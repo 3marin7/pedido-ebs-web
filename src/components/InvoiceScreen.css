@@ -1,0 +1,168 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+/* Estilos base mejorados */
+.invoice-container {
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 25px;
+  background: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  color: #2d3748; /* Color de texto base oscuro */
+}
+
+/* Título principal con mejor contraste */
+.invoice-container h1 {
+  color: #1a365d; /* Azul muy oscuro */
+  font-size: 28px;
+  text-align: center;
+  margin-bottom: 25px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #2b6cb0;
+  font-weight: 700;
+}
+
+/* Estilo para todos los textos ingresados por el usuario */
+.user-data {
+  color: #1a365d; /* Azul oscuro */
+  font-weight: 600;
+  background-color: #ebf4ff; /* Fondo azul muy claro */
+  padding: 3px 8px;
+  border-radius: 4px;
+  display: inline-block;
+  border-left: 3px solid #2b6cb0;
+}
+
+/* Campos de formulario mejorados */
+.input-field {
+  width: 100%;
+  padding: 12px 15px;
+  margin-bottom: 15px;
+  border: 1px solid #cbd5e0;
+  border-radius: 6px;
+  font-size: 16px;
+  background-color: #fff;
+  color: #1a365d; /* Texto oscuro */
+  transition: all 0.3s;
+}
+
+.input-field:focus {
+  border-color: #2b6cb0;
+  box-shadow: 0 0 0 3px rgba(43, 108, 176, 0.2);
+  outline: none;
+}
+
+/* Selector personalizado */
+select.input-field {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%231a365d' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 15px center;
+  background-size: 12px;
+  appearance: none;
+}
+
+/* Secciones del formulario */
+.form-section {
+  margin-bottom: 25px;
+  padding: 20px;
+  background: #f8fafc;
+  border-radius: 8px;
+  border-left: 4px solid #2b6cb0;
+}
+
+.form-section h3 {
+  color: #2b6cb0;
+  margin-bottom: 15px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+/* Lista de productos */
+.productos-list {
+  margin: 25px 0;
+}
+
+.producto-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  margin-bottom: 10px;
+  background: white;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border-left: 3px solid #2b6cb0;
+}
+
+.producto-info {
+  flex: 1;
+}
+
+.producto-nombre {
+  font-weight: 600;
+  color: #1a365d;
+  margin-bottom: 5px;
+}
+
+.producto-detalle {
+  color: #4a5568;
+  font-size: 14px;
+}
+
+.producto-detalle span {
+  color: #1a365d;
+  font-weight: 600;
+  margin: 0 3px;
+}
+
+/* Botones */
+.button {
+  background: #2b6cb0;
+  color: white;
+  padding: 12px 25px;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  margin-right: 10px;
+  margin-bottom: 10px;
+}
+
+.button:hover {
+  background: #2c5282;
+  transform: translateY(-2px);
+}
+
+.secondary-button {
+  background: #4a5568;
+}
+
+.secondary-button:hover {
+  background: #2d3748;
+}
+
+.danger-button {
+  background: #c53030;
+}
+
+.danger-button:hover {
+  background: #9b2c2c;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .invoice-container {
+    padding: 15px;
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+  }
+  
+  .button {
+    width: 100%;
+    margin-right: 0;
+  }
+}
