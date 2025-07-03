@@ -1,19 +1,20 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
 /* Estilos base mejorados */
 .invoice-container {
-  font-family: 'Segoe UI', system-ui, sans-serif;
-  max-width: 800px;
+  font-family: 'Roboto', 'Segoe UI', system-ui, sans-serif;
+  max-width: 900px;
   margin: 20px auto;
   padding: 25px;
   background: #ffffff;
   border-radius: 10px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  color: #2d3748; /* Color de texto base oscuro */
+  color: #2d3748;
 }
 
-/* Título principal con mejor contraste */
+/* Título principal */
 .invoice-container h1 {
-  color: #1a365d; /* Azul muy oscuro */
+  color: #1a365d;
   font-size: 28px;
   text-align: center;
   margin-bottom: 25px;
@@ -22,48 +23,64 @@
   font-weight: 700;
 }
 
-/* Estilo para todos los textos ingresados por el usuario */
-.user-data {
-  color: #1a365d; /* Azul oscuro */
-  font-weight: 600;
-  background-color: #ebf4ff; /* Fondo azul muy claro */
-  padding: 3px 8px;
-  border-radius: 4px;
-  display: inline-block;
-  border-left: 3px solid #2b6cb0;
+/* Estructura del formulario */
+.form-row {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 15px;
 }
 
-/* Campos de formulario mejorados */
-.input-field {
+.form-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #4a5568;
+  font-size: 14px;
+}
+
+/* Campos de formulario - ESTILO UNIFICADO */
+.input-field, 
+.form-group input,
+.product-form-row input {
   width: 100%;
   padding: 12px 15px;
-  margin-bottom: 15px;
   border: 1px solid #cbd5e0;
   border-radius: 6px;
-  font-size: 16px;
+  font-size: 15px;
   background-color: #fff;
-  color: #1a365d; /* Texto oscuro */
+  color: #1a365d;
   transition: all 0.3s;
+  height: 48px; /* Altura fija para todos */
+  box-sizing: border-box; /* Para que padding no afecte dimensiones */
 }
 
-.input-field:focus {
+.input-field:focus,
+.form-group input:focus,
+.product-form-row input:focus {
   border-color: #2b6cb0;
   box-shadow: 0 0 0 3px rgba(43, 108, 176, 0.2);
   outline: none;
 }
 
 /* Selector personalizado */
-select.input-field {
+select.input-field,
+.form-group select {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%231a365d' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 15px center;
   background-size: 12px;
   appearance: none;
+  padding-right: 35px;
 }
 
 /* Secciones del formulario */
 .form-section {
-  margin-bottom: 25px;
+  margin: 20px 0;
   padding: 20px;
   background: #f8fafc;
   border-radius: 8px;
@@ -75,6 +92,17 @@ select.input-field {
   margin-bottom: 15px;
   font-size: 18px;
   font-weight: 600;
+}
+
+/* Formulario de productos - ahora con mismo estilo */
+.product-form-row {
+  display: flex;
+  gap: 15px;
+  align-items: flex-end;
+}
+
+.product-form-row .form-group {
+  margin-bottom: 0;
 }
 
 /* Lista de productos */
@@ -109,12 +137,6 @@ select.input-field {
   font-size: 14px;
 }
 
-.producto-detalle span {
-  color: #1a365d;
-  font-weight: 600;
-  margin: 0 3px;
-}
-
 /* Botones */
 .button {
   background: #2b6cb0;
@@ -128,6 +150,7 @@ select.input-field {
   transition: all 0.3s;
   margin-right: 10px;
   margin-bottom: 10px;
+  height: 48px; /* Misma altura que los inputs */
 }
 
 .button:hover {
@@ -135,26 +158,17 @@ select.input-field {
   transform: translateY(-2px);
 }
 
-.secondary-button {
-  background: #4a5568;
-}
-
-.secondary-button:hover {
-  background: #2d3748;
-}
-
-.danger-button {
-  background: #c53030;
-}
-
-.danger-button:hover {
-  background: #9b2c2c;
-}
-
 /* Responsive */
 @media (max-width: 768px) {
   .invoice-container {
     padding: 15px;
+    margin: 10px;
+  }
+  
+  .form-row,
+  .product-form-row {
+    flex-direction: column;
+    gap: 10px;
   }
   
   .action-buttons {

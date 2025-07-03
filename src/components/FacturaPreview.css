@@ -1,78 +1,90 @@
-/* Agrega esto al inicio del archivo */
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@500;700&display=swap');
-
 .factura-container {
-  font-family: 'Roboto', Arial, sans-serif;
   max-width: 800px;
   margin: 20px auto;
-  padding: 25px;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  padding: 30px;
+  background: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  font-family: 'Roboto', sans-serif;
+  color: #2d3748;
 }
 
-/* Texto con degradado azul */
 .factura-container h1 {
-  background: linear-gradient(135deg, #3498db, #2c3e50);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  font-size: 28px;
+  color: #1a365d;
+  font-size: 24px;
   text-align: center;
   margin-bottom: 25px;
   padding-bottom: 10px;
-  border-bottom: 2px solid #3498db;
+  border-bottom: 2px solid #2b6cb0;
+}
+
+.datos-factura {
+  margin-bottom: 25px;
+  padding: 20px;
+  background: #f8fafc;
+  border-radius: 8px;
+}
+
+.fila-datos {
+  display: flex;
+  gap: 30px;
+}
+
+.columna-datos {
+  flex: 1;
 }
 
 .datos-factura p {
   margin: 10px 0;
-  font-size: 16px;
-  color: #34495e;
+  font-size: 15px;
+  line-height: 1.5;
 }
 
 .datos-factura b {
-  color: #2c3e50;
+  color: #2b6cb0;
+  min-width: 80px;
   display: inline-block;
-  width: 100px;
 }
 
 .tabla-productos {
   width: 100%;
-  margin: 25px 0;
   border-collapse: collapse;
+  margin: 20px 0;
 }
 
 .tabla-productos th {
-  background: linear-gradient(135deg, #3498db, #2980b9);
+  background-color: #2b6cb0;
   color: white;
   padding: 12px;
   text-align: left;
 }
 
 .tabla-productos td {
-  padding: 12px;
-  border-bottom: 1px solid #ecf0f1;
-  color: #2c3e50;
+  padding: 10px 12px;
+  border-bottom: 1px solid #e2e8f0;
 }
 
-.tabla-productos tr:hover {
-  background-color: #f8f9fa;
+.tabla-productos tr:nth-child(even) {
+  background-color: #f8fafc;
+}
+
+.total {
+  text-align: right;
+  margin-top: 20px;
+  padding: 15px;
+  background-color: #ebf4ff;
+  border-radius: 6px;
 }
 
 .total h3 {
-  background: linear-gradient(135deg, #3498db, #2c3e50);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  font-size: 22px;
-  text-align: right;
-  margin-top: 20px;
+  color: #1a365d;
+  font-size: 18px;
 }
 
 .botones {
   display: flex;
+  justify-content: flex-end;
   gap: 15px;
-  justify-content: center;
   margin-top: 30px;
 }
 
@@ -80,23 +92,46 @@
   padding: 12px 25px;
   border: none;
   border-radius: 6px;
-  cursor: pointer;
-  font-weight: bold;
   font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
   transition: all 0.3s;
 }
 
 .boton-volver {
-  background: linear-gradient(135deg, #e74c3c, #c0392b);
+  background-color: #f03506;
   color: white;
+}
+
+.boton-volver:hover {
+  background-color: #994238;
 }
 
 .boton-guardar {
-  background: linear-gradient(135deg, #2ecc71, #27ae60);
+  background-color: #2ecc71;
   color: white;
 }
 
-.boton-volver:hover, .boton-guardar:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+.boton-guardar:hover {
+  background-color: #2c5282;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .fila-datos {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .factura-container {
+    padding: 20px;
+  }
+  
+  .botones {
+    flex-direction: column;
+  }
+  
+  .boton-volver, .boton-guardar {
+    width: 100%;
+  }
 }

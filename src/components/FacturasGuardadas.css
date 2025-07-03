@@ -4,7 +4,7 @@
   margin: 0 auto;
   padding: 2rem;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  color: #333;
+  color: #342f2f;
 }
 
 /* Header */
@@ -91,12 +91,12 @@
 }
 
 .secondary-button:hover {
-  background-color: #bdc3c7;
+  background-color: #4a6d85;
 }
 
 /* Filtros y búsqueda */
 .filtros-container {
-  background-color: #f8f9fa;
+  background-color: #b7d6f4;
   padding: 1.5rem;
   border-radius: 8px;
   margin-bottom: 2rem;
@@ -390,7 +390,7 @@
 
 /* Skeleton Loading */
 .skeleton {
-  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background: linear-gradient(90deg, #5c3e3e 25%, #e0e0e0 50%, #f0f0f0 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
 }

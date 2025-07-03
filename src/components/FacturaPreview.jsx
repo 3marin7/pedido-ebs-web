@@ -7,9 +7,18 @@ const FacturaPreview = ({ factura, onVolver, onGuardar }) => {
       <h1>VISTA PREVIA DE LA FACTURA</h1>
       
       <div className="datos-factura">
-        <p><b>Cliente:</b> {factura.cliente || "No especificado"}</p>
-        <p><b>Fecha:</b> {factura.fecha || "No especificada"}</p>
-        <p><b>Vendedor:</b> {factura.vendedor || "No especificado"}</p>
+        <div className="fila-datos">
+          <div className="columna-datos">
+            <p><b>Cliente:</b> {factura.cliente || "No especificado"}</p>
+            <p><b>Fecha:</b> {factura.fecha || "No especificada"}</p>
+            <p><b>Vendedor:</b> {factura.vendedor || "No especificado"}</p>
+          </div>
+          <div className="columna-datos">
+            <p><b>Dirección:</b> {factura.direccion || "No especificada"}</p>
+            <p><b>Teléfono:</b> {factura.telefono || "No especificado"}</p>
+            <p><b>Correo:</b> {factura.correo || "No especificado"}</p>
+          </div>
+        </div>
       </div>
 
       <table className="tabla-productos">
