@@ -160,6 +160,14 @@ const FacturasGuardadas = () => {
               >
                 <i className={`fas fa-${mostrarResumen ? 'eye-slash' : 'eye'}`}></i> {mostrarResumen ? 'Ocultar' : 'Mostrar'} Resúmenes
               </button>
+              
+              {/* Botón añadido para Reportes de Cobros */}
+              <button 
+                className="button report-button"
+                onClick={() => navigate('/reportes-cobros')}
+              >
+                <i className="fas fa-chart-bar"></i> Reportes de Cobros
+              </button>
             </>
           )}
         </div>
