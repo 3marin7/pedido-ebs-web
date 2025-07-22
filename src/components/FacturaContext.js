@@ -1,46 +1,50 @@
-import { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 
 const FacturaContext = createContext();
 
 export const FacturaProvider = ({ children }) => {
-  const [productosFactura, setProductosFactura] = useState([]);
+  const [itemsFactura, setItemsFactura] = useState([]);
+  const [cliente, setCliente] = useState(null);
 
   const agregarProductoFactura = (producto) => {
-    setProductosFactura(prev => {
-      const existente = prev.find(p => p.id === producto.id);
-      if (existente) {
-        return prev.map(p => 
-          p.id === producto.id ? { ...p, cantidad: p.cantidad + 1 } : p
+    setItemsFactura(prevItems => {
+      const itemExistente = prevItems.find(item => item.id === producto.id);
+      
+      if (itemExistente) {
+        return prevItems.map(item =>
+          item.id === producto.id
+            ? { ...item, cantidad: item.cantidad + 1 }
+            : item
         );
+      } else {
+        return [...prevItems, { ...producto, cantidad: 1 }];
       }
-      return [...prev, { ...producto, cantidad: 1 }];
     });
   };
 
   const eliminarProductoFactura = (id) => {
-    setProductosFactura(prev => prev.filter(p => p.id !== id));
+    setItemsFactura(prevItems => prevItems.filter(item => item.id !== id));
   };
 
   const actualizarCantidad = (id, nuevaCantidad) => {
-    setProductosFactura(prev => 
-      prev.map(p => 
-        p.id === id ? { ...p, cantidad: nuevaCantidad } : p
+    if (nuevaCantidad < 1) return;
+    
+    setItemsFactura(prevItems =>
+      prevItems.map(item =>
+        item.id === id ? { ...item, cantidad: nuevaCantidad } : item
       )
     );
   };
 
-  const limpiarFactura = () => {
-    setProductosFactura([]);
-  };
-
   return (
-    <FacturaContext.Provider 
-      value={{ 
-        productosFactura, 
+    <FacturaContext.Provider
+      value={{
+        itemsFactura,
+        cliente,
+        setCliente,
         agregarProductoFactura,
         eliminarProductoFactura,
-        actualizarCantidad,
-        limpiarFactura
+        actualizarCantidad
       }}
     >
       {children}
