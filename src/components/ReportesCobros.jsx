@@ -11,7 +11,10 @@ const ReportesCobros = () => {
   const [fechaFin, setFechaFin] = useState('');
   const [filtroVendedor, setFiltroVendedor] = useState('Todos');
   const [mostrarGrafico, setMostrarGrafico] = useState(true);
-  
+  const [mostrarModalImportar, setMostrarModalImportar] = useState(false);
+  const [archivoCSV, setArchivoCSV] = useState(null);
+  const [errorImportacion, setErrorImportacion] = useState('');
+
   // Obtener vendedores únicos de las facturas
   const obtenerVendedores = () => {
     const vendedoresSet = new Set();
@@ -172,7 +175,24 @@ const ReportesCobros = () => {
     return new Date(fecha).toLocaleDateString('es-ES', opciones);
   };
 
-  // Exportar reporte a CSV
+  // Función auxiliar para generar y descargar el CSV
+  const generarCSV = (headers, rows, filename) => {
+    let csvContent = headers.join(',') + '\n';
+    rows.forEach(row => {
+      csvContent += row.map(item => `"${item}"`).join(',') + '\n';
+    });
+    
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `${filename}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  // 1. Exportar reporte completo de abonos
   const exportarACSV = () => {
     const headers = ['Fecha', 'Cliente', 'Vendedor', 'Monto', 'Nota', 'Factura ID'];
     const rows = reportes.abonosFiltrados.map(abono => [
@@ -184,19 +204,50 @@ const ReportesCobros = () => {
       abono.facturaId
     ]);
     
-    let csvContent = headers.join(',') + '\n';
-    rows.forEach(row => {
-      csvContent += row.map(item => `"${item}"`).join(',') + '\n';
-    });
+    generarCSV(headers, rows, `reporte_cobros_${new Date().toISOString().slice(0, 10)}`);
+  };
+
+  // 2. Exportar reporte por vendedores
+  const exportarVendedoresACSV = () => {
+    const headers = ['Vendedor', 'Cantidad Abonos', 'Total Recaudado', 'Promedio por Abono', '% del Total'];
+    const rows = reportes.porVendedor.map(vendedor => [
+      vendedor.vendedor,
+      vendedor.cantidad,
+      vendedor.total,
+      vendedor.cantidad > 0 ? (vendedor.total / vendedor.cantidad).toFixed(2) : 0,
+      calcularPorcentaje(vendedor.total)
+    ]);
     
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.setAttribute('download', `reporte_cobros_${new Date().toISOString().slice(0, 10)}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    generarCSV(headers, rows, `reporte_vendedores_${new Date().toISOString().slice(0, 10)}`);
+  };
+
+  // 3. Exportar reporte diario
+  const exportarDiarioACSV = () => {
+    const headers = ['Fecha', 'Cantidad Abonos', 'Total Recaudado', 'Promedio por Abono', 'Vendedor Principal'];
+    const rows = reportes.porDia.map(dia => [
+      dia.fecha,
+      dia.cantidad,
+      dia.total,
+      (dia.total / dia.cantidad).toFixed(2),
+      obtenerVendedorPrincipal(dia.abonos)
+    ]);
+    
+    generarCSV(headers, rows, `reporte_diario_${new Date().toISOString().slice(0, 10)}`);
+  };
+
+  // 4. Exportar reporte de clientes
+  const exportarClientesACSV = () => {
+    const headers = ['Cliente', 'Cantidad Abonos', 'Total Abonado', 'Vendedores'];
+    const rows = Object.values(reportes.porCliente)
+      .sort((a, b) => b.total - a.total)
+      .map(cliente => [
+        cliente.cliente,
+        cliente.cantidad,
+        cliente.total,
+        [...new Set(cliente.abonos.map(a => a.vendedor))].join(', ')
+      ]);
+    
+    generarCSV(headers, rows, `reporte_clientes_${new Date().toISOString().slice(0, 10)}`);
   };
 
   // Calcular porcentaje para gráfico circular
@@ -224,6 +275,99 @@ const ReportesCobros = () => {
       .sort((a, b) => b[1] - a[1])[0]?.[0] || 'N/A';
   };
 
+  // Manejar importación de CSV
+  const manejarImportacionCSV = (event) => {
+    setErrorImportacion('');
+    const file = event.target.files[0];
+    
+    if (!file) return;
+    
+    if (file.type !== 'text/csv' && !file.name.endsWith('.csv')) {
+      setErrorImportacion('El archivo debe ser un CSV');
+      return;
+    }
+    
+    setArchivoCSV(file);
+    setMostrarModalImportar(true);
+  };
+
+  const procesarArchivoCSV = () => {
+    if (!archivoCSV) return;
+    
+    const reader = new FileReader();
+    
+    reader.onload = (e) => {
+      try {
+        const content = e.target.result;
+        const lines = content.split('\n');
+        const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
+        
+        // Validar estructura básica del CSV
+        const camposRequeridos = ['fecha', 'cliente', 'vendedor', 'monto', 'facturaId'];
+        const faltantes = camposRequeridos.filter(campo => !headers.includes(campo));
+        
+        if (faltantes.length > 0) {
+          setErrorImportacion(`Faltan campos requeridos: ${faltantes.join(', ')}`);
+          return;
+        }
+        
+        const nuevosAbonos = [];
+        
+        for (let i = 1; i < lines.length; i++) {
+          if (!lines[i].trim()) continue;
+          
+          const values = lines[i].split(',').map(v => v.trim().replace(/"/g, ''));
+          const abono = {};
+          
+          headers.forEach((header, index) => {
+            abono[header] = values[index] || '';
+          });
+          
+          // Validar y convertir valores
+          if (!abono.fecha || !abono.monto || !abono.facturaId) {
+            console.warn(`Fila ${i} ignorada por datos incompletos`);
+            continue;
+          }
+          
+          abono.monto = parseFloat(abono.monto) || 0;
+          abono.id = Date.now() + i; // ID temporal
+          
+          nuevosAbonos.push(abono);
+        }
+        
+        if (nuevosAbonos.length === 0) {
+          setErrorImportacion('No se encontraron abonos válidos en el archivo');
+          return;
+        }
+        
+        // Combinar con abonos existentes
+        const abonosActuales = JSON.parse(localStorage.getItem('abonos')) || [];
+        const abonosActualizados = [...abonosActuales, ...nuevosAbonos];
+        
+        // Guardar en localStorage
+        localStorage.setItem('abonos', JSON.stringify(abonosActualizados));
+        
+        // Actualizar estado
+        setAbonos(abonosActualizados);
+        setMostrarModalImportar(false);
+        setArchivoCSV(null);
+        
+        // Mostrar mensaje de éxito
+        alert(`Se importaron ${nuevosAbonos.length} abonos correctamente`);
+        
+      } catch (error) {
+        console.error('Error procesando CSV:', error);
+        setErrorImportacion('Error al procesar el archivo CSV');
+      }
+    };
+    
+    reader.onerror = () => {
+      setErrorImportacion('Error al leer el archivo');
+    };
+    
+    reader.readAsText(archivoCSV);
+  };
+
   return (
     <div className="reportes-container">
       <header className="reportes-header">
@@ -238,23 +382,46 @@ const ReportesCobros = () => {
             <i className="fas fa-arrow-left"></i> Volver a Facturas
           </button>
           
-          {abonos.length > 0 && (
-            <>
-              <button 
-                className="button info-button"
-                onClick={exportarACSV}
-              >
-                <i className="fas fa-file-csv"></i> Exportar CSV
+          {/* Botón de importar */}
+          <label className="button info-button file-import-button">
+            <i className="fas fa-file-import"></i> Importar CSV
+            <input 
+              type="file" 
+              accept=".csv, text/csv"
+              onChange={manejarImportacionCSV}
+              style={{ display: 'none' }}
+            />
+          </label>
+          
+          {/* Menú de exportación */}
+          <div className="dropdown">
+            <button className="button info-button dropdown-toggle">
+              <i className="fas fa-file-csv"></i> Exportar Reportes
+              <i className="fas fa-caret-down"></i>
+            </button>
+            <div className="dropdown-menu">
+              <button className="dropdown-item" onClick={exportarACSV}>
+                <i className="fas fa-file-alt"></i> Abonos detallados
               </button>
-              <button 
-                className="button toggle-button"
-                onClick={() => setMostrarGrafico(!mostrarGrafico)}
-              >
-                <i className={`fas fa-${mostrarGrafico ? 'chart-bar' : 'chart-pie'}`}></i> 
-                {mostrarGrafico ? 'Ver Tabla' : 'Ver Gráfico'}
+              <button className="dropdown-item" onClick={exportarVendedoresACSV}>
+                <i className="fas fa-user-tie"></i> Por vendedores
               </button>
-            </>
-          )}
+              <button className="dropdown-item" onClick={exportarDiarioACSV}>
+                <i className="fas fa-calendar-day"></i> Diario consolidado
+              </button>
+              <button className="dropdown-item" onClick={exportarClientesACSV}>
+                <i className="fas fa-users"></i> Por clientes
+              </button>
+            </div>
+          </div>
+          
+          <button 
+            className="button toggle-button"
+            onClick={() => setMostrarGrafico(!mostrarGrafico)}
+          >
+            <i className={`fas fa-${mostrarGrafico ? 'chart-bar' : 'chart-pie'}`}></i> 
+            {mostrarGrafico ? 'Ver Tabla' : 'Ver Gráfico'}
+          </button>
         </div>
       </header>
 
@@ -578,6 +745,65 @@ const ReportesCobros = () => {
           </div>
         )}
       </div>
+
+      {/* Modal de Importación */}
+      {mostrarModalImportar && (
+        <div className="modal-overlay">
+          <div className="modal-container">
+            <div className="modal-header">
+              <h3>Importar Abonos desde CSV</h3>
+              <button 
+                className="modal-close"
+                onClick={() => {
+                  setMostrarModalImportar(false);
+                  setErrorImportacion('');
+                }}
+              >
+                &times;
+              </button>
+            </div>
+            
+            <div className="modal-body">
+              <p>Archivo seleccionado: <strong>{archivoCSV?.name}</strong></p>
+              
+              <div className="import-instructions">
+                <h4>Formato requerido:</h4>
+                <ul>
+                  <li>Columnas: <code>fecha, cliente, vendedor, monto, facturaId, nota</code></li>
+                  <li>Fecha formato: <code>YYYY-MM-DD</code></li>
+                  <li>Monto debe ser numérico</li>
+                  <li>La primera fila debe contener los encabezados</li>
+                </ul>
+              </div>
+              
+              {errorImportacion && (
+                <div className="error-message">
+                  <i className="fas fa-exclamation-circle"></i> {errorImportacion}
+                </div>
+              )}
+            </div>
+            
+            <div className="modal-footer">
+              <button
+                className="button secondary-button"
+                onClick={() => {
+                  setMostrarModalImportar(false);
+                  setErrorImportacion('');
+                }}
+              >
+                Cancelar
+              </button>
+              <button
+                className="button primary-button"
+                onClick={procesarArchivoCSV}
+                disabled={!archivoCSV}
+              >
+                <i className="fas fa-file-import"></i> Importar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

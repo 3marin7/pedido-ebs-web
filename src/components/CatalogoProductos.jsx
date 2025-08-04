@@ -70,6 +70,216 @@ const CloudinaryUpload = ({ onImageUpload }) => {
   );
 };
 
+const ImportExportActions = ({ productos, productosFiltrados, setProductos }) => {
+  const fileInputRef = React.useRef(null);
+
+  // Función para formatear precio (similar a la del componente principal)
+  const formatPrecio = (precio) => {
+    return new Intl.NumberFormat('es-CO', {
+      style: 'currency',
+      currency: 'COP',
+      minimumFractionDigits: 0
+    }).format(precio);
+  };
+
+  const exportarProductos = (tipoExportacion = 'todos') => {
+    let productosAExportar = [...productos];
+    
+    // Filtrar según el tipo de exportación
+    if (tipoExportacion === 'activos') {
+      productosAExportar = productosAExportar.filter(p => p.activo);
+    } else if (tipoExportacion === 'filtrados') {
+      productosAExportar = productosFiltrados;
+    }
+
+    // Crear objeto con metadatos
+    const exportData = {
+      metadata: {
+        fechaExportacion: new Date().toISOString(),
+        cantidadProductos: productosAExportar.length,
+        version: '1.0'
+      },
+      productos: productosAExportar
+    };
+
+    // Crear archivo JSON
+    const dataStr = JSON.stringify(exportData, null, 2);
+    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+    
+    // Generar nombre de archivo
+    const fecha = new Date();
+    const nombreArchivo = `productos_${tipoExportacion}_${fecha.getFullYear()}-${(fecha.getMonth()+1).toString().padStart(2, '0')}-${fecha.getDate().toString().padStart(2, '0')}.json`;
+    
+    // Crear elemento para descarga
+    const exportLink = document.createElement('a');
+    exportLink.setAttribute('href', dataUri);
+    exportLink.setAttribute('download', nombreArchivo);
+    document.body.appendChild(exportLink);
+    exportLink.click();
+    document.body.removeChild(exportLink);
+  };
+
+  // Nueva función para exportar a CSV/Excel
+  const exportarAExcel = (tipoExportacion = 'todos') => {
+    let productosAExportar = [...productos];
+    
+    if (tipoExportacion === 'activos') {
+      productosAExportar = productosAExportar.filter(p => p.activo);
+    } else if (tipoExportacion === 'filtrados') {
+      productosAExportar = productosFiltrados;
+    }
+
+    // Encabezados del CSV
+    let csvContent = "Código,Nombre,Categoría,Precio,Stock,Descripción,Estado,Última Actualización\n";
+    
+    // Agregar cada producto
+    productosAExportar.forEach(producto => {
+      const row = [
+        producto.codigo || 'N/A',
+        `"${producto.nombre.replace(/"/g, '""')}"`,
+        producto.categoria || 'Sin categoría',
+        formatPrecio(producto.precio).replace(/[^\d,]/g, ''),
+        producto.stock || 0,
+        `"${(producto.descripcion || 'Sin descripción').replace(/"/g, '""')}"`,
+        producto.activo ? 'Activo' : 'Inactivo',
+        new Date().toLocaleDateString()
+      ].join(',');
+      
+      csvContent += row + '\n';
+    });
+
+    // Crear archivo
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    
+    const fecha = new Date();
+    const nombreArchivo = `inventario_final_${fecha.getFullYear()}-${(fecha.getMonth()+1).toString().padStart(2, '0')}-${fecha.getDate().toString().padStart(2, '0')}.csv`;
+    
+    link.setAttribute('href', url);
+    link.setAttribute('download', nombreArchivo);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const importarProductos = (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    // Validar tipo de archivo
+    if (!file.name.endsWith('.json')) {
+      alert('Por favor, selecciona un archivo JSON válido');
+      return;
+    }
+
+    const reader = new FileReader();
+    
+    reader.onload = (e) => {
+      try {
+        const data = JSON.parse(e.target.result);
+        
+        // Validar estructura básica
+        if (!data.productos || !Array.isArray(data.productos)) {
+          throw new Error('El archivo no contiene una lista válida de productos');
+        }
+
+        // Validar cada producto
+        const productosImportados = data.productos.map((p, index) => {
+          // Validaciones básicas
+          if (!p.nombre || typeof p.nombre !== 'string') {
+            throw new Error(`Producto en posición ${index} no tiene un nombre válido`);
+          }
+          
+          if (!p.precio || isNaN(parseFloat(p.precio))) {
+            throw new Error(`Producto "${p.nombre}" no tiene un precio válido`);
+          }
+
+          // Asignar ID nuevo si no existe o si ya existe en nuestros productos
+          const idExistente = productos.find(prod => prod.id === p.id);
+          return {
+            ...p,
+            id: idExistente ? Date.now() + index : p.id,
+            precio: parseFloat(p.precio),
+            stock: parseInt(p.stock) || 0,
+            activo: p.activo !== undefined ? p.activo : true,
+            imagenUrl: p.imagenUrl || '',
+            imagenPublicId: p.imagenPublicId || ''
+          };
+        });
+
+        // Mostrar resumen antes de aplicar cambios
+        const confirmacion = window.confirm(
+          `Se importarán ${productosImportados.length} productos.\n` +
+          `Nuevos: ${productosImportados.filter(p => !productos.some(existing => existing.id === p.id)).length}\n` +
+          `Actualizados: ${productosImportados.filter(p => productos.some(existing => existing.id === p.id)).length}\n\n` +
+          `¿Deseas continuar?`
+        );
+
+        if (confirmacion) {
+          // Combinar productos existentes con los importados
+          const productosActualizados = [
+            ...productos.filter(p => !productosImportados.some(imp => imp.id === p.id)),
+            ...productosImportados
+          ];
+
+          localStorage.setItem('productos', JSON.stringify(productosActualizados));
+          setProductos(productosActualizados);
+          alert('Importación completada con éxito');
+        }
+      } catch (error) {
+        console.error('Error importando productos:', error);
+        alert(`Error al importar: ${error.message}`);
+      }
+    };
+
+    reader.onerror = () => {
+      alert('Error al leer el archivo');
+    };
+
+    reader.readAsText(file);
+  };
+
+  const handleImportClick = () => {
+    fileInputRef.current.click();
+  };
+
+  return (
+    <div className="import-export-actions">
+      <div className="dropdown">
+        <button className="button info-button">
+          <i className="fas fa-file-export"></i> Exportar ▼
+        </button>
+        <div className="dropdown-content">
+          <button onClick={() => exportarProductos('todos')}>JSON - Todos</button>
+          <button onClick={() => exportarProductos('activos')}>JSON - Activos</button>
+          <button onClick={() => exportarProductos('filtrados')}>JSON - Filtrados</button>
+          <div className="dropdown-divider"></div>
+          <button onClick={() => exportarAExcel('todos')}>Excel - Todos</button>
+          <button onClick={() => exportarAExcel('activos')}>Excel - Activos</button>
+          <button onClick={() => exportarAExcel('filtrados')}>Excel - Filtrados</button>
+        </div>
+      </div>
+      
+      <button 
+        className="button warning-button"
+        onClick={handleImportClick}
+      >
+        <i className="fas fa-file-import"></i> Importar
+      </button>
+      
+      <input
+        type="file"
+        ref={fileInputRef}
+        onChange={importarProductos}
+        accept=".json"
+        style={{ display: 'none' }}
+      />
+    </div>
+  );
+};
+
 const CatalogoProductos = () => {
   const navigate = useNavigate();
   const [productos, setProductos] = useState([]);
@@ -91,7 +301,7 @@ const CatalogoProductos = () => {
   const [editandoId, setEditandoId] = useState(null);
   const [filtroEstado, setFiltroEstado] = useState('activos');
 
-  const categorias = ['toallas', 'Bloqueadores', 'pañales', 'Alimentos', 'Desodorantes', 'Otros'];
+  const categorias = ['Toallas', 'Bloqueadores', 'Pañales', 'Alimentos', 'Desodorantes','Medicamentos ',  'Otros'];
 
   // Cargar productos desde localStorage
   useEffect(() => {
@@ -235,6 +445,11 @@ const CatalogoProductos = () => {
       <header className="catalogo-header">
         <h1><i className="fas fa-boxes"></i> Catálogo de Productos</h1>
         <div className="header-actions">
+          <ImportExportActions 
+            productos={productos}
+            productosFiltrados={productosFiltrados}
+            setProductos={setProductos}
+          />
           <button 
             className="button success-button"
             onClick={() => {
@@ -517,7 +732,7 @@ const CatalogoProductos = () => {
                   onClick={() => toggleEstadoProducto(producto.id)}
                 >
                   <i className={`fas ${producto.activo ? 'fa-eye-slash' : 'fa-eye'}`}></i>
-                  {producto.activo ? 'Desactivar' : 'Activar'}
+                  {producto.activo ? 'si hay' : 'no hay'}
                 </button>
                 
                 <button 

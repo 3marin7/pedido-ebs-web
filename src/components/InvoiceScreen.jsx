@@ -5,6 +5,7 @@ import './InvoiceScreen.css';
 
 const InvoiceScreen = () => {
   const navigate = useNavigate();
+  
   // Estados principales
   const [cliente, setCliente] = useState('');
   const [fecha, setFecha] = useState(new Date().toISOString().split('T')[0]);
@@ -36,9 +37,13 @@ const InvoiceScreen = () => {
     nombre: '',
     direccion: '',
     telefono: '',
-    correo: ''
+    correo: '',
+    clasificacion: 3
   });
   const [clientes, setClientes] = useState([]);
+  const [importandoClientes, setImportandoClientes] = useState(false);
+  const [filtroClasificacion, setFiltroClasificacion] = useState(0);
+  const [clienteEditando, setClienteEditando] = useState(null);
 
   const vendedores = ['Edwin Marin', 'Fredy Marin', 'Fabian Marin'];
 
@@ -50,6 +55,31 @@ const InvoiceScreen = () => {
     const clientesGuardados = JSON.parse(localStorage.getItem('clientes')) || [];
     setClientes(clientesGuardados);
   }, []);
+
+  // Función para determinar clasificación automática
+  const determinarClasificacionAutomatica = (nombreCliente) => {
+    const facturas = JSON.parse(localStorage.getItem('facturas')) || [];
+    const facturasCliente = facturas.filter(f => f.cliente === nombreCliente);
+    
+    if (facturasCliente.length === 0) return 3;
+    
+    const totalGastado = facturasCliente.reduce((sum, f) => sum + f.total, 0);
+    const promedioPorFactura = totalGastado / facturasCliente.length;
+    const frecuenciaCompras = facturasCliente.length / (facturas.length || 1);
+    
+    let puntaje = 3;
+    if (totalGastado > 5000000) puntaje += 1;
+    if (totalGastado > 10000000) puntaje += 1;
+    if (totalGastado < 1000000) puntaje -= 1;
+    
+    if (promedioPorFactura > 500000) puntaje += 1;
+    if (promedioPorFactura < 100000) puntaje -= 1;
+    
+    if (frecuenciaCompras > 0.5) puntaje += 1;
+    if (frecuenciaCompras < 0.1) puntaje -= 1;
+    
+    return Math.min(Math.max(puntaje, 1), 5);
+  };
 
   // Función para agregar producto manualmente
   const agregarProducto = () => {
@@ -71,7 +101,7 @@ const InvoiceScreen = () => {
     setPrecioProducto('');
   };
 
-  // Función corregida para agregar desde catálogo
+  // Función para agregar desde catálogo
   const agregarProductoDesdeCatalogo = (producto) => {
     if (!producto || !producto.nombre || !producto.precio) {
       console.error('Producto inválido:', producto);
@@ -163,7 +193,29 @@ const InvoiceScreen = () => {
     setVendedorSeleccionado('');
   };
 
-  // Funciones para clientes
+  // Funciones para gestión de clientes
+  const iniciarEdicionCliente = (cliente) => {
+    setClienteEditando(cliente);
+    setNuevoCliente({
+      nombre: cliente.nombre,
+      direccion: cliente.direccion,
+      telefono: cliente.telefono,
+      correo: cliente.correo,
+      clasificacion: cliente.clasificacion
+    });
+  };
+
+  const cancelarEdicionCliente = () => {
+    setClienteEditando(null);
+    setNuevoCliente({
+      nombre: '',
+      direccion: '',
+      telefono: '',
+      correo: '',
+      clasificacion: 3
+    });
+  };
+
   const guardarCliente = () => {
     if (!nuevoCliente.nombre) {
       alert('El nombre del cliente es obligatorio');
@@ -174,26 +226,40 @@ const InvoiceScreen = () => {
       c.nombre.toLowerCase() === nuevoCliente.nombre.toLowerCase()
     );
 
-    if (clienteExistente) {
+    if (clienteExistente && !clienteEditando) {
       alert('Ya existe un cliente con ese nombre');
       return;
     }
 
-    const nuevoClienteConId = {
-      ...nuevoCliente,
-      id: Date.now()
-    };
-
-    const clientesActualizados = [...clientes, nuevoClienteConId];
-    setClientes(clientesActualizados);
-    localStorage.setItem('clientes', JSON.stringify(clientesActualizados));
+    if (clienteEditando) {
+      // Actualizar cliente existente
+      const clientesActualizados = clientes.map(c => 
+        c.id === clienteEditando.id ? { ...nuevoCliente, id: clienteEditando.id } : c
+      );
+      setClientes(clientesActualizados);
+      localStorage.setItem('clientes', JSON.stringify(clientesActualizados));
+    } else {
+      // Crear nuevo cliente
+      const clasificacion = nuevoCliente.clasificacion || determinarClasificacionAutomatica(nuevoCliente.nombre);
+      const nuevoClienteConId = {
+        ...nuevoCliente,
+        id: Date.now(),
+        clasificacion,
+        fechaRegistro: new Date().toISOString()
+      };
+      const clientesActualizados = [...clientes, nuevoClienteConId];
+      setClientes(clientesActualizados);
+      localStorage.setItem('clientes', JSON.stringify(clientesActualizados));
+    }
     
     setNuevoCliente({
       nombre: '',
       direccion: '',
       telefono: '',
-      correo: ''
+      correo: '',
+      clasificacion: 3
     });
+    setClienteEditando(null);
     
     alert('Cliente guardado exitosamente!');
   };
@@ -206,17 +272,156 @@ const InvoiceScreen = () => {
     setMostrarClientes(false);
   };
 
+  // Función para exportar clientes mejorada
+  const exportarClientes = () => {
+    try {
+      if (clientes.length === 0) {
+        alert('No hay clientes para exportar');
+        return;
+      }
+
+      // Estructura de exportación mejorada
+      const datosExportacion = {
+        metadata: {
+          sistema: "EBS Facturación",
+          version: "1.0",
+          fechaExportacion: new Date().toISOString(),
+          totalClientes: clientes.length
+        },
+        clientes: clientes.map(cliente => ({
+          id: cliente.id,
+          nombre: cliente.nombre,
+          direccion: cliente.direccion || '',
+          telefono: cliente.telefono || '',
+          correo: cliente.correo || '',
+          clasificacion: cliente.clasificacion || 3,
+          fechaRegistro: cliente.fechaRegistro || new Date().toISOString()
+        }))
+      };
+
+      const dataStr = JSON.stringify(datosExportacion, null, 2);
+      const blob = new Blob([dataStr], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `clientes_ebs_${new Date().toISOString().slice(0, 10)}.json`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      // Liberar memoria
+      setTimeout(() => URL.revokeObjectURL(url), 100);
+      
+      alert(`✅ Se exportaron ${clientes.length} clientes correctamente`);
+    } catch (error) {
+      console.error('Error al exportar clientes:', error);
+      alert('❌ Ocurrió un error al exportar los clientes. Verifica la consola para más detalles.');
+    }
+  };
+
+  // Función para importar clientes mejorada
+  const importarClientes = (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    setImportandoClientes(true);
+    const reader = new FileReader();
+    
+    reader.onload = (e) => {
+      try {
+        const contenido = e.target.result;
+        const datosImportados = JSON.parse(contenido);
+        
+        // Validación 1: Estructura básica del archivo
+        if (!datosImportados || !Array.isArray(datosImportados.clientes)) {
+          throw new Error("El archivo no tiene el formato correcto. Debe contener un array 'clientes'");
+        }
+        
+        const clientesImportados = datosImportados.clientes;
+        const clientesActuales = JSON.parse(localStorage.getItem('clientes')) || [];
+        
+        // Validación 2: Campos obligatorios y normalización
+        const clientesValidados = clientesImportados.map((cliente, index) => {
+          if (!cliente.nombre) {
+            throw new Error(`Cliente en posición ${index} no tiene nombre`);
+          }
+          
+          // Normalizar clasificación (1-5)
+          let clasificacion = 3;
+          if (cliente.clasificacion !== undefined) {
+            clasificacion = Math.max(1, Math.min(5, parseInt(cliente.clasificacion) || 3));
+          }
+          
+          return {
+            id: cliente.id || Date.now() + index,
+            nombre: cliente.nombre.toString().trim(),
+            direccion: cliente.direccion ? cliente.direccion.toString().trim() : '',
+            telefono: cliente.telefono ? cliente.telefono.toString().trim() : '',
+            correo: cliente.correo ? cliente.correo.toString().trim() : '',
+            clasificacion: clasificacion,
+            fechaRegistro: cliente.fechaRegistro || new Date().toISOString()
+          };
+        });
+        
+        // Detectar duplicados por ID y nombre
+        const nombresExistentes = new Set(clientesActuales.map(c => c.nombre.toLowerCase()));
+        const nuevosClientes = clientesValidados.filter(c => 
+          !nombresExistentes.has(c.nombre.toLowerCase())
+        );
+        
+        if (nuevosClientes.length === 0) {
+          alert('⚠️ Todos los clientes en el archivo ya existen en el sistema');
+          return;
+        }
+        
+        const confirmacion = window.confirm(
+          `📊 Resumen de Importación:\n\n` +
+          `• Clientes en archivo: ${clientesImportados.length}\n` +
+          `• Nuevos clientes a importar: ${nuevosClientes.length}\n` +
+          `• Clientes duplicados (no se importarán): ${clientesImportados.length - nuevosClientes.length}\n\n` +
+          `¿Desea continuar con la importación?`
+        );
+        
+        if (confirmacion) {
+          const clientesActualizados = [...clientesActuales, ...nuevosClientes];
+          localStorage.setItem('clientes', JSON.stringify(clientesActualizados));
+          setClientes(clientesActualizados);
+          
+          alert(`🎉 Importación completada!\n\nSe agregaron ${nuevosClientes.length} nuevos clientes.`);
+        }
+      } catch (error) {
+        console.error("Error importando clientes:", error);
+        alert(`❌ Error al importar: ${error.message}\n\nVerifica que el archivo tenga el formato correcto.`);
+      } finally {
+        setImportandoClientes(false);
+        event.target.value = '';
+      }
+    };
+    
+    reader.onerror = () => {
+      alert("❌ Error al leer el archivo. Asegúrese de seleccionar un archivo JSON válido.");
+      setImportandoClientes(false);
+      event.target.value = '';
+    };
+    
+    reader.readAsText(file);
+  };
+
   // Filtros
   const productosFiltrados = productosCatalogo.filter(producto => 
     producto.nombre.toLowerCase().includes(busquedaCatalogo.toLowerCase()) ||
     (producto.codigo && producto.codigo.toLowerCase().includes(busquedaCatalogo.toLowerCase()))
   );
 
-  const clientesFiltrados = clientes.filter(cliente => 
-    cliente.nombre.toLowerCase().includes(busquedaCliente.toLowerCase()) ||
-    (cliente.telefono && cliente.telefono.includes(busquedaCliente)) ||
-    (cliente.correo && cliente.correo.toLowerCase().includes(busquedaCliente.toLowerCase()))
-  );
+  const clientesFiltrados = clientes.filter(cliente => {
+    const coincideNombre = cliente.nombre.toLowerCase().includes(busquedaCliente.toLowerCase());
+    const coincideTelefono = cliente.telefono && cliente.telefono.includes(busquedaCliente);
+    const coincideCorreo = cliente.correo && cliente.correo.toLowerCase().includes(busquedaCliente.toLowerCase());
+    const coincideClasificacion = filtroClasificacion === 0 || cliente.clasificacion === filtroClasificacion;
+    
+    return (coincideNombre || coincideTelefono || coincideCorreo) && coincideClasificacion;
+  });
 
   return (
     <div className="invoice-container">
@@ -302,10 +507,13 @@ const InvoiceScreen = () => {
         <div className="clientes-modal">
           <div className="clientes-content">
             <div className="clientes-header">
-              <h2>Seleccionar Cliente</h2>
+              <h2>{clienteEditando ? 'Editar Cliente' : 'Seleccionar Cliente'}</h2>
               <button 
                 className="button secondary-button"
-                onClick={() => setMostrarClientes(false)}
+                onClick={() => {
+                  setMostrarClientes(false);
+                  cancelarEdicionCliente();
+                }}
               >
                 Volver
               </button>
@@ -319,32 +527,81 @@ const InvoiceScreen = () => {
                 onChange={(e) => setBusquedaCliente(e.target.value)}
               />
             </div>
-            
-            <div className="clientes-list">
-              {clientesFiltrados.length > 0 ? (
-                clientesFiltrados.map(cliente => (
-                  <div 
-                    key={cliente.id} 
-                    className="cliente-item"
-                    onClick={() => seleccionarCliente(cliente)}
-                  >
-                    <div className="cliente-info">
-                      <h4>{cliente.nombre}</h4>
-                      {cliente.telefono && <p>Tel: {cliente.telefono}</p>}
-                      {cliente.correo && <p>Email: {cliente.correo}</p>}
-                      {cliente.direccion && <p>Dir: {cliente.direccion}</p>}
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <div className="empty-clientes">
-                  <p>No se encontraron clientes</p>
-                </div>
-              )}
+
+            <div className="clientes-filters">
+              <label>Filtrar por clasificación:</label>
+              <select 
+                value={filtroClasificacion} 
+                onChange={(e) => setFiltroClasificacion(Number(e.target.value))}
+              >
+                <option value={0}>Todas</option>
+                <option value={1}>1 ★</option>
+                <option value={2}>2 ★★</option>
+                <option value={3}>3 ★★★</option>
+                <option value={4}>4 ★★★★</option>
+                <option value={5}>5 ★★★★★</option>
+              </select>
             </div>
             
+            <div className="clientes-stats">
+              <h4>Estadísticas de Clientes:</h4>
+              <div className="stats-grid">
+                {[5, 4, 3, 2, 1].map(star => (
+                  <div key={star} className="stat-item">
+                    <span className={`clasificacion-badge clasificacion-${star}`}>
+                      {star} {'★'.repeat(star)}
+                    </span>
+                    <span>
+                      {clientes.filter(c => c.clasificacion === star).length} clientes
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+            
+            {!clienteEditando && (
+              <div className="clientes-list">
+                {clientesFiltrados.length > 0 ? (
+                  clientesFiltrados.map(cliente => (
+                    <div 
+                      key={cliente.id} 
+                      className="cliente-item"
+                    >
+                      <div 
+                        className="cliente-info"
+                        onClick={() => seleccionarCliente(cliente)}
+                      >
+                        <h4>{cliente.nombre}</h4>
+                        <div className={`clasificacion-badge clasificacion-${cliente.clasificacion}`}>
+                          {cliente.clasificacion} {'★'.repeat(cliente.clasificacion)}
+                        </div>
+                        {cliente.telefono && <p>Tel: {cliente.telefono}</p>}
+                        {cliente.correo && <p>Email: {cliente.correo}</p>}
+                        {cliente.direccion && <p>Dir: {cliente.direccion}</p>}
+                      </div>
+                      <div className="cliente-acciones">
+                        <button
+                          className="button info-button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            iniciarEdicionCliente(cliente);
+                          }}
+                        >
+                          <i className="fas fa-edit"></i> Editar
+                        </button>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="empty-clientes">
+                    <p>No se encontraron clientes</p>
+                  </div>
+                )}
+              </div>
+            )}
+            
             <div className="nuevo-cliente-form">
-              <h3>Agregar Nuevo Cliente</h3>
+              <h3>{clienteEditando ? 'Editar Cliente' : 'Agregar Nuevo Cliente'}</h3>
               <div className="form-row">
                 <div className="form-group">
                   <label>Nombre *</label>
@@ -387,13 +644,78 @@ const InvoiceScreen = () => {
                   />
                 </div>
               </div>
+
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Clasificación (1-5)</label>
+                  <div className="clasificacion-stars">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <span
+                        key={star}
+                        className={`star ${star <= nuevoCliente.clasificacion ? 'filled' : ''}`}
+                        onClick={() => setNuevoCliente({...nuevoCliente, clasificacion: star})}
+                      >
+                        ★
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
               
+              <div className="form-buttons">
+                <button 
+                  className="button primary-button"
+                  onClick={guardarCliente}
+                >
+                  {clienteEditando ? 'Actualizar Cliente' : 'Guardar Cliente'}
+                </button>
+                
+                {clienteEditando && (
+                  <button 
+                    className="button secondary-button"
+                    onClick={cancelarEdicionCliente}
+                  >
+                    Cancelar
+                  </button>
+                )}
+              </div>
+            </div>
+
+            <div className="clientes-actions">
               <button 
-                className="button primary-button"
-                onClick={guardarCliente}
+                className="button info-button"
+                onClick={exportarClientes}
+                disabled={clientes.length === 0 || importandoClientes}
               >
-                Guardar Cliente
+                <i className="fas fa-file-export"></i> Exportar Clientes
+                {clientes.length > 0 && (
+                  <span className="badge-count">{clientes.length}</span>
+                )}
               </button>
+              
+              <label 
+                htmlFor="importar-clientes" 
+                className={`button warning-button ${importandoClientes ? 'disabled' : ''}`}
+              >
+                <i className="fas fa-file-import"></i> 
+                {importandoClientes ? 'Importando...' : 'Importar Clientes'}
+              </label>
+              
+              <input
+                type="file"
+                id="importar-clientes"
+                accept=".json,application/json"
+                onChange={importarClientes}
+                disabled={importandoClientes}
+                style={{ display: 'none' }}
+              />
+              
+              {importandoClientes && (
+                <div className="import-progress">
+                  <div className="spinner"></div>
+                  <span>Procesando archivo...</span>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -587,15 +909,14 @@ const InvoiceScreen = () => {
             >
               Administrar Catálogo
             </button>
+            {/* Nuevo botón para el catálogo de clientes */}
+            <button
+            className="button success-button"
+            onClick={() => navigate('/catalogo-clientes')}
+            >
+            <i className="fas fa-share"></i> Enviar Catálogo
+            </button>
           </div>
-          <div className="header-actions">
-  <button
-    className="button primary-button"
-    onClick={() => navigate('/catalogo-clientes')}
-  >
-    <i className="fas fa-users"></i> Catálogo Clientes
-  </button>
-</div>
         </>
       )}
     </div>

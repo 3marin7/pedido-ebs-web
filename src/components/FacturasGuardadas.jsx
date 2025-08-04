@@ -10,6 +10,7 @@ const FacturasGuardadas = () => {
   const [orden, setOrden] = useState('recientes');
   const [mostrarConfirmacion, setMostrarConfirmacion] = useState(null);
   const [mostrarResumen, setMostrarResumen] = useState(false);
+  const [importando, setImportando] = useState(false);
 
   // Cargar facturas
   useEffect(() => {
@@ -59,7 +60,6 @@ const FacturasGuardadas = () => {
       promedioFiltrado: 0
     };
 
-    // Calcular total general y por cliente
     facturas.forEach(f => {
       stats.totalGeneral += f.total;
       
@@ -74,12 +74,10 @@ const FacturasGuardadas = () => {
       stats.porCliente[f.cliente].total += f.total;
     });
 
-    // Calcular total filtrado
     facturasProcesadas.forEach(f => {
       stats.totalFiltrado += f.total;
     });
 
-    // Calcular promedios
     stats.promedioGeneral = stats.cantidadGeneral > 0 
       ? stats.totalGeneral / stats.cantidadGeneral 
       : 0;
@@ -88,7 +86,6 @@ const FacturasGuardadas = () => {
       ? stats.totalFiltrado / stats.cantidadFiltrada 
       : 0;
 
-    // Calcular promedios por cliente
     Object.keys(stats.porCliente).forEach(cliente => {
       stats.porCliente[cliente].promedio = 
         stats.porCliente[cliente].total / stats.porCliente[cliente].cantidad;
@@ -118,6 +115,75 @@ const FacturasGuardadas = () => {
     link.click();
   };
 
+  // Importar facturas (versión que preserva existentes)
+  const importarFacturas = (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    setImportando(true);
+    const reader = new FileReader();
+    
+    reader.onload = (e) => {
+      try {
+        const contenido = e.target.result;
+        const facturasImportadas = JSON.parse(contenido);
+        
+        if (!Array.isArray(facturasImportadas)) {
+          throw new Error("El archivo no contiene un formato válido de facturas");
+        }
+        
+        const camposRequeridos = ['id', 'cliente', 'vendedor', 'fecha', 'productos', 'total'];
+        facturasImportadas.forEach(factura => {
+          camposRequeridos.forEach(campo => {
+            if (!factura.hasOwnProperty(campo)) {
+              throw new Error(`Factura inválida: falta el campo ${campo}`);
+            }
+          });
+        });
+        
+        const facturasActuales = JSON.parse(localStorage.getItem('facturas')) || [];
+        
+        // Fusionar facturas evitando duplicados por ID
+        const facturasUnidas = [
+          ...facturasActuales,
+          ...facturasImportadas.filter(
+            fi => !facturasActuales.some(fa => fa.id === fi.id)
+          )
+        ];
+        
+        // Ordenar por ID descendente
+        facturasUnidas.sort((a, b) => b.id - a.id);
+        
+        const confirmar = window.confirm(
+          `Se importarán ${facturasImportadas.length} facturas.\n` +
+          `Nuevas facturas a agregar: ${facturasUnidas.length - facturasActuales.length}\n` +
+          `Total después de importación: ${facturasUnidas.length}\n\n` +
+          `¿Deseas continuar?`
+        );
+        
+        if (confirmar) {
+          localStorage.setItem('facturas', JSON.stringify(facturasUnidas));
+          setFacturas(facturasUnidas);
+          alert(`Importación completada. Ahora tienes ${facturasUnidas.length} facturas.`);
+        }
+      } catch (error) {
+        console.error("Error importando facturas:", error);
+        alert(`Error al importar facturas: ${error.message}`);
+      } finally {
+        setImportando(false);
+        event.target.value = '';
+      }
+    };
+    
+    reader.onerror = () => {
+      alert("Error al leer el archivo");
+      setImportando(false);
+      event.target.value = '';
+    };
+    
+    reader.readAsText(file);
+  };
+
   // Formatear fecha
   const formatFecha = (fechaISO) => {
     const opciones = { year: 'numeric', month: 'short', day: 'numeric' };
@@ -143,6 +209,7 @@ const FacturasGuardadas = () => {
           <button 
             className="button success-button"
             onClick={() => navigate('/')}
+            disabled={importando}
           >
             <i className="fas fa-plus"></i> Nueva Factura
           </button>
@@ -151,20 +218,37 @@ const FacturasGuardadas = () => {
               <button 
                 className="button info-button"
                 onClick={exportarFacturas}
+                disabled={importando}
               >
                 <i className="fas fa-file-export"></i> Exportar
               </button>
               <button 
+                className="button warning-button"
+                onClick={() => document.getElementById('importar-facturas').click()}
+                disabled={importando}
+              >
+                <i className="fas fa-file-import"></i> {importando ? 'Importando...' : 'Importar'}
+              </button>
+              <input
+                type="file"
+                id="importar-facturas"
+                accept=".json"
+                style={{ display: 'none' }}
+                onChange={importarFacturas}
+                disabled={importando}
+              />
+              <button 
                 className="button secondary-button"
                 onClick={() => setMostrarResumen(!mostrarResumen)}
+                disabled={importando}
               >
                 <i className={`fas fa-${mostrarResumen ? 'eye-slash' : 'eye'}`}></i> {mostrarResumen ? 'Ocultar' : 'Mostrar'} Resúmenes
               </button>
               
-              {/* Botón añadido para Reportes de Cobros */}
               <button 
                 className="button report-button"
                 onClick={() => navigate('/reportes-cobros')}
+                disabled={importando}
               >
                 <i className="fas fa-chart-bar"></i> Reportes de Cobros
               </button>
@@ -180,6 +264,7 @@ const FacturasGuardadas = () => {
             placeholder="🔍 Buscar por cliente, vendedor, ID o fecha..."
             value={busqueda}
             onChange={(e) => setBusqueda(e.target.value)}
+            disabled={importando}
           />
         </div>
         
@@ -188,6 +273,7 @@ const FacturasGuardadas = () => {
             value={orden} 
             onChange={(e) => setOrden(e.target.value)}
             className="orden-select"
+            disabled={importando}
           >
             <option value="recientes">Más recientes</option>
             <option value="antiguos">Más antiguos</option>
@@ -201,7 +287,6 @@ const FacturasGuardadas = () => {
         </div>
       </div>
 
-      {/* Sección de Estadísticas - Ahora condicional */}
       {mostrarResumen && (
         <div className="resumen-section">
           <div className="resumen-card">
@@ -262,8 +347,12 @@ const FacturasGuardadas = () => {
         </div>
       )}
 
-      {/* Listado de Facturas */}
-      {cargando ? (
+      {importando ? (
+        <div className="loading-overlay">
+          <div className="loading-spinner"></div>
+          <p>Importando facturas...</p>
+        </div>
+      ) : cargando ? (
         <div className="facturas-grid">
           {[...Array(6)].map((_, i) => (
             <div key={i} className="factura-card skeleton">
@@ -325,6 +414,7 @@ const FacturasGuardadas = () => {
                 <button
                   className="button primary-button"
                   onClick={() => navigate(`/factura/${factura.id}`)}
+                  disabled={importando}
                 >
                   <i className="fas fa-eye"></i> Ver Detalle
                 </button>
@@ -334,6 +424,7 @@ const FacturasGuardadas = () => {
                     e.stopPropagation();
                     setMostrarConfirmacion(factura.id);
                   }}
+                  disabled={importando}
                 >
                   <i className="fas fa-trash"></i> Eliminar
                 </button>

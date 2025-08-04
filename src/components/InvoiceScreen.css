@@ -408,3 +408,451 @@ select {
   padding: 8px 12px;
   font-size: 14px;
 }
+/* Estilos para los botones de clientes */
+.clientes-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #eee;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.clientes-actions .button {
+  padding: 8px 15px;
+  font-size: 14px;
+  margin: 5px;
+}
+
+/* Estilo para el modal de clientes */
+.clientes-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.clientes-content {
+  background: white;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 800px;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.clientes-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.clientes-search {
+  margin-bottom: 15px;
+}
+
+.clientes-search input {
+  width: 100%;
+  padding: 8px 15px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.clientes-list {
+  max-height: 300px;
+  overflow-y: auto;
+  margin-bottom: 20px;
+  border: 1px solid #eee;
+  border-radius: 4px;
+}
+
+.cliente-item {
+  padding: 10px 15px;
+  border-bottom: 1px solid #eee;
+  transition: background-color 0.2s;
+}
+
+.cliente-item:hover {
+  background-color: #f5f5f5;
+  cursor: pointer;
+}
+
+.cliente-info h4 {
+  margin: 0 0 5px 0;
+  color: #333;
+}
+
+.cliente-info p {
+  margin: 3px 0;
+  font-size: 13px;
+  color: #666;
+}
+
+.empty-clientes {
+  text-align: center;
+  padding: 20px;
+  color: #666;
+}
+
+.nuevo-cliente-form {
+  background: #f9f9f9;
+  padding: 15px;
+  border-radius: 4px;
+  margin-top: 20px;
+}
+
+.nuevo-cliente-form h3 {
+  margin-top: 0;
+  color: #444;
+}
+
+/* Loading overlay para importación */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.9);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.loading-spinner {
+  border: 5px solid #f3f3f3;
+  border-top: 5px solid #3498db;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
+  margin-bottom: 15px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+/* Clasificación de estrellas */
+.clasificacion-stars {
+  display: flex;
+  gap: 5px;
+  font-size: 1.5em;
+}
+
+.clasificacion-stars .star {
+  cursor: pointer;
+  color: #ccc;
+  transition: color 0.2s;
+}
+
+.clasificacion-stars .star.filled {
+  color: #FFD700;
+}
+
+.clasificacion-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.8em;
+  font-weight: bold;
+  margin-left: 10px;
+  background-color: #f0f0f0;
+}
+
+/* Colores para diferentes clasificaciones */
+.clasificacion-1 { color: #ff0000; }
+.clasificacion-2 { color: #ff6b6b; }
+.clasificacion-3 { color: #ffcc00; }
+.clasificacion-4 { color: #66cc66; }
+.clasificacion-5 { color: #006400; }
+
+/* Filtros y estadísticas */
+.clientes-filters {
+  margin: 10px 0;
+  padding: 10px;
+  background-color: #f8f9fa;
+  border-radius: 5px;
+}
+
+.clientes-filters label {
+  margin-right: 10px;
+}
+
+.clientes-stats {
+  margin: 20px 0;
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px;
+  background-color: white;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Mejoras visuales para items de cliente */
+.cliente-item {
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.cliente-item:hover {
+  background-color: #f5f5f5;
+}
+
+.cliente-info h4 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+/* Clasificación de estrellas */
+.clasificacion-stars {
+  display: flex;
+  gap: 5px;
+  font-size: 1.5em;
+}
+
+.clasificacion-stars .star {
+  cursor: pointer;
+  color: #ccc;
+  transition: color 0.2s;
+}
+
+.clasificacion-stars .star.filled {
+  color: #FFD700;
+}
+
+.clasificacion-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.8em;
+  font-weight: bold;
+  margin-left: 10px;
+  background-color: #f0f0f0;
+}
+
+/* Colores para diferentes clasificaciones */
+.clasificacion-1 { color: #ff0000; background-color: #ffeeee; }
+.clasificacion-2 { color: #ff6b6b; background-color: #fff0f0; }
+.clasificacion-3 { color: #ffcc00; background-color: #fff9e6; }
+.clasificacion-4 { color: #66cc66; background-color: #f0fff0; }
+.clasificacion-5 { color: #006400; background-color: #e6ffe6; }
+
+/* Filtros y estadísticas */
+.clientes-filters {
+  margin: 10px 0;
+  padding: 10px;
+  background-color: #f8f9fa;
+  border-radius: 5px;
+}
+
+.clientes-filters label {
+  margin-right: 10px;
+  font-weight: 500;
+}
+
+.clientes-stats {
+  margin: 20px 0;
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background-color: white;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Mejoras visuales para items de cliente */
+.cliente-item {
+  cursor: pointer;
+  transition: background-color 0.2s;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.cliente-item:hover {
+  background-color: #f5f5f5;
+}
+
+.cliente-info {
+  flex-grow: 1;
+}
+
+.cliente-info h4 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 5px;
+}
+
+.cliente-acciones {
+  display: flex;
+  gap: 5px;
+}
+
+.cliente-acciones button {
+  padding: 5px 10px;
+  font-size: 0.8em;
+}
+
+.form-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.empty-clientes {
+  text-align: center;
+  padding: 20px;
+  color: #666;
+}
+/* Estilos para exportación/importación */
+.clientes-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  margin: 20px 0;
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+}
+
+.clientes-actions .button {
+  position: relative;
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+}
+
+.clientes-actions .button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.clientes-actions .button.disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.clientes-actions .info-button {
+  background-color: #17a2b8;
+  border-color: #17a2b8;
+}
+
+.clientes-actions .warning-button {
+  background-color: #ffc107;
+  border-color: #ffc107;
+  color: #212529;
+}
+
+.badge-count {
+  background-color: #ffffff;
+  color: #17a2b8;
+  border-radius: 50%;
+  padding: 3px 8px;
+  font-size: 0.8em;
+  font-weight: bold;
+  margin-left: 8px;
+  border: 1px solid currentColor;
+}
+
+.import-progress {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #6c757d;
+  font-size: 0.9rem;
+  padding: 8px 12px;
+  background-color: #f8f9fa;
+  border-radius: 4px;
+  margin-left: auto;
+}
+
+.spinner {
+  border: 3px solid rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  border-top: 3px solid #6c757d;
+  width: 18px;
+  height: 18px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Estilos para el input file personalizado */
+.file-input-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background-color: #ffc107;
+  color: #212529;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-weight: 500;
+}
+
+.file-input-label:hover {
+  background-color: #e0a800;
+  transform: translateY(-2px);
+}
+
+.file-input-label:active {
+  transform: translateY(0);
+}
