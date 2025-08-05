@@ -5,6 +5,7 @@ import './FacturasGuardadas.css';
 const FacturasGuardadas = () => {
   const navigate = useNavigate();
   const [facturas, setFacturas] = useState([]);
+  const [abonos, setAbonos] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [busqueda, setBusqueda] = useState('');
   const [orden, setOrden] = useState('recientes');
@@ -12,44 +13,67 @@ const FacturasGuardadas = () => {
   const [mostrarResumen, setMostrarResumen] = useState(false);
   const [importando, setImportando] = useState(false);
 
-  // Cargar facturas
+  // Cargar facturas y abonos
   useEffect(() => {
-    const cargarFacturas = () => {
+    const cargarDatos = () => {
       try {
         const facturasGuardadas = JSON.parse(localStorage.getItem('facturas')) || [];
+        const abonosGuardados = JSON.parse(localStorage.getItem('abonos')) || [];
         setFacturas(facturasGuardadas);
+        setAbonos(abonosGuardados);
       } catch (error) {
-        console.error("Error cargando facturas:", error);
+        console.error("Error cargando datos:", error);
       } finally {
         setCargando(false);
       }
     };
 
-    cargarFacturas();
+    cargarDatos();
   }, []);
 
-  // Procesar facturas con filtros y orden
-  const facturasProcesadas = facturas
-    .filter(factura => {
+  // Calcular saldos para cada factura
+  const calcularSaldos = (facturas, abonos) => {
+    return facturas.map(factura => {
+      const abonosFactura = abonos.filter(abono => abono.facturaId === factura.id);
+      const totalAbonado = abonosFactura.reduce((sum, abono) => sum + (abono.monto || 0), 0);
+      const saldo = factura.total - totalAbonado;
+      
+      return {
+        ...factura,
+        totalAbonado,
+        saldo,
+        estado: saldo <= 0 ? 'Pagada' : (totalAbonado > 0 ? 'Parcial' : 'Pendiente')
+      };
+    });
+  };
+
+  // Procesar facturas con filtros, orden y saldos
+  const facturasProcesadas = calcularSaldos(
+    facturas.filter(factura => {
       const termino = busqueda.toLowerCase();
       return (
-        factura.cliente.toLowerCase().includes(termino) ||
-        factura.vendedor.toLowerCase().includes(termino) ||
-        factura.id.toString().includes(busqueda) ||
-        factura.fecha.includes(busqueda)
+        factura.cliente?.toLowerCase().includes(termino) ||
+        factura.vendedor?.toLowerCase().includes(termino) ||
+        factura.id?.toString().includes(busqueda) ||
+        factura.fecha?.includes(busqueda)
       );
-    })
-    .sort((a, b) => {
+    }).sort((a, b) => {
       switch (orden) {
         case 'antiguos': return new Date(a.fecha) - new Date(b.fecha);
         case 'mayor-total': return b.total - a.total;
         case 'menor-total': return a.total - b.total;
+        case 'mayor-saldo': return (b.saldo || 0) - (a.saldo || 0);
+        case 'menor-saldo': return (a.saldo || 0) - (b.saldo || 0);
         default: return new Date(b.fecha) - new Date(a.fecha);
       }
-    });
+    }),
+    abonos
+  );
 
   // Calcular estadísticas
   const calcularEstadisticas = () => {
+    const facturasConSaldo = calcularSaldos(facturas, abonos);
+    
     const stats = {
       totalGeneral: 0,
       totalFiltrado: 0,
@@ -57,25 +81,33 @@ const FacturasGuardadas = () => {
       cantidadFiltrada: facturasProcesadas.length,
       porCliente: {},
       promedioGeneral: 0,
-      promedioFiltrado: 0
+      promedioFiltrado: 0,
+      totalAbonado: 0,
+      totalSaldoPendiente: 0
     };
 
-    facturas.forEach(f => {
-      stats.totalGeneral += f.total;
+    facturasConSaldo.forEach(f => {
+      stats.totalGeneral += f.total || 0;
+      stats.totalAbonado += f.totalAbonado || 0;
+      stats.totalSaldoPendiente += (f.saldo > 0 ? f.saldo : 0) || 0;
       
       if (!stats.porCliente[f.cliente]) {
         stats.porCliente[f.cliente] = {
           cantidad: 0,
           total: 0,
+          abonado: 0,
+          saldo: 0,
           promedio: 0
         };
       }
       stats.porCliente[f.cliente].cantidad++;
-      stats.porCliente[f.cliente].total += f.total;
+      stats.porCliente[f.cliente].total += f.total || 0;
+      stats.porCliente[f.cliente].abonado += f.totalAbonado || 0;
+      stats.porCliente[f.cliente].saldo += (f.saldo > 0 ? f.saldo : 0) || 0;
     });
 
     facturasProcesadas.forEach(f => {
-      stats.totalFiltrado += f.total;
+      stats.totalFiltrado += f.total || 0;
     });
 
     stats.promedioGeneral = stats.cantidadGeneral > 0 
@@ -96,27 +128,47 @@ const FacturasGuardadas = () => {
 
   const estadisticas = calcularEstadisticas();
 
-  // Eliminar factura
+  // Eliminar factura (y sus abonos asociados)
   const eliminarFactura = (id) => {
+    if (!window.confirm('¿Eliminar esta factura y todos sus abonos asociados?')) return;
+    
+    // Eliminar factura
     const nuevasFacturas = facturas.filter(f => f.id !== id);
     localStorage.setItem('facturas', JSON.stringify(nuevasFacturas));
+    
+    // Eliminar abonos asociados
+    const nuevosAbonos = abonos.filter(a => a.facturaId !== id);
+    localStorage.setItem('abonos', JSON.stringify(nuevosAbonos));
+    
     setFacturas(nuevasFacturas);
+    setAbonos(nuevosAbonos);
     setMostrarConfirmacion(null);
   };
 
-  // Exportar facturas
-  const exportarFacturas = () => {
-    const dataStr = JSON.stringify(facturas, null, 2);
+  // Exportar facturas y abonos
+  const exportarDatos = () => {
+    const datosParaExportar = {
+      facturas: facturas,
+      abonos: abonos,
+      metadata: {
+        exportadoEl: new Date().toISOString(),
+        version: '1.0',
+        totalFacturas: facturas.length,
+        totalAbonos: abonos.length
+      }
+    };
+
+    const dataStr = JSON.stringify(datosParaExportar, null, 2);
     const blob = new Blob([dataStr], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `facturas-ebs-${new Date().toISOString().slice(0, 10)}.json`;
+    link.download = `datos-facturacion-${new Date().toISOString().slice(0, 10)}.json`;
     link.click();
   };
 
-  // Importar facturas (versión que preserva existentes)
-  const importarFacturas = (event) => {
+  // Importar facturas y abonos (versión corregida)
+  const importarDatos = (event) => {
     const file = event.target.files[0];
     if (!file) return;
 
@@ -126,49 +178,92 @@ const FacturasGuardadas = () => {
     reader.onload = (e) => {
       try {
         const contenido = e.target.result;
-        const facturasImportadas = JSON.parse(contenido);
+        const datosImportados = JSON.parse(contenido);
         
-        if (!Array.isArray(facturasImportadas)) {
-          throw new Error("El archivo no contiene un formato válido de facturas");
+        let facturasImportadas = [];
+        let abonosImportados = [];
+        
+        if (datosImportados.facturas && datosImportados.abonos) {
+          facturasImportadas = datosImportados.facturas;
+          abonosImportados = datosImportados.abonos;
+        } else if (Array.isArray(datosImportados)) {
+          facturasImportadas = datosImportados;
+          abonosImportados = [];
+        } else {
+          throw new Error("El archivo no tiene un formato válido");
         }
-        
-        const camposRequeridos = ['id', 'cliente', 'vendedor', 'fecha', 'productos', 'total'];
+
+        // Validar facturas
+        const camposRequeridosFacturas = ['id', 'cliente', 'vendedor', 'fecha', 'productos', 'total'];
         facturasImportadas.forEach(factura => {
-          camposRequeridos.forEach(campo => {
+          camposRequeridosFacturas.forEach(campo => {
             if (!factura.hasOwnProperty(campo)) {
               throw new Error(`Factura inválida: falta el campo ${campo}`);
             }
           });
         });
-        
+
+        // Validar abonos (con método como opcional)
+        const camposRequeridosAbonos = ['id', 'facturaId', 'fecha', 'monto'];
+        abonosImportados.forEach(abono => {
+          camposRequeridosAbonos.forEach(campo => {
+            if (!abono.hasOwnProperty(campo)) {
+              throw new Error(`Abono inválido: falta el campo ${campo}`);
+            }
+          });
+          // Asignar método por defecto si no existe
+          if (!abono.metodo) {
+            abono.metodo = 'No especificado';
+          }
+        });
+
         const facturasActuales = JSON.parse(localStorage.getItem('facturas')) || [];
+        const abonosActuales = JSON.parse(localStorage.getItem('abonos')) || [];
         
-        // Fusionar facturas evitando duplicados por ID
         const facturasUnidas = [
           ...facturasActuales,
           ...facturasImportadas.filter(
             fi => !facturasActuales.some(fa => fa.id === fi.id)
           )
         ];
-        
-        // Ordenar por ID descendente
+
+        const abonosUnidos = [
+          ...abonosActuales,
+          ...abonosImportados.filter(
+            ai => !abonosActuales.some(aa => aa.id === ai.id)
+          )
+        ];
+
         facturasUnidas.sort((a, b) => b.id - a.id);
+        abonosUnidos.sort((a, b) => b.id - a.id);
+        
+        const nuevasFacturas = facturasUnidas.length - facturasActuales.length;
+        const nuevosAbonos = abonosUnidos.length - abonosActuales.length;
         
         const confirmar = window.confirm(
-          `Se importarán ${facturasImportadas.length} facturas.\n` +
-          `Nuevas facturas a agregar: ${facturasUnidas.length - facturasActuales.length}\n` +
-          `Total después de importación: ${facturasUnidas.length}\n\n` +
+          `Se importarán:\n` +
+          `- ${facturasImportadas.length} facturas (${nuevasFacturas} nuevas)\n` +
+          `- ${abonosImportados.length} abonos (${nuevosAbonos} nuevos)\n\n` +
+          `Totales después de importación:\n` +
+          `- Facturas: ${facturasUnidas.length}\n` +
+          `- Abonos: ${abonosUnidos.length}\n\n` +
           `¿Deseas continuar?`
         );
         
         if (confirmar) {
           localStorage.setItem('facturas', JSON.stringify(facturasUnidas));
+          localStorage.setItem('abonos', JSON.stringify(abonosUnidos));
           setFacturas(facturasUnidas);
-          alert(`Importación completada. Ahora tienes ${facturasUnidas.length} facturas.`);
+          setAbonos(abonosUnidos);
+          alert(
+            `Importación completada.\n` +
+            `Facturas: ${facturasUnidas.length} (${nuevasFacturas} nuevas)\n` +
+            `Abonos: ${abonosUnidos.length} (${nuevosAbonos} nuevos)`
+          );
         }
       } catch (error) {
-        console.error("Error importando facturas:", error);
-        alert(`Error al importar facturas: ${error.message}`);
+        console.error("Error importando datos:", error);
+        alert(`Error al importar datos: ${error.message}`);
       } finally {
         setImportando(false);
         event.target.value = '';
@@ -196,7 +291,17 @@ const FacturasGuardadas = () => {
       style: 'currency',
       currency: 'COP',
       minimumFractionDigits: 0
-    }).format(valor);
+    }).format(valor || 0);
+  };
+
+  // Formatear estado con color
+  const formatEstado = (estado) => {
+    const clases = {
+      'Pagada': 'estado-pagada',
+      'Parcial': 'estado-parcial',
+      'Pendiente': 'estado-pendiente'
+    };
+    return <span className={`estado ${clases[estado] || ''}`}>{estado}</span>;
   };
 
   return (
@@ -213,28 +318,28 @@ const FacturasGuardadas = () => {
           >
             <i className="fas fa-plus"></i> Nueva Factura
           </button>
-          {facturas.length > 0 && (
+          {(facturas.length > 0 || abonos.length > 0) && (
             <>
               <button 
                 className="button info-button"
-                onClick={exportarFacturas}
+                onClick={exportarDatos}
                 disabled={importando}
               >
-                <i className="fas fa-file-export"></i> Exportar
+                <i className="fas fa-file-export"></i> Exportar Todo
               </button>
               <button 
                 className="button warning-button"
-                onClick={() => document.getElementById('importar-facturas').click()}
+                onClick={() => document.getElementById('importar-datos').click()}
                 disabled={importando}
               >
                 <i className="fas fa-file-import"></i> {importando ? 'Importando...' : 'Importar'}
               </button>
               <input
                 type="file"
-                id="importar-facturas"
+                id="importar-datos"
                 accept=".json"
                 style={{ display: 'none' }}
-                onChange={importarFacturas}
+                onChange={importarDatos}
                 disabled={importando}
               />
               <button 
@@ -279,6 +384,8 @@ const FacturasGuardadas = () => {
             <option value="antiguos">Más antiguos</option>
             <option value="mayor-total">Mayor total</option>
             <option value="menor-total">Menor total</option>
+            <option value="mayor-saldo">Mayor saldo</option>
+            <option value="menor-saldo">Menor saldo</option>
           </select>
           
           <span className="contador">
@@ -301,8 +408,20 @@ const FacturasGuardadas = () => {
                 <strong>{formatMoneda(estadisticas.totalGeneral)}</strong>
               </div>
               <div className="stat-item">
+                <span>Total Abonado</span>
+                <strong>{formatMoneda(estadisticas.totalAbonado)}</strong>
+              </div>
+              <div className="stat-item">
+                <span>Saldo Pendiente</span>
+                <strong className="saldo-pendiente">{formatMoneda(estadisticas.totalSaldoPendiente)}</strong>
+              </div>
+              <div className="stat-item">
                 <span>Promedio/Factura</span>
                 <strong>{formatMoneda(estadisticas.promedioGeneral)}</strong>
+              </div>
+              <div className="stat-item">
+                <span>Total Abonos</span>
+                <strong>{abonos.length}</strong>
               </div>
             </div>
           </div>
@@ -338,6 +457,10 @@ const FacturasGuardadas = () => {
                         <strong>{formatMoneda(datos.total)}</strong>
                         <small> ({formatMoneda(datos.promedio)} c/u)</small>
                       </div>
+                      <div className="cliente-saldos">
+                        <span>Abonado: {formatMoneda(datos.abonado)}</span>
+                        <span>Saldo: {formatMoneda(datos.saldo)}</span>
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -350,7 +473,7 @@ const FacturasGuardadas = () => {
       {importando ? (
         <div className="loading-overlay">
           <div className="loading-spinner"></div>
-          <p>Importando facturas...</p>
+          <p>Importando datos...</p>
         </div>
       ) : cargando ? (
         <div className="facturas-grid">
@@ -360,6 +483,8 @@ const FacturasGuardadas = () => {
               <div className="skeleton-line" style={{ width: '60%' }}></div>
               <div className="skeleton-line" style={{ width: '80%' }}></div>
               <div className="skeleton-line" style={{ width: '30%' }}></div>
+              <div className="skeleton-line" style={{ width: '50%' }}></div>
+              <div className="skeleton-line" style={{ width: '50%' }}></div>
             </div>
           ))}
         </div>
@@ -399,13 +524,27 @@ const FacturasGuardadas = () => {
                 <div className="factura-stats">
                   <div className="stat-item">
                     <span>Productos</span>
-                    <strong>{factura.productos.length}</strong>
+                    <strong>{factura.productos?.length || 0}</strong>
                   </div>
                   <div className="stat-item">
                     <span>Total</span>
                     <strong className="total-amount">
                       {formatMoneda(factura.total)}
                     </strong>
+                  </div>
+                  <div className="stat-item">
+                    <span>Abonado</span>
+                    <strong>{formatMoneda(factura.totalAbonado)}</strong>
+                  </div>
+                  <div className="stat-item">
+                    <span>Saldo</span>
+                    <strong className={factura.saldo > 0 ? 'saldo-pendiente' : 'saldo-pagado'}>
+                      {formatMoneda(factura.saldo)}
+                    </strong>
+                  </div>
+                  <div className="stat-item">
+                    <span>Estado</span>
+                    {formatEstado(factura.estado)}
                   </div>
                 </div>
               </div>
@@ -433,7 +572,7 @@ const FacturasGuardadas = () => {
               {mostrarConfirmacion === factura.id && (
                 <div className="confirmacion-overlay">
                   <div className="confirmacion-box">
-                    <p>¿Eliminar esta factura permanentemente?</p>
+                    <p>¿Eliminar esta factura y todos sus abonos asociados?</p>
                     <div className="confirmacion-buttons">
                       <button 
                         className="button danger-button"
