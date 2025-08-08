@@ -41,29 +41,12 @@ h1 {
   display: flex;
   gap: 15px;
   margin-bottom: 15px;
-  flex-wrap: wrap;
 }
 
 .form-group {
   flex: 1;
   display: flex;
   flex-direction: column;
-  min-width: 200px;
-}
-
-.cliente-group {
-  position: relative;
-}
-
-.cliente-input-container {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
-.select-button {
-  margin-top: 5px;
-  width: 100%;
 }
 
 .form-group label {
@@ -121,12 +104,6 @@ select {
   display: flex;
   gap: 15px;
   align-items: flex-end;
-  flex-wrap: wrap;
-}
-
-.product-form-row > * {
-  flex: 1;
-  min-width: 120px;
 }
 
 .productos-list {
@@ -387,7 +364,6 @@ select {
 @media (max-width: 768px) {
   .form-row, .product-form-row {
     flex-direction: column;
-    gap: 10px;
   }
   
   .productos-catalogo-list {
@@ -403,27 +379,6 @@ select {
     width: 95%;
     padding: 15px;
   }
-
-  .cliente-input-container {
-    flex-direction: column;
-  }
-
-  .select-button {
-    margin-top: 8px;
-    width: 100%;
-  }
-}
-
-@media (min-width: 769px) {
-  .cliente-input-container {
-    flex-direction: row;
-    align-items: center;
-  }
-
-  .select-button {
-    margin-top: 0;
-    width: auto;
-  }
 }
 
 /* Action buttons */
@@ -435,8 +390,10 @@ select {
   flex-wrap: wrap;
 }
 
-.action-buttons .button {
-  margin: 5px;
+/* Estilos para el botón de seleccionar cliente */
+.cliente-select-button {
+  margin-top: 10px;
+  width: 100%;
 }
 
 /* Clasificación de estrellas */

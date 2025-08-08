@@ -729,21 +729,13 @@ const InvoiceScreen = () => {
           <div className="form-row">
             <div className="form-group cliente-group">
               <label>Cliente *</label>
-              <div className="cliente-input-container">
-                <input
-                  type="text"
-                  value={cliente}
-                  onChange={(e) => setCliente(e.target.value)}
-                  placeholder="Nombre del cliente"
-                  required
-                />
-                <button 
-                  className="button small-button select-button"
-                  onClick={() => setMostrarClientes(true)}
-                >
-                  <i className="fas fa-users"></i> Seleccionar
-                </button>
-              </div>
+              <input
+                type="text"
+                value={cliente}
+                onChange={(e) => setCliente(e.target.value)}
+                placeholder="Nombre del cliente"
+                required
+              />
             </div>
             
             <div className="form-group">
@@ -768,6 +760,19 @@ const InvoiceScreen = () => {
                   </option>
                 ))}
               </select>
+            </div>
+          </div>
+
+          {/* Nueva fila para el botón de seleccionar cliente */}
+          <div className="form-row">
+            <div className="form-group">
+              <button 
+                className="button info-button"
+                onClick={() => setMostrarClientes(true)}
+                style={{ marginTop: '10px' }}
+              >
+                <i className="fas fa-users"></i> Seleccionar Cliente
+              </button>
             </div>
           </div>
 
