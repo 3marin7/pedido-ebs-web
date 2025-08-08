@@ -738,7 +738,7 @@ const InvoiceScreen = () => {
                   required
                 />
                 <button 
-                  className="button small-button"
+                  className="button small-button select-button"
                   onClick={() => setMostrarClientes(true)}
                 >
                   <i className="fas fa-users"></i> Seleccionar
@@ -909,12 +909,11 @@ const InvoiceScreen = () => {
             >
               Administrar Catálogo
             </button>
-            {/* Nuevo botón para el catálogo de clientes */}
             <button
-            className="button success-button"
-            onClick={() => navigate('/catalogo-clientes')}
+              className="button success-button"
+              onClick={() => navigate('/catalogo-clientes')}
             >
-            <i className="fas fa-share"></i> Enviar Catálogo
+              <i className="fas fa-share"></i> Enviar Catálogo
             </button>
           </div>
         </>

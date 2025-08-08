@@ -1,3 +1,4 @@
+/* InvoiceScreen.css */
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
 @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css');
 
@@ -40,12 +41,29 @@ h1 {
   display: flex;
   gap: 15px;
   margin-bottom: 15px;
+  flex-wrap: wrap;
 }
 
 .form-group {
   flex: 1;
   display: flex;
   flex-direction: column;
+  min-width: 200px;
+}
+
+.cliente-group {
+  position: relative;
+}
+
+.cliente-input-container {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.select-button {
+  margin-top: 5px;
+  width: 100%;
 }
 
 .form-group label {
@@ -103,6 +121,12 @@ select {
   display: flex;
   gap: 15px;
   align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+.product-form-row > * {
+  flex: 1;
+  min-width: 120px;
 }
 
 .productos-list {
@@ -363,6 +387,7 @@ select {
 @media (max-width: 768px) {
   .form-row, .product-form-row {
     flex-direction: column;
+    gap: 10px;
   }
   
   .productos-catalogo-list {
@@ -378,6 +403,27 @@ select {
     width: 95%;
     padding: 15px;
   }
+
+  .cliente-input-container {
+    flex-direction: column;
+  }
+
+  .select-button {
+    margin-top: 8px;
+    width: 100%;
+  }
+}
+
+@media (min-width: 769px) {
+  .cliente-input-container {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .select-button {
+    margin-top: 0;
+    width: auto;
+  }
 }
 
 /* Action buttons */
@@ -386,252 +432,13 @@ select {
   gap: 15px;
   margin-top: 30px;
   justify-content: center;
-}
-
-/* Cliente input container */
-.cliente-input-container {
-  display: flex;
-  gap: 5px;
-}
-
-.cliente-input-container input {
-  flex: 1;
-}
-/* Estilos para acciones del header */
-.header-actions {
-  margin-bottom: 20px;
-  display: flex;
-  justify-content: flex-end;
-}
-
-.header-actions .button {
-  padding: 8px 12px;
-  font-size: 14px;
-}
-/* Estilos para los botones de clientes */
-.clientes-actions {
-  display: flex;
-  gap: 10px;
-  margin-top: 20px;
-  padding-top: 20px;
-  border-top: 1px solid #eee;
-  justify-content: center;
   flex-wrap: wrap;
 }
 
-.clientes-actions .button {
-  padding: 8px 15px;
-  font-size: 14px;
+.action-buttons .button {
   margin: 5px;
 }
 
-/* Estilo para el modal de clientes */
-.clientes-modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-}
-
-.clientes-content {
-  background: white;
-  border-radius: 8px;
-  width: 90%;
-  max-width: 800px;
-  max-height: 90vh;
-  overflow-y: auto;
-  padding: 20px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-}
-
-.clientes-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.clientes-search {
-  margin-bottom: 15px;
-}
-
-.clientes-search input {
-  width: 100%;
-  padding: 8px 15px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-}
-
-.clientes-list {
-  max-height: 300px;
-  overflow-y: auto;
-  margin-bottom: 20px;
-  border: 1px solid #eee;
-  border-radius: 4px;
-}
-
-.cliente-item {
-  padding: 10px 15px;
-  border-bottom: 1px solid #eee;
-  transition: background-color 0.2s;
-}
-
-.cliente-item:hover {
-  background-color: #f5f5f5;
-  cursor: pointer;
-}
-
-.cliente-info h4 {
-  margin: 0 0 5px 0;
-  color: #333;
-}
-
-.cliente-info p {
-  margin: 3px 0;
-  font-size: 13px;
-  color: #666;
-}
-
-.empty-clientes {
-  text-align: center;
-  padding: 20px;
-  color: #666;
-}
-
-.nuevo-cliente-form {
-  background: #f9f9f9;
-  padding: 15px;
-  border-radius: 4px;
-  margin-top: 20px;
-}
-
-.nuevo-cliente-form h3 {
-  margin-top: 0;
-  color: #444;
-}
-
-/* Loading overlay para importación */
-.loading-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(255, 255, 255, 0.9);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  z-index: 2000;
-}
-
-.loading-spinner {
-  border: 5px solid #f3f3f3;
-  border-top: 5px solid #3498db;
-  border-radius: 50%;
-  width: 50px;
-  height: 50px;
-  animation: spin 1s linear infinite;
-  margin-bottom: 15px;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-/* Clasificación de estrellas */
-.clasificacion-stars {
-  display: flex;
-  gap: 5px;
-  font-size: 1.5em;
-}
-
-.clasificacion-stars .star {
-  cursor: pointer;
-  color: #ccc;
-  transition: color 0.2s;
-}
-
-.clasificacion-stars .star.filled {
-  color: #FFD700;
-}
-
-.clasificacion-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 3px;
-  padding: 2px 8px;
-  border-radius: 12px;
-  font-size: 0.8em;
-  font-weight: bold;
-  margin-left: 10px;
-  background-color: #f0f0f0;
-}
-
-/* Colores para diferentes clasificaciones */
-.clasificacion-1 { color: #ff0000; }
-.clasificacion-2 { color: #ff6b6b; }
-.clasificacion-3 { color: #ffcc00; }
-.clasificacion-4 { color: #66cc66; }
-.clasificacion-5 { color: #006400; }
-
-/* Filtros y estadísticas */
-.clientes-filters {
-  margin: 10px 0;
-  padding: 10px;
-  background-color: #f8f9fa;
-  border-radius: 5px;
-}
-
-.clientes-filters label {
-  margin-right: 10px;
-}
-
-.clientes-stats {
-  margin: 20px 0;
-  padding: 15px;
-  background-color: #f8f9fa;
-  border-radius: 8px;
-}
-
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 10px;
-  margin-top: 10px;
-}
-
-.stat-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 8px;
-  background-color: white;
-  border-radius: 5px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-/* Mejoras visuales para items de cliente */
-.cliente-item {
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.cliente-item:hover {
-  background-color: #f5f5f5;
-}
-
-.cliente-info h4 {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
 /* Clasificación de estrellas */
 .clasificacion-stars {
   display: flex;
@@ -752,6 +559,7 @@ select {
   padding: 20px;
   color: #666;
 }
+
 /* Estilos para exportación/importación */
 .clientes-actions {
   display: flex;

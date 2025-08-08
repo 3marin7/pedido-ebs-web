@@ -12,6 +12,7 @@ const FacturasGuardadas = () => {
   const [mostrarConfirmacion, setMostrarConfirmacion] = useState(null);
   const [mostrarResumen, setMostrarResumen] = useState(false);
   const [importando, setImportando] = useState(false);
+  const [errorImportacion, setErrorImportacion] = useState(null);
 
   // Cargar facturas y abonos
   useEffect(() => {
@@ -164,53 +165,88 @@ const FacturasGuardadas = () => {
     const link = document.createElement('a');
     link.href = url;
     link.download = `datos-facturacion-${new Date().toISOString().slice(0, 10)}.json`;
+    document.body.appendChild(link);
     link.click();
+    document.body.removeChild(link);
+    
+    // Liberar memoria
+    setTimeout(() => URL.revokeObjectURL(url), 100);
   };
 
-  // Importar facturas y abonos (versión corregida)
+  // Importar facturas y abonos - Versión mejorada para Safari Mobile
   const importarDatos = (event) => {
     const file = event.target.files[0];
-    if (!file) return;
+    if (!file) {
+      setErrorImportacion('No se seleccionó ningún archivo');
+      return;
+    }
+
+    // Verificar tipo de archivo
+    if (!file.name.endsWith('.json') && !file.type.includes('json')) {
+      setErrorImportacion('El archivo debe ser de tipo JSON');
+      event.target.value = '';
+      return;
+    }
 
     setImportando(true);
+    setErrorImportacion(null);
     const reader = new FileReader();
     
     reader.onload = (e) => {
       try {
         const contenido = e.target.result;
-        const datosImportados = JSON.parse(contenido);
-        
+        if (!contenido) {
+          throw new Error('El archivo está vacío');
+        }
+
+        // Intenta parsear el contenido
+        let datosImportados;
+        try {
+          datosImportados = JSON.parse(contenido);
+        } catch (parseError) {
+          console.error('Error al parsear JSON:', parseError);
+          throw new Error('El archivo no contiene un JSON válido');
+        }
+
+        // Validar estructura básica
+        if (!datosImportados) {
+          throw new Error('El archivo no contiene datos');
+        }
+
         let facturasImportadas = [];
         let abonosImportados = [];
         
+        // Manejar diferentes formatos de archivo
         if (datosImportados.facturas && datosImportados.abonos) {
           facturasImportadas = datosImportados.facturas;
           abonosImportados = datosImportados.abonos;
         } else if (Array.isArray(datosImportados)) {
+          // Asumir que es un array de facturas sin abonos
           facturasImportadas = datosImportados;
           abonosImportados = [];
         } else {
-          throw new Error("El archivo no tiene un formato válido");
+          throw new Error("Formato de archivo no reconocido");
         }
 
         // Validar facturas
         const camposRequeridosFacturas = ['id', 'cliente', 'vendedor', 'fecha', 'productos', 'total'];
-        facturasImportadas.forEach(factura => {
+        facturasImportadas.forEach((factura, index) => {
           camposRequeridosFacturas.forEach(campo => {
             if (!factura.hasOwnProperty(campo)) {
-              throw new Error(`Factura inválida: falta el campo ${campo}`);
+              throw new Error(`Factura en posición ${index} no tiene el campo requerido: ${campo}`);
             }
           });
         });
 
-        // Validar abonos (con método como opcional)
+        // Validar abonos
         const camposRequeridosAbonos = ['id', 'facturaId', 'fecha', 'monto'];
-        abonosImportados.forEach(abono => {
+        abonosImportados.forEach((abono, index) => {
           camposRequeridosAbonos.forEach(campo => {
             if (!abono.hasOwnProperty(campo)) {
-              throw new Error(`Abono inválido: falta el campo ${campo}`);
+              throw new Error(`Abono en posición ${index} no tiene el campo requerido: ${campo}`);
             }
           });
+          
           // Asignar método por defecto si no existe
           if (!abono.metodo) {
             abono.metodo = 'No especificado';
@@ -220,6 +256,7 @@ const FacturasGuardadas = () => {
         const facturasActuales = JSON.parse(localStorage.getItem('facturas')) || [];
         const abonosActuales = JSON.parse(localStorage.getItem('abonos')) || [];
         
+        // Filtrar para evitar duplicados
         const facturasUnidas = [
           ...facturasActuales,
           ...facturasImportadas.filter(
@@ -234,20 +271,24 @@ const FacturasGuardadas = () => {
           )
         ];
 
+        // Ordenar por ID descendente
         facturasUnidas.sort((a, b) => b.id - a.id);
         abonosUnidos.sort((a, b) => b.id - a.id);
         
         const nuevasFacturas = facturasUnidas.length - facturasActuales.length;
         const nuevosAbonos = abonosUnidos.length - abonosActuales.length;
         
+        // Mostrar resumen de importación
         const confirmar = window.confirm(
-          `Se importarán:\n` +
-          `- ${facturasImportadas.length} facturas (${nuevasFacturas} nuevas)\n` +
-          `- ${abonosImportados.length} abonos (${nuevosAbonos} nuevos)\n\n` +
+          `Resumen de Importación:\n\n` +
+          `- Facturas a importar: ${facturasImportadas.length}\n` +
+          `  (${nuevasFacturas} nuevas, ${facturasImportadas.length - nuevasFacturas} existentes)\n` +
+          `- Abonos a importar: ${abonosImportados.length}\n` +
+          `  (${nuevosAbonos} nuevos, ${abonosImportados.length - nuevosAbonos} existentes)\n\n` +
           `Totales después de importación:\n` +
           `- Facturas: ${facturasUnidas.length}\n` +
           `- Abonos: ${abonosUnidos.length}\n\n` +
-          `¿Deseas continuar?`
+          `¿Deseas continuar con la importación?`
         );
         
         if (confirmar) {
@@ -255,28 +296,49 @@ const FacturasGuardadas = () => {
           localStorage.setItem('abonos', JSON.stringify(abonosUnidos));
           setFacturas(facturasUnidas);
           setAbonos(abonosUnidos);
+          
+          // Mostrar feedback detallado
           alert(
-            `Importación completada.\n` +
-            `Facturas: ${facturasUnidas.length} (${nuevasFacturas} nuevas)\n` +
-            `Abonos: ${abonosUnidos.length} (${nuevosAbonos} nuevos)`
+            `✅ Importación completada con éxito\n\n` +
+            `Facturas:\n` +
+            `- Total: ${facturasUnidas.length}\n` +
+            `- Nuevas: ${nuevasFacturas}\n\n` +
+            `Abonos:\n` +
+            `- Total: ${abonosUnidos.length}\n` +
+            `- Nuevos: ${nuevosAbonos}`
           );
         }
       } catch (error) {
-        console.error("Error importando datos:", error);
-        alert(`Error al importar datos: ${error.message}`);
+        console.error("Error en importación:", error);
+        setErrorImportacion(error.message);
+        alert(`❌ Error al importar: ${error.message}`);
       } finally {
         setImportando(false);
-        event.target.value = '';
+        event.target.value = ''; // Resetear input para permitir re-selección
       }
     };
     
-    reader.onerror = () => {
-      alert("Error al leer el archivo");
+    reader.onerror = (error) => {
+      console.error("Error al leer archivo:", error);
+      setErrorImportacion('Error al leer el archivo. Intenta nuevamente.');
       setImportando(false);
       event.target.value = '';
     };
     
-    reader.readAsText(file);
+    // Manejo especial para Safari Mobile
+    try {
+      if (file.type === '' || file.type === 'application/octet-stream') {
+        // Safari a veces no detecta bien el tipo MIME
+        reader.readAsText(file);
+      } else {
+        reader.readAsText(file);
+      }
+    } catch (error) {
+      console.error("Error en FileReader:", error);
+      setErrorImportacion('Error al procesar el archivo. Intenta con otro archivo.');
+      setImportando(false);
+      event.target.value = '';
+    }
   };
 
   // Formatear fecha
@@ -327,21 +389,20 @@ const FacturasGuardadas = () => {
               >
                 <i className="fas fa-file-export"></i> Exportar Todo
               </button>
-              <button 
-                className="button warning-button"
-                onClick={() => document.getElementById('importar-datos').click()}
-                disabled={importando}
+              <label 
+                htmlFor="importar-datos" 
+                className={`button warning-button ${importando ? 'disabled' : ''}`}
               >
                 <i className="fas fa-file-import"></i> {importando ? 'Importando...' : 'Importar'}
-              </button>
-              <input
-                type="file"
-                id="importar-datos"
-                accept=".json"
-                style={{ display: 'none' }}
-                onChange={importarDatos}
-                disabled={importando}
-              />
+                <input
+                  type="file"
+                  id="importar-datos"
+                  accept=".json,application/json"
+                  style={{ display: 'none' }}
+                  onChange={importarDatos}
+                  disabled={importando}
+                />
+              </label>
               <button 
                 className="button secondary-button"
                 onClick={() => setMostrarResumen(!mostrarResumen)}
@@ -361,6 +422,12 @@ const FacturasGuardadas = () => {
           )}
         </div>
       </header>
+
+      {errorImportacion && (
+        <div className="error-message">
+          <i className="fas fa-exclamation-circle"></i> {errorImportacion}
+        </div>
+      )}
 
       <div className="filtros-container">
         <div className="search-box">
@@ -474,6 +541,9 @@ const FacturasGuardadas = () => {
         <div className="loading-overlay">
           <div className="loading-spinner"></div>
           <p>Importando datos...</p>
+          {errorImportacion && (
+            <p className="error-text">{errorImportacion}</p>
+          )}
         </div>
       ) : cargando ? (
         <div className="facturas-grid">
