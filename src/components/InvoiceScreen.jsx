@@ -936,6 +936,12 @@ const InvoiceScreen = () => {
             >
               <i className="fas fa-share"></i> Enviar Catálogo
             </button>
+            <button
+                   className="button warning-button"
+                     onClick={() => window.open('https://mercagi.com/login/', '_blank')}
+             >
+                 <i className="fas fa-external-link-alt"></i> Mercagi
+             </button>
           </div>
         </>
       )}
