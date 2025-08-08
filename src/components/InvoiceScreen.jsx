@@ -726,9 +726,22 @@ const InvoiceScreen = () => {
         <>
           <h1>PEDIDO EBS</h1>
 
+          {/* Botón de seleccionar cliente (primero según requerimiento) */}
+          <div className="form-row">
+            <div className="form-group">
+              <button 
+                className="button info-button"
+                onClick={() => setMostrarClientes(true)}
+              >
+                <i className="fas fa-users"></i> Seleccionar Cliente
+              </button>
+            </div>
+          </div>
+
+          {/* Campo de cliente (segundo según requerimiento) */}
           <div className="form-row">
             <div className="form-group cliente-group">
-              <label>Cliente *</label>
+              <label></label>
               <input
                 type="text"
                 value={cliente}
@@ -737,72 +750,75 @@ const InvoiceScreen = () => {
                 required
               />
             </div>
-            
+          </div>
+
+          {/* Fecha (tercero según requerimiento) */}
+          <div className="form-row">
             <div className="form-group">
-              <label>Fecha</label>
+              <label></label>
               <input
                 type="date"
                 value={fecha}
                 onChange={(e) => setFecha(e.target.value)}
               />
             </div>
+          </div>
+
+          {/* Dirección (cuarto según requerimiento) */}
+          <div className="form-row">
             <div className="form-group">
-              <label>Vendedor *</label>
+              <label></label>
+              <input
+                type="text"
+                value={direccion}
+                onChange={(e) => setDireccion(e.target.value)}
+                placeholder="Direccion Opcional"
+              />
+            </div>
+          </div>
+
+          {/* Teléfono (quinto según requerimiento) */}
+          <div className="form-row">
+            <div className="form-group">
+              
+              <input
+                type="tel"
+                value={telefono}
+                onChange={(e) => setTelefono(e.target.value)}
+                placeholder="Telefono Opcional"
+              />
+            </div>
+          </div>
+
+          {/* Correo (sexto según requerimiento) */}
+          <div className="form-row">
+            <div className="form-group">
+              <label></label>
+              <input
+                type="email"
+                value={correo}
+                onChange={(e) => setCorreo(e.target.value)}
+                placeholder="Email Opcional"
+              />
+            </div>
+          </div>
+
+          {/* Vendedor (séptimo según requerimiento) */}
+          <div className="form-row">
+            <div className="form-group">
+              <label></label>
               <select
                 value={vendedorSeleccionado}
                 onChange={(e) => setVendedorSeleccionado(e.target.value)}
                 required
               >
-                <option value="">Seleccione</option>
+                <option value="">Seleccione vendedor</option>
                 {vendedores.map((v) => (
                   <option key={v} value={v}>
                     {v}
                   </option>
                 ))}
               </select>
-            </div>
-          </div>
-
-          {/* Nueva fila para el botón de seleccionar cliente */}
-          <div className="form-row">
-            <div className="form-group">
-              <button 
-                className="button info-button"
-                onClick={() => setMostrarClientes(true)}
-                style={{ marginTop: '10px' }}
-              >
-                <i className="fas fa-users"></i> Seleccionar Cliente
-              </button>
-            </div>
-          </div>
-
-          <div className="form-row">
-            <div className="form-group">
-              <label>Dirección</label>
-              <input
-                type="text"
-                value={direccion}
-                onChange={(e) => setDireccion(e.target.value)}
-                placeholder="Opcional"
-              />
-            </div>
-            <div className="form-group">
-              <label>Teléfono</label>
-              <input
-                type="tel"
-                value={telefono}
-                onChange={(e) => setTelefono(e.target.value)}
-                placeholder="Opcional"
-              />
-            </div>
-            <div className="form-group">
-              <label>Correo</label>
-              <input
-                type="email"
-                value={correo}
-                onChange={(e) => setCorreo(e.target.value)}
-                placeholder="Opcional"
-              />
             </div>
           </div>
 
