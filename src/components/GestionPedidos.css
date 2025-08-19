@@ -1,0 +1,134 @@
+.gestion-pedidos {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.filtros {
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.filtros select {
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+}
+
+.lista-pedidos {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.pedido-card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 15px;
+  background-color: #fff;
+}
+
+.pedido-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.estado-badge {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.estado-badge.pendiente {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.estado-badge.confirmado {
+  background-color: #d1ecf1;
+  color: #0c5460;
+}
+
+.estado-badge.en_preparacion {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.estado-badge.enviado {
+  background-color: #cce5ff;
+  color: #004085;
+}
+
+.estado-badge.entregado {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.estado-badge.cancelado {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.pedido-info p {
+  margin: 5px 0;
+}
+
+.productos-pedido {
+  margin: 15px 0;
+}
+
+.productos-pedido h4 {
+  margin-bottom: 8px;
+}
+
+.productos-pedido ul {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.productos-pedido li {
+  padding: 5px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.acciones-pedido {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid #eee;
+}
+
+.acciones-pedido select {
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+}
+
+.btn-whatsapp {
+  background-color: #25D366;
+  color: white;
+  padding: 8px 15px;
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.btn-whatsapp:hover {
+  background-color: #128C7E;
+}
+
+.loading {
+  text-align: center;
+  padding: 40px;
+  font-size: 18px;
+}

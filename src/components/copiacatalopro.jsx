@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from './supabaseClient'; // Asegúrate de que la ruta sea correcta
+import axios from 'axios';
 import './CatalogoProductos.css';
 
 const CloudinaryUpload = ({ onImageUpload }) => {
@@ -11,34 +11,39 @@ const CloudinaryUpload = ({ onImageUpload }) => {
     const file = e.target.files[0];
     if (!file) return;
 
+    // Validar tipo y tamaño de archivo
     if (!file.type.match('image.*')) {
       alert('Por favor, selecciona un archivo de imagen (JPEG, PNG, etc.)');
       return;
     }
     
-    if (file.size > 5 * 1024 * 1024) {
+    if (file.size > 5 * 1024 * 1024) { // 5MB
       alert('La imagen es demasiado grande (máximo 5MB)');
       return;
     }
 
     const formData = new FormData();
     formData.append('file', file);
-    formData.append('upload_preset', 'catalogo_productos_web');
+    formData.append('upload_preset', 'catalogo_productos_web'); // Tu Upload Preset
 
     try {
       setUploading(true);
-      const response = await fetch(
-        'https://api.cloudinary.com/v1_1/dstnroimw/image/upload',
+      const response = await axios.post(
+        'https://api.cloudinary.com/v1_1/dstnroimw/image/upload', // Tu Cloud Name
+        formData,
         {
-          method: 'POST',
-          body: formData,
+          onUploadProgress: (progressEvent) => {
+            const percentCompleted = Math.round(
+              (progressEvent.loaded * 100) / progressEvent.total
+            );
+            setProgress(percentCompleted);
+          },
         }
       );
 
-      const data = await response.json();
       onImageUpload({
-        imagenUrl: data.secure_url,
-        imagenPublicId: data.public_id
+        imagenUrl: response.data.secure_url,
+        imagenPublicId: response.data.public_id
       });
     } catch (error) {
       console.error('Error subiendo imagen:', error);
@@ -68,6 +73,7 @@ const CloudinaryUpload = ({ onImageUpload }) => {
 const ImportExportActions = ({ productos, productosFiltrados, setProductos }) => {
   const fileInputRef = React.useRef(null);
 
+  // Función para formatear precio (similar a la del componente principal)
   const formatPrecio = (precio) => {
     return new Intl.NumberFormat('es-CO', {
       style: 'currency',
@@ -79,12 +85,14 @@ const ImportExportActions = ({ productos, productosFiltrados, setProductos }) =>
   const exportarProductos = (tipoExportacion = 'todos') => {
     let productosAExportar = [...productos];
     
+    // Filtrar según el tipo de exportación
     if (tipoExportacion === 'activos') {
       productosAExportar = productosAExportar.filter(p => p.activo);
     } else if (tipoExportacion === 'filtrados') {
       productosAExportar = productosFiltrados;
     }
 
+    // Crear objeto con metadatos
     const exportData = {
       metadata: {
         fechaExportacion: new Date().toISOString(),
@@ -94,11 +102,15 @@ const ImportExportActions = ({ productos, productosFiltrados, setProductos }) =>
       productos: productosAExportar
     };
 
+    // Crear archivo JSON
     const dataStr = JSON.stringify(exportData, null, 2);
     const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+    
+    // Generar nombre de archivo
     const fecha = new Date();
     const nombreArchivo = `productos_${tipoExportacion}_${fecha.getFullYear()}-${(fecha.getMonth()+1).toString().padStart(2, '0')}-${fecha.getDate().toString().padStart(2, '0')}.json`;
     
+    // Crear elemento para descarga
     const exportLink = document.createElement('a');
     exportLink.setAttribute('href', dataUri);
     exportLink.setAttribute('download', nombreArchivo);
@@ -107,6 +119,7 @@ const ImportExportActions = ({ productos, productosFiltrados, setProductos }) =>
     document.body.removeChild(exportLink);
   };
 
+  // Nueva función para exportar a CSV/Excel
   const exportarAExcel = (tipoExportacion = 'todos') => {
     let productosAExportar = [...productos];
     
@@ -116,8 +129,10 @@ const ImportExportActions = ({ productos, productosFiltrados, setProductos }) =>
       productosAExportar = productosFiltrados;
     }
 
+    // Encabezados del CSV
     let csvContent = "Código,Nombre,Categoría,Precio,Stock,Descripción,Estado,Última Actualización\n";
     
+    // Agregar cada producto
     productosAExportar.forEach(producto => {
       const row = [
         producto.codigo || 'N/A',
@@ -133,6 +148,7 @@ const ImportExportActions = ({ productos, productosFiltrados, setProductos }) =>
       csvContent += row + '\n';
     });
 
+    // Crear archivo
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
@@ -152,6 +168,7 @@ const ImportExportActions = ({ productos, productosFiltrados, setProductos }) =>
     const file = event.target.files[0];
     if (!file) return;
 
+    // Validar tipo de archivo
     if (!file.name.endsWith('.json')) {
       alert('Por favor, selecciona un archivo JSON válido');
       return;
@@ -159,15 +176,18 @@ const ImportExportActions = ({ productos, productosFiltrados, setProductos }) =>
 
     const reader = new FileReader();
     
-    reader.onload = async (e) => {
+    reader.onload = (e) => {
       try {
         const data = JSON.parse(e.target.result);
         
+        // Validar estructura básica
         if (!data.productos || !Array.isArray(data.productos)) {
           throw new Error('El archivo no contiene una lista válida de productos');
         }
 
+        // Validar cada producto
         const productosImportados = data.productos.map((p, index) => {
+          // Validaciones básicas
           if (!p.nombre || typeof p.nombre !== 'string') {
             throw new Error(`Producto en posición ${index} no tiene un nombre válido`);
           }
@@ -176,41 +196,36 @@ const ImportExportActions = ({ productos, productosFiltrados, setProductos }) =>
             throw new Error(`Producto "${p.nombre}" no tiene un precio válido`);
           }
 
+          // Asignar ID nuevo si no existe o si ya existe en nuestros productos
+          const idExistente = productos.find(prod => prod.id === p.id);
           return {
-            codigo: p.codigo || '',
-            nombre: p.nombre,
+            ...p,
+            id: idExistente ? Date.now() + index : p.id,
             precio: parseFloat(p.precio),
-            categoria: p.categoria || '',
             stock: parseInt(p.stock) || 0,
-            descripcion: p.descripcion || '',
             activo: p.activo !== undefined ? p.activo : true,
-            imagen_url: p.imagenUrl || '',
-            imagen_public_id: p.imagenPublicId || ''
+            imagenUrl: p.imagenUrl || '',
+            imagenPublicId: p.imagenPublicId || ''
           };
         });
 
+        // Mostrar resumen antes de aplicar cambios
         const confirmacion = window.confirm(
-          `Se importarán ${productosImportados.length} productos.\n\n` +
+          `Se importarán ${productosImportados.length} productos.\n` +
+          `Nuevos: ${productosImportados.filter(p => !productos.some(existing => existing.id === p.id)).length}\n` +
+          `Actualizados: ${productosImportados.filter(p => productos.some(existing => existing.id === p.id)).length}\n\n` +
           `¿Deseas continuar?`
         );
 
         if (confirmacion) {
-          // Insertar en lote en Supabase
-          const { data: insertedData, error } = await supabase
-            .from('productos')
-            .insert(productosImportados)
-            .select();
+          // Combinar productos existentes con los importados
+          const productosActualizados = [
+            ...productos.filter(p => !productosImportados.some(imp => imp.id === p.id)),
+            ...productosImportados
+          ];
 
-          if (error) throw error;
-
-          // Actualizar el estado local con los nuevos productos
-          const { data: allProducts, error: fetchError } = await supabase
-            .from('productos')
-            .select('*');
-
-          if (fetchError) throw fetchError;
-
-          setProductos(allProducts);
+          localStorage.setItem('productos', JSON.stringify(productosActualizados));
+          setProductos(productosActualizados);
           alert('Importación completada con éxito');
         }
       } catch (error) {
@@ -286,32 +301,30 @@ const CatalogoProductos = () => {
   const [editandoId, setEditandoId] = useState(null);
   const [filtroEstado, setFiltroEstado] = useState('activos');
 
-  const categorias = ['Toallas', 'Bloqueadores', 'Pañales', 'Alimentos', 'Desodorantes', 'Medicamentos', 'Otros'];
+  const categorias = ['Toallas', 'Bloqueadores', 'Pañales', 'Alimentos', 'Desodorantes','Medicamentos ',  'Otros'];
 
-  // Cargar productos desde Supabase
+  // Cargar productos desde localStorage
   useEffect(() => {
-    const cargarProductos = async () => {
+    const cargarProductos = () => {
       try {
-        setCargando(true);
-        const { data, error } = await supabase
-          .from('productos')
-          .select('*')
-          .order('nombre', { ascending: true });
-
-        if (error) throw error;
-
-        setProductos(data || []);
+        const productosGuardados = JSON.parse(localStorage.getItem('productos')) || [];
+        const productosConEstado = productosGuardados.map(p => ({
+          ...p,
+          activo: p.activo !== undefined ? p.activo : true,
+          imagenUrl: p.imagenUrl || '',
+          imagenPublicId: p.imagenPublicId || ''
+        }));
+        setProductos(productosConEstado);
       } catch (error) {
         console.error("Error cargando productos:", error);
-        alert('Error al cargar los productos');
       } finally {
         setCargando(false);
       }
     };
-    
     cargarProductos();
   }, []);
 
+  // Manejar cambios en el formulario
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
     setNuevoProducto({
@@ -320,6 +333,7 @@ const CatalogoProductos = () => {
     });
   };
 
+  // Validar datos del producto
   const validarProducto = () => {
     if (!nuevoProducto.nombre || !nuevoProducto.precio) {
       alert('⚠️ Nombre y precio son campos obligatorios');
@@ -328,110 +342,68 @@ const CatalogoProductos = () => {
     return true;
   };
 
-  const guardarProducto = async () => {
+  // Guardar producto (nuevo o edición)
+  const guardarProducto = () => {
     if (!validarProducto()) return;
 
-    try {
-      const productoData = {
-        codigo: nuevoProducto.codigo || null,
-        nombre: nuevoProducto.nombre,
+    let productosActualizados = [...productos];
+    
+    if (editandoId) {
+      productosActualizados = productosActualizados.map(p => 
+        p.id === editandoId ? { ...p, ...nuevoProducto } : p
+      );
+    } else {
+      const producto = {
+        id: Date.now(),
+        ...nuevoProducto,
         precio: parseFloat(nuevoProducto.precio),
-        categoria: nuevoProducto.categoria || null,
         stock: parseInt(nuevoProducto.stock) || 0,
-        descripcion: nuevoProducto.descripcion || null,
-        activo: nuevoProducto.activo,
-        imagen_url: nuevoProducto.imagenUrl || null,
-        imagen_public_id: nuevoProducto.imagenPublicId || null
+        activo: true
       };
-
-      if (editandoId) {
-        // Actualizar producto existente
-        const { data, error } = await supabase
-          .from('productos')
-          .update(productoData)
-          .eq('id', editandoId)
-          .select();
-
-        if (error) throw error;
-
-        setProductos(productos.map(p => 
-          p.id === editandoId ? data[0] : p
-        ));
-      } else {
-        // Crear nuevo producto
-        const { data, error } = await supabase
-          .from('productos')
-          .insert([productoData])
-          .select();
-
-        if (error) throw error;
-
-        setProductos([...productos, data[0]]);
-      }
-
-      // Resetear formulario
-      setNuevoProducto({
-        codigo: '',
-        nombre: '',
-        precio: '',
-        categoria: '',
-        stock: '',
-        descripcion: '',
-        activo: true,
-        imagenUrl: '',
-        imagenPublicId: ''
-      });
-      setEditandoId(null);
-      setMostrarFormulario(false);
-    } catch (error) {
-      console.error('Error guardando producto:', error);
-      alert('Error al guardar el producto');
+      productosActualizados.push(producto);
     }
+
+    localStorage.setItem('productos', JSON.stringify(productosActualizados));
+    setProductos(productosActualizados);
+    
+    // Resetear formulario
+    setNuevoProducto({
+      codigo: '',
+      nombre: '',
+      precio: '',
+      categoria: '',
+      stock: '',
+      descripcion: '',
+      activo: true,
+      imagenUrl: '',
+      imagenPublicId: ''
+    });
+    setEditandoId(null);
+    setMostrarFormulario(false);
   };
 
-  const eliminarProducto = async (id) => {
+  // Eliminar producto
+  const eliminarProducto = (id) => {
     if (!window.confirm('¿Estás seguro de eliminar este producto?')) return;
     
-    try {
-      const { error } = await supabase
-        .from('productos')
-        .delete()
-        .eq('id', id);
-
-      if (error) throw error;
-
-      setProductos(productos.filter(p => p.id !== id));
-      alert('Producto eliminado con éxito');
-    } catch (error) {
-      console.error('Error eliminando producto:', error);
-      alert('Error al eliminar el producto');
-    }
+    const productosActualizados = productos.filter(p => p.id !== id);
+    localStorage.setItem('productos', JSON.stringify(productosActualizados));
+    setProductos(productosActualizados);
   };
 
-  const toggleEstadoProducto = async (id) => {
+  // Activar/Desactivar producto
+  const toggleEstadoProducto = (id) => {
+    const productosActualizados = productos.map(p => 
+      p.id === id ? { ...p, activo: !p.activo } : p
+    );
+    localStorage.setItem('productos', JSON.stringify(productosActualizados));
+    setProductos(productosActualizados);
+    
     const producto = productos.find(p => p.id === id);
-    const nuevoEstado = !producto.activo;
-
-    try {
-      const { data, error } = await supabase
-        .from('productos')
-        .update({ activo: nuevoEstado })
-        .eq('id', id)
-        .select();
-
-      if (error) throw error;
-
-      setProductos(productos.map(p => 
-        p.id === id ? data[0] : p
-      ));
-      
-      alert(`Producto "${producto.nombre}" ha sido ${nuevoEstado ? 'activado' : 'desactivado'}`);
-    } catch (error) {
-      console.error('Error cambiando estado del producto:', error);
-      alert('Error al cambiar el estado del producto');
-    }
+    alert(`Producto "${producto.nombre}" ha sido ${producto.activo ? 'desactivado' : 'activado'}`);
   };
 
+  // Editar producto
   const editarProducto = (producto) => {
     setNuevoProducto({
       codigo: producto.codigo || '',
@@ -441,16 +413,17 @@ const CatalogoProductos = () => {
       stock: producto.stock?.toString() || '',
       descripcion: producto.descripcion || '',
       activo: producto.activo !== undefined ? producto.activo : true,
-      imagenUrl: producto.imagen_url || '',
-      imagenPublicId: producto.imagen_public_id || ''
+      imagenUrl: producto.imagenUrl || '',
+      imagenPublicId: producto.imagenPublicId || ''
     });
     setEditandoId(producto.id);
     setMostrarFormulario(true);
   };
 
+  // Filtrar productos
   const productosFiltrados = productos.filter(producto => {
     const coincideBusqueda = producto.nombre.toLowerCase().includes(busqueda.toLowerCase()) || 
-                            (producto.codigo && producto.codigo.toLowerCase().includes(busqueda.toLowerCase()));
+                            producto.codigo.toLowerCase().includes(busqueda.toLowerCase());
     const coincideCategoria = categoriaFiltro === 'Todas' || producto.categoria === categoriaFiltro;
     
     if (filtroEstado === 'activos') return coincideBusqueda && coincideCategoria && producto.activo;
@@ -458,6 +431,7 @@ const CatalogoProductos = () => {
     return coincideBusqueda && coincideCategoria;
   });
 
+  // Formatear precio
   const formatPrecio = (precio) => {
     return new Intl.NumberFormat('es-CO', {
       style: 'currency',
@@ -494,12 +468,14 @@ const CatalogoProductos = () => {
         </div>
       </header>
 
+      {/* Resumen de productos */}
       <div className="resumen-productos">
         <span><i className="fas fa-check-circle"></i> Activos: {productos.filter(p => p.activo).length}</span>
         <span><i className="fas fa-ban"></i> Inactivos: {productos.filter(p => !p.activo).length}</span>
         <span><i className="fas fa-boxes"></i> Total: {productos.length}</span>
       </div>
 
+      {/* Filtros */}
       <div className="filtros-container">
         <div className="search-box">
           <input
@@ -523,6 +499,7 @@ const CatalogoProductos = () => {
         </div>
       </div>
 
+      {/* Pestañas de estado */}
       <div className="tabs-container">
         <button 
           className={`tab-button ${filtroEstado === 'activos' ? 'active' : ''}`}
@@ -544,6 +521,7 @@ const CatalogoProductos = () => {
         </button>
       </div>
 
+      {/* Formulario de producto (modal) */}
       {mostrarFormulario && (
         <div className="modal-overlay">
           <div className="producto-form">
@@ -625,6 +603,7 @@ const CatalogoProductos = () => {
               />
             </div>
 
+            {/* Upload de imagen con Cloudinary */}
             <div className="form-group">
               <label>Imagen:</label>
               <CloudinaryUpload 
@@ -688,6 +667,7 @@ const CatalogoProductos = () => {
         </div>
       )}
 
+      {/* Estados de carga */}
       {cargando ? (
         <div className="loading-state">
           <div className="spinner"></div>
@@ -711,9 +691,9 @@ const CatalogoProductos = () => {
             <div key={producto.id} className={`producto-card ${!producto.activo ? 'inactivo' : ''}`}>
               {!producto.activo && <span className="inactive-badge">INACTIVO</span>}
               
-              {producto.imagen_url && (
+              {producto.imagenUrl && (
                 <div className="producto-imagen">
-                  <img src={producto.imagen_url} alt={producto.nombre} />
+                  <img src={producto.imagenUrl} alt={producto.nombre} />
                 </div>
               )}
               
@@ -752,7 +732,7 @@ const CatalogoProductos = () => {
                   onClick={() => toggleEstadoProducto(producto.id)}
                 >
                   <i className={`fas ${producto.activo ? 'fa-eye-slash' : 'fa-eye'}`}></i>
-                  {producto.activo ? 'Desactivar' : 'Activar'}
+                  {producto.activo ? 'si hay' : 'no hay'}
                 </button>
                 
                 <button 

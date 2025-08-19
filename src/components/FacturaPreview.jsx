@@ -1,7 +1,7 @@
 import React from 'react';
 import './FacturaPreview.css';
 
-const FacturaPreview = ({ factura, onVolver, onGuardar }) => {
+const FacturaPreview = ({ factura, onVolver, onGuardar, cargando }) => {
   return (
     <div className="factura-container">
       <h1>VISTA PREVIA DE LA FACTURA</h1>
@@ -47,8 +47,12 @@ const FacturaPreview = ({ factura, onVolver, onGuardar }) => {
       </div>
 
       <div className="botones">
-        <button onClick={onVolver} className="boton-volver">VOLVER</button>
-        <button onClick={onGuardar} className="boton-guardar">GUARDAR FACTURA</button>
+        <button onClick={onVolver} className="boton-volver" disabled={cargando}>
+          {cargando ? 'CARGANDO...' : 'VOLVER'}
+        </button>
+        <button onClick={onGuardar} className="boton-guardar" disabled={cargando}>
+          {cargando ? 'GUARDANDO...' : 'GUARDAR FACTURA'}
+        </button>
       </div>
     </div>
   );

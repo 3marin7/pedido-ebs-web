@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from './supabaseClient';
 import './FacturasGuardadas.css';
 
 const FacturasGuardadas = () => {
@@ -14,16 +15,32 @@ const FacturasGuardadas = () => {
   const [importando, setImportando] = useState(false);
   const [errorImportacion, setErrorImportacion] = useState(null);
 
-  // Cargar facturas y abonos
+  // Cargar facturas y abonos desde Supabase
   useEffect(() => {
-    const cargarDatos = () => {
+    const cargarDatos = async () => {
       try {
-        const facturasGuardadas = JSON.parse(localStorage.getItem('facturas')) || [];
-        const abonosGuardados = JSON.parse(localStorage.getItem('abonos')) || [];
-        setFacturas(facturasGuardadas);
-        setAbonos(abonosGuardados);
+        setCargando(true);
+        
+        // Cargar facturas
+        const { data: facturasData, error: facturasError } = await supabase
+          .from('facturas')
+          .select('*')
+          .order('fecha', { ascending: false });
+        
+        if (facturasError) throw facturasError;
+        
+        // Cargar abonos
+        const { data: abonosData, error: abonosError } = await supabase
+          .from('abonos')
+          .select('*');
+        
+        if (abonosError) throw abonosError;
+        
+        setFacturas(facturasData || []);
+        setAbonos(abonosData || []);
       } catch (error) {
         console.error("Error cargando datos:", error);
+        alert('Error al cargar las facturas y abonos');
       } finally {
         setCargando(false);
       }
@@ -35,7 +52,7 @@ const FacturasGuardadas = () => {
   // Calcular saldos para cada factura
   const calcularSaldos = (facturas, abonos) => {
     return facturas.map(factura => {
-      const abonosFactura = abonos.filter(abono => abono.facturaId === factura.id);
+      const abonosFactura = abonos.filter(abono => abono.factura_id === factura.id);
       const totalAbonado = abonosFactura.reduce((sum, abono) => sum + (abono.monto || 0), 0);
       const saldo = factura.total - totalAbonado;
       
@@ -130,58 +147,99 @@ const FacturasGuardadas = () => {
   const estadisticas = calcularEstadisticas();
 
   // Eliminar factura (y sus abonos asociados)
-  const eliminarFactura = (id) => {
+  const eliminarFactura = async (id) => {
     if (!window.confirm('¿Eliminar esta factura y todos sus abonos asociados?')) return;
     
-    // Eliminar factura
-    const nuevasFacturas = facturas.filter(f => f.id !== id);
-    localStorage.setItem('facturas', JSON.stringify(nuevasFacturas));
-    
-    // Eliminar abonos asociados
-    const nuevosAbonos = abonos.filter(a => a.facturaId !== id);
-    localStorage.setItem('abonos', JSON.stringify(nuevosAbonos));
-    
-    setFacturas(nuevasFacturas);
-    setAbonos(nuevosAbonos);
-    setMostrarConfirmacion(null);
+    try {
+      setCargando(true);
+      
+      // Eliminar abonos asociados primero
+      const { error: abonosError } = await supabase
+        .from('abonos')
+        .delete()
+        .eq('factura_id', id);
+      
+      if (abonosError) throw abonosError;
+      
+      // Eliminar factura
+      const { error: facturaError } = await supabase
+        .from('facturas')
+        .delete()
+        .eq('id', id);
+      
+      if (facturaError) throw facturaError;
+      
+      // Actualizar estado local
+      setFacturas(facturas.filter(f => f.id !== id));
+      setAbonos(abonos.filter(a => a.factura_id !== id));
+      
+    } catch (error) {
+      console.error("Error eliminando factura:", error);
+      alert('Error al eliminar la factura');
+    } finally {
+      setCargando(false);
+      setMostrarConfirmacion(null);
+    }
   };
 
   // Exportar facturas y abonos
-  const exportarDatos = () => {
-    const datosParaExportar = {
-      facturas: facturas,
-      abonos: abonos,
-      metadata: {
-        exportadoEl: new Date().toISOString(),
-        version: '1.0',
-        totalFacturas: facturas.length,
-        totalAbonos: abonos.length
-      }
-    };
+  const exportarDatos = async () => {
+    try {
+      setCargando(true);
+      
+      // Obtener todas las facturas y abonos
+      const { data: facturasData, error: facturasError } = await supabase
+        .from('facturas')
+        .select('*');
+      
+      if (facturasError) throw facturasError;
+      
+      const { data: abonosData, error: abonosError } = await supabase
+        .from('abonos')
+        .select('*');
+      
+      if (abonosError) throw abonosError;
+      
+      const datosParaExportar = {
+        facturas: facturasData,
+        abonos: abonosData,
+        metadata: {
+          exportadoEl: new Date().toISOString(),
+          version: '1.0',
+          totalFacturas: facturasData.length,
+          totalAbonos: abonosData.length
+        }
+      };
 
-    const dataStr = JSON.stringify(datosParaExportar, null, 2);
-    const blob = new Blob([dataStr], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `datos-facturacion-${new Date().toISOString().slice(0, 10)}.json`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    
-    // Liberar memoria
-    setTimeout(() => URL.revokeObjectURL(url), 100);
+      const dataStr = JSON.stringify(datosParaExportar, null, 2);
+      const blob = new Blob([dataStr], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `datos-facturacion-${new Date().toISOString().slice(0, 10)}.json`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      // Liberar memoria
+      setTimeout(() => URL.revokeObjectURL(url), 100);
+      
+    } catch (error) {
+      console.error("Error exportando datos:", error);
+      alert('Error al exportar los datos');
+    } finally {
+      setCargando(false);
+    }
   };
 
-  // Importar facturas y abonos - Versión mejorada para Safari Mobile
-  const importarDatos = (event) => {
+  // Importar facturas y abonos
+  const importarDatos = async (event) => {
     const file = event.target.files[0];
     if (!file) {
       setErrorImportacion('No se seleccionó ningún archivo');
       return;
     }
 
-    // Verificar tipo de archivo
     if (!file.name.endsWith('.json') && !file.type.includes('json')) {
       setErrorImportacion('El archivo debe ser de tipo JSON');
       event.target.value = '';
@@ -192,36 +250,25 @@ const FacturasGuardadas = () => {
     setErrorImportacion(null);
     const reader = new FileReader();
     
-    reader.onload = (e) => {
+    reader.onload = async (e) => {
       try {
         const contenido = e.target.result;
-        if (!contenido) {
-          throw new Error('El archivo está vacío');
-        }
+        if (!contenido) throw new Error('El archivo está vacío');
 
-        // Intenta parsear el contenido
         let datosImportados;
         try {
           datosImportados = JSON.parse(contenido);
         } catch (parseError) {
-          console.error('Error al parsear JSON:', parseError);
           throw new Error('El archivo no contiene un JSON válido');
-        }
-
-        // Validar estructura básica
-        if (!datosImportados) {
-          throw new Error('El archivo no contiene datos');
         }
 
         let facturasImportadas = [];
         let abonosImportados = [];
         
-        // Manejar diferentes formatos de archivo
         if (datosImportados.facturas && datosImportados.abonos) {
           facturasImportadas = datosImportados.facturas;
           abonosImportados = datosImportados.abonos;
         } else if (Array.isArray(datosImportados)) {
-          // Asumir que es un array de facturas sin abonos
           facturasImportadas = datosImportados;
           abonosImportados = [];
         } else {
@@ -239,7 +286,7 @@ const FacturasGuardadas = () => {
         });
 
         // Validar abonos
-        const camposRequeridosAbonos = ['id', 'facturaId', 'fecha', 'monto'];
+        const camposRequeridosAbonos = ['id', 'factura_id', 'fecha', 'monto'];
         abonosImportados.forEach((abono, index) => {
           camposRequeridosAbonos.forEach(campo => {
             if (!abono.hasOwnProperty(campo)) {
@@ -247,74 +294,48 @@ const FacturasGuardadas = () => {
             }
           });
           
-          // Asignar método por defecto si no existe
           if (!abono.metodo) {
             abono.metodo = 'No especificado';
           }
         });
 
-        const facturasActuales = JSON.parse(localStorage.getItem('facturas')) || [];
-        const abonosActuales = JSON.parse(localStorage.getItem('abonos')) || [];
+        // Insertar facturas en lote
+        const { error: facturasError } = await supabase
+          .from('facturas')
+          .upsert(facturasImportadas, { onConflict: 'id' });
         
-        // Filtrar para evitar duplicados
-        const facturasUnidas = [
-          ...facturasActuales,
-          ...facturasImportadas.filter(
-            fi => !facturasActuales.some(fa => fa.id === fi.id)
-          )
-        ];
-
-        const abonosUnidos = [
-          ...abonosActuales,
-          ...abonosImportados.filter(
-            ai => !abonosActuales.some(aa => aa.id === ai.id)
-          )
-        ];
-
-        // Ordenar por ID descendente
-        facturasUnidas.sort((a, b) => b.id - a.id);
-        abonosUnidos.sort((a, b) => b.id - a.id);
+        if (facturasError) throw facturasError;
         
-        const nuevasFacturas = facturasUnidas.length - facturasActuales.length;
-        const nuevosAbonos = abonosUnidos.length - abonosActuales.length;
-        
-        // Mostrar resumen de importación
-        const confirmar = window.confirm(
-          `Resumen de Importación:\n\n` +
-          `- Facturas a importar: ${facturasImportadas.length}\n` +
-          `  (${nuevasFacturas} nuevas, ${facturasImportadas.length - nuevasFacturas} existentes)\n` +
-          `- Abonos a importar: ${abonosImportados.length}\n` +
-          `  (${nuevosAbonos} nuevos, ${abonosImportados.length - nuevosAbonos} existentes)\n\n` +
-          `Totales después de importación:\n` +
-          `- Facturas: ${facturasUnidas.length}\n` +
-          `- Abonos: ${abonosUnidos.length}\n\n` +
-          `¿Deseas continuar con la importación?`
-        );
-        
-        if (confirmar) {
-          localStorage.setItem('facturas', JSON.stringify(facturasUnidas));
-          localStorage.setItem('abonos', JSON.stringify(abonosUnidos));
-          setFacturas(facturasUnidas);
-          setAbonos(abonosUnidos);
+        // Insertar abonos en lote
+        if (abonosImportados.length > 0) {
+          const { error: abonosError } = await supabase
+            .from('abonos')
+            .upsert(abonosImportados, { onConflict: 'id' });
           
-          // Mostrar feedback detallado
-          alert(
-            `✅ Importación completada con éxito\n\n` +
-            `Facturas:\n` +
-            `- Total: ${facturasUnidas.length}\n` +
-            `- Nuevas: ${nuevasFacturas}\n\n` +
-            `Abonos:\n` +
-            `- Total: ${abonosUnidos.length}\n` +
-            `- Nuevos: ${nuevosAbonos}`
-          );
+          if (abonosError) throw abonosError;
         }
+
+        // Recargar datos
+        const { data: nuevasFacturas } = await supabase
+          .from('facturas')
+          .select('*');
+        
+        const { data: nuevosAbonos } = await supabase
+          .from('abonos')
+          .select('*');
+        
+        setFacturas(nuevasFacturas || []);
+        setAbonos(nuevosAbonos || []);
+        
+        alert('✅ Importación completada con éxito');
+        
       } catch (error) {
         console.error("Error en importación:", error);
         setErrorImportacion(error.message);
         alert(`❌ Error al importar: ${error.message}`);
       } finally {
         setImportando(false);
-        event.target.value = ''; // Resetear input para permitir re-selección
+        event.target.value = '';
       }
     };
     
@@ -325,20 +346,7 @@ const FacturasGuardadas = () => {
       event.target.value = '';
     };
     
-    // Manejo especial para Safari Mobile
-    try {
-      if (file.type === '' || file.type === 'application/octet-stream') {
-        // Safari a veces no detecta bien el tipo MIME
-        reader.readAsText(file);
-      } else {
-        reader.readAsText(file);
-      }
-    } catch (error) {
-      console.error("Error en FileReader:", error);
-      setErrorImportacion('Error al procesar el archivo. Intenta con otro archivo.');
-      setImportando(false);
-      event.target.value = '';
-    }
+    reader.readAsText(file);
   };
 
   // Formatear fecha
@@ -376,7 +384,7 @@ const FacturasGuardadas = () => {
           <button 
             className="button success-button"
             onClick={() => navigate('/')}
-            disabled={importando}
+            disabled={importando || cargando}
           >
             <i className="fas fa-plus"></i> Nueva Factura
           </button>
@@ -385,13 +393,13 @@ const FacturasGuardadas = () => {
               <button 
                 className="button info-button"
                 onClick={exportarDatos}
-                disabled={importando}
+                disabled={importando || cargando}
               >
                 <i className="fas fa-file-export"></i> Exportar Todo
               </button>
               <label 
                 htmlFor="importar-datos" 
-                className={`button warning-button ${importando ? 'disabled' : ''}`}
+                className={`button warning-button ${importando || cargando ? 'disabled' : ''}`}
               >
                 <i className="fas fa-file-import"></i> {importando ? 'Importando...' : 'Importar'}
                 <input
@@ -400,13 +408,13 @@ const FacturasGuardadas = () => {
                   accept=".json,application/json"
                   style={{ display: 'none' }}
                   onChange={importarDatos}
-                  disabled={importando}
+                  disabled={importando || cargando}
                 />
               </label>
               <button 
                 className="button secondary-button"
                 onClick={() => setMostrarResumen(!mostrarResumen)}
-                disabled={importando}
+                disabled={importando || cargando}
               >
                 <i className={`fas fa-${mostrarResumen ? 'eye-slash' : 'eye'}`}></i> {mostrarResumen ? 'Ocultar' : 'Mostrar'} Resúmenes
               </button>
@@ -414,7 +422,7 @@ const FacturasGuardadas = () => {
               <button 
                 className="button report-button"
                 onClick={() => navigate('/reportes-cobros')}
-                disabled={importando}
+                disabled={importando || cargando}
               >
                 <i className="fas fa-chart-bar"></i> Reportes de Cobros
               </button>
@@ -436,7 +444,7 @@ const FacturasGuardadas = () => {
             placeholder="🔍 Buscar por cliente, vendedor, ID o fecha..."
             value={busqueda}
             onChange={(e) => setBusqueda(e.target.value)}
-            disabled={importando}
+            disabled={importando || cargando}
           />
         </div>
         
@@ -445,7 +453,7 @@ const FacturasGuardadas = () => {
             value={orden} 
             onChange={(e) => setOrden(e.target.value)}
             className="orden-select"
-            disabled={importando}
+            disabled={importando || cargando}
           >
             <option value="recientes">Más recientes</option>
             <option value="antiguos">Más antiguos</option>
@@ -537,26 +545,13 @@ const FacturasGuardadas = () => {
         </div>
       )}
 
-      {importando ? (
+      {importando || cargando ? (
         <div className="loading-overlay">
           <div className="loading-spinner"></div>
-          <p>Importando datos...</p>
+          <p>{importando ? 'Importando datos...' : 'Cargando facturas...'}</p>
           {errorImportacion && (
             <p className="error-text">{errorImportacion}</p>
           )}
-        </div>
-      ) : cargando ? (
-        <div className="facturas-grid">
-          {[...Array(6)].map((_, i) => (
-            <div key={i} className="factura-card skeleton">
-              <div className="skeleton-line" style={{ width: '40%' }}></div>
-              <div className="skeleton-line" style={{ width: '60%' }}></div>
-              <div className="skeleton-line" style={{ width: '80%' }}></div>
-              <div className="skeleton-line" style={{ width: '30%' }}></div>
-              <div className="skeleton-line" style={{ width: '50%' }}></div>
-              <div className="skeleton-line" style={{ width: '50%' }}></div>
-            </div>
-          ))}
         </div>
       ) : facturasProcesadas.length === 0 ? (
         <div className="empty-state">
@@ -623,7 +618,7 @@ const FacturasGuardadas = () => {
                 <button
                   className="button primary-button"
                   onClick={() => navigate(`/factura/${factura.id}`)}
-                  disabled={importando}
+                  disabled={importando || cargando}
                 >
                   <i className="fas fa-eye"></i> Ver Detalle
                 </button>
@@ -633,7 +628,7 @@ const FacturasGuardadas = () => {
                     e.stopPropagation();
                     setMostrarConfirmacion(factura.id);
                   }}
-                  disabled={importando}
+                  disabled={importando || cargando}
                 >
                   <i className="fas fa-trash"></i> Eliminar
                 </button>

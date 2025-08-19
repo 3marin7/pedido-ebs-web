@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import FacturaPreview from './FacturaPreview';
+import ClientesScreen from './ClientesScreen';
+import { supabase } from './supabaseClient';
 import './InvoiceScreen.css';
 
 const InvoiceScreen = () => {
@@ -32,54 +34,45 @@ const InvoiceScreen = () => {
   const [cantidadEditada, setCantidadEditada] = useState('');
   
   // Estados para clientes
-  const [busquedaCliente, setBusquedaCliente] = useState('');
-  const [nuevoCliente, setNuevoCliente] = useState({
-    nombre: '',
-    direccion: '',
-    telefono: '',
-    correo: '',
-    clasificacion: 3
-  });
   const [clientes, setClientes] = useState([]);
-  const [importandoClientes, setImportandoClientes] = useState(false);
-  const [filtroClasificacion, setFiltroClasificacion] = useState(0);
-  const [clienteEditando, setClienteEditando] = useState(null);
+  const [cargando, setCargando] = useState(false);
 
   const vendedores = ['Edwin Marin', 'Fredy Marin', 'Fabian Marin'];
 
   // Cargar datos iniciales
   useEffect(() => {
-    const productosGuardados = JSON.parse(localStorage.getItem('productos')) || [];
-    setProductosCatalogo(productosGuardados);
+    const cargarDatosIniciales = async () => {
+      try {
+        setCargando(true);
+        
+        // Cargar productos del catálogo
+        const { data: productosData, error: productosError } = await supabase
+          .from('productos')
+          .select('*')
+          .order('nombre', { ascending: true });
+        
+        if (productosError) throw productosError;
+        setProductosCatalogo(productosData || []);
+        
+        // Cargar clientes
+        const { data: clientesData, error: clientesError } = await supabase
+          .from('clientes')
+          .select('*')
+          .order('nombre', { ascending: true });
+        
+        if (clientesError) throw clientesError;
+        setClientes(clientesData || []);
+        
+      } catch (error) {
+        console.error('Error cargando datos iniciales:', error);
+        alert('Error al cargar datos iniciales');
+      } finally {
+        setCargando(false);
+      }
+    };
     
-    const clientesGuardados = JSON.parse(localStorage.getItem('clientes')) || [];
-    setClientes(clientesGuardados);
+    cargarDatosIniciales();
   }, []);
-
-  // Función para determinar clasificación automática
-  const determinarClasificacionAutomatica = (nombreCliente) => {
-    const facturas = JSON.parse(localStorage.getItem('facturas')) || [];
-    const facturasCliente = facturas.filter(f => f.cliente === nombreCliente);
-    
-    if (facturasCliente.length === 0) return 3;
-    
-    const totalGastado = facturasCliente.reduce((sum, f) => sum + f.total, 0);
-    const promedioPorFactura = totalGastado / facturasCliente.length;
-    const frecuenciaCompras = facturasCliente.length / (facturas.length || 1);
-    
-    let puntaje = 3;
-    if (totalGastado > 5000000) puntaje += 1;
-    if (totalGastado > 10000000) puntaje += 1;
-    if (totalGastado < 1000000) puntaje -= 1;
-    
-    if (promedioPorFactura > 500000) puntaje += 1;
-    if (promedioPorFactura < 100000) puntaje -= 1;
-    
-    if (frecuenciaCompras > 0.5) puntaje += 1;
-    if (frecuenciaCompras < 0.1) puntaje -= 1;
-    
-    return Math.min(Math.max(puntaje, 1), 5);
-  };
 
   // Función para agregar producto manualmente
   const agregarProducto = () => {
@@ -169,101 +162,55 @@ const InvoiceScreen = () => {
     setMostrarVistaPrevia(true);
   };
 
-  const guardarFactura = () => {
-    const facturas = JSON.parse(localStorage.getItem('facturas')) || [];
-    const nuevaFactura = {
-      id: Date.now(),
-      cliente,
-      fecha,
-      vendedor: vendedorSeleccionado,
-      direccion: direccion || 'No especificado',
-      telefono: telefono || 'No especificado',
-      correo: correo || 'No especificado',
-      productos,
-      total: productos.reduce((sum, p) => sum + (p.cantidad * p.precio), 0),
-    };
-    localStorage.setItem('facturas', JSON.stringify([...facturas, nuevaFactura]));
-    alert('Factura guardada exitosamente!');
-    setMostrarVistaPrevia(false);
-    setCliente('');
-    setDireccion('');
-    setTelefono('');
-    setCorreo('');
-    setProductos([]);
-    setVendedorSeleccionado('');
-  };
-
-  // Funciones para gestión de clientes
-  const iniciarEdicionCliente = (cliente) => {
-    setClienteEditando(cliente);
-    setNuevoCliente({
-      nombre: cliente.nombre,
-      direccion: cliente.direccion,
-      telefono: cliente.telefono,
-      correo: cliente.correo,
-      clasificacion: cliente.clasificacion
-    });
-  };
-
-  const cancelarEdicionCliente = () => {
-    setClienteEditando(null);
-    setNuevoCliente({
-      nombre: '',
-      direccion: '',
-      telefono: '',
-      correo: '',
-      clasificacion: 3
-    });
-  };
-
-  const guardarCliente = () => {
-    if (!nuevoCliente.nombre) {
-      alert('El nombre del cliente es obligatorio');
-      return;
-    }
-
-    const clienteExistente = clientes.find(c => 
-      c.nombre.toLowerCase() === nuevoCliente.nombre.toLowerCase()
-    );
-
-    if (clienteExistente && !clienteEditando) {
-      alert('Ya existe un cliente con ese nombre');
-      return;
-    }
-
-    if (clienteEditando) {
-      // Actualizar cliente existente
-      const clientesActualizados = clientes.map(c => 
-        c.id === clienteEditando.id ? { ...nuevoCliente, id: clienteEditando.id } : c
-      );
-      setClientes(clientesActualizados);
-      localStorage.setItem('clientes', JSON.stringify(clientesActualizados));
-    } else {
-      // Crear nuevo cliente
-      const clasificacion = nuevoCliente.clasificacion || determinarClasificacionAutomatica(nuevoCliente.nombre);
-      const nuevoClienteConId = {
-        ...nuevoCliente,
-        id: Date.now(),
-        clasificacion,
-        fechaRegistro: new Date().toISOString()
+  const guardarFactura = async () => {
+    try {
+      setCargando(true);
+      
+      const facturaData = {
+        cliente,
+        fecha,
+        vendedor: vendedorSeleccionado,
+        direccion: direccion || null,
+        telefono: telefono || null,
+        correo: correo || null,
+        productos,
+        total: productos.reduce((sum, p) => sum + (p.cantidad * p.precio), 0),
       };
-      const clientesActualizados = [...clientes, nuevoClienteConId];
-      setClientes(clientesActualizados);
-      localStorage.setItem('clientes', JSON.stringify(clientesActualizados));
+
+      const { data, error } = await supabase
+        .from('facturas')
+        .insert([{
+          cliente: facturaData.cliente,
+          fecha: facturaData.fecha,
+          vendedor: facturaData.vendedor,
+          direccion: facturaData.direccion,
+          telefono: facturaData.telefono,
+          correo: facturaData.correo,
+          productos: facturaData.productos,
+          total: facturaData.total
+        }])
+        .select();
+
+      if (error) throw error;
+
+      alert('Factura guardada exitosamente!');
+      setMostrarVistaPrevia(false);
+      setCliente('');
+      setDireccion('');
+  setTelefono('');
+      setCorreo('');
+      setProductos([]);
+      setVendedorSeleccionado('');
+      
+    } catch (error) {
+      console.error('Error guardando factura:', error);
+      alert('Error al guardar la factura');
+    } finally {
+      setCargando(false);
     }
-    
-    setNuevoCliente({
-      nombre: '',
-      direccion: '',
-      telefono: '',
-      correo: '',
-      clasificacion: 3
-    });
-    setClienteEditando(null);
-    
-    alert('Cliente guardado exitosamente!');
   };
 
+  // Función para seleccionar cliente
   const seleccionarCliente = (cliente) => {
     setCliente(cliente.nombre);
     setDireccion(cliente.direccion || '');
@@ -272,156 +219,11 @@ const InvoiceScreen = () => {
     setMostrarClientes(false);
   };
 
-  // Función para exportar clientes mejorada
-  const exportarClientes = () => {
-    try {
-      if (clientes.length === 0) {
-        alert('No hay clientes para exportar');
-        return;
-      }
-
-      // Estructura de exportación mejorada
-      const datosExportacion = {
-        metadata: {
-          sistema: "EBS Facturación",
-          version: "1.0",
-          fechaExportacion: new Date().toISOString(),
-          totalClientes: clientes.length
-        },
-        clientes: clientes.map(cliente => ({
-          id: cliente.id,
-          nombre: cliente.nombre,
-          direccion: cliente.direccion || '',
-          telefono: cliente.telefono || '',
-          correo: cliente.correo || '',
-          clasificacion: cliente.clasificacion || 3,
-          fechaRegistro: cliente.fechaRegistro || new Date().toISOString()
-        }))
-      };
-
-      const dataStr = JSON.stringify(datosExportacion, null, 2);
-      const blob = new Blob([dataStr], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `clientes_ebs_${new Date().toISOString().slice(0, 10)}.json`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      
-      // Liberar memoria
-      setTimeout(() => URL.revokeObjectURL(url), 100);
-      
-      alert(`✅ Se exportaron ${clientes.length} clientes correctamente`);
-    } catch (error) {
-      console.error('Error al exportar clientes:', error);
-      alert('❌ Ocurrió un error al exportar los clientes. Verifica la consola para más detalles.');
-    }
-  };
-
-  // Función para importar clientes mejorada
-  const importarClientes = (event) => {
-    const file = event.target.files[0];
-    if (!file) return;
-
-    setImportandoClientes(true);
-    const reader = new FileReader();
-    
-    reader.onload = (e) => {
-      try {
-        const contenido = e.target.result;
-        const datosImportados = JSON.parse(contenido);
-        
-        // Validación 1: Estructura básica del archivo
-        if (!datosImportados || !Array.isArray(datosImportados.clientes)) {
-          throw new Error("El archivo no tiene el formato correcto. Debe contener un array 'clientes'");
-        }
-        
-        const clientesImportados = datosImportados.clientes;
-        const clientesActuales = JSON.parse(localStorage.getItem('clientes')) || [];
-        
-        // Validación 2: Campos obligatorios y normalización
-        const clientesValidados = clientesImportados.map((cliente, index) => {
-          if (!cliente.nombre) {
-            throw new Error(`Cliente en posición ${index} no tiene nombre`);
-          }
-          
-          // Normalizar clasificación (1-5)
-          let clasificacion = 3;
-          if (cliente.clasificacion !== undefined) {
-            clasificacion = Math.max(1, Math.min(5, parseInt(cliente.clasificacion) || 3));
-          }
-          
-          return {
-            id: cliente.id || Date.now() + index,
-            nombre: cliente.nombre.toString().trim(),
-            direccion: cliente.direccion ? cliente.direccion.toString().trim() : '',
-            telefono: cliente.telefono ? cliente.telefono.toString().trim() : '',
-            correo: cliente.correo ? cliente.correo.toString().trim() : '',
-            clasificacion: clasificacion,
-            fechaRegistro: cliente.fechaRegistro || new Date().toISOString()
-          };
-        });
-        
-        // Detectar duplicados por ID y nombre
-        const nombresExistentes = new Set(clientesActuales.map(c => c.nombre.toLowerCase()));
-        const nuevosClientes = clientesValidados.filter(c => 
-          !nombresExistentes.has(c.nombre.toLowerCase())
-        );
-        
-        if (nuevosClientes.length === 0) {
-          alert('⚠️ Todos los clientes en el archivo ya existen en el sistema');
-          return;
-        }
-        
-        const confirmacion = window.confirm(
-          `📊 Resumen de Importación:\n\n` +
-          `• Clientes en archivo: ${clientesImportados.length}\n` +
-          `• Nuevos clientes a importar: ${nuevosClientes.length}\n` +
-          `• Clientes duplicados (no se importarán): ${clientesImportados.length - nuevosClientes.length}\n\n` +
-          `¿Desea continuar con la importación?`
-        );
-        
-        if (confirmacion) {
-          const clientesActualizados = [...clientesActuales, ...nuevosClientes];
-          localStorage.setItem('clientes', JSON.stringify(clientesActualizados));
-          setClientes(clientesActualizados);
-          
-          alert(`🎉 Importación completada!\n\nSe agregaron ${nuevosClientes.length} nuevos clientes.`);
-        }
-      } catch (error) {
-        console.error("Error importando clientes:", error);
-        alert(`❌ Error al importar: ${error.message}\n\nVerifica que el archivo tenga el formato correcto.`);
-      } finally {
-        setImportandoClientes(false);
-        event.target.value = '';
-      }
-    };
-    
-    reader.onerror = () => {
-      alert("❌ Error al leer el archivo. Asegúrese de seleccionar un archivo JSON válido.");
-      setImportandoClientes(false);
-      event.target.value = '';
-    };
-    
-    reader.readAsText(file);
-  };
-
   // Filtros
   const productosFiltrados = productosCatalogo.filter(producto => 
     producto.nombre.toLowerCase().includes(busquedaCatalogo.toLowerCase()) ||
     (producto.codigo && producto.codigo.toLowerCase().includes(busquedaCatalogo.toLowerCase()))
   );
-
-  const clientesFiltrados = clientes.filter(cliente => {
-    const coincideNombre = cliente.nombre.toLowerCase().includes(busquedaCliente.toLowerCase());
-    const coincideTelefono = cliente.telefono && cliente.telefono.includes(busquedaCliente);
-    const coincideCorreo = cliente.correo && cliente.correo.toLowerCase().includes(busquedaCliente.toLowerCase());
-    const coincideClasificacion = filtroClasificacion === 0 || cliente.clasificacion === filtroClasificacion;
-    
-    return (coincideNombre || coincideTelefono || coincideCorreo) && coincideClasificacion;
-  });
 
   return (
     <div className="invoice-container">
@@ -440,6 +242,7 @@ const InvoiceScreen = () => {
           }}
           onVolver={() => setMostrarVistaPrevia(false)}
           onGuardar={guardarFactura}
+          cargando={cargando}
         />
       )}
 
@@ -504,221 +307,11 @@ const InvoiceScreen = () => {
 
       {/* Modal de Clientes */}
       {mostrarClientes && (
-        <div className="clientes-modal">
-          <div className="clientes-content">
-            <div className="clientes-header">
-              <h2>{clienteEditando ? 'Editar Cliente' : 'Seleccionar Cliente'}</h2>
-              <button 
-                className="button secondary-button"
-                onClick={() => {
-                  setMostrarClientes(false);
-                  cancelarEdicionCliente();
-                }}
-              >
-                Volver
-              </button>
-            </div>
-            
-            <div className="clientes-search">
-              <input
-                type="text"
-                placeholder="🔍 Buscar cliente..."
-                value={busquedaCliente}
-                onChange={(e) => setBusquedaCliente(e.target.value)}
-              />
-            </div>
-
-            <div className="clientes-filters">
-              <label>Filtrar por clasificación:</label>
-              <select 
-                value={filtroClasificacion} 
-                onChange={(e) => setFiltroClasificacion(Number(e.target.value))}
-              >
-                <option value={0}>Todas</option>
-                <option value={1}>1 ★</option>
-                <option value={2}>2 ★★</option>
-                <option value={3}>3 ★★★</option>
-                <option value={4}>4 ★★★★</option>
-                <option value={5}>5 ★★★★★</option>
-              </select>
-            </div>
-            
-            <div className="clientes-stats">
-              <h4>Estadísticas de Clientes:</h4>
-              <div className="stats-grid">
-                {[5, 4, 3, 2, 1].map(star => (
-                  <div key={star} className="stat-item">
-                    <span className={`clasificacion-badge clasificacion-${star}`}>
-                      {star} {'★'.repeat(star)}
-                    </span>
-                    <span>
-                      {clientes.filter(c => c.clasificacion === star).length} clientes
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-            
-            {!clienteEditando && (
-              <div className="clientes-list">
-                {clientesFiltrados.length > 0 ? (
-                  clientesFiltrados.map(cliente => (
-                    <div 
-                      key={cliente.id} 
-                      className="cliente-item"
-                    >
-                      <div 
-                        className="cliente-info"
-                        onClick={() => seleccionarCliente(cliente)}
-                      >
-                        <h4>{cliente.nombre}</h4>
-                        <div className={`clasificacion-badge clasificacion-${cliente.clasificacion}`}>
-                          {cliente.clasificacion} {'★'.repeat(cliente.clasificacion)}
-                        </div>
-                        {cliente.telefono && <p>Tel: {cliente.telefono}</p>}
-                        {cliente.correo && <p>Email: {cliente.correo}</p>}
-                        {cliente.direccion && <p>Dir: {cliente.direccion}</p>}
-                      </div>
-                      <div className="cliente-acciones">
-                        <button
-                          className="button info-button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            iniciarEdicionCliente(cliente);
-                          }}
-                        >
-                          <i className="fas fa-edit"></i> Editar
-                        </button>
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <div className="empty-clientes">
-                    <p>No se encontraron clientes</p>
-                  </div>
-                )}
-              </div>
-            )}
-            
-            <div className="nuevo-cliente-form">
-              <h3>{clienteEditando ? 'Editar Cliente' : 'Agregar Nuevo Cliente'}</h3>
-              <div className="form-row">
-                <div className="form-group">
-                  <label>Nombre *</label>
-                  <input
-                    type="text"
-                    value={nuevoCliente.nombre}
-                    onChange={(e) => setNuevoCliente({...nuevoCliente, nombre: e.target.value})}
-                    placeholder="Nombre completo"
-                    required
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Teléfono</label>
-                  <input
-                    type="tel"
-                    value={nuevoCliente.telefono}
-                    onChange={(e) => setNuevoCliente({...nuevoCliente, telefono: e.target.value})}
-                    placeholder="Opcional"
-                  />
-                </div>
-              </div>
-              
-              <div className="form-row">
-                <div className="form-group">
-                  <label>Correo</label>
-                  <input
-                    type="email"
-                    value={nuevoCliente.correo}
-                    onChange={(e) => setNuevoCliente({...nuevoCliente, correo: e.target.value})}
-                    placeholder="Opcional"
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Dirección</label>
-                  <input
-                    type="text"
-                    value={nuevoCliente.direccion}
-                    onChange={(e) => setNuevoCliente({...nuevoCliente, direccion: e.target.value})}
-                    placeholder="Opcional"
-                  />
-                </div>
-              </div>
-
-              <div className="form-row">
-                <div className="form-group">
-                  <label>Clasificación (1-5)</label>
-                  <div className="clasificacion-stars">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <span
-                        key={star}
-                        className={`star ${star <= nuevoCliente.clasificacion ? 'filled' : ''}`}
-                        onClick={() => setNuevoCliente({...nuevoCliente, clasificacion: star})}
-                      >
-                        ★
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-              
-              <div className="form-buttons">
-                <button 
-                  className="button primary-button"
-                  onClick={guardarCliente}
-                >
-                  {clienteEditando ? 'Actualizar Cliente' : 'Guardar Cliente'}
-                </button>
-                
-                {clienteEditando && (
-                  <button 
-                    className="button secondary-button"
-                    onClick={cancelarEdicionCliente}
-                  >
-                    Cancelar
-                  </button>
-                )}
-              </div>
-            </div>
-
-            <div className="clientes-actions">
-              <button 
-                className="button info-button"
-                onClick={exportarClientes}
-                disabled={clientes.length === 0 || importandoClientes}
-              >
-                <i className="fas fa-file-export"></i> Exportar Clientes
-                {clientes.length > 0 && (
-                  <span className="badge-count">{clientes.length}</span>
-                )}
-              </button>
-              
-              <label 
-                htmlFor="importar-clientes" 
-                className={`button warning-button ${importandoClientes ? 'disabled' : ''}`}
-              >
-                <i className="fas fa-file-import"></i> 
-                {importandoClientes ? 'Importando...' : 'Importar Clientes'}
-              </label>
-              
-              <input
-                type="file"
-                id="importar-clientes"
-                accept=".json,application/json"
-                onChange={importarClientes}
-                disabled={importandoClientes}
-                style={{ display: 'none' }}
-              />
-              
-              {importandoClientes && (
-                <div className="import-progress">
-                  <div className="spinner"></div>
-                  <span>Procesando archivo...</span>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
+        <ClientesScreen 
+          onSeleccionarCliente={seleccionarCliente}
+          onVolver={() => setMostrarClientes(false)}
+          clientes={clientes}
+        />
       )}
 
       {/* Formulario Principal */}
@@ -726,7 +319,7 @@ const InvoiceScreen = () => {
         <>
           <h1>PEDIDO EBS</h1>
 
-          {/* Botón de seleccionar cliente (primero según requerimiento) */}
+          {/* Botón de seleccionar cliente */}
           <div className="form-row">
             <div className="form-group">
               <button 
@@ -738,7 +331,7 @@ const InvoiceScreen = () => {
             </div>
           </div>
 
-          {/* Campo de cliente (segundo según requerimiento) */}
+          {/* Campo de cliente */}
           <div className="form-row">
             <div className="form-group cliente-group">
               <label></label>
@@ -752,7 +345,7 @@ const InvoiceScreen = () => {
             </div>
           </div>
 
-          {/* Fecha (tercero según requerimiento) */}
+          {/* Fecha */}
           <div className="form-row">
             <div className="form-group">
               <label></label>
@@ -764,7 +357,7 @@ const InvoiceScreen = () => {
             </div>
           </div>
 
-          {/* Dirección (cuarto según requerimiento) */}
+          {/* Dirección */}
           <div className="form-row">
             <div className="form-group">
               <label></label>
@@ -777,10 +370,9 @@ const InvoiceScreen = () => {
             </div>
           </div>
 
-          {/* Teléfono (quinto según requerimiento) */}
+          {/* Teléfono */}
           <div className="form-row">
             <div className="form-group">
-              
               <input
                 type="tel"
                 value={telefono}
@@ -790,7 +382,7 @@ const InvoiceScreen = () => {
             </div>
           </div>
 
-          {/* Correo (sexto según requerimiento) */}
+          {/* Correo */}
           <div className="form-row">
             <div className="form-group">
               <label></label>
@@ -803,7 +395,7 @@ const InvoiceScreen = () => {
             </div>
           </div>
 
-          {/* Vendedor (séptimo según requerimiento) */}
+          {/* Vendedor */}
           <div className="form-row">
             <div className="form-group">
               <label></label>
@@ -936,12 +528,19 @@ const InvoiceScreen = () => {
             >
               <i className="fas fa-share"></i> Enviar Catálogo
             </button>
+            {/* BOTÓN CORREGIDO: Gestión de Pedidos */}
             <button
-                   className="button warning-button"
-                     onClick={() => window.open('https://mercagi.com/login/', '_blank')}
-             >
-                 <i className="fas fa-external-link-alt"></i> Mercagi
-             </button>
+              className="button warning-button"
+              onClick={() => navigate('/gestion-pedidos')}
+            >
+              <i className="fas fa-clipboard-list"></i> Gestión Pedidos
+            </button>
+            <button
+              className="button primary-button"
+              onClick={() => window.open('https://mercagi.com/login/', '_blank')}
+            >
+              <i className="fas fa-external-link-alt"></i> Mercagi
+            </button>
           </div>
         </>
       )}

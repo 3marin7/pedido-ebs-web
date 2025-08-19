@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { supabase } from './supabaseClient';
 import './FacturaDetalle.css';
 
 const FacturaDetalle = () => {
@@ -12,26 +13,38 @@ const FacturaDetalle = () => {
   const [nuevoAbono, setNuevoAbono] = useState({
     monto: '',
     fecha: new Date().toISOString().split('T')[0],
+    metodo: 'Efectivo',
     nota: ''
   });
   const [editandoAbono, setEditandoAbono] = useState(null);
   const [mostrarFormAbono, setMostrarFormAbono] = useState(false);
 
+  // Cargar factura y abonos desde Supabase
   useEffect(() => {
-    const cargarFacturaYAbonos = () => {
+    const cargarFacturaYAbonos = async () => {
       try {
-        // Cargar factura
-        const facturas = JSON.parse(localStorage.getItem('facturas')) || [];
-        const encontrada = facturas.find(f => f.id === Number(id));
+        setCargando(true);
         
-        if (encontrada) {
-          setFactura(encontrada);
-        }
-
+        // Cargar factura
+        const { data: facturaData, error: facturaError } = await supabase
+          .from('facturas')
+          .select('*')
+          .eq('id', id)
+          .single();
+        
+        if (facturaError) throw facturaError;
+        setFactura(facturaData);
+        
         // Cargar abonos
-        const todosAbonos = JSON.parse(localStorage.getItem('abonos')) || [];
-        const abonosFactura = todosAbonos.filter(a => a.facturaId === Number(id));
-        setAbonos(abonosFactura);
+        const { data: abonosData, error: abonosError } = await supabase
+          .from('abonos')
+          .select('*')
+          .eq('factura_id', id)
+          .order('fecha', { ascending: false });
+        
+        if (abonosError) throw abonosError;
+        setAbonos(abonosData || []);
+        
       } catch (error) {
         console.error("Error cargando datos:", error);
       } finally {
@@ -70,7 +83,7 @@ const FacturaDetalle = () => {
   };
 
   const estaPagada = () => {
-    return Math.abs(calcularSaldoPendiente()) < 0.01; // Consideramos pagada si el saldo es menor a 1 centavo
+    return Math.abs(calcularSaldoPendiente()) < 0.01;
   };
 
   const handleInputAbonoChange = (e) => {
@@ -95,73 +108,113 @@ const FacturaDetalle = () => {
     return true;
   };
 
-  const agregarAbono = () => {
+  const agregarAbono = async () => {
     if (!validarAbono()) return;
 
-    const abono = {
-      id: Date.now(),
-      facturaId: Number(id),
-      ...nuevoAbono,
-      fecha: nuevoAbono.fecha || new Date().toISOString().split('T')[0],
-      creadoEn: new Date().toISOString()
-    };
+    try {
+      setCargando(true);
+      
+      const abonoData = {
+        factura_id: Number(id),
+        monto: nuevoAbono.monto,
+        fecha: nuevoAbono.fecha || new Date().toISOString().split('T')[0],
+        metodo: nuevoAbono.metodo,
+        nota: nuevoAbono.nota || null
+      };
 
-    const nuevosAbonos = [...abonos, abono];
-    setAbonos(nuevosAbonos);
-    
-    // Actualizar localStorage
-    const todosAbonos = JSON.parse(localStorage.getItem('abonos')) || [];
-    localStorage.setItem('abonos', JSON.stringify([...todosAbonos, abono]));
-    
-    // Resetear formulario
-    setNuevoAbono({
-      monto: '',
-      fecha: new Date().toISOString().split('T')[0],
-      nota: ''
-    });
-    setMostrarFormAbono(false);
+      const { data, error } = await supabase
+        .from('abonos')
+        .insert([abonoData])
+        .select();
+      
+      if (error) throw error;
+
+      // Actualizar estado local
+      setAbonos([data[0], ...abonos]);
+      
+      // Resetear formulario
+      setNuevoAbono({
+        monto: '',
+        fecha: new Date().toISOString().split('T')[0],
+        metodo: 'Efectivo',
+        nota: ''
+      });
+      setMostrarFormAbono(false);
+      
+    } catch (error) {
+      console.error("Error agregando abono:", error);
+      alert('Error al agregar el abono');
+    } finally {
+      setCargando(false);
+    }
   };
 
-  const editarAbono = () => {
+  const editarAbono = async () => {
     if (!validarAbono()) return;
 
-    const abonosActualizados = abonos.map(abono => 
-      abono.id === editandoAbono.id 
-        ? { ...abono, ...nuevoAbono } 
-        : abono
-    );
+    try {
+      setCargando(true);
+      
+      const abonoData = {
+        monto: nuevoAbono.monto,
+        fecha: nuevoAbono.fecha,
+        metodo: nuevoAbono.metodo,
+        nota: nuevoAbono.nota || null
+      };
 
-    setAbonos(abonosActualizados);
-    
-    // Actualizar localStorage
-    const todosAbonos = JSON.parse(localStorage.getItem('abonos')) || [];
-    const nuevosTodosAbonos = todosAbonos.map(abono => 
-      abono.id === editandoAbono.id 
-        ? { ...abono, ...nuevoAbono } 
-        : abono
-    );
-    localStorage.setItem('abonos', JSON.stringify(nuevosTodosAbonos));
-    
-    // Resetear formulario
-    setEditandoAbono(null);
-    setNuevoAbono({
-      monto: '',
-      fecha: new Date().toISOString().split('T')[0],
-      nota: ''
-    });
-    setMostrarFormAbono(false);
+      const { data, error } = await supabase
+        .from('abonos')
+        .update(abonoData)
+        .eq('id', editandoAbono.id)
+        .select();
+      
+      if (error) throw error;
+
+      // Actualizar estado local
+      setAbonos(abonos.map(abono => 
+        abono.id === editandoAbono.id ? data[0] : abono
+      ));
+      
+      // Resetear formulario
+      setEditandoAbono(null);
+      setNuevoAbono({
+        monto: '',
+        fecha: new Date().toISOString().split('T')[0],
+        metodo: 'Efectivo',
+        nota: ''
+      });
+      setMostrarFormAbono(false);
+      
+    } catch (error) {
+      console.error("Error editando abono:", error);
+      alert('Error al editar el abono');
+    } finally {
+      setCargando(false);
+    }
   };
 
-  const eliminarAbono = (idAbono) => {
+  const eliminarAbono = async (idAbono) => {
     if (!window.confirm('¿Estás seguro de eliminar este abono?')) return;
 
-    const abonosActualizados = abonos.filter(abono => abono.id !== idAbono);
-    setAbonos(abonosActualizados);
-    
-    // Actualizar localStorage
-    const todosAbonos = JSON.parse(localStorage.getItem('abonos')) || [];
-    const nuevosTodosAbonos = todosAbonos.filter(abono => abono.id !== idAbono);
-    localStorage.setItem('abonos', JSON.stringify(nuevosTodosAbonos));
+    try {
+      setCargando(true);
+      
+      const { error } = await supabase
+        .from('abonos')
+        .delete()
+        .eq('id', idAbono);
+      
+      if (error) throw error;
+
+      // Actualizar estado local
+      setAbonos(abonos.filter(abono => abono.id !== idAbono));
+      
+    } catch (error) {
+      console.error("Error eliminando abono:", error);
+      alert('Error al eliminar el abono');
+    } finally {
+      setCargando(false);
+    }
   };
 
   const iniciarEdicionAbono = (abono) => {
@@ -169,6 +222,7 @@ const FacturaDetalle = () => {
     setNuevoAbono({
       monto: abono.monto,
       fecha: abono.fecha,
+      metodo: abono.metodo || 'Efectivo',
       nota: abono.nota || ''
     });
     setMostrarFormAbono(true);
@@ -179,25 +233,29 @@ const FacturaDetalle = () => {
     setNuevoAbono({
       monto: '',
       fecha: new Date().toISOString().split('T')[0],
+      metodo: 'Efectivo',
       nota: ''
     });
     setMostrarFormAbono(false);
   };
 
   const formatearMoneda = (monto) => {
-    return new Intl.NumberFormat('es-MX', { 
+    return new Intl.NumberFormat('es-CO', { 
       style: 'currency', 
-      currency: 'MXN' 
+      currency: 'COP',
+      minimumFractionDigits: 0
     }).format(monto);
   };
 
   const formatearFecha = (fecha) => {
-    return new Date(fecha).toLocaleDateString('es-MX', {
+    return new Date(fecha).toLocaleDateString('es-ES', {
       year: 'numeric',
       month: 'long',
       day: 'numeric'
     });
   };
+
+  const metodosPago = ['Efectivo', 'Transferencia', 'Tarjeta', 'Cheque', 'Otro'];
 
   if (cargando) {
     return (
@@ -276,11 +334,19 @@ const FacturaDetalle = () => {
         <div className="info-card cliente-info">
           <h3>Cliente</h3>
           <p>{factura.cliente}</p>
+          {factura.telefono && <p>Tel: {factura.telefono}</p>}
+          {factura.correo && <p>Email: {factura.correo}</p>}
         </div>
         
         <div className="info-card vendedor-info">
           <h3>Vendedor</h3>
           <p>{factura.vendedor}</p>
+          {factura.direccion && (
+            <div className="direccion-info">
+              <h4>Dirección</h4>
+              <p>{factura.direccion}</p>
+            </div>
+          )}
         </div>
       </div>
 
@@ -367,6 +433,18 @@ const FacturaDetalle = () => {
               />
             </div>
             <div className="form-group">
+              <label>Método de pago:</label>
+              <select
+                name="metodo"
+                value={nuevoAbono.metodo}
+                onChange={handleInputAbonoChange}
+              >
+                {metodosPago.map(metodo => (
+                  <option key={metodo} value={metodo}>{metodo}</option>
+                ))}
+              </select>
+            </div>
+            <div className="form-group">
               <label>Nota (opcional):</label>
               <textarea
                 name="nota"
@@ -379,14 +457,16 @@ const FacturaDetalle = () => {
               <button 
                 className="button secondary-button"
                 onClick={cancelarEdicion}
+                disabled={cargando}
               >
                 Cancelar
               </button>
               <button 
                 className="button primary-button"
                 onClick={editandoAbono ? editarAbono : agregarAbono}
+                disabled={cargando}
               >
-                {editandoAbono ? 'Guardar Cambios' : 'Agregar Abono'}
+                {cargando ? 'Procesando...' : (editandoAbono ? 'Guardar Cambios' : 'Agregar Abono')}
               </button>
             </div>
           </div>
@@ -399,21 +479,24 @@ const FacturaDetalle = () => {
                 <tr>
                   <th>Fecha</th>
                   <th>Monto</th>
+                  <th>Método</th>
                   <th>Nota</th>
                   <th>Acciones</th>
                 </tr>
               </thead>
               <tbody>
-                {abonos.sort((a, b) => new Date(b.fecha) - new Date(a.fecha)).map((abono) => (
+                {abonos.map((abono) => (
                   <tr key={abono.id}>
                     <td>{formatearFecha(abono.fecha)}</td>
                     <td>{formatearMoneda(abono.monto)}</td>
+                    <td>{abono.metodo || 'Efectivo'}</td>
                     <td>{abono.nota || '-'}</td>
                     <td className="acciones-cell">
                       <button 
                         className="button icon-button small"
                         onClick={() => iniciarEdicionAbono(abono)}
                         title="Editar"
+                        disabled={cargando}
                       >
                         ✏️
                       </button>
@@ -421,6 +504,7 @@ const FacturaDetalle = () => {
                         className="button icon-button small danger"
                         onClick={() => eliminarAbono(abono.id)}
                         title="Eliminar"
+                        disabled={cargando}
                       >
                         🗑️
                       </button>

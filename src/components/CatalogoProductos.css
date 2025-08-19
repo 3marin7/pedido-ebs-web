@@ -799,3 +799,154 @@ body {
 .fas {
   font-size: 14px;
 }
+/* Agrega estos estilos al final de tu archivo CSS */
+
+/* Estilos específicos para los botones de acción en las tarjetas de producto */
+.producto-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--medium-gray);
+}
+
+.action-btn {
+  padding: 0.5rem 0.75rem;
+  border: none;
+  border-radius: var(--border-radius-sm);
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  flex: 1;
+}
+
+.action-btn i {
+  font-size: 0.8rem;
+}
+
+/* Botón "si hay" */
+.stock-btn {
+  background-color: var(--success-color);
+  color: var(--white);
+}
+
+.stock-btn:hover {
+  background-color: #3bc25d;
+}
+
+/* Botón "Editar" */
+.edit-btn {
+  background-color: var(--primary-color);
+  color: var(--white);
+}
+
+.edit-btn:hover {
+  background-color: var(--primary-dark);
+}
+
+/* Botón "Eliminar" */
+.delete-btn {
+  background-color: var(--danger-color);
+  color: var(--white);
+}
+
+.delete-btn:hover {
+  background-color: #e02d30;
+}
+
+/* Estilos para el estado inactivo */
+.inactive-btn {
+  background-color: var(--medium-gray);
+  color: var(--dark-gray);
+  cursor: not-allowed;
+}
+
+/* Estilos para los checkboxes */
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.checkbox-container input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--primary-color);
+  cursor: pointer;
+}
+
+.checkbox-container label {
+  font-size: 0.875rem;
+  color: var(--dark-gray);
+  cursor: pointer;
+}
+
+/* Mejoras para la visualización de productos */
+.producto-item {
+  border-bottom: 1px solid var(--medium-gray);
+  padding: 1rem 0;
+}
+
+.producto-item:last-child {
+  border-bottom: none;
+}
+
+.producto-nombre {
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+}
+
+.producto-precio {
+  font-weight: 700;
+  color: var(--success-color);
+  margin-bottom: 0.5rem;
+}
+
+.producto-detalle {
+  font-size: 0.875rem;
+  color: var(--text-light);
+  margin-bottom: 0.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.producto-detalle i {
+  width: 16px;
+  text-align: center;
+}
+
+/* Estilos para el contador de productos */
+.contador-productos {
+  font-size: 0.875rem;
+  color: var(--text-light);
+  margin-bottom: 1rem;
+  display: flex;
+  gap: 1rem;
+}
+
+.contador-productos span {
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--border-radius-sm);
+}
+
+.contador-productos .active-count {
+  background-color: rgba(67, 97, 238, 0.1);
+  color: var(--primary-color);
+}
+
+.contador-productos .inactive-count {
+  background-color: rgba(248, 249, 250, 0.7);
+  color: var(--text-light);
+}
+
+.contador-productos .total-count {
+  font-weight: 600;
+}

@@ -621,3 +621,76 @@ select {
 .file-input-label:active {
   transform: translateY(0);
 }
+/* Estilos para el botón de Gestión de Pedidos */
+.button.warning-button {
+  background-color: #ff9800;
+  color: white;
+  border: none;
+}
+
+.button.warning-button:hover {
+  background-color: #f57c00;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.button.warning-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Ajustes responsivos para los botones de acción */
+.action-buttons {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  margin-top: 30px;
+}
+
+.action-buttons .button {
+  width: 100%;
+  justify-content: center;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 12px 15px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* Media queries para responsividad */
+@media (max-width: 1024px) {
+  .action-buttons {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .action-buttons {
+    grid-template-columns: 1fr;
+  }
+  
+  .action-buttons .button {
+    margin-bottom: 10px;
+    font-size: 13px;
+    padding: 10px 12px;
+  }
+}
+
+/* Estilos para iconos en botones */
+.button i {
+  margin-right: 8px;
+  font-size: 14px;
+}
+
+/* Efectos de hover para todos los botones */
+.button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}

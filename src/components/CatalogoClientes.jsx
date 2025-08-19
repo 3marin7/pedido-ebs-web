@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
+import { supabase } from './supabaseClient';
 import './CatalogoClientes.css';
 
 const CatalogoClientes = () => {
@@ -14,28 +15,48 @@ const CatalogoClientes = () => {
       telefono: '',
       notas: ''
     },
-    mostrarCarrito: false
+    mostrarCarrito: false,
+    showQuantityNotification: false
   });
 
+  const [categorias, setCategorias] = useState(['Todas']);
   const location = useLocation();
-  const navigate = useNavigate();
 
-  // Categorías disponibles
-  const categorias = ['toallas', 'Bloqueadores', 'pañales', 'Alimentos', 'Desodorantes', 'Otros'];
-
-  // Cargar productos desde localStorage o API
+  // Cargar productos desde Supabase
   useEffect(() => {
-    const cargarProductos = () => {
+    const cargarProductos = async () => {
       try {
-        const productosGuardados = JSON.parse(localStorage.getItem('productos')) || [];
-        // Filtrar solo productos activos para clientes
+        setState(prev => ({ ...prev, cargando: true }));
+        
+        const { data: productos, error } = await supabase
+          .from('productos')
+          .select(`
+            id,
+            codigo,
+            nombre,
+            precio,
+            categoria,
+            descripcion,
+            imagen_url,
+            activo
+          `)
+          .eq('activo', true)
+          .order('nombre', { ascending: true });
+
+        if (error) throw error;
+
+        const categoriasUnicas = [...new Set(productos.map(p => p.categoria))]
+          .filter(Boolean)
+          .sort();
+
         setState(prev => ({
           ...prev,
-          productos: productosGuardados.filter(p => p.activo !== false),
+          productos: productos,
           cargando: false
         }));
-        
-        // Verificar si hay parámetros en la URL (para pre-llenar datos)
+
+        setCategorias(['Todas', ...categoriasUnicas]);
+
         if (location.search) {
           const params = new URLSearchParams(location.search);
           setState(prev => ({
@@ -105,6 +126,20 @@ const CatalogoClientes = () => {
         ? prev.productosSeleccionados.filter(p => p.id !== producto.id)
         : [...prev.productosSeleccionados, { ...producto, cantidad: 1 }];
       
+      // Mostrar notificación al agregar
+      if (!existe) {
+        setTimeout(() => {
+          setState(prev => ({ ...prev, showQuantityNotification: false }));
+        }, 2000);
+        return { 
+          ...prev, 
+          productosSeleccionados: nuevosProductos, 
+          showQuantityNotification: true,
+          // Mostrar automáticamente el carrito al agregar cualquier producto
+          mostrarCarrito: true
+        };
+      }
+      
       return { ...prev, productosSeleccionados: nuevosProductos };
     });
   };
@@ -127,7 +162,7 @@ const CatalogoClientes = () => {
   };
 
   // Generar enlace de WhatsApp
-  const generarEnlaceWhatsApp = () => {
+  const generarEnlaceWhatsApp = async () => {
     if (!state.clienteInfo.nombre || !state.clienteInfo.telefono) {
       alert('Por favor ingresa tu nombre y teléfono');
       return;
@@ -138,16 +173,42 @@ const CatalogoClientes = () => {
       return;
     }
 
-    const numeroWhatsApp = '573042919147'; // Reemplaza con tu número
-    const mensaje = `¡Hola! Soy ${state.clienteInfo.nombre} (${state.clienteInfo.telefono}). Quiero hacer el siguiente pedido:\n\n` +
-      state.productosSeleccionados.map(p => 
-        `- ${p.nombre} (${formatPrecio(p.precio)}): ${p.cantidad} unidad(es)`
-      ).join('\n') +
-      `\n\nTotal: ${formatPrecio(calcularTotal())}` +
-      `\n\nNotas: ${state.clienteInfo.notas || 'Ninguna'}`;
-    
-    const url = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(mensaje)}`;
-    window.open(url, '_blank');
+    try {
+      // 1. Primero guardar el pedido en la base de datos
+      const { data: pedido, error } = await supabase
+        .from('pedidos')
+        .insert([
+          {
+            cliente_nombre: state.clienteInfo.nombre,
+            cliente_telefono: state.clienteInfo.telefono,
+            cliente_notas: state.clienteInfo.notas || 'Ninguna',
+            productos: state.productosSeleccionados,
+            total: calcularTotal(),
+            estado: 'pendiente', // Estado inicial
+            fecha_creacion: new Date().toISOString()
+          }
+        ])
+        .select();
+
+      if (error) throw error;
+
+      // 2. Si se guardó correctamente, enviar por WhatsApp
+      const numeroWhatsApp = '573042919147';
+      const mensaje = `¡Hola! Soy ${state.clienteInfo.nombre} (${state.clienteInfo.telefono}). Quiero hacer el siguiente pedido:\n\n` +
+        state.productosSeleccionados.map(p => 
+          `- ${p.nombre} (${formatPrecio(p.precio)}): ${p.cantidad} unidad(es)`
+        ).join('\n') +
+        `\n\nTotal: ${formatPrecio(calcularTotal())}` +
+        `\n\nNotas: ${state.clienteInfo.notas || 'Ninguna'}` +
+        `\n\nNº de pedido: ${pedido[0].id}`; // Incluimos el ID del pedido
+      
+      const url = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(mensaje)}`;
+      window.open(url, '_blank');
+
+    } catch (error) {
+      console.error('Error al guardar el pedido:', error);
+      alert('Hubo un error al procesar tu pedido. Por favor, intenta nuevamente.');
+    }
   };
 
   // Generar link para compartir
@@ -158,24 +219,54 @@ const CatalogoClientes = () => {
     if (state.clienteInfo.telefono) params.append('telefono', state.clienteInfo.telefono);
     
     const urlCompleta = `${baseUrl}?${params.toString()}`;
-    
-    // Copiar al portapapeles
     navigator.clipboard.writeText(urlCompleta);
     alert('¡Link copiado! Puedes compartirlo con el cliente');
   };
 
   return (
-    <div className="catalogo-cliente-container">
-      {/* Encabezado */}
-      <header className="cliente-header">
-        <h1><i className="fas fa-store"></i> Catálogo Digital</h1>
-        <div className="cliente-actions">
-          <button 
-            className="whatsapp-button"
-            onClick={toggleMostrarCarrito}
-          >
-            <i className="fab fa-whatsapp"></i> Ver Pedido ({state.productosSeleccionados.length})
+    <div className="catalogo-mobile">
+      {/* Barra superior fija */}
+      <header className="app-header">
+        <div className="header-content">
+          <h1><i className="fas fa-store"></i> CATÁLOGO DISTRIBUCIONES-EBS-HERMANOS-MARIN</h1>
+          <button className="cart-button" onClick={toggleMostrarCarrito}>
+            <i className="fas fa-shopping-cart"></i>
+            {state.productosSeleccionados.length > 0 && (
+              <span className="cart-badge">{state.productosSeleccionados.length}</span>
+            )}
           </button>
+        </div>
+        
+        {/* Filtros en barra pegajosa */}
+        <div className="sticky-filters">
+          <div className="search-container">
+            <i className="fas fa-search"></i>
+            <input
+              type="text"
+              placeholder="Buscar por nombre, código o descripción..."
+              value={state.busqueda}
+              onChange={handleBusquedaChange}
+            />
+            {state.busqueda && (
+              <button 
+                className="clear-search"
+                onClick={() => setState(prev => ({ ...prev, busqueda: '' }))}
+              >
+                <i className="fas fa-times"></i>
+              </button>
+            )}
+          </div>
+          
+          <select 
+            value={state.categoriaFiltro}
+            onChange={handleCategoriaChange}
+            className="category-selector"
+          >
+            <option value="Todas">Todas</option>
+            {categorias.map(cat => (
+              <option key={cat} value={cat}>{cat}</option>
+            ))}
+          </select>
         </div>
       </header>
 
@@ -184,57 +275,32 @@ const CatalogoClientes = () => {
         <h3>Tus Datos</h3>
         <div className="cliente-form">
           <div className="form-group">
-            <label>Nombre Completo *</label>
             <input
               type="text"
               name="nombre"
               value={state.clienteInfo.nombre}
               onChange={handleInputChange}
-              placeholder="Ej: María González"
+              placeholder="Nombre Completo (Ej: María González)"
               required
             />
           </div>
           <div className="form-group">
-            <label>Teléfono *</label>
             <input
               type="tel"
               name="telefono"
               value={state.clienteInfo.telefono}
               onChange={handleInputChange}
-              placeholder="Ej: 3001234567"
+              placeholder="Teléfono (Ej: 3001234567)"
               required
             />
           </div>
           <button 
-            className="button share-button"
+            className="share-button"
             onClick={generarLinkCompartir}
             disabled={!state.clienteInfo.nombre || !state.clienteInfo.telefono}
           >
             <i className="fas fa-share-alt"></i> Guardar y Compartir Link
           </button>
-        </div>
-      </div>
-
-      {/* Filtros */}
-      <div className="filtros-container">
-        <div className="search-box">
-          <input
-            type="text"
-            placeholder="🔍 Buscar productos..."
-            value={state.busqueda}
-            onChange={handleBusquedaChange}
-          />
-        </div>
-        <div className="categoria-filter">
-          <select 
-            value={state.categoriaFiltro} 
-            onChange={handleCategoriaChange}
-          >
-            <option value="Todas">Todas las categorías</option>
-            {categorias.map(cat => (
-              <option key={cat} value={cat}>{cat}</option>
-            ))}
-          </select>
         </div>
       </div>
 
@@ -251,70 +317,87 @@ const CatalogoClientes = () => {
           <p>Prueba con otros términos de búsqueda</p>
         </div>
       ) : (
-        <div className="productos-grid">
+        <div className="product-list">
           {productosFiltrados.map(producto => {
             const estaSeleccionado = state.productosSeleccionados.some(p => p.id === producto.id);
             return (
               <div 
                 key={producto.id} 
-                className={`producto-card ${estaSeleccionado ? 'seleccionado' : ''}`}
+                className={`product-card ${estaSeleccionado ? 'selected' : ''}`}
                 onClick={() => toggleProductoSeleccionado(producto)}
               >
-                {producto.imagenUrl && (
-                  <div className="producto-imagen">
-                    <img src={producto.imagenUrl} alt={producto.nombre} />
-                  </div>
-                )}
-                
-                <div className="producto-header">
-                  <h3>{producto.nombre}</h3>
-                  {producto.codigo && <span className="codigo">#{producto.codigo}</span>}
-                </div>
-                
-                <div className="producto-body">
-                  <div className="producto-precio">
-                    {formatPrecio(producto.precio)}
-                  </div>
-                  
-                  {producto.categoria && (
-                    <div className="producto-categoria">
-                      <i className="fas fa-tag"></i> {producto.categoria}
+                <div className="product-image-container">
+                  <img 
+                    src={producto.imagen_url || 'https://via.placeholder.com/150?text=Producto'} 
+                    alt={producto.nombre}
+                    loading="lazy"
+                    className="product-image"
+                    onError={(e) => {
+                      e.target.src = 'https://via.placeholder.com/150?text=Imagen+no+disponible';
+                    }}
+                  />
+                  {estaSeleccionado && (
+                    <div className="selected-badge">
+                      <i className="fas fa-check"></i>
                     </div>
                   )}
-                  
-                  {producto.descripcion && (
-                    <p className="producto-descripcion">
-                      {producto.descripcion}
-                    </p>
-                  )}
                 </div>
                 
-                {estaSeleccionado && (
-                  <div className="producto-seleccionado-badge">
-                    <i className="fas fa-check-circle"></i> Seleccionado
-                  </div>
-                )}
+                <div className="product-info">
+                  <h3 className="product-name">{producto.nombre}</h3>
+                  {producto.codigo && (
+                    <p className="product-code">Ref: {producto.codigo}</p>
+                  )}
+                  <p className="product-price">{formatPrecio(producto.precio)}</p>
+                  {producto.categoria && (
+                    <span className="product-category">{producto.categoria}</span>
+                  )}
+                </div>
               </div>
             );
           })}
         </div>
       )}
 
-      {/* Carrito/Pedido lateral */}
+      {/* Bottom Navigation */}
+      <div className="bottom-nav">
+        <button 
+          className="nav-button" 
+          onClick={generarLinkCompartir}
+          disabled={!state.clienteInfo.nombre || !state.clienteInfo.telefono}
+        >
+          <i className="fas fa-share-alt"></i>
+          <span>Compartir</span>
+        </button>
+        <button 
+          className="whatsapp-button nav-button"
+          onClick={generarEnlaceWhatsApp}
+          disabled={state.productosSeleccionados.length === 0}
+        >
+          <i className="fab fa-whatsapp"></i>
+          <span>Pedido</span>
+        </button>
+      </div>
+
+      {/* Notificación de cantidad */}
+      {state.showQuantityNotification && (
+        <div className="quantity-notification">
+          Producto agregado al carrito ({state.productosSeleccionados.length})
+        </div>
+      )}
+
+      {/* Carrito mejorado */}
       {state.mostrarCarrito && (
-        <div className="carrito-modal">
-          <div className="carrito-content">
-            <div className="carrito-header">
+        <div className="cart-overlay">
+          <div className="cart-content">
+            <div className="cart-header">
               <h2>Tu Pedido</h2>
-              <button 
-                className="close-button"
-                onClick={toggleMostrarCarrito}
-              >
+              <button className="close-button" onClick={toggleMostrarCarrito}>
                 &times;
               </button>
             </div>
             
-            <div className="carrito-body">
+            <div className="cart-body">
               {state.productosSeleccionados.length === 0 ? (
                 <div className="empty-cart">
                   <i className="fas fa-shopping-basket"></i>
@@ -322,45 +405,65 @@ const CatalogoClientes = () => {
                 </div>
               ) : (
                 <>
-                  <div className="productos-list">
+                  <div className="cart-items">
                     {state.productosSeleccionados.map(producto => (
-                      <div key={producto.id} className="producto-carrito">
-                        <div className="producto-info">
+                      <div key={producto.id} className="cart-item">
+                        <div className="item-info">
                           <h4>{producto.nombre}</h4>
-                          <span>{formatPrecio(producto.precio)} c/u</span>
+                          <span className="item-price">{formatPrecio(producto.precio)} c/u</span>
                         </div>
-                        <div className="producto-cantidad">
-                          <button 
-                            onClick={() => actualizarCantidad(producto.id, producto.cantidad - 1)}
-                          >
-                            -
-                          </button>
-                          <input
-                            type="number"
-                            value={producto.cantidad}
-                            onChange={(e) => actualizarCantidad(producto.id, e.target.value)}
-                            min="1"
-                          />
-                          <button 
-                            onClick={() => actualizarCantidad(producto.id, producto.cantidad + 1)}
-                          >
-                            +
-                          </button>
+                        
+                        <div className="quantity-controls">
+                          <span className="item-total">
+                            {formatPrecio(producto.precio * producto.cantidad)}
+                          </span>
+                          
+                          <div className="quantity-selector">
+                            <button 
+                              className="quantity-btn decrease"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                actualizarCantidad(producto.id, producto.cantidad - 1);
+                              }}
+                            >
+                              −
+                            </button>
+                            <input
+                              type="number"
+                              className="quantity-input"
+                              value={producto.cantidad}
+                              onChange={(e) => {
+                                e.stopPropagation();
+                                actualizarCantidad(producto.id, e.target.value);
+                              }}
+                              min="1"
+                            />
+                            <button 
+                              className="quantity-btn increase"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                actualizarCantidad(producto.id, producto.cantidad + 1);
+                              }}
+                            >
+                              +
+                            </button>
+                          </div>
                         </div>
-                        <div className="producto-subtotal">
-                          {formatPrecio(producto.precio * producto.cantidad)}
-                        </div>
+                        
                         <button 
-                          className="eliminar-button"
-                          onClick={() => toggleProductoSeleccionado(producto)}
+                          className="remove-btn"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleProductoSeleccionado(producto);
+                          }}
                         >
-                          <i className="fas fa-trash"></i>
+                          ×
                         </button>
                       </div>
                     ))}
                   </div>
                   
-                  <div className="notas-pedido">
+                  <div className="order-notes">
                     <label>Notas adicionales:</label>
                     <textarea
                       name="notas"
@@ -371,17 +474,22 @@ const CatalogoClientes = () => {
                     />
                   </div>
                   
-                  <div className="carrito-total">
+                  <div className="cart-total">
                     <span>Total:</span>
                     <span className="total-amount">{formatPrecio(calcularTotal())}</span>
                   </div>
-                  
-                  <button 
-                    className="whatsapp-button full-width"
-                    onClick={generarEnlaceWhatsApp}
-                  >
-                    <i className="fab fa-whatsapp"></i> Enviar Pedido por WhatsApp
-                  </button>
+
+                  {/* Botón de enviar pedido mejorado */}
+                  <div className="send-order-container">
+                    <button 
+                      className="send-order-button"
+                      onClick={generarEnlaceWhatsApp}
+                      disabled={state.productosSeleccionados.length === 0}
+                    >
+                      <i className="fab fa-whatsapp"></i> Enviar Pedido por WhatsApp
+                      <span className="total-on-button">{formatPrecio(calcularTotal())}</span>
+                    </button>
+                  </div>
                 </>
               )}
             </div>
