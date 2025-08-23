@@ -11,6 +11,7 @@
   --success-color: #4ad66d;
   --warning-color: #f8961e;
   --danger-color: #f94144;
+  --info-color: #3498db;
   
   /* Escala de grises */
   --light-gray: #f8f9fa;
@@ -53,6 +54,12 @@ body {
   background-color: var(--light-gray);
   min-height: 100vh;
   padding: 0;
+}
+
+/* AÑADIDO: Estilos base para botones */
+button {
+  font-family: inherit;
+  cursor: pointer;
 }
 
 /* Contenedor principal - Mejorado */
@@ -111,6 +118,7 @@ body {
   font-size: 0.875rem;
   box-shadow: var(--shadow-sm);
   text-decoration: none;
+  font-family: inherit;
 }
 
 .button i {
@@ -161,6 +169,28 @@ body {
   box-shadow: var(--shadow-md);
 }
 
+.warning-button {
+  background-color: var(--warning-color);
+  color: var(--white);
+}
+
+.warning-button:hover {
+  background-color: #e68a19;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.info-button {
+  background-color: var(--info-color);
+  color: var(--white);
+}
+
+.info-button:hover {
+  background-color: #2980b9;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
 /* Contenido principal - Mejorado */
 .catalogo-content {
   padding: 2rem;
@@ -183,6 +213,7 @@ body {
   align-items: center;
   gap: 0.5rem;
   font-size: 0.875rem;
+  font-weight: 500;
 }
 
 .resumen-productos i {
@@ -239,6 +270,11 @@ body {
   cursor: pointer;
 }
 
+.filtros-avanzados span {
+  font-size: 0.875rem;
+  color: var(--text-light);
+}
+
 /* Pestañas - Mejorado */
 .tabs-container {
   display: flex;
@@ -261,6 +297,7 @@ body {
   position: relative;
   transition: all 0.25s ease;
   white-space: nowrap;
+  font-family: inherit;
 }
 
 .tab-button.active {
@@ -419,10 +456,20 @@ body {
   font-weight: 500;
   transition: all 0.2s ease;
   flex: 1;
+  font-family: inherit;
 }
 
 .action-button i {
   font-size: 0.875rem;
+}
+
+.toggle-button {
+  background: var(--warning-color);
+  color: var(--white);
+}
+
+.toggle-button:hover {
+  background: #e68a19;
 }
 
 .edit-button {
@@ -441,15 +488,6 @@ body {
 
 .delete-button:hover {
   background: #e02d30;
-}
-
-.toggle-button {
-  background: var(--warning-color);
-  color: var(--white);
-}
-
-.toggle-button:hover {
-  background: #e68a19;
 }
 
 /* Modal de producto - Mejorado */
@@ -512,6 +550,7 @@ body {
   border-radius: var(--border-radius-md);
   font-size: 0.875rem;
   transition: all 0.2s ease;
+  font-family: inherit;
 }
 
 .form-group input:focus,
@@ -554,6 +593,8 @@ body {
   text-align: center;
   font-weight: 500;
   width: 100%;
+  font-family: inherit;
+  border: none;
 }
 
 .upload-button:hover {
@@ -634,6 +675,59 @@ body {
   }
 }
 
+/* Estilos para el menú de exportación */
+.import-export-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: var(--white);
+  min-width: 200px;
+  box-shadow: var(--shadow-lg);
+  z-index: 1;
+  border-radius: var(--border-radius-md);
+  overflow: hidden;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+.dropdown-content button {
+  color: var(--text-color);
+  padding: 12px 15px;
+  text-decoration: none;
+  display: block;
+  width: 100%;
+  text-align: left;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 14px;
+  border-bottom: 1px solid var(--medium-gray);
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.dropdown-content button:hover {
+  background-color: var(--light-gray);
+}
+
+.dropdown-divider {
+  height: 1px;
+  background-color: var(--medium-gray);
+  margin: 5px 0;
+}
+
 /* Responsive - Mejorado */
 @media (max-width: 1024px) {
   .productos-grid {
@@ -649,14 +743,17 @@ body {
   
   .catalogo-header {
     padding: 1rem;
+    flex-direction: column;
+    align-items: flex-start;
   }
   
   .header-actions {
     width: 100%;
+    justify-content: flex-start;
   }
   
   .button {
-    width: 100%;
+    width: auto;
   }
   
   .catalogo-content {
@@ -675,6 +772,17 @@ body {
   .action-button {
     width: 100%;
   }
+  
+  .filtros-avanzados {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .resumen-productos {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
 }
 
 @media (max-width: 480px) {
@@ -685,268 +793,25 @@ body {
   .producto-form {
     width: 95%;
     padding: 1.5rem;
+    margin: 1rem;
   }
-}
-/* Estilos para el menú de exportación */
-.import-export-actions {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-}
-
-.dropdown {
-  position: relative;
-  display: inline-block;
-}
-
-.dropdown button.info-button {
-  background-color: #3498db;
-  color: white;
-  padding: 10px 15px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 14px;
-}
-
-.dropdown button.info-button:hover {
-  background-color: #2980b9;
-}
-
-.dropdown-content {
-  display: none;
-  position: absolute;
-  background-color: #f9f9f9;
-  min-width: 180px;
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-  z-index: 1;
-  border-radius: 4px;
-  overflow: hidden;
-}
-
-.dropdown:hover .dropdown-content {
-  display: block;
-}
-
-.dropdown-content button {
-  color: #333;
-  padding: 10px 15px;
-  text-decoration: none;
-  display: block;
-  width: 100%;
-  text-align: left;
-  border: none;
-  background: none;
-  cursor: pointer;
-  font-size: 13px;
-  border-bottom: 1px solid #eee;
-}
-
-.dropdown-content button:hover {
-  background-color: #f1f1f1;
-}
-
-.dropdown-divider {
-  height: 1px;
-  background-color: #ddd;
-  margin: 5px 0;
-}
-
-/* Estilos para los botones principales */
-.button {
-  padding: 10px 15px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 14px;
-  transition: all 0.3s ease;
-}
-
-.success-button {
-  background-color: #2ecc71;
-  color: white;
-}
-
-.success-button:hover {
-  background-color: #27ae60;
-}
-
-.secondary-button {
-  background-color: #95a5a6;
-  color: white;
-}
-
-.secondary-button:hover {
-  background-color: #7f8c8d;
-}
-
-.warning-button {
-  background-color: #e67e22;
-  color: white;
-}
-
-.warning-button:hover {
-  background-color: #d35400;
-}
-
-/* Iconos */
-.fas {
-  font-size: 14px;
-}
-/* Agrega estos estilos al final de tu archivo CSS */
-
-/* Estilos específicos para los botones de acción en las tarjetas de producto */
-.producto-actions {
-  display: flex;
-  gap: 0.5rem;
-  margin-top: 1rem;
-  padding-top: 1rem;
-  border-top: 1px solid var(--medium-gray);
-}
-
-.action-btn {
-  padding: 0.5rem 0.75rem;
-  border: none;
-  border-radius: var(--border-radius-sm);
-  font-size: 0.75rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.25rem;
-  flex: 1;
-}
-
-.action-btn i {
-  font-size: 0.8rem;
-}
-
-/* Botón "si hay" */
-.stock-btn {
-  background-color: var(--success-color);
-  color: var(--white);
-}
-
-.stock-btn:hover {
-  background-color: #3bc25d;
-}
-
-/* Botón "Editar" */
-.edit-btn {
-  background-color: var(--primary-color);
-  color: var(--white);
-}
-
-.edit-btn:hover {
-  background-color: var(--primary-dark);
-}
-
-/* Botón "Eliminar" */
-.delete-btn {
-  background-color: var(--danger-color);
-  color: var(--white);
-}
-
-.delete-btn:hover {
-  background-color: #e02d30;
-}
-
-/* Estilos para el estado inactivo */
-.inactive-btn {
-  background-color: var(--medium-gray);
-  color: var(--dark-gray);
-  cursor: not-allowed;
-}
-
-/* Estilos para los checkboxes */
-.checkbox-container {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 0.5rem;
-}
-
-.checkbox-container input[type="checkbox"] {
-  width: 16px;
-  height: 16px;
-  accent-color: var(--primary-color);
-  cursor: pointer;
-}
-
-.checkbox-container label {
-  font-size: 0.875rem;
-  color: var(--dark-gray);
-  cursor: pointer;
-}
-
-/* Mejoras para la visualización de productos */
-.producto-item {
-  border-bottom: 1px solid var(--medium-gray);
-  padding: 1rem 0;
-}
-
-.producto-item:last-child {
-  border-bottom: none;
-}
-
-.producto-nombre {
-  font-weight: 600;
-  font-size: 1.1rem;
-  margin-bottom: 0.5rem;
-}
-
-.producto-precio {
-  font-weight: 700;
-  color: var(--success-color);
-  margin-bottom: 0.5rem;
-}
-
-.producto-detalle {
-  font-size: 0.875rem;
-  color: var(--text-light);
-  margin-bottom: 0.25rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.producto-detalle i {
-  width: 16px;
-  text-align: center;
-}
-
-/* Estilos para el contador de productos */
-.contador-productos {
-  font-size: 0.875rem;
-  color: var(--text-light);
-  margin-bottom: 1rem;
-  display: flex;
-  gap: 1rem;
-}
-
-.contador-productos span {
-  padding: 0.25rem 0.5rem;
-  border-radius: var(--border-radius-sm);
-}
-
-.contador-productos .active-count {
-  background-color: rgba(67, 97, 238, 0.1);
-  color: var(--primary-color);
-}
-
-.contador-productos .inactive-count {
-  background-color: rgba(248, 249, 250, 0.7);
-  color: var(--text-light);
-}
-
-.contador-productos .total-count {
-  font-weight: 600;
+  
+  .header-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .import-export-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .dropdown {
+    width: 100%;
+  }
+  
+  .dropdown button.info-button {
+    width: 100%;
+    justify-content: center;
+  }
 }

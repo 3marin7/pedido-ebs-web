@@ -4,7 +4,7 @@ import './FacturaPreview.css';
 const FacturaPreview = ({ factura, onVolver, onGuardar, cargando }) => {
   return (
     <div className="factura-container">
-      <h1>VISTA PREVIA DE LA FACTURA</h1>
+      <h1>VISTA PREVIA</h1>
       
       <div className="datos-factura">
         <div className="fila-datos">
@@ -51,7 +51,7 @@ const FacturaPreview = ({ factura, onVolver, onGuardar, cargando }) => {
           {cargando ? 'CARGANDO...' : 'VOLVER'}
         </button>
         <button onClick={onGuardar} className="boton-guardar" disabled={cargando}>
-          {cargando ? 'GUARDANDO...' : 'GUARDAR FACTURA'}
+          {cargando ? 'GUARDANDO...' : 'GUARDAR'}
         </button>
       </div>
     </div>

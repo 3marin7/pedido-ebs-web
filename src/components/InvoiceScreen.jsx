@@ -81,11 +81,24 @@ const InvoiceScreen = () => {
       return;
     }
 
+    const cantidad = parseInt(cantidadProducto);
+    const precio = parseFloat(precioProducto);
+
+    if (isNaN(cantidad) || cantidad <= 0) {
+      alert('Ingrese una cantidad válida');
+      return;
+    }
+
+    if (isNaN(precio) || precio <= 0) {
+      alert('Ingrese un precio válido');
+      return;
+    }
+
     const nuevoProducto = {
       id: Date.now(),
       nombre: nombreProducto,
-      cantidad: parseInt(cantidadProducto),
-      precio: parseFloat(precioProducto),
+      cantidad: cantidad,
+      precio: precio,
     };
 
     setProductos([...productos, nuevoProducto]);
@@ -135,13 +148,14 @@ const InvoiceScreen = () => {
   };
 
   const guardarEdicionCantidad = (id) => {
-    if (!cantidadEditada || isNaN(cantidadEditada)) {
+    const cantidad = parseInt(cantidadEditada);
+    if (isNaN(cantidad) || cantidad <= 0) {
       alert('Ingrese una cantidad válida');
       return;
     }
 
     const productosActualizados = productos.map(p => 
-      p.id === id ? { ...p, cantidad: parseInt(cantidadEditada) } : p
+      p.id === id ? { ...p, cantidad: cantidad } : p
     );
     setProductos(productosActualizados);
     setEditandoProductoId(null);
@@ -195,9 +209,11 @@ const InvoiceScreen = () => {
 
       alert('Factura guardada exitosamente!');
       setMostrarVistaPrevia(false);
+      
+      // Limpiar formulario
       setCliente('');
       setDireccion('');
-  setTelefono('');
+      setTelefono('');
       setCorreo('');
       setProductos([]);
       setVendedorSeleccionado('');
@@ -225,6 +241,9 @@ const InvoiceScreen = () => {
     (producto.codigo && producto.codigo.toLowerCase().includes(busquedaCatalogo.toLowerCase()))
   );
 
+  // Calcular total
+  const total = productos.reduce((sum, p) => sum + (p.cantidad * p.precio), 0);
+
   return (
     <div className="invoice-container">
       {/* Vista Previa de Factura */}
@@ -238,7 +257,7 @@ const InvoiceScreen = () => {
             telefono,
             correo,
             productos,
-            total: productos.reduce((sum, p) => sum + (p.cantidad * p.precio), 0),
+            total: total,
           }}
           onVolver={() => setMostrarVistaPrevia(false)}
           onGuardar={guardarFactura}
@@ -266,6 +285,7 @@ const InvoiceScreen = () => {
                 placeholder="🔍 Buscar producto..."
                 value={busquedaCatalogo}
                 onChange={(e) => setBusquedaCatalogo(e.target.value)}
+                className="search-input"
               />
             </div>
             
@@ -282,7 +302,7 @@ const InvoiceScreen = () => {
                       {producto.codigo && <span className="producto-codigo">#{producto.codigo}</span>}
                     </div>
                     <div className="producto-precio">
-                      ${producto.precio.toFixed(2)}
+                      ${producto.precio?.toFixed(2) || '0.00'}
                     </div>
                   </div>
                 ))
@@ -331,61 +351,51 @@ const InvoiceScreen = () => {
             </div>
           </div>
 
-          {/* Campo de cliente */}
+          {/* Línea 1: Nombre del cliente y Fecha */}
           <div className="form-row">
-            <div className="form-group cliente-group">
-              <label></label>
+            <div className="form-group cliente-group" style={{flex: 2}}>
               <input
                 type="text"
                 value={cliente}
                 onChange={(e) => setCliente(e.target.value)}
-                placeholder="Nombre del cliente"
+                placeholder="Nombre del cliente *"
                 required
+                className={!cliente ? 'input-error' : ''}
               />
             </div>
-          </div>
-
-          {/* Fecha */}
-          <div className="form-row">
-            <div className="form-group">
-              <label></label>
+            <div className="form-group" style={{flex: 1}}>
               <input
                 type="date"
                 value={fecha}
                 onChange={(e) => setFecha(e.target.value)}
+                className="date-input"
               />
             </div>
           </div>
 
-          {/* Dirección */}
+          {/* Línea 2: Dirección y Teléfono */}
           <div className="form-row">
-            <div className="form-group">
-              <label></label>
+            <div className="form-group" style={{flex: 2}}>
               <input
                 type="text"
                 value={direccion}
                 onChange={(e) => setDireccion(e.target.value)}
-                placeholder="Direccion Opcional"
+                placeholder="Dirección Opcional"
               />
             </div>
-          </div>
-
-          {/* Teléfono */}
-          <div className="form-row">
-            <div className="form-group">
+            <div className="form-group" style={{flex: 1}}>
               <input
                 type="tel"
                 value={telefono}
                 onChange={(e) => setTelefono(e.target.value)}
-                placeholder="Telefono Opcional"
+                placeholder="Teléfono Opcional"
               />
             </div>
           </div>
 
-          {/* Correo */}
+          {/* Línea 3: Email y Vendedor */}
           <div className="form-row">
-            <div className="form-group">
-              <label></label>
+            <div className="form-group" style={{flex: 1}}>
               <input
                 type="email"
                 value={correo}
@@ -393,18 +403,14 @@ const InvoiceScreen = () => {
                 placeholder="Email Opcional"
               />
             </div>
-          </div>
-
-          {/* Vendedor */}
-          <div className="form-row">
-            <div className="form-group">
-              <label></label>
+            <div className="form-group" style={{flex: 1}}>
               <select
                 value={vendedorSeleccionado}
                 onChange={(e) => setVendedorSeleccionado(e.target.value)}
                 required
+                className={!vendedorSeleccionado ? 'input-error' : ''}
               >
-                <option value="">Seleccione vendedor</option>
+                <option value="">Seleccione vendedor *</option>
                 {vendedores.map((v) => (
                   <option key={v} value={v}>
                     {v}
@@ -422,6 +428,7 @@ const InvoiceScreen = () => {
                 value={nombreProducto}
                 onChange={(e) => setNombreProducto(e.target.value)}
                 placeholder="Nombre *"
+                className="product-input"
               />
               <input
                 type="number"
@@ -429,6 +436,7 @@ const InvoiceScreen = () => {
                 onChange={(e) => setCantidadProducto(e.target.value)}
                 placeholder="Cantidad *"
                 min="1"
+                className="product-input"
               />
               <input
                 type="number"
@@ -437,12 +445,13 @@ const InvoiceScreen = () => {
                 placeholder="Precio *"
                 min="0"
                 step="0.01"
+                className="product-input"
               />
-              <button className="button" onClick={agregarProducto}>
+              <button className="button add-product-button" onClick={agregarProducto}>
                 Agregar
               </button>
               <button 
-                className="button primary-button"
+                className="button primary-button catalog-button"
                 onClick={() => setMostrarCatalogo(true)}
               >
                 <i className="fas fa-book"></i> Catálogo
@@ -465,6 +474,7 @@ const InvoiceScreen = () => {
                           onChange={(e) => setCantidadEditada(e.target.value)}
                           min="1"
                           className="editar-cantidad-input"
+                          autoFocus
                         />
                         <button 
                           className="button small-button success-button"
@@ -488,26 +498,35 @@ const InvoiceScreen = () => {
                   <div className="producto-acciones">
                     {editandoProductoId !== p.id && (
                       <button
-                        className="button info-button"
+                        className="button info-button small-button"
                         onClick={() => iniciarEdicionCantidad(p)}
+                        title="Editar cantidad"
                       >
-                        <i className="fas fa-edit"></i> Editar
+                        <i className="fas fa-edit"></i>
                       </button>
                     )}
                     <button
-                      className="button danger-button"
+                      className="button danger-button small-button"
                       onClick={() => eliminarProducto(p.id)}
+                      title="Eliminar producto"
                     >
-                      <i className="fas fa-trash"></i> Eliminar
+                      <i className="fas fa-trash"></i>
                     </button>
                   </div>
                 </div>
               ))}
+              <div className="total-container">
+                <h3>Total: ${total.toFixed(2)}</h3>
+              </div>
             </div>
           )}
 
           <div className="action-buttons">
-            <button className="button" onClick={mostrarPrevia}>
+            <button 
+              className="button preview-button" 
+              onClick={mostrarPrevia}
+              disabled={productos.length === 0 || !cliente || !vendedorSeleccionado}
+            >
               Vista Previa
             </button>
             <button
@@ -528,7 +547,6 @@ const InvoiceScreen = () => {
             >
               <i className="fas fa-share"></i> Enviar Catálogo
             </button>
-            {/* BOTÓN CORREGIDO: Gestión de Pedidos */}
             <button
               className="button warning-button"
               onClick={() => navigate('/gestion-pedidos')}

@@ -57,7 +57,7 @@ const FacturaDetalle = () => {
 
   const copiarDatos = () => {
     const datos = `
-      Factura #${factura.id}
+      Cuenta de Cobro #${factura.id}
       Cliente: ${factura.cliente}
       Fecha: ${new Date(factura.fecha).toLocaleDateString()}
       Total: $${factura.total.toFixed(2)}
@@ -261,7 +261,7 @@ const FacturaDetalle = () => {
     return (
       <div className="cargando-detalle">
         <div className="spinner"></div>
-        <p>Cargando factura...</p>
+        <p>Cargando cuenta de cobro...</p>
       </div>
     );
   }
@@ -269,7 +269,7 @@ const FacturaDetalle = () => {
   if (!factura) {
     return (
       <div className="factura-no-encontrada">
-        <h2>Factura no encontrada</h2>
+        <h2>Cuenta de cobro no encontrada</h2>
         <button 
           className="button primary-button"
           onClick={() => navigate('/facturas')}
@@ -313,7 +313,7 @@ const FacturaDetalle = () => {
 
       <div className="factura-header">
         <div className="header-info">
-          <h1>Factura #{factura.id.toString().padStart(6, '0')}</h1>
+          <h1>Cuenta de Cobro #{factura.id.toString().padStart(6, '0')}</h1>
           <p className="fecha-emision">
             Emitida el {new Date(factura.fecha).toLocaleDateString('es-ES', { 
               weekday: 'long', 
@@ -325,7 +325,7 @@ const FacturaDetalle = () => {
         </div>
         
         <div className="header-total">
-          <span>Total Factura</span>
+          <span>Total Cuenta de Cobro</span>
           <h2>{formatearMoneda(factura.total)}</h2>
         </div>
       </div>
@@ -516,18 +516,18 @@ const FacturaDetalle = () => {
           </div>
         ) : (
           <div className="sin-abonos">
-            <p>No se han registrado abonos para esta factura.</p>
+            <p>No se han registrado abonos para esta cuenta de cobro.</p>
           </div>
         )}
       </div>
 
       <div className="factura-footer">
         <p className="footer-nota">
-          Gracias por su preferencia. Para cualquier aclaración, presentar esta factura.
+          Gracias por su preferencia. Para cualquier aclaración, presentar esta cuenta de cobro.
         </p>
         <div className="footer-logo">
           <span>EBS</span>
-          <small>Sistema de Facturación</small>
+          <small>Sistema de Ebs-Hermanos Marin</small>
         </div>
       </div>
     </div>
