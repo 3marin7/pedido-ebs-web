@@ -762,12 +762,15 @@ const CatalogoProductos = () => {
                   <i className="fas fa-edit"></i> Editar
                 </button>
                 
-                <button 
-                  className="action-button delete-button"
-                  onClick={() => eliminarProducto(producto.id)}
-                >
-                  <i className="fas fa-trash"></i> Eliminar
-                </button>
+                {/* Botón de eliminar solo visible para productos inactivos */}
+                {!producto.activo && (
+                  <button 
+                    className="action-button delete-button"
+                    onClick={() => eliminarProducto(producto.id)}
+                  >
+                    <i className="fas fa-trash"></i> Eliminar
+                  </button>
+                )}
               </div>
             </div>
           ))}
