@@ -14,6 +14,10 @@ const FacturasGuardadas = () => {
   const [mostrarResumen, setMostrarResumen] = useState(false);
   const [importando, setImportando] = useState(false);
   const [errorImportacion, setErrorImportacion] = useState(null);
+  const [mostrarPagadas, setMostrarPagadas] = useState(false);
+  // Nuevos estados para la autenticación de eliminación
+  const [password, setPassword] = useState('');
+  const [errorPassword, setErrorPassword] = useState('');
 
   // Cargar facturas y abonos desde Supabase
   useEffect(() => {
@@ -65,16 +69,31 @@ const FacturasGuardadas = () => {
     });
   };
 
+  // Función para verificar la contraseña
+  const verificarPassword = () => {
+    return password === 'edwin' || password === '777';
+  };
+
   // Procesar facturas con filtros, orden y saldos
   const facturasProcesadas = calcularSaldos(
     facturas.filter(factura => {
       const termino = busqueda.toLowerCase();
-      return (
+      const coincideBusqueda = (
         factura.cliente?.toLowerCase().includes(termino) ||
         factura.vendedor?.toLowerCase().includes(termino) ||
         factura.id?.toString().includes(busqueda) ||
         factura.fecha?.includes(busqueda)
       );
+      
+      // Calcular estado para esta factura individualmente
+      const abonosFactura = abonos.filter(abono => abono.factura_id === factura.id);
+      const totalAbonado = abonosFactura.reduce((sum, abono) => sum + (abono.monto || 0), 0);
+      const saldo = factura.total - totalAbonado;
+      const estaPagada = saldo <= 0;
+      
+      // Mostrar siempre si hay búsqueda activa o si se eligió mostrar pagadas
+      // O si la factura no está pagada
+      return coincideBusqueda && (mostrarPagadas || !estaPagada || busqueda !== '');
     }).sort((a, b) => {
       switch (orden) {
         case 'antiguos': return new Date(a.fecha) - new Date(b.fecha);
@@ -150,7 +169,25 @@ const FacturasGuardadas = () => {
 
   // Eliminar factura (y sus abonos asociados)
   const eliminarFactura = async (id) => {
-    if (!window.confirm('¿Eliminar esta factura y todos sus abonos asociados?')) return;
+    // Verificar contraseña primero
+    if (!verificarPassword()) {
+      setErrorPassword('Contraseña incorrecta');
+      return;
+    }
+    
+    // Buscar la factura específica
+    const facturaAEliminar = facturas.find(f => f.id === id);
+    
+    // Verificar si tiene saldo pendiente
+    const facturasConSaldo = calcularSaldos([facturaAEliminar], abonos);
+    const tieneSaldoPendiente = facturasConSaldo[0]?.saldo > 0;
+    
+    if (tieneSaldoPendiente) {
+      if (!window.confirm('¿Estás seguro de eliminar esta factura con saldo pendiente? Esta acción no se puede deshacer.')) return;
+    } else {
+      // Para facturas pagadas, pedir confirmación adicional
+      if (!window.confirm('Esta factura ya está pagada. ¿Realmente deseas eliminarla? Esta acción no se puede deshacer.')) return;
+    }
     
     try {
       setCargando(true);
@@ -181,6 +218,8 @@ const FacturasGuardadas = () => {
     } finally {
       setCargando(false);
       setMostrarConfirmacion(null);
+      setPassword('');
+      setErrorPassword('');
     }
   };
 
@@ -414,6 +453,14 @@ const FacturasGuardadas = () => {
                 />
               </label>
               <button 
+                className={`button ${mostrarPagadas ? 'success-button' : 'secondary-button'}`}
+                onClick={() => setMostrarPagadas(!mostrarPagadas)}
+                disabled={importando || cargando}
+              >
+                <i className={`fas fa-${mostrarPagadas ? 'eye' : 'eye-slash'}`}></i> 
+                {mostrarPagadas ? 'Ocultar Pagadas' : 'Mostrar Pagadas'}
+              </button>
+              <button 
                 className="button secondary-button"
                 onClick={() => setMostrarResumen(!mostrarResumen)}
                 disabled={importando || cargando}
@@ -469,6 +516,7 @@ const FacturasGuardadas = () => {
           
           <span className="contador">
             {facturasProcesadas.length} de {facturas.length} facturas
+            {!mostrarPagadas && ' (ocultando pagadas)'}
           </span>
         </div>
       </div>
@@ -637,30 +685,50 @@ const FacturasGuardadas = () => {
                   <i className="fas fa-trash"></i> Eliminar
                 </button>
               </footer>
-              
-              {mostrarConfirmacion === factura.id && (
-                <div className="confirmacion-overlay">
-                  <div className="confirmacion-box">
-                    <p>¿Eliminar esta factura y todos sus abonos asociados?</p>
-                    <div className="confirmacion-buttons">
-                      <button 
-                        className="button danger-button"
-                        onClick={() => eliminarFactura(factura.id)}
-                      >
-                        <i className="fas fa-check"></i> Confirmar
-                      </button>
-                      <button 
-                        className="button secondary-button"
-                        onClick={() => setMostrarConfirmacion(null)}
-                      >
-                        <i className="fas fa-times"></i> Cancelar
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              )}
             </article>
           ))}
+        </div>
+      )}
+      
+      {mostrarConfirmacion && (
+        <div className="confirmacion-overlay">
+          <div className="confirmacion-box">
+            <h4>Confirmar eliminación</h4>
+            <p>Para eliminar la factura, ingrese la contraseña de autorización:</p>
+            
+            <div className="password-input-container">
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  setErrorPassword('');
+                }}
+                placeholder="Ingrese la contraseña"
+                className={errorPassword ? 'input-error' : ''}
+              />
+              {errorPassword && <span className="error-text">{errorPassword}</span>}
+            </div>
+            
+            <div className="confirmacion-buttons">
+              <button 
+                className="button danger-button"
+                onClick={() => eliminarFactura(mostrarConfirmacion)}
+              >
+                <i className="fas fa-trash"></i> Eliminar
+              </button>
+              <button 
+                className="button secondary-button"
+                onClick={() => {
+                  setMostrarConfirmacion(null);
+                  setPassword('');
+                  setErrorPassword('');
+                }}
+              >
+                <i className="fas fa-times"></i> Cancelar
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

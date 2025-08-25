@@ -517,3 +517,64 @@
     width: 100%;
   }
 }
+/* Estilos para las advertencias en confirmación de eliminación */
+.advertencia-pagada {
+  background-color: #fff3cd;
+  border-left: 4px solid #ffc107;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.advertencia-parcial {
+  background-color: #d1ecf1;
+  border-left: 4px solid #0dcaf0;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.confirmacion-box h4 {
+  margin: 0 0 10px 0;
+  color: #dc3545;
+}
+
+/* Mejoras para el botón de mostrar/ocultar pagadas */
+.button.success-button {
+  background-color: #28a745;
+  border-color: #28a745;
+}
+
+.button.success-button:hover {
+  background-color: #218838;
+  border-color: #1e7e34;
+}
+.password-input-container {
+  margin: 15px 0;
+  width: 100%;
+}
+
+.password-input-container input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.password-input-container input.input-error {
+  border-color: #e74c3c;
+}
+
+.password-input-container .error-text {
+  color: #e74c3c;
+  font-size: 12px;
+  margin-top: 5px;
+  display: block;
+}
