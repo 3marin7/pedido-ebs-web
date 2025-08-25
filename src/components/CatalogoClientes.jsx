@@ -301,7 +301,7 @@ const CatalogoClientes = () => {
             <i className="fas fa-search"></i>
             <input
               type="text"
-              placeholder="Buscar por nombre, código o descripción..."
+              placeholder="Buscar por nombre, código or descripción..."
               value={busqueda}
               onChange={handleBusquedaChange}
             />
@@ -566,7 +566,7 @@ const CatalogoClientes = () => {
                       name="notas"
                       value={clienteInfo.notas}
                       onChange={handleInputChange}
-                      placeholder="Ej: Necesito el pedido para el viernes, empaque especial, etc."
+                      placeholder="Ej: Necesito el pedido para el viernes, local, direccion, etc ."
                       rows="3"
                     />
                   </div>
@@ -576,25 +576,35 @@ const CatalogoClientes = () => {
                     <span className="total-amount">{formatPrecio(calcularTotal())}</span>
                   </div>
 
-                  <div className="send-order-container">
+                  {/* Botones de acción en el carrito */}
+                  <div className="cart-actions">
                     <button 
-                      className="send-order-button"
-                      onClick={enviarPedidoWhatsApp}
-                      disabled={enviandoPedido}
+                      className="continue-shopping-btn"
+                      onClick={toggleMostrarCarrito}
                     >
-                      {enviandoPedido ? (
-                        <>
-                          <div className="loading-spinner-small"></div>
-                          Enviando...
-                        </>
-                      ) : (
-                        <>
-                          <i className="fab fa-whatsapp"></i> 
-                          Enviar Pedido por WhatsApp
-                        </>
-                      )}
-                      <span className="total-on-button">{formatPrecio(calcularTotal())}</span>
+                      <i className="fas fa-arrow-left"></i> Seguir Comprando
                     </button>
+                    
+                    <div className="send-order-container">
+                      <button 
+                        className="send-order-button"
+                        onClick={enviarPedidoWhatsApp}
+                        disabled={enviandoPedido}
+                      >
+                        {enviandoPedido ? (
+                          <>
+                            <div className="loading-spinner-small"></div>
+                            Enviando...
+                          </>
+                        ) : (
+                          <>
+                            <i className="fab fa-whatsapp"></i> 
+                            Enviar Pedido por WhatsApp
+                          </>
+                        )}
+                        <span className="total-on-button">{formatPrecio(calcularTotal())}</span>
+                      </button>
+                    </div>
                   </div>
                 </>
               )}

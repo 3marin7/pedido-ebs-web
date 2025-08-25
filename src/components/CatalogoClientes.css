@@ -859,4 +859,88 @@ body {
 
 .btn-secondary:hover {
   background: #e5e5e5;
+}/* Acciones del carrito */
+.cart-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.continue-shopping-btn {
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  padding: 15px;
+  border-radius: 8px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  width: 100%;
+}
+
+.continue-shopping-btn:hover {
+  background-color: #5a6268;
+}
+
+.continue-shopping-btn i {
+  font-size: 0.9rem;
+}
+
+/* Ajuste para el contenedor de enviar pedido */
+.send-order-container {
+  width: 100%;
+}
+
+/* Responsive para botones en pantallas pequeñas */
+@media (max-width: 480px) {
+  .cart-actions {
+    gap: 8px;
+  }
+  
+  .continue-shopping-btn,
+  .send-order-button {
+    padding: 12px;
+    font-size: 0.9rem;
+  }
+  
+  .continue-shopping-btn i,
+  .send-order-button i {
+    font-size: 0.8rem;
+  }
+}
+
+/* Mejora visual para los botones */
+.btn-primary {
+  background: #25D366;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s;
+}
+
+.btn-primary:hover {
+  background: #128C7E;
+}
+
+.btn-secondary {
+  background: #f5f5f5;
+  color: #333;
+  border: 1px solid #ddd;
+  padding: 12px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s;
+}
+
+.btn-secondary:hover {
+  background: #e5e5e5;
 }
