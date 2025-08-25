@@ -1,32 +1,35 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
 import { supabase } from './supabaseClient';
 import './CatalogoClientes.css';
 
 const CatalogoClientes = () => {
-  const [state, setState] = useState({
-    productos: [],
-    productosSeleccionados: [],
-    cargando: true,
-    busqueda: '',
-    categoriaFiltro: 'Todas',
-    clienteInfo: {
-      nombre: '',
-      telefono: '',
-      notas: ''
-    },
-    mostrarCarrito: false,
-    showQuantityNotification: false
+  const [productos, setProductos] = useState([]);
+  const [productosSeleccionados, setProductosSeleccionados] = useState([]);
+  const [cargando, setCargando] = useState(true);
+  const [busqueda, setBusqueda] = useState('');
+  const [categoriaFiltro, setCategoriaFiltro] = useState('Todas');
+  const [clienteInfo, setClienteInfo] = useState({
+    nombre: '',
+    telefono: '',
+    notas: ''
   });
-
+  const [mostrarCarrito, setMostrarCarrito] = useState(false);
+  const [showQuantityNotification, setShowQuantityNotification] = useState(false);
   const [categorias, setCategorias] = useState(['Todas']);
+  const [error, setError] = useState(null);
+  const [enviandoPedido, setEnviandoPedido] = useState(false);
+  const [pedidoEnviado, setPedidoEnviado] = useState(false);
+  const [numeroPedido, setNumeroPedido] = useState(null);
+
   const location = useLocation();
 
   // Cargar productos desde Supabase
   useEffect(() => {
     const cargarProductos = async () => {
       try {
-        setState(prev => ({ ...prev, cargando: true }));
+        setCargando(true);
+        setError(null);
         
         const { data: productos, error } = await supabase
           .from('productos')
@@ -45,32 +48,25 @@ const CatalogoClientes = () => {
 
         if (error) throw error;
 
-        const categoriasUnicas = [...new Set(productos.map(p => p.categoria))]
-          .filter(Boolean)
-          .sort();
-
-        setState(prev => ({
-          ...prev,
-          productos: productos,
-          cargando: false
-        }));
-
+        // Extraer categorías únicas
+        const categoriasUnicas = [...new Set(productos.map(p => p.categoria).filter(Boolean))].sort();
         setCategorias(['Todas', ...categoriasUnicas]);
+        setProductos(productos || []);
 
+        // Cargar información del cliente desde URL si existe
         if (location.search) {
           const params = new URLSearchParams(location.search);
-          setState(prev => ({
+          setClienteInfo(prev => ({
             ...prev,
-            clienteInfo: {
-              ...prev.clienteInfo,
-              nombre: params.get('nombre') || '',
-              telefono: params.get('telefono') || ''
-            }
+            nombre: params.get('nombre') || '',
+            telefono: params.get('telefono') || ''
           }));
         }
       } catch (error) {
         console.error("Error cargando productos:", error);
-        setState(prev => ({ ...prev, cargando: false }));
+        setError('Error al cargar el catálogo. Intenta nuevamente.');
+      } finally {
+        setCargando(false);
       }
     };
     
@@ -80,34 +76,38 @@ const CatalogoClientes = () => {
   // Handlers
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setState(prev => ({
+    setClienteInfo(prev => ({
       ...prev,
-      clienteInfo: {
-        ...prev.clienteInfo,
-        [name]: value
-      }
+      [name]: value
     }));
   };
 
   const handleBusquedaChange = (e) => {
-    setState(prev => ({ ...prev, busqueda: e.target.value }));
+    setBusqueda(e.target.value);
   };
 
   const handleCategoriaChange = (e) => {
-    setState(prev => ({ ...prev, categoriaFiltro: e.target.value }));
+    setCategoriaFiltro(e.target.value);
   };
 
   const toggleMostrarCarrito = () => {
-    setState(prev => ({ ...prev, mostrarCarrito: !prev.mostrarCarrito }));
+    setMostrarCarrito(prev => !prev);
   };
 
-  // Filtrar productos
-  const productosFiltrados = state.productos.filter(producto => {
-    const coincideBusqueda = producto.nombre.toLowerCase().includes(state.busqueda.toLowerCase()) || 
-                          (producto.codigo && producto.codigo.toLowerCase().includes(state.busqueda.toLowerCase()));
-    const coincideCategoria = state.categoriaFiltro === 'Todas' || producto.categoria === state.categoriaFiltro;
-    return coincideBusqueda && coincideCategoria;
-  });
+  // Filtrar productos con useCallback para mejor rendimiento
+  const productosFiltrados = useCallback(() => {
+    return productos.filter(producto => {
+      const terminoBusqueda = busqueda.toLowerCase();
+      const coincideBusqueda = 
+        producto.nombre.toLowerCase().includes(terminoBusqueda) || 
+        (producto.codigo && producto.codigo.toLowerCase().includes(terminoBusqueda)) ||
+        (producto.descripcion && producto.descripcion.toLowerCase().includes(terminoBusqueda));
+      
+      const coincideCategoria = categoriaFiltro === 'Todas' || producto.categoria === categoriaFiltro;
+      
+      return coincideBusqueda && coincideCategoria;
+    });
+  }, [productos, busqueda, categoriaFiltro]);
 
   // Formatear precio
   const formatPrecio = (precio) => {
@@ -115,63 +115,99 @@ const CatalogoClientes = () => {
       style: 'currency',
       currency: 'COP',
       minimumFractionDigits: 0
-    }).format(precio);
+    }).format(precio || 0);
   };
 
   // Manejar selección de productos
   const toggleProductoSeleccionado = (producto) => {
-    setState(prev => {
-      const existe = prev.productosSeleccionados.find(p => p.id === producto.id);
-      const nuevosProductos = existe
-        ? prev.productosSeleccionados.filter(p => p.id !== producto.id)
-        : [...prev.productosSeleccionados, { ...producto, cantidad: 1 }];
+    const existe = productosSeleccionados.find(p => p.id === producto.id);
+    
+    if (existe) {
+      setProductosSeleccionados(prev => prev.filter(p => p.id !== producto.id));
+    } else {
+      const nuevoProducto = { 
+        ...producto, 
+        cantidad: 1,
+        precio: producto.precio || 0
+      };
+      setProductosSeleccionados(prev => [...prev, nuevoProducto]);
       
-      // Mostrar notificación al agregar
-      if (!existe) {
-        setTimeout(() => {
-          setState(prev => ({ ...prev, showQuantityNotification: false }));
-        }, 2000);
-        return { 
-          ...prev, 
-          productosSeleccionados: nuevosProductos, 
-          showQuantityNotification: true,
-          // Mostrar automáticamente el carrito al agregar cualquier producto
-          mostrarCarrito: true
-        };
+      // Mostrar notificación
+      setShowQuantityNotification(true);
+      setTimeout(() => setShowQuantityNotification(false), 2000);
+      
+      // Mostrar automáticamente el carrito
+      if (!mostrarCarrito) {
+        setMostrarCarrito(true);
       }
-      
-      return { ...prev, productosSeleccionados: nuevosProductos };
-    });
+    }
   };
 
   // Actualizar cantidad de un producto seleccionado
   const actualizarCantidad = (id, cantidad) => {
-    if (cantidad < 1) return;
+    const nuevaCantidad = Math.max(1, Math.min(parseInt(cantidad) || 1, 999));
     
-    setState(prev => ({
-      ...prev,
-      productosSeleccionados: prev.productosSeleccionados.map(p => 
-        p.id === id ? { ...p, cantidad: Math.min(parseInt(cantidad), 999) } : p
-      )
-    }));
+    setProductosSeleccionados(prev => 
+      prev.map(p => p.id === id ? { ...p, cantidad: nuevaCantidad } : p)
+    );
   };
 
   // Calcular total
   const calcularTotal = () => {
-    return state.productosSeleccionados.reduce((total, p) => total + (p.precio * p.cantidad), 0);
+    return productosSeleccionados.reduce((total, p) => {
+      const precio = p.precio || 0;
+      const cantidad = p.cantidad || 1;
+      return total + (precio * cantidad);
+    }, 0);
   };
 
-  // Generar enlace de WhatsApp
-  const generarEnlaceWhatsApp = async () => {
-    if (!state.clienteInfo.nombre || !state.clienteInfo.telefono) {
-      alert('Por favor ingresa tu nombre y teléfono');
-      return;
+  // Validar información del cliente
+  const validarCliente = () => {
+    if (!clienteInfo.nombre.trim()) {
+      alert('Por favor ingresa tu nombre completo');
+      return false;
     }
+    
+    if (!clienteInfo.telefono.trim()) {
+      alert('Por favor ingresa tu número de teléfono');
+      return false;
+    }
+    
+    const telefonoValido = /^[0-9]{10,15}$/.test(clienteInfo.telefono.replace(/\D/g, ''));
+    if (!telefonoValido) {
+      alert('Por favor ingresa un número de teléfono válido (mínimo 10 dígitos)');
+      return false;
+    }
+    
+    return true;
+  };
 
-    if (state.productosSeleccionados.length === 0) {
+  // Reiniciar para nuevo pedido
+  const reiniciarParaNuevoPedido = () => {
+    setProductosSeleccionados([]);
+    setClienteInfo(prev => ({
+      ...prev,
+      notas: '' // Limpiar notas pero mantener nombre y teléfono
+    }));
+    setPedidoEnviado(false);
+    setNumeroPedido(null);
+    setMostrarCarrito(false);
+  };
+
+  // Generar enlace de WhatsApp - VERSIÓN CORREGIDA
+  const enviarPedidoWhatsApp = async () => {
+    if (enviandoPedido) return;
+    
+    if (productosSeleccionados.length === 0) {
       alert('Por favor selecciona al menos un producto');
       return;
     }
+
+    if (!validarCliente()) {
+      return;
+    }
+
+    setEnviandoPedido(true);
 
     try {
       // 1. Primero guardar el pedido en la base de datos
@@ -179,12 +215,12 @@ const CatalogoClientes = () => {
         .from('pedidos')
         .insert([
           {
-            cliente_nombre: state.clienteInfo.nombre,
-            cliente_telefono: state.clienteInfo.telefono,
-            cliente_notas: state.clienteInfo.notas || 'Ninguna',
-            productos: state.productosSeleccionados,
+            cliente_nombre: clienteInfo.nombre.trim(),
+            cliente_telefono: clienteInfo.telefono.replace(/\D/g, ''),
+            cliente_notas: clienteInfo.notas.trim() || 'Ninguna',
+            productos: productosSeleccionados,
             total: calcularTotal(),
-            estado: 'pendiente', // Estado inicial
+            estado: 'pendiente',
             fecha_creacion: new Date().toISOString()
           }
         ])
@@ -192,36 +228,58 @@ const CatalogoClientes = () => {
 
       if (error) throw error;
 
-      // 2. Si se guardó correctamente, enviar por WhatsApp
-      const numeroWhatsApp = '573042919147';
-      const mensaje = `¡Hola! Soy ${state.clienteInfo.nombre} (${state.clienteInfo.telefono}). Quiero hacer el siguiente pedido:\n\n` +
-        state.productosSeleccionados.map(p => 
-          `- ${p.nombre} (${formatPrecio(p.precio)}): ${p.cantidad} unidad(es)`
-        ).join('\n') +
-        `\n\nTotal: ${formatPrecio(calcularTotal())}` +
-        `\n\nNotas: ${state.clienteInfo.notas || 'Ninguna'}` +
-        `\n\nNº de pedido: ${pedido[0].id}`; // Incluimos el ID del pedido
+      // Guardar número de pedido para mostrarlo en la confirmación
+      setNumeroPedido(pedido[0].id);
+
+      // 2. Preparar mensaje para WhatsApp - FORMATO MEJORADO
+      const numeroWhatsApp = '573004583117'; // Número corregido
       
-      const url = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(mensaje)}`;
+      // Crear mensaje con formato más limpio
+      let mensaje = `*¡NUEVO PEDIDO!*%0A%0A`;
+      mensaje += `*Cliente:* ${clienteInfo.nombre}%0A`;
+      mensaje += `*Teléfono:* ${clienteInfo.telefono}%0A%0A`;
+      mensaje += `*📦 PRODUCTOS SELECCIONADOS:*%0A%0A`;
+      
+      productosSeleccionados.forEach(p => {
+        mensaje += `✔️ ${p.nombre}%0A`;
+        mensaje += `   Cantidad: ${p.cantidad}%0A`;
+        mensaje += `   Precio: ${formatPrecio(p.precio)}%0A`;
+        mensaje += `   Subtotal: ${formatPrecio(p.precio * p.cantidad)}%0A%0A`;
+      });
+      
+      mensaje += `*💰 TOTAL: ${formatPrecio(calcularTotal())}*%0A%0A`;
+      
+      if (clienteInfo.notas.trim()) {
+        mensaje += `*📝 NOTAS:*%0A${clienteInfo.notas}%0A%0A`;
+      }
+      
+      mensaje += `*📋 Nº DE PEDIDO:* ${pedido[0].id}%0A`;
+      mensaje += `*📅 FECHA:* ${new Date().toLocaleDateString('es-CO')}%0A%0A`;
+      mensaje += `_Pedido generado desde Catálogo Digital_`;
+
+      // Crear URL de WhatsApp - FORMA ALTERNATIVA MÁS CONFIABLE
+      const url = `https://api.whatsapp.com/send?phone=${numeroWhatsApp}&text=${mensaje}`;
+      
+      // Mostrar confirmación
+      setPedidoEnviado(true);
+      
+      // Abrir WhatsApp inmediatamente
       window.open(url, '_blank');
+      
+      // Cerrar el estado de envío después de un breve tiempo
+      setTimeout(() => {
+        setEnviandoPedido(false);
+      }, 2000);
 
     } catch (error) {
       console.error('Error al guardar el pedido:', error);
       alert('Hubo un error al procesar tu pedido. Por favor, intenta nuevamente.');
+      setEnviandoPedido(false);
     }
   };
 
-  // Generar link para compartir
-  const generarLinkCompartir = () => {
-    const baseUrl = window.location.origin + window.location.pathname;
-    const params = new URLSearchParams();
-    if (state.clienteInfo.nombre) params.append('nombre', state.clienteInfo.nombre);
-    if (state.clienteInfo.telefono) params.append('telefono', state.clienteInfo.telefono);
-    
-    const urlCompleta = `${baseUrl}?${params.toString()}`;
-    navigator.clipboard.writeText(urlCompleta);
-    alert('¡Link copiado! Puedes compartirlo con el cliente');
-  };
+  // Productos filtrados
+  const productosFiltradosLista = productosFiltrados();
 
   return (
     <div className="catalogo-mobile">
@@ -231,8 +289,8 @@ const CatalogoClientes = () => {
           <h1><i className="fas fa-store"></i> CATÁLOGO DISTRIBUCIONES-EBS-HERMANOS-MARIN</h1>
           <button className="cart-button" onClick={toggleMostrarCarrito}>
             <i className="fas fa-shopping-cart"></i>
-            {state.productosSeleccionados.length > 0 && (
-              <span className="cart-badge">{state.productosSeleccionados.length}</span>
+            {productosSeleccionados.length > 0 && (
+              <span className="cart-badge">{productosSeleccionados.length}</span>
             )}
           </button>
         </div>
@@ -244,13 +302,13 @@ const CatalogoClientes = () => {
             <input
               type="text"
               placeholder="Buscar por nombre, código o descripción..."
-              value={state.busqueda}
+              value={busqueda}
               onChange={handleBusquedaChange}
             />
-            {state.busqueda && (
+            {busqueda && (
               <button 
                 className="clear-search"
-                onClick={() => setState(prev => ({ ...prev, busqueda: '' }))}
+                onClick={() => setBusqueda('')}
               >
                 <i className="fas fa-times"></i>
               </button>
@@ -258,11 +316,10 @@ const CatalogoClientes = () => {
           </div>
           
           <select 
-            value={state.categoriaFiltro}
+            value={categoriaFiltro}
             onChange={handleCategoriaChange}
             className="category-selector"
           >
-            <option value="Todas">Todas</option>
             {categorias.map(cat => (
               <option key={cat} value={cat}>{cat}</option>
             ))}
@@ -270,56 +327,29 @@ const CatalogoClientes = () => {
         </div>
       </header>
 
-      {/* Información del cliente */}
-      <div className="cliente-info-section">
-        <h3>Tus Datos</h3>
-        <div className="cliente-form">
-          <div className="form-group">
-            <input
-              type="text"
-              name="nombre"
-              value={state.clienteInfo.nombre}
-              onChange={handleInputChange}
-              placeholder="Nombre Completo (Ej: María González)"
-              required
-            />
-          </div>
-          <div className="form-group">
-            <input
-              type="tel"
-              name="telefono"
-              value={state.clienteInfo.telefono}
-              onChange={handleInputChange}
-              placeholder="Teléfono (Ej: 3001234567)"
-              required
-            />
-          </div>
-          <button 
-            className="share-button"
-            onClick={generarLinkCompartir}
-            disabled={!state.clienteInfo.nombre || !state.clienteInfo.telefono}
-          >
-            <i className="fas fa-share-alt"></i> Guardar y Compartir Link
-          </button>
+      {/* Mensaje de error */}
+      {error && (
+        <div className="error-message">
+          <i className="fas fa-exclamation-triangle"></i> {error}
         </div>
-      </div>
+      )}
 
       {/* Lista de productos */}
-      {state.cargando ? (
+      {cargando ? (
         <div className="loading-state">
           <div className="spinner"></div>
           <p>Cargando catálogo...</p>
         </div>
-      ) : productosFiltrados.length === 0 ? (
+      ) : productosFiltradosLista.length === 0 ? (
         <div className="empty-state">
           <i className="fas fa-search"></i>
           <h3>No encontramos productos</h3>
-          <p>Prueba con otros términos de búsqueda</p>
+          <p>Prueba con otros términos de búsqueda o selecciona otra categoría</p>
         </div>
       ) : (
         <div className="product-list">
-          {productosFiltrados.map(producto => {
-            const estaSeleccionado = state.productosSeleccionados.some(p => p.id === producto.id);
+          {productosFiltradosLista.map(producto => {
+            const estaSeleccionado = productosSeleccionados.some(p => p.id === producto.id);
             return (
               <div 
                 key={producto.id} 
@@ -362,51 +392,83 @@ const CatalogoClientes = () => {
       {/* Bottom Navigation */}
       <div className="bottom-nav">
         <button 
-          className="nav-button" 
-          onClick={generarLinkCompartir}
-          disabled={!state.clienteInfo.nombre || !state.clienteInfo.telefono}
-        >
-          <i className="fas fa-share-alt"></i>
-          <span>Compartir</span>
-        </button>
-        <button 
           className="whatsapp-button nav-button"
-          onClick={generarEnlaceWhatsApp}
-          disabled={state.productosSeleccionados.length === 0}
+          onClick={toggleMostrarCarrito}
+          disabled={productosSeleccionados.length === 0}
         >
           <i className="fab fa-whatsapp"></i>
-          <span>Pedido</span>
+          <span>Ver Pedido</span>
+          {productosSeleccionados.length > 0 && (
+            <span className="nav-badge">{productosSeleccionados.length}</span>
+          )}
         </button>
       </div>
 
       {/* Notificación de cantidad */}
-      {state.showQuantityNotification && (
+      {showQuantityNotification && (
         <div className="quantity-notification">
-          Producto agregado al carrito ({state.productosSeleccionados.length})
+          Producto agregado al carrito ({productosSeleccionados.length})
+        </div>
+      )}
+
+      {/* Confirmación de pedido enviado */}
+      {pedidoEnviado && (
+        <div className="confirmation-overlay">
+          <div className="confirmation-content">
+            <div className="confirmation-icon">
+              <i className="fas fa-check-circle"></i>
+            </div>
+            <h3>¡Pedido Enviado con Éxito!</h3>
+            <p>Tu pedido <strong>#{numeroPedido}</strong> ha sido enviado por WhatsApp.</p>
+            <p>En breve nos comunicaremos contigo para confirmarlo.</p>
+            <div className="confirmation-buttons">
+              <button 
+                className="btn-secondary"
+                onClick={() => {
+                  setPedidoEnviado(false);
+                  setMostrarCarrito(true);
+                }}
+              >
+                Ver Detalles
+              </button>
+              <button 
+                className="btn-primary"
+                onClick={reiniciarParaNuevoPedido}
+              >
+                Hacer Otro Pedido
+              </button>
+            </div>
+          </div>
         </div>
       )}
 
       {/* Carrito mejorado */}
-      {state.mostrarCarrito && (
+      {mostrarCarrito && (
         <div className="cart-overlay">
           <div className="cart-content">
             <div className="cart-header">
-              <h2>Tu Pedido</h2>
+              <h2>Tu Pedido {numeroPedido && `#${numeroPedido}`}</h2>
               <button className="close-button" onClick={toggleMostrarCarrito}>
                 &times;
               </button>
             </div>
             
             <div className="cart-body">
-              {state.productosSeleccionados.length === 0 ? (
+              {productosSeleccionados.length === 0 ? (
                 <div className="empty-cart">
                   <i className="fas fa-shopping-basket"></i>
                   <p>No has seleccionado productos</p>
+                  <button 
+                    className="btn-primary"
+                    onClick={toggleMostrarCarrito}
+                  >
+                    Seguir Comprando
+                  </button>
                 </div>
               ) : (
                 <>
                   <div className="cart-items">
-                    {state.productosSeleccionados.map(producto => (
+                    {productosSeleccionados.map(producto => (
                       <div key={producto.id} className="cart-item">
                         <div className="item-info">
                           <h4>{producto.nombre}</h4>
@@ -415,7 +477,7 @@ const CatalogoClientes = () => {
                         
                         <div className="quantity-controls">
                           <span className="item-total">
-                            {formatPrecio(producto.precio * producto.cantidad)}
+                            {formatPrecio((producto.precio || 0) * (producto.cantidad || 1))}
                           </span>
                           
                           <div className="quantity-selector">
@@ -423,7 +485,7 @@ const CatalogoClientes = () => {
                               className="quantity-btn decrease"
                               onClick={(e) => {
                                 e.stopPropagation();
-                                actualizarCantidad(producto.id, producto.cantidad - 1);
+                                actualizarCantidad(producto.id, (producto.cantidad || 1) - 1);
                               }}
                             >
                               −
@@ -431,18 +493,19 @@ const CatalogoClientes = () => {
                             <input
                               type="number"
                               className="quantity-input"
-                              value={producto.cantidad}
+                              value={producto.cantidad || 1}
                               onChange={(e) => {
                                 e.stopPropagation();
                                 actualizarCantidad(producto.id, e.target.value);
                               }}
                               min="1"
+                              max="999"
                             />
                             <button 
                               className="quantity-btn increase"
                               onClick={(e) => {
                                 e.stopPropagation();
-                                actualizarCantidad(producto.id, producto.cantidad + 1);
+                                actualizarCantidad(producto.id, (producto.cantidad || 1) + 1);
                               }}
                             >
                               +
@@ -463,13 +526,47 @@ const CatalogoClientes = () => {
                     ))}
                   </div>
                   
+                  {/* Información del cliente dentro del carrito */}
+                  <div className="cliente-info-cart">
+                    <h3>Completa tus datos para enviar el pedido</h3>
+                    <div className="cliente-form">
+                      <div className="form-group">
+                        <label htmlFor="nombre-cliente">Nombre Completo *</label>
+                        <input
+                          id="nombre-cliente"
+                          type="text"
+                          name="nombre"
+                          value={clienteInfo.nombre}
+                          onChange={handleInputChange}
+                          placeholder="Ej: María González"
+                          className={!clienteInfo.nombre.trim() ? 'input-error' : ''}
+                        />
+                        {!clienteInfo.nombre.trim() && <span className="error-text">Campo obligatorio</span>}
+                      </div>
+                      <div className="form-group">
+                        <label htmlFor="telefono-cliente">Teléfono *</label>
+                        <input
+                          id="telefono-cliente"
+                          type="tel"
+                          name="telefono"
+                          value={clienteInfo.telefono}
+                          onChange={handleInputChange}
+                          placeholder="Ej: 3001234567"
+                          className={!clienteInfo.telefono.trim() ? 'input-error' : ''}
+                        />
+                        {!clienteInfo.telefono.trim() && <span className="error-text">Campo obligatorio</span>}
+                        <small>El teléfono debe tener al menos 10 dígitos</small>
+                      </div>
+                    </div>
+                  </div>
+                  
                   <div className="order-notes">
-                    <label>Notas adicionales:</label>
+                    <label>Notas adicionales (opcional):</label>
                     <textarea
                       name="notas"
-                      value={state.clienteInfo.notas}
+                      value={clienteInfo.notas}
                       onChange={handleInputChange}
-                      placeholder="Ej: Necesito el pedido para el viernes..."
+                      placeholder="Ej: Necesito el pedido para el viernes, empaque especial, etc."
                       rows="3"
                     />
                   </div>
@@ -479,14 +576,23 @@ const CatalogoClientes = () => {
                     <span className="total-amount">{formatPrecio(calcularTotal())}</span>
                   </div>
 
-                  {/* Botón de enviar pedido mejorado */}
                   <div className="send-order-container">
                     <button 
                       className="send-order-button"
-                      onClick={generarEnlaceWhatsApp}
-                      disabled={state.productosSeleccionados.length === 0}
+                      onClick={enviarPedidoWhatsApp}
+                      disabled={enviandoPedido}
                     >
-                      <i className="fab fa-whatsapp"></i> Enviar Pedido por WhatsApp
+                      {enviandoPedido ? (
+                        <>
+                          <div className="loading-spinner-small"></div>
+                          Enviando...
+                        </>
+                      ) : (
+                        <>
+                          <i className="fab fa-whatsapp"></i> 
+                          Enviar Pedido por WhatsApp
+                        </>
+                      )}
                       <span className="total-on-button">{formatPrecio(calcularTotal())}</span>
                     </button>
                   </div>
