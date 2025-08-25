@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../App';
 import { Link } from 'react-router-dom';
+import './Login.css'; // Asegúrate de importar el CSS
 
 const Login = () => {
   const [username, setUsername] = useState('');
@@ -9,7 +10,7 @@ const Login = () => {
   const [error, setError] = useState('');
   const { login } = useAuth();
 
-  // Datos de usuarios de ejemplo (en una app real, esto vendría de una API)
+  // Datos de usuarios de ejemplo
   const users = [
     { id: 1, username: 'EBS', password: 'E1', role: 'admin' },
     { id: 2, username: 'v', password: 'v1', role: 'vendedor' },
@@ -30,86 +31,57 @@ const Login = () => {
   };
 
   return (
-    <div style={{ 
-      maxWidth: '400px', 
-      margin: '50px auto', 
-      padding: '20px',
-      border: '1px solid #ddd',
-      borderRadius: '8px',
-      boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-    }}>
-      <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>Iniciar Sesión</h2>
-      <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: '15px' }}>
-          <label style={{ display: 'block', marginBottom: '5px' }}>Usuario:</label>
-          <input
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-            style={{
-              width: '100%',
-              padding: '8px',
-              border: '1px solid #ccc',
-              borderRadius: '4px',
-              boxSizing: 'border-box'
-            }}
-          />
+    <div className="login-container">
+      <div className="login-card">
+        <div className="login-header">
+          <h1>Distribuciones EBS Hermanos Marín</h1>
+          <p>Sistema de pedidos y catálogo digital</p>
         </div>
-        <div style={{ marginBottom: '15px' }}>
-          <label style={{ display: 'block', marginBottom: '5px' }}>Contraseña:</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            style={{
-              width: '100%',
-              padding: '8px',
-              border: '1px solid #ccc',
-              borderRadius: '4px',
-              boxSizing: 'border-box'
-            }}
-          />
+        
+        <div className="login-content">
+          <div className="login-form-section">
+            <h3>Acceso para el equipo</h3>
+            <p>Ingresa tus credenciales para acceder al sistema</p>
+            
+            <form onSubmit={handleSubmit}>
+              <div className="form-group">
+                <label>Usuario:</label>
+                <input
+                  type="text"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  required
+                  placeholder="Ingresa tu usuario"
+                />
+              </div>
+              <div className="form-group">
+                <label>Contraseña:</label>
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  placeholder="Ingresa tu contraseña"
+                />
+              </div>
+              {error && <div className="error-message">{error}</div>}
+              <button type="submit" className="login-btn">
+                Ingresar al sistema
+              </button>
+            </form>
+          </div>
+          
+          <div className="catalog-section">
+            <div className="catalog-icon">
+              <i className="fas fa-store"></i>
+            </div>
+            <h2>Explora nuestro catálogo</h2>
+            <p>Descubre todos nuestros productos disponibles y realiza tus pedidos directamente por WhatsApp sin necesidad de crear una cuenta.</p>
+            <Link to="/catalogo-clientes" className="catalog-btn">
+              Ver Catálogo Completo
+            </Link>
+          </div>
         </div>
-        {error && <div style={{ color: 'red', marginBottom: '15px' }}>{error}</div>}
-        <button 
-          type="submit"
-          style={{
-            width: '100%',
-            padding: '10px',
-            backgroundColor: '#007bff',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer',
-            marginBottom: '15px'
-          }}
-          onMouseOver={(e) => e.target.style.backgroundColor = '#0056b3'}
-          onMouseOut={(e) => e.target.style.backgroundColor = '#007bff'}
-        >
-          Ingresar
-        </button>
-      </form>
-      
-      <div style={{ textAlign: 'center', marginTop: '20px', paddingTop: '15px', borderTop: '1px solid #eee' }}>
-        <p style={{ marginBottom: '10px' }}>¿Quieres ver nuestro catálogo de clientes?</p>
-        <Link 
-          to="/catalogo-clientes"
-          style={{
-            display: 'inline-block',
-            padding: '10px 15px',
-            backgroundColor: '#28a745',
-            color: 'white',
-            textDecoration: 'none',
-            borderRadius: '4px',
-            transition: 'background-color 0.3s'
-          }}
-          onMouseOver={(e) => e.target.style.backgroundColor = '#218838'}
-          onMouseOut={(e) => e.target.style.backgroundColor = '#28a745'}
-        >
-          Ver Catálogo de Clientes
-        </Link>
       </div>
     </div>
   );
