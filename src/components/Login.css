@@ -1,7 +1,7 @@
 /* Login.css */
 .login-container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #929dca 0%, #05092b 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -51,12 +51,12 @@
 
 .catalog-icon {
   font-size: 48px;
-  color: #4a6bdf;
+  color: #ed2906;
   margin-bottom: 15px;
 }
 
 .catalog-section h2 {
-  color: #2c3e50;
+  color: #b0bdca;
   margin-bottom: 15px;
   font-size: 22px;
 }
@@ -69,7 +69,7 @@
 
 .catalog-btn {
   display: inline-block;
-  background: #4a6bdf;
+  background: #51991a;
   color: white;
   padding: 12px 30px;
   border-radius: 50px;

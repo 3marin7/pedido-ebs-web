@@ -21,6 +21,7 @@ const CatalogoClientes = () => {
   const [enviandoPedido, setEnviandoPedido] = useState(false);
   const [pedidoEnviado, setPedidoEnviado] = useState(false);
   const [numeroPedido, setNumeroPedido] = useState(null);
+  const [imagenAmpliada, setImagenAmpliada] = useState(null);
 
   const location = useLocation();
 
@@ -92,6 +93,17 @@ const CatalogoClientes = () => {
 
   const toggleMostrarCarrito = () => {
     setMostrarCarrito(prev => !prev);
+  };
+
+  // Función para abrir imagen ampliada
+  const abrirImagenAmpliada = (producto, e) => {
+    e.stopPropagation(); // Prevenir que se active la selección del producto
+    setImagenAmpliada(producto);
+  };
+
+  // Función para cerrar imagen ampliada
+  const cerrarImagenAmpliada = () => {
+    setImagenAmpliada(null);
   };
 
   // Filtrar productos con useCallback para mejor rendimiento
@@ -371,6 +383,15 @@ const CatalogoClientes = () => {
                       <i className="fas fa-check"></i>
                     </div>
                   )}
+                  
+                  {/* Botón para ampliar imagen */}
+                  <button 
+                    className="expand-image-btn"
+                    onClick={(e) => abrirImagenAmpliada(producto, e)}
+                    aria-label="Ampliar imagen"
+                  >
+                    <i className="fas fa-expand"></i>
+                  </button>
                 </div>
                 
                 <div className="product-info">
@@ -386,6 +407,49 @@ const CatalogoClientes = () => {
               </div>
             );
           })}
+        </div>
+      )}
+
+      {/* Modal para imagen ampliada */}
+      {imagenAmpliada && (
+        <div className="image-modal-overlay" onClick={cerrarImagenAmpliada}>
+          <div className="image-modal-content" onClick={(e) => e.stopPropagation()}>
+            <button className="close-modal-btn" onClick={cerrarImagenAmpliada}>
+              <i className="fas fa-times"></i>
+            </button>
+            
+            <div className="modal-image-container">
+              <img 
+                src={imagenAmpliada.imagen_url || 'https://via.placeholder.com/300?text=Producto'} 
+                alt={imagenAmpliada.nombre}
+                className="modal-image"
+                onError={(e) => {
+                  e.target.src = 'https://via.placeholder.com/300?text=Imagen+no+disponible';
+                }}
+              />
+            </div>
+            
+            <div className="modal-product-info">
+              <h3>{imagenAmpliada.nombre}</h3>
+              {imagenAmpliada.codigo && <p>Ref: {imagenAmpliada.codigo}</p>}
+              <p className="modal-price">{formatPrecio(imagenAmpliada.precio)}</p>
+              {imagenAmpliada.descripcion && (
+                <p className="modal-description">{imagenAmpliada.descripcion}</p>
+              )}
+            </div>
+            
+            <button 
+              className={`select-product-btn ${productosSeleccionados.some(p => p.id === imagenAmpliada.id) ? 'selected' : ''}`}
+              onClick={() => {
+                toggleProductoSeleccionado(imagenAmpliada);
+                cerrarImagenAmpliada();
+              }}
+            >
+              {productosSeleccionados.some(p => p.id === imagenAmpliada.id) 
+                ? '✓ Quitar del pedido' 
+                : 'Agregar al pedido'}
+            </button>
+          </div>
         </div>
       )}
 
