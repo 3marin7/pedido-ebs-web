@@ -244,7 +244,7 @@ const CatalogoClientes = () => {
       setNumeroPedido(pedido[0].id);
 
       // 2. Preparar mensaje para WhatsApp - FORMATO MEJORADO
-      const numeroWhatsApp = '573004583117'; // Número corregido
+      const numeroWhatsApp = '573004583117'; // Número corregido con código de país
       
       // Crear mensaje con formato más limpio
       let mensaje = `*¡NUEVO PEDIDO!*%0A%0A`;
@@ -607,7 +607,7 @@ const CatalogoClientes = () => {
                     ))}
                   </div>
                   
-                  {/* Información del cliente dentro del carrito */}
+                  {/* Información del cliente dentro del carrito - SIN MODIFICAR */}
                   <div className="cliente-info-cart">
                     <h3>Completa tus datos para enviar el pedido</h3>
                     <div className="cliente-form">
