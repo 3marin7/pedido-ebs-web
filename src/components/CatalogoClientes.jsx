@@ -359,34 +359,33 @@ const CatalogoClientes = () => {
           <p>Prueba con otros términos de búsqueda o selecciona otra categoría</p>
         </div>
       ) : (
-        <div className="product-list">
+        <div className="product-list-single">
           {productosFiltradosLista.map(producto => {
             const estaSeleccionado = productosSeleccionados.some(p => p.id === producto.id);
             return (
               <div 
                 key={producto.id} 
-                className={`product-card ${estaSeleccionado ? 'selected' : ''}`}
-                onClick={() => toggleProductoSeleccionado(producto)}
+                className={`product-card-single ${estaSeleccionado ? 'selected' : ''}`}
               >
-                <div className="product-image-container">
+                <div className="product-image-container-single">
                   <img 
-                    src={producto.imagen_url || 'https://via.placeholder.com/150?text=Producto'} 
+                    src={producto.imagen_url || 'https://via.placeholder.com/300?text=Producto'} 
                     alt={producto.nombre}
                     loading="lazy"
-                    className="product-image"
+                    className="product-image-single"
                     onError={(e) => {
-                      e.target.src = 'https://via.placeholder.com/150?text=Imagen+no+disponible';
+                      e.target.src = 'https://via.placeholder.com/300?text=Imagen+no+disponible';
                     }}
                   />
                   {estaSeleccionado && (
-                    <div className="selected-badge">
+                    <div className="selected-badge-single">
                       <i className="fas fa-check"></i>
                     </div>
                   )}
                   
                   {/* Botón para ampliar imagen */}
                   <button 
-                    className="expand-image-btn"
+                    className="expand-image-btn-single"
                     onClick={(e) => abrirImagenAmpliada(producto, e)}
                     aria-label="Ampliar imagen"
                   >
@@ -394,15 +393,33 @@ const CatalogoClientes = () => {
                   </button>
                 </div>
                 
-                <div className="product-info">
-                  <h3 className="product-name">{producto.nombre}</h3>
+                <div className="product-info-single">
+                  <h3 className="product-name-single">{producto.nombre}</h3>
                   {producto.codigo && (
-                    <p className="product-code">Ref: {producto.codigo}</p>
+                    <p className="product-code-single">Ref: {producto.codigo}</p>
                   )}
-                  <p className="product-price">{formatPrecio(producto.precio)}</p>
+                  {producto.descripcion && (
+                    <p className="product-description-single">{producto.descripcion}</p>
+                  )}
+                  <p className="product-price-single">{formatPrecio(producto.precio)}</p>
                   {producto.categoria && (
-                    <span className="product-category">{producto.categoria}</span>
+                    <span className="product-category-single">{producto.categoria}</span>
                   )}
+                  
+                  <button 
+                    className={`add-to-cart-btn ${estaSeleccionado ? 'added' : ''}`}
+                    onClick={() => toggleProductoSeleccionado(producto)}
+                  >
+                    {estaSeleccionado ? (
+                      <>
+                        <i className="fas fa-check"></i> Agregado
+                      </>
+                    ) : (
+                      <>
+                        <i className="fas fa-cart-plus"></i> Agregar al carrito
+                      </>
+                    )}
+                  </button>
                 </div>
               </div>
             );
