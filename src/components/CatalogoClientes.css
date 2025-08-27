@@ -1344,4 +1344,40 @@ body {
     font-size: 0.8rem;
     padding: 3px 8px;
   }
+}/* Estilos para la barra de navegación inferior */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #fff;
+  border-top: 1px solid #e0e0e0;
+  padding: 10px 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+.brand-text {
+  position: absolute;
+  right: 15px;
+  color: #666;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* Ajustar el botón principal para que no se superponga */
+.whatsapp-button.nav-button {
+  position: relative;
+  margin: 0;
+}
+
+/* Asegurar que el texto de marca no se vea en pantallas muy pequeñas */
+@media (max-width: 320px) {
+  .brand-text {
+    font-size: 10px;
+    right: 10px;
+  }
 }

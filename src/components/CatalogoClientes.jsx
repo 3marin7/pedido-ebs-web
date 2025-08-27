@@ -470,7 +470,7 @@ const CatalogoClientes = () => {
         </div>
       )}
 
-      {/* Bottom Navigation */}
+      {/* Bottom Navigation - MODIFICADO */}
       <div className="bottom-nav">
         <button 
           className="whatsapp-button nav-button"
@@ -483,6 +483,11 @@ const CatalogoClientes = () => {
             <span className="nav-badge">{productosSeleccionados.length}</span>
           )}
         </button>
+        
+        {/* Texto agregado en la esquina derecha */}
+        <div className="brand-text">
+          EBS Hermanos Marin - ING. Edwin Marin 3004583117
+        </div>
       </div>
 
       {/* Notificación de cantidad */}
