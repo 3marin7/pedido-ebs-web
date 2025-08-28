@@ -286,7 +286,7 @@ const CatalogoProductos = () => {
   const [editandoId, setEditandoId] = useState(null);
   const [filtroEstado, setFiltroEstado] = useState('activos');
 
-  const categorias = ['Toallas', 'Bloqueadores', 'Pañales', 'Alimentos', 'Desodorantes', 'Medicamentos', 'Otros'];
+  const categorias = ['Toallas', 'Bloqueadores y Cuidado de la Piel', 'Pañales', 'Alimentos', 'Desodorantes', 'Medicamentos', 'Cuidado del Cabello','Jabones y Geles','Otros','Producto del Dia Promocion '];
 
   // Cargar productos desde Supabase
   useEffect(() => {
