@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from './supabaseClient'; // Asegúrate de que la ruta sea correcta
+import { supabase } from './supabaseClient';
 import './CatalogoProductos.css';
 
+// Componente para subir imágenes a Cloudinary
 const CloudinaryUpload = ({ onImageUpload }) => {
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -65,6 +66,7 @@ const CloudinaryUpload = ({ onImageUpload }) => {
   );
 };
 
+// Componente para importar/exportar productos
 const ImportExportActions = ({ productos, productosFiltrados, setProductos }) => {
   const fileInputRef = React.useRef(null);
 
@@ -265,6 +267,163 @@ const ImportExportActions = ({ productos, productosFiltrados, setProductos }) =>
   );
 };
 
+// Componente para reporte de inventario
+const ReporteInventario = ({ productos }) => {
+  const [filtroCategoria, setFiltroCategoria] = useState('Todas');
+  const [filtroEstado, setFiltroEstado] = useState('activos');
+  const categorias = ['Todas', 'Toallas', 'Bloqueadores y Cuidado de la Piel', 'Pañales', 'Alimentos', 'Desodorantes', 'Medicamentos', 'Cuidado del Cabello','Jabones y Geles','Otros','Producto del Dia Promocion'];
+
+  // Filtrar productos según los filtros seleccionados
+  const productosFiltrados = productos.filter(producto => {
+    const coincideCategoria = filtroCategoria === 'Todas' || producto.categoria === filtroCategoria;
+    
+    if (filtroEstado === 'activos') return coincideCategoria && producto.activo;
+    if (filtroEstado === 'inactivos') return coincideCategoria && !producto.activo;
+    return coincideCategoria;
+  });
+
+  // Calcular totales
+  const totalProductos = productosFiltrados.length;
+  const valorTotal = productosFiltrados.reduce((total, producto) => {
+    return total + (producto.precio * (producto.stock || 0));
+  }, 0);
+
+  const formatPrecio = (precio) => {
+    return new Intl.NumberFormat('es-CO', {
+      style: 'currency',
+      currency: 'COP',
+      minimumFractionDigits: 0
+    }).format(precio);
+  };
+
+  const exportarReporte = () => {
+    let csvContent = "Código,Nombre,Categoría,Precio Unitario,Stock,Valor Total,Estado\n";
+    
+    productosFiltrados.forEach(producto => {
+      const valorTotalProducto = producto.precio * (producto.stock || 0);
+      const row = [
+        producto.codigo || 'N/A',
+        `"${producto.nombre.replace(/"/g, '""')}"`,
+        producto.categoria || 'Sin categoría',
+        formatPrecio(producto.precio).replace(/[^\d,]/g, ''),
+        producto.stock || 0,
+        formatPrecio(valorTotalProducto).replace(/[^\d,]/g, ''),
+        producto.activo ? 'Activo' : 'Inactivo'
+      ].join(',');
+      
+      csvContent += row + '\n';
+    });
+
+    // Agregar total general
+    csvContent += `\nTOTAL GENERAL,,,${totalProductos} productos,,${formatPrecio(valorTotal).replace(/[^\d,]/g, '')},`;
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    
+    const fecha = new Date();
+    const nombreArchivo = `reporte_inventario_${fecha.getFullYear()}-${(fecha.getMonth()+1).toString().padStart(2, '0')}-${fecha.getDate().toString().padStart(2, '0')}.csv`;
+    
+    link.setAttribute('href', url);
+    link.setAttribute('download', nombreArchivo);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  return (
+    <div className="reporte-inventario">
+      <h2><i className="fas fa-file-alt"></i> Reporte de Inventario</h2>
+      
+      <div className="filtros-reporte">
+        <div className="filtro-group">
+          <label>Categoría:</label>
+          <select 
+            value={filtroCategoria} 
+            onChange={(e) => setFiltroCategoria(e.target.value)}
+          >
+            {categorias.map(cat => (
+              <option key={cat} value={cat}>{cat}</option>
+            ))}
+          </select>
+        </div>
+        
+        <div className="filtro-group">
+          <label>Estado:</label>
+          <select 
+            value={filtroEstado} 
+            onChange={(e) => setFiltroEstado(e.target.value)}
+          >
+            <option value="activos">Activos</option>
+            <option value="inactivos">Inactivos</option>
+            <option value="todos">Todos</option>
+          </select>
+        </div>
+        
+        <button className="button info-button" onClick={exportarReporte}>
+          <i className="fas fa-download"></i> Exportar Reporte
+        </button>
+      </div>
+      
+      <div className="resumen-reporte">
+        <div className="resumen-item">
+          <span className="resumen-label">Productos:</span>
+          <span className="resumen-valor">{totalProductos}</span>
+        </div>
+        <div className="resumen-item">
+          <span className="resumen-label">Valor Total:</span>
+          <span className="resumen-valor">{formatPrecio(valorTotal)}</span>
+        </div>
+      </div>
+      
+      <div className="tabla-reporte-container">
+        <table className="tabla-reporte">
+          <thead>
+            <tr>
+              <th>Código</th>
+              <th>Nombre</th>
+              <th>Categoría</th>
+              <th>Precio Unitario</th>
+              <th>Stock</th>
+              <th>Valor Total</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody>
+            {productosFiltrados.map(producto => {
+              const valorTotalProducto = producto.precio * (producto.stock || 0);
+              return (
+                <tr key={producto.id} className={!producto.activo ? 'inactivo' : ''}>
+                  <td>{producto.codigo || 'N/A'}</td>
+                  <td>{producto.nombre}</td>
+                  <td>{producto.categoria || 'Sin categoría'}</td>
+                  <td>{formatPrecio(producto.precio)}</td>
+                  <td>{producto.stock || 0}</td>
+                  <td>{formatPrecio(valorTotalProducto)}</td>
+                  <td>
+                    <span className={`estado-badge ${producto.activo ? 'activo' : 'inactivo'}`}>
+                      {producto.activo ? 'Activo' : 'Inactivo'}
+                    </span>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colSpan="4" className="total-label">TOTAL GENERAL</td>
+              <td className="total-value">{totalProductos} productos</td>
+              <td className="total-value" colSpan="2">{formatPrecio(valorTotal)}</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+  );
+};
+
+// Componente principal del catálogo
 const CatalogoProductos = () => {
   const navigate = useNavigate();
   const [productos, setProductos] = useState([]);
@@ -285,8 +444,9 @@ const CatalogoProductos = () => {
   const [categoriaFiltro, setCategoriaFiltro] = useState('Todas');
   const [editandoId, setEditandoId] = useState(null);
   const [filtroEstado, setFiltroEstado] = useState('activos');
+  const [vistaActual, setVistaActual] = useState('catalogo'); // 'catalogo' o 'reporte'
 
-  const categorias = ['Toallas', 'Bloqueadores y Cuidado de la Piel', 'Pañales', 'Alimentos', 'Desodorantes', 'Medicamentos', 'Cuidado del Cabello','Jabones y Geles','Otros','Producto del Dia Promocion '];
+  const categorias = ['Toallas', 'Bloqueadores y Cuidado de la Piel', 'Pañales', 'Alimentos', 'Desodorantes', 'Medicamentos', 'Cuidado del Cabello','Jabones y Geles','Otros','Producto del Dia Promocion'];
 
   // Cargar productos desde Supabase
   useEffect(() => {
@@ -486,6 +646,18 @@ const CatalogoProductos = () => {
             <i className="fas fa-plus"></i> Nuevo Producto
           </button>
           <button 
+            className={`button ${vistaActual === 'catalogo' ? 'primary-button' : 'secondary-button'}`}
+            onClick={() => setVistaActual('catalogo')}
+          >
+            <i className="fas fa-boxes"></i> Catálogo
+          </button>
+          <button 
+            className={`button ${vistaActual === 'reporte' ? 'primary-button' : 'secondary-button'}`}
+            onClick={() => setVistaActual('reporte')}
+          >
+            <i className="fas fa-file-alt"></i> Reporte
+          </button>
+          <button 
             className="button secondary-button"
             onClick={() => navigate('/')}
           >
@@ -494,287 +666,293 @@ const CatalogoProductos = () => {
         </div>
       </header>
 
-      <div className="resumen-productos">
-        <span><i className="fas fa-check-circle"></i> Activos: {productos.filter(p => p.activo).length}</span>
-        <span><i className="fas fa-ban"></i> Inactivos: {productos.filter(p => !p.activo).length}</span>
-        <span><i className="fas fa-boxes"></i> Total: {productos.length}</span>
-      </div>
+      {vistaActual === 'reporte' ? (
+        <ReporteInventario productos={productos} />
+      ) : (
+        <>
+          <div className="resumen-productos">
+            <span><i className="fas fa-check-circle"></i> Activos: {productos.filter(p => p.activo).length}</span>
+            <span><i className="fas fa-ban"></i> Inactivos: {productos.filter(p => !p.activo).length}</span>
+            <span><i className="fas fa-boxes"></i> Total: {productos.length}</span>
+          </div>
 
-      <div className="filtros-container">
-        <div className="search-box">
-          <input
-            type="text"
-            placeholder="🔍 Buscar por nombre o código..."
-            value={busqueda}
-            onChange={(e) => setBusqueda(e.target.value)}
-          />
-        </div>
-        <div className="filtros-avanzados">
-          <select 
-            value={categoriaFiltro} 
-            onChange={(e) => setCategoriaFiltro(e.target.value)}
-          >
-            <option value="Todas">Todas las categorías</option>
-            {categorias.map(cat => (
-              <option key={cat} value={cat}>{cat}</option>
-            ))}
-          </select>
-          <span>Mostrando {productosFiltrados.length} de {productos.length}</span>
-        </div>
-      </div>
-
-      <div className="tabs-container">
-        <button 
-          className={`tab-button ${filtroEstado === 'activos' ? 'active' : ''}`}
-          onClick={() => setFiltroEstado('activos')}
-        >
-          Activos ({productos.filter(p => p.activo).length})
-        </button>
-        <button 
-          className={`tab-button ${filtroEstado === 'inactivos' ? 'active' : ''}`}
-          onClick={() => setFiltroEstado('inactivos')}
-        >
-          Inactivos ({productos.filter(p => !p.activo).length})
-        </button>
-        <button 
-          className={`tab-button ${filtroEstado === 'todos' ? 'active' : ''}`}
-          onClick={() => setFiltroEstado('todos')}
-        >
-          Todos ({productos.length})
-        </button>
-      </div>
-
-      {mostrarFormulario && (
-        <div className="modal-overlay">
-          <div className="producto-form">
-            <h2>{editandoId ? '✏️ Editar Producto' : '➕ Nuevo Producto'}</h2>
-            
-            <div className="form-group">
-              <label>Código (opcional):</label>
+          <div className="filtros-container">
+            <div className="search-box">
               <input
                 type="text"
-                name="codigo"
-                value={nuevoProducto.codigo}
-                onChange={handleInputChange}
-                placeholder="Código interno"
+                placeholder="🔍 Buscar por nombre o código..."
+                value={busqueda}
+                onChange={(e) => setBusqueda(e.target.value)}
               />
             </div>
-            
-            <div className="form-group">
-              <label>Nombre *:</label>
-              <input
-                type="text"
-                name="nombre"
-                value={nuevoProducto.nombre}
-                onChange={handleInputChange}
-                placeholder="Nombre del producto"
-                required
-              />
-            </div>
-            
-            <div className="form-row">
-              <div className="form-group">
-                <label>Precio *:</label>
-                <input
-                  type="number"
-                  name="precio"
-                  value={nuevoProducto.precio}
-                  onChange={handleInputChange}
-                  placeholder="Precio"
-                  min="0"
-                  step="0.01"
-                  required
-                />
-              </div>
-              
-              <div className="form-group">
-                <label>Stock:</label>
-                <input
-                  type="number"
-                  name="stock"
-                  value={nuevoProducto.stock}
-                  onChange={handleInputChange}
-                  placeholder="Inventario"
-                  min="0"
-                />
-              </div>
-            </div>
-            
-            <div className="form-group">
-              <label>Categoría:</label>
-              <select
-                name="categoria"
-                value={nuevoProducto.categoria}
-                onChange={handleInputChange}
+            <div className="filtros-avanzados">
+              <select 
+                value={categoriaFiltro} 
+                onChange={(e) => setCategoriaFiltro(e.target.value)}
               >
-                <option value="">Seleccione...</option>
+                <option value="Todas">Todas las categorías</option>
                 {categorias.map(cat => (
                   <option key={cat} value={cat}>{cat}</option>
                 ))}
               </select>
-            </div>
-            
-            <div className="form-group">
-              <label>Descripción:</label>
-              <textarea
-                name="descripcion"
-                value={nuevoProducto.descripcion}
-                onChange={handleInputChange}
-                placeholder="Detalles del producto"
-                rows="3"
-              />
-            </div>
-
-            <div className="form-group">
-              <label>Imagen:</label>
-              <CloudinaryUpload 
-                onImageUpload={({imagenUrl, imagenPublicId}) => {
-                  setNuevoProducto({
-                    ...nuevoProducto,
-                    imagenUrl,
-                    imagenPublicId
-                  });
-                }}
-              />
-              {nuevoProducto.imagenUrl && (
-                <div className="image-preview">
-                  <img src={nuevoProducto.imagenUrl} alt="Vista previa" />
-                  <button 
-                    className="button small-button danger-button"
-                    onClick={() => setNuevoProducto({
-                      ...nuevoProducto,
-                      imagenUrl: '',
-                      imagenPublicId: ''
-                    })}
-                  >
-                    Eliminar
-                  </button>
-                </div>
-              )}
-            </div>
-            
-            {editandoId && (
-              <div className="form-group checkbox-group">
-                <label>
-                  <input
-                    type="checkbox"
-                    name="activo"
-                    checked={nuevoProducto.activo}
-                    onChange={handleInputChange}
-                  />
-                  Producto activo
-                </label>
-              </div>
-            )}
-            
-            <div className="form-actions">
-              <button 
-                className="button secondary-button"
-                onClick={() => {
-                  setMostrarFormulario(false);
-                  setEditandoId(null);
-                }}
-              >
-                Cancelar
-              </button>
-              <button 
-                className="button primary-button"
-                onClick={guardarProducto}
-              >
-                {editandoId ? 'Guardar Cambios' : 'Agregar Producto'}
-              </button>
+              <span>Mostrando {productosFiltrados.length} de {productos.length}</span>
             </div>
           </div>
-        </div>
-      )}
 
-      {cargando ? (
-        <div className="loading-state">
-          <div className="spinner"></div>
-          <p>Cargando productos...</p>
-        </div>
-      ) : productos.length === 0 ? (
-        <div className="empty-state">
-          <i className="fas fa-box-open"></i>
-          <h3>No hay productos</h3>
-          <p>Agrega tu primer producto</p>
-        </div>
-      ) : productosFiltrados.length === 0 ? (
-        <div className="empty-state">
-          <i className="fas fa-search"></i>
-          <h3>No se encontraron resultados</h3>
-          <p>Prueba con otros filtros</p>
-        </div>
-      ) : (
-        <div className="productos-grid">
-          {productosFiltrados.map(producto => (
-            <div key={producto.id} className={`producto-card ${!producto.activo ? 'inactivo' : ''}`}>
-              {!producto.activo && <span className="inactive-badge">INACTIVO</span>}
-              
-              {producto.imagen_url && (
-                <div className="producto-imagen">
-                  <img src={producto.imagen_url} alt={producto.nombre} />
-                </div>
-              )}
-              
-              <div className="producto-header">
-                <h3>{producto.nombre}</h3>
-                {producto.codigo && <span className="codigo">#{producto.codigo}</span>}
-              </div>
-              
-              <div className="producto-body">
-                <div className="producto-precio">
-                  {formatPrecio(producto.precio)}
+          <div className="tabs-container">
+            <button 
+              className={`tab-button ${filtroEstado === 'activos' ? 'active' : ''}`}
+              onClick={() => setFiltroEstado('activos')}
+            >
+              Activos ({productos.filter(p => p.activo).length})
+            </button>
+            <button 
+              className={`tab-button ${filtroEstado === 'inactivos' ? 'active' : ''}`}
+              onClick={() => setFiltroEstado('inactivos')}
+            >
+              Inactivos ({productos.filter(p => !p.activo).length})
+            </button>
+            <button 
+              className={`tab-button ${filtroEstado === 'todos' ? 'active' : ''}`}
+              onClick={() => setFiltroEstado('todos')}
+            >
+              Todos ({productos.length})
+            </button>
+          </div>
+
+          {mostrarFormulario && (
+            <div className="modal-overlay">
+              <div className="producto-form">
+                <h2>{editandoId ? '✏️ Editar Producto' : '➕ Nuevo Producto'}</h2>
+                
+                <div className="form-group">
+                  <label>Código (opcional):</label>
+                  <input
+                    type="text"
+                    name="codigo"
+                    value={nuevoProducto.codigo}
+                    onChange={handleInputChange}
+                    placeholder="Código interno"
+                  />
                 </div>
                 
-                {producto.categoria && (
-                  <div className="producto-categoria">
-                    <i className="fas fa-tag"></i> {producto.categoria}
+                <div className="form-group">
+                  <label>Nombre *:</label>
+                  <input
+                    type="text"
+                    name="nombre"
+                    value={nuevoProducto.nombre}
+                    onChange={handleInputChange}
+                    placeholder="Nombre del producto"
+                    required
+                  />
+                </div>
+                
+                <div className="form-row">
+                  <div className="form-group">
+                    <label>Precio *:</label>
+                    <input
+                      type="number"
+                      name="precio"
+                      value={nuevoProducto.precio}
+                      onChange={handleInputChange}
+                      placeholder="Precio"
+                      min="0"
+                      step="0.01"
+                      required
+                    />
                   </div>
-                )}
-                
-                {producto.stock !== undefined && (
-                  <div className="producto-stock">
-                    <i className="fas fa-boxes"></i> Stock: {producto.stock}
+                  
+                  <div className="form-group">
+                    <label>Stock:</label>
+                    <input
+                      type="number"
+                      name="stock"
+                      value={nuevoProducto.stock}
+                      onChange={handleInputChange}
+                      placeholder="Inventario"
+                      min="0"
+                    />
                   </div>
-                )}
+                </div>
                 
-                {producto.descripcion && (
-                  <p className="producto-descripcion">
-                    {producto.descripcion}
-                  </p>
-                )}
-              </div>
-              
-              <div className="producto-actions">
-                <button 
-                  className="action-button toggle-button"
-                  onClick={() => toggleEstadoProducto(producto.id)}
-                >
-                  <i className={`fas ${producto.activo ? 'fa-eye-slash' : 'fa-eye'}`}></i>
-                  {producto.activo ? 'Desactivar' : 'Activar'}
-                </button>
-                
-                <button 
-                  className="action-button edit-button"
-                  onClick={() => editarProducto(producto)}
-                >
-                  <i className="fas fa-edit"></i> Editar
-                </button>
-                
-                {/* Botón de eliminar solo visible para productos inactivos */}
-                {!producto.activo && (
-                  <button 
-                    className="action-button delete-button"
-                    onClick={() => eliminarProducto(producto.id)}
+                <div className="form-group">
+                  <label>Categoría:</label>
+                  <select
+                    name="categoria"
+                    value={nuevoProducto.categoria}
+                    onChange={handleInputChange}
                   >
-                    <i className="fas fa-trash"></i> Eliminar
-                  </button>
+                    <option value="">Seleccione...</option>
+                    {categorias.map(cat => (
+                      <option key={cat} value={cat}>{cat}</option>
+                    ))}
+                  </select>
+                </div>
+                
+                <div className="form-group">
+                  <label>Descripción:</label>
+                  <textarea
+                    name="descripcion"
+                    value={nuevoProducto.descripcion}
+                    onChange={handleInputChange}
+                    placeholder="Detalles del producto"
+                    rows="3"
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>Imagen:</label>
+                  <CloudinaryUpload 
+                    onImageUpload={({imagenUrl, imagenPublicId}) => {
+                      setNuevoProducto({
+                        ...nuevoProducto,
+                        imagenUrl,
+                        imagenPublicId
+                      });
+                    }}
+                  />
+                  {nuevoProducto.imagenUrl && (
+                    <div className="image-preview">
+                      <img src={nuevoProducto.imagenUrl} alt="Vista previa" />
+                      <button 
+                        className="button small-button danger-button"
+                        onClick={() => setNuevoProducto({
+                          ...nuevoProducto,
+                          imagenUrl: '',
+                          imagenPublicId: ''
+                        })}
+                      >
+                        Eliminar
+                      </button>
+                    </div>
+                  )}
+                </div>
+                
+                {editandoId && (
+                  <div className="form-group checkbox-group">
+                    <label>
+                      <input
+                        type="checkbox"
+                        name="activo"
+                        checked={nuevoProducto.activo}
+                        onChange={handleInputChange}
+                      />
+                      Producto activo
+                    </label>
+                  </div>
                 )}
+                
+                <div className="form-actions">
+                  <button 
+                    className="button secondary-button"
+                    onClick={() => {
+                      setMostrarFormulario(false);
+                      setEditandoId(null);
+                    }}
+                  >
+                    Cancelar
+                  </button>
+                  <button 
+                    className="button primary-button"
+                    onClick={guardarProducto}
+                  >
+                    {editandoId ? 'Guardar Cambios' : 'Agregar Producto'}
+                  </button>
+                </div>
               </div>
             </div>
-          ))}
-        </div>
+          )}
+
+          {cargando ? (
+            <div className="loading-state">
+              <div className="spinner"></div>
+              <p>Cargando productos...</p>
+            </div>
+          ) : productos.length === 0 ? (
+            <div className="empty-state">
+              <i className="fas fa-box-open"></i>
+              <h3>No hay productos</h3>
+              <p>Agrega tu primer producto</p>
+            </div>
+          ) : productosFiltrados.length === 0 ? (
+            <div className="empty-state">
+              <i className="fas fa-search"></i>
+              <h3>No se encontraron resultados</h3>
+              <p>Prueba con otros filtros</p>
+            </div>
+          ) : (
+            <div className="productos-grid">
+              {productosFiltrados.map(producto => (
+                <div key={producto.id} className={`producto-card ${!producto.activo ? 'inactivo' : ''}`}>
+                  {!producto.activo && <span className="inactive-badge">INACTIVO</span>}
+                  
+                  {producto.imagen_url && (
+                    <div className="producto-imagen">
+                      <img src={producto.imagen_url} alt={producto.nombre} />
+                    </div>
+                  )}
+                  
+                  <div className="producto-header">
+                    <h3>{producto.nombre}</h3>
+                    {producto.codigo && <span className="codigo">#{producto.codigo}</span>}
+                  </div>
+                  
+                  <div className="producto-body">
+                    <div className="producto-precio">
+                      {formatPrecio(producto.precio)}
+                    </div>
+                    
+                    {producto.categoria && (
+                      <div className="producto-categoria">
+                        <i className="fas fa-tag"></i> {producto.categoria}
+                      </div>
+                    )}
+                    
+                    {producto.stock !== undefined && (
+                      <div className="producto-stock">
+                        <i className="fas fa-boxes"></i> Stock: {producto.stock}
+                      </div>
+                    )}
+                    
+                    {producto.descripcion && (
+                      <p className="producto-descripcion">
+                        {producto.descripcion}
+                      </p>
+                    )}
+                  </div>
+                  
+                  <div className="producto-actions">
+                    <button 
+                      className="action-button toggle-button"
+                      onClick={() => toggleEstadoProducto(producto.id)}
+                    >
+                      <i className={`fas ${producto.activo ? 'fa-eye-slash' : 'fa-eye'}`}></i>
+                      {producto.activo ? 'Desactivar' : 'Activar'}
+                    </button>
+                    
+                    <button 
+                      className="action-button edit-button"
+                      onClick={() => editarProducto(producto)}
+                    >
+                      <i className="fas fa-edit"></i> Editar
+                    </button>
+                    
+                    {/* Botón de eliminar solo visible para productos inactivos */}
+                    {!producto.activo && (
+                      <button 
+                        className="action-button delete-button"
+                        onClick={() => eliminarProducto(producto.id)}
+                      >
+                        <i className="fas fa-trash"></i> Eliminar
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </>
       )}
     </div>
   );
