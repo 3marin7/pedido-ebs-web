@@ -6,7 +6,6 @@ import './CatalogoProductos.css';
 // Componente para subir imágenes a Cloudinary
 const CloudinaryUpload = ({ onImageUpload }) => {
   const [uploading, setUploading] = useState(false);
-  const [progress, setProgress] = useState(0);
 
   const handleFileUpload = async (e) => {
     const file = e.target.files[0];
@@ -46,14 +45,13 @@ const CloudinaryUpload = ({ onImageUpload }) => {
       alert('Error al subir la imagen. Intenta de nuevo.');
     } finally {
       setUploading(false);
-      setProgress(0);
     }
   };
 
   return (
     <div className="cloudinary-upload">
       <label className="upload-button">
-        {uploading ? `Subiendo... ${progress}%` : '📤 Subir Imagen'}
+        {uploading ? 'Subiendo...' : '📤 Subir Imagen'}
         <input
           type="file"
           accept="image/*"
@@ -423,6 +421,47 @@ const ReporteInventario = ({ productos }) => {
   );
 };
 
+// Modal para validar contraseña al eliminar
+const ModalConfirmacion = ({ isOpen, onClose, onConfirm, productoNombre }) => {
+  const [password, setPassword] = useState('');
+
+  const handleConfirm = () => {
+    if (password === 'edwin' || password === '777') {
+      onConfirm();
+      onClose();
+    } else {
+      alert('Contraseña incorrecta comunicate con soporte 3004583117');
+    }
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="modal-overlay">
+      <div className="modal-confirmacion">
+        <h3>Confirmar Eliminación</h3>
+        <p>Está a punto de eliminar el producto: <strong>{productoNombre}</strong></p>
+        <p>Ingrese la contraseña para confirmar:</p>
+        <input
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="Contraseña"
+          className="password-input"
+        />
+        <div className="modal-actions">
+          <button className="button secondary-button" onClick={onClose}>
+            Cancelar
+          </button>
+          <button className="button danger-button" onClick={handleConfirm}>
+            Confirmar Eliminación
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 // Componente principal del catálogo
 const CatalogoProductos = () => {
   const navigate = useNavigate();
@@ -444,7 +483,12 @@ const CatalogoProductos = () => {
   const [categoriaFiltro, setCategoriaFiltro] = useState('Todas');
   const [editandoId, setEditandoId] = useState(null);
   const [filtroEstado, setFiltroEstado] = useState('activos');
-  const [vistaActual, setVistaActual] = useState('catalogo'); // 'catalogo' o 'reporte'
+  const [vistaActual, setVistaActual] = useState('catalogo');
+  const [modalEliminar, setModalEliminar] = useState({
+    isOpen: false,
+    productoId: null,
+    productoNombre: ''
+  });
 
   const categorias = ['Toallas', 'Bloqueadores y Cuidado de la Piel', 'Pañales', 'Alimentos', 'Desodorantes', 'Medicamentos', 'Cuidado del Cabello','Jabones y Geles','Otros','Producto del Dia Promocion'];
 
@@ -550,8 +594,6 @@ const CatalogoProductos = () => {
   };
 
   const eliminarProducto = async (id) => {
-    if (!window.confirm('¿Estás seguro de eliminar este producto?')) return;
-    
     try {
       const { error } = await supabase
         .from('productos')
@@ -606,6 +648,28 @@ const CatalogoProductos = () => {
     });
     setEditandoId(producto.id);
     setMostrarFormulario(true);
+  };
+
+  const abrirModalEliminar = (productoId, productoNombre) => {
+    setModalEliminar({
+      isOpen: true,
+      productoId,
+      productoNombre
+    });
+  };
+
+  const cerrarModalEliminar = () => {
+    setModalEliminar({
+      isOpen: false,
+      productoId: null,
+      productoNombre: ''
+    });
+  };
+
+  const confirmarEliminacion = () => {
+    if (modalEliminar.productoId) {
+      eliminarProducto(modalEliminar.productoId);
+    }
   };
 
   const productosFiltrados = productos.filter(producto => {
@@ -942,7 +1006,7 @@ const CatalogoProductos = () => {
                     {!producto.activo && (
                       <button 
                         className="action-button delete-button"
-                        onClick={() => eliminarProducto(producto.id)}
+                        onClick={() => abrirModalEliminar(producto.id, producto.nombre)}
                       >
                         <i className="fas fa-trash"></i> Eliminar
                       </button>
@@ -954,6 +1018,13 @@ const CatalogoProductos = () => {
           )}
         </>
       )}
+
+      <ModalConfirmacion
+        isOpen={modalEliminar.isOpen}
+        onClose={cerrarModalEliminar}
+        onConfirm={confirmarEliminacion}
+        productoNombre={modalEliminar.productoNombre}
+      />
     </div>
   );
 };
