@@ -1,0 +1,3810 @@
+[
+  {
+    "id": 6,
+    "cliente": "JAVIER BUITRAGO ",
+    "fecha": "2025-08-19",
+    "vendedor": "Edwin Marin",
+    "direccion": "Ferrocaril ",
+    "telefono": "3114411220",
+    "correo": null,
+    "total": 176000,
+    "created_at": "2025-08-19T22:34:12.263473+00:00",
+    "productos": [
+      {
+        "id": 3,
+        "codigo": "",
+        "nombre": "Toallas Nosotras Rapigel ",
+        "precio": 11000,
+        "cantidad": 16
+      }
+    ]
+  },
+  {
+    "id": 7,
+    "cliente": "MARTHA BLANCO",
+    "fecha": "2025-08-08",
+    "vendedor": "Edwin Marin",
+    "direccion": "SÁBANA ",
+    "telefono": "3001234555",
+    "correo": "mb@gmail.com",
+    "total": 1560000,
+    "created_at": "2025-08-20T19:49:53.098652+00:00",
+    "productos": [
+      {
+        "id": 15,
+        "codigo": "",
+        "nombre": "PILA DURACEL AA 10X6",
+        "precio": 195000,
+        "cantidad": 4
+      },
+      {
+        "id": 14,
+        "codigo": "",
+        "nombre": "PILA DURACELL AAA 10X6",
+        "precio": 195000,
+        "cantidad": 4
+      }
+    ]
+  },
+  {
+    "id": 8,
+    "cliente": "ADRIAN",
+    "fecha": "2025-08-08",
+    "vendedor": "Edwin Marin",
+    "direccion": "Sábana local ",
+    "telefono": null,
+    "correo": null,
+    "total": 780000,
+    "created_at": "2025-08-20T19:51:09.305046+00:00",
+    "productos": [
+      {
+        "id": 15,
+        "codigo": "",
+        "nombre": "PILA DURACEL AA 10X6",
+        "precio": 195000,
+        "cantidad": 2
+      },
+      {
+        "id": 14,
+        "codigo": "",
+        "nombre": "PILA DURACELL AAA 10X6",
+        "precio": 195000,
+        "cantidad": 2
+      }
+    ]
+  },
+  {
+    "id": 9,
+    "cliente": "MARTHA TABARES",
+    "fecha": "2025-08-08",
+    "vendedor": "Edwin Marin",
+    "direccion": "PARQUE local 123",
+    "telefono": "3453053",
+    "correo": "mt@gmail.com",
+    "total": 2112000,
+    "created_at": "2025-08-20T19:52:53.484295+00:00",
+    "productos": [
+      {
+        "id": 1755719549502,
+        "nombre": "Vitamina c lasante mandarina",
+        "precio": 22000,
+        "cantidad": 96
+      }
+    ]
+  },
+  {
+    "id": 10,
+    "cliente": "NATHALY ",
+    "fecha": "2025-08-11",
+    "vendedor": "Edwin Marin",
+    "direccion": "Parque",
+    "telefono": null,
+    "correo": null,
+    "total": 1760000,
+    "created_at": "2025-08-20T19:53:56.287242+00:00",
+    "productos": [
+      {
+        "id": 1755719611817,
+        "nombre": "Xraydol",
+        "precio": 88000,
+        "cantidad": 20
+      }
+    ]
+  },
+  {
+    "id": 11,
+    "cliente": "SARA",
+    "fecha": "2025-08-12",
+    "vendedor": "Edwin Marin",
+    "direccion": "SABANA",
+    "telefono": null,
+    "correo": null,
+    "total": 1025000,
+    "created_at": "2025-08-20T19:57:48.238963+00:00",
+    "productos": [
+      {
+        "id": 4,
+        "codigo": "",
+        "nombre": "Nosotras multiestilo x 150 caja x 10",
+        "precio": 14000,
+        "cantidad": 10
+      },
+      {
+        "id": 8,
+        "codigo": "",
+        "nombre": "NOSOTRAS DIA Y NOCHE X24",
+        "precio": 10500,
+        "cantidad": 16
+      },
+      {
+        "id": 47,
+        "codigo": "",
+        "nombre": "MEXSANA TALCO 300+85G X15",
+        "precio": 19000,
+        "cantidad": 15
+      },
+      {
+        "id": 42,
+        "codigo": "",
+        "nombre": "REXONA CLINICAL POR 2",
+        "precio": 25000,
+        "cantidad": 12
+      },
+      {
+        "id": 40,
+        "codigo": "",
+        "nombre": "NIVEA LABIAL",
+        "precio": 11000,
+        "cantidad": 12
+      }
+    ]
+  },
+  {
+    "id": 12,
+    "cliente": "CARMENSA ",
+    "fecha": "2025-08-14",
+    "vendedor": "Edwin Marin",
+    "direccion": "Ferrocarril",
+    "telefono": null,
+    "correo": null,
+    "total": 192000,
+    "created_at": "2025-08-20T20:01:00.563181+00:00",
+    "productos": [
+      {
+        "id": 1755720041487,
+        "nombre": "KOTES BUENAS NOCHES ",
+        "precio": 12000,
+        "cantidad": 16
+      }
+    ]
+  },
+  {
+    "id": 13,
+    "cliente": "SARA",
+    "fecha": "2025-08-14",
+    "vendedor": "Edwin Marin",
+    "direccion": "SABANA",
+    "telefono": null,
+    "correo": null,
+    "total": 176000,
+    "created_at": "2025-08-20T20:02:05.584728+00:00",
+    "productos": [
+      {
+        "id": 3,
+        "codigo": "",
+        "nombre": "Toallas Nosotras Rapigel ",
+        "precio": 11000,
+        "cantidad": 16
+      }
+    ]
+  },
+  {
+    "id": 14,
+    "cliente": "EDISON -laura",
+    "fecha": "2025-07-16",
+    "vendedor": "Edwin Marin",
+    "direccion": "Parque",
+    "telefono": null,
+    "correo": null,
+    "total": 880000,
+    "created_at": "2025-08-20T20:06:03.226732+00:00",
+    "productos": [
+      {
+        "id": 3,
+        "codigo": "",
+        "nombre": "Toallas Nosotras Rapigel ",
+        "precio": 11000,
+        "cantidad": 80
+      }
+    ]
+  },
+  {
+    "id": 15,
+    "cliente": "JAVIER BUITRAGO ",
+    "fecha": "2025-07-16",
+    "vendedor": "Edwin Marin",
+    "direccion": "Ferrocaril A003",
+    "telefono": "3114411220",
+    "correo": null,
+    "total": 375000,
+    "created_at": "2025-08-20T20:07:01.650879+00:00",
+    "productos": [
+      {
+        "id": 44,
+        "codigo": "",
+        "nombre": "GILLETTE PRESTOBARBAS 10X12X120",
+        "precio": 375000,
+        "cantidad": 1
+      }
+    ]
+  },
+  {
+    "id": 17,
+    "cliente": "CECY",
+    "fecha": "2025-07-23",
+    "vendedor": "Edwin Marin",
+    "direccion": "Parque",
+    "telefono": null,
+    "correo": null,
+    "total": 2640000,
+    "created_at": "2025-08-20T20:13:53.481498+00:00",
+    "productos": [
+      {
+        "id": 3,
+        "codigo": "",
+        "nombre": "Toallas Nosotras Rapigel ",
+        "precio": 11000,
+        "cantidad": 240
+      }
+    ]
+  },
+  {
+    "id": 18,
+    "cliente": "EDWIN SOLER",
+    "fecha": "2025-07-23",
+    "vendedor": "Edwin Marin",
+    "direccion": "Parque ",
+    "telefono": null,
+    "correo": null,
+    "total": 585000,
+    "created_at": "2025-08-20T20:16:09.489+00:00",
+    "productos": [
+      {
+        "id": 15,
+        "codigo": "",
+        "nombre": "PILA DURACEL AA 10X6",
+        "precio": 195000,
+        "cantidad": 2
+      },
+      {
+        "id": 14,
+        "codigo": "",
+        "nombre": "PILA DURACELL AAA 10X6",
+        "precio": 195000,
+        "cantidad": 1
+      }
+    ]
+  },
+  {
+    "id": 19,
+    "cliente": "RAUL  ZIPA ",
+    "fecha": "2025-07-23",
+    "vendedor": "Edwin Marin",
+    "direccion": "Parque",
+    "telefono": "31",
+    "correo": "worwiz",
+    "total": 253000,
+    "created_at": "2025-08-20T20:19:08.737475+00:00",
+    "productos": [
+      {
+        "id": 31,
+        "codigo": "",
+        "nombre": "PONDS CR REJUVENESS 6X100G+...",
+        "precio": 23000,
+        "cantidad": 11
+      }
+    ]
+  },
+  {
+    "id": 20,
+    "cliente": "FRANK BAEZ",
+    "fecha": "2025-07-23",
+    "vendedor": "Edwin Marin",
+    "direccion": "PARQUE ",
+    "telefono": "+57 3166470853",
+    "correo": null,
+    "total": 324000,
+    "created_at": "2025-08-20T20:20:27.539715+00:00",
+    "productos": [
+      {
+        "id": 10,
+        "codigo": "",
+        "nombre": "REXONA DEO SOBRE SURTIDO 24DPL X12 TIRAS X 10 SAC...",
+        "precio": 13500,
+        "cantidad": 24
+      }
+    ]
+  },
+  {
+    "id": 21,
+    "cliente": "ROBINSON NEW YORK",
+    "fecha": "2025-07-23",
+    "vendedor": "Edwin Marin",
+    "direccion": "CC FERROCARRIL",
+    "telefono": null,
+    "correo": null,
+    "total": 3900000,
+    "created_at": "2025-08-20T20:21:29.179355+00:00",
+    "productos": [
+      {
+        "id": 15,
+        "codigo": "",
+        "nombre": "PILA DURACEL AA 10X6",
+        "precio": 195000,
+        "cantidad": 10
+      },
+      {
+        "id": 14,
+        "codigo": "",
+        "nombre": "PILA DURACELL AAA 10X6",
+        "precio": 195000,
+        "cantidad": 10
+      }
+    ]
+  },
+  {
+    "id": 22,
+    "cliente": "LEIDY PAOLA  TORRES",
+    "fecha": "2025-07-23",
+    "vendedor": "Edwin Marin",
+    "direccion": "Sabana",
+    "telefono": null,
+    "correo": null,
+    "total": 864000,
+    "created_at": "2025-08-20T20:24:05.636843+00:00",
+    "productos": [
+      {
+        "id": 1755721438294,
+        "nombre": "Mieltertos ",
+        "precio": 18000,
+        "cantidad": 48
+      }
+    ]
+  },
+  {
+    "id": 25,
+    "cliente": "HERIBERTO",
+    "fecha": "2025-08-20",
+    "vendedor": "Edwin Marin",
+    "direccion": "CENTRO CARACAS",
+    "telefono": null,
+    "correo": null,
+    "total": 1560000,
+    "created_at": "2025-08-21T00:55:32.172251+00:00",
+    "productos": [
+      {
+        "id": 15,
+        "codigo": "",
+        "nombre": "PILA DURACEL AA 10X6",
+        "precio": 195000,
+        "cantidad": 4
+      },
+      {
+        "id": 14,
+        "codigo": "",
+        "nombre": "PILA DURACELL AAA 10X6",
+        "precio": 195000,
+        "cantidad": 4
+      }
+    ]
+  },
+  {
+    "id": 26,
+    "cliente": "HECTOR COSTENO",
+    "fecha": "2025-08-20",
+    "vendedor": "Edwin Marin",
+    "direccion": "PARQUE",
+    "telefono": null,
+    "correo": null,
+    "total": 276000,
+    "created_at": "2025-08-21T00:57:45.388297+00:00",
+    "productos": [
+      {
+        "id": 31,
+        "codigo": "",
+        "nombre": "PONDS CR REJUVENESS 6X100G+...",
+        "precio": 23000,
+        "cantidad": 12
+      }
+    ]
+  },
+  {
+    "id": 27,
+    "cliente": "JAVIER BUITRAGO ",
+    "fecha": "2025-08-21",
+    "vendedor": "Edwin Marin",
+    "direccion": "Ferrocaril A003",
+    "telefono": "3114411220",
+    "correo": null,
+    "total": 750000,
+    "created_at": "2025-08-21T00:58:51.648652+00:00",
+    "productos": [
+      {
+        "id": 44,
+        "codigo": "",
+        "nombre": "GILLETTE PRESTOBARBAS 10X12X120",
+        "precio": 375000,
+        "cantidad": 2
+      }
+    ]
+  },
+  {
+    "id": 28,
+    "cliente": "FERNANDO FERROCARRIL",
+    "fecha": "2025-08-21",
+    "vendedor": "Edwin Marin",
+    "direccion": "FERROCARRIL",
+    "telefono": null,
+    "correo": null,
+    "total": 272000,
+    "created_at": "2025-08-21T01:01:20.894687+00:00",
+    "productos": [
+      {
+        "id": 18,
+        "codigo": "",
+        "nombre": "HUGGIES ETAPA 3 50 PANALES",
+        "precio": 34000,
+        "cantidad": 8
+      }
+    ]
+  },
+  {
+    "id": 29,
+    "cliente": "YANET GONZÁLEZ ",
+    "fecha": "2025-08-21",
+    "vendedor": "Edwin Marin",
+    "direccion": "Sábana ",
+    "telefono": null,
+    "correo": null,
+    "total": 680000,
+    "created_at": "2025-08-21T01:02:16.926217+00:00",
+    "productos": [
+      {
+        "id": 18,
+        "codigo": "",
+        "nombre": "HUGGIES ETAPA 3 50 PANALES",
+        "precio": 34000,
+        "cantidad": 20
+      }
+    ]
+  },
+  {
+    "id": 30,
+    "cliente": "LEIDY PAOLA  TORRES",
+    "fecha": "2025-08-21",
+    "vendedor": "Edwin Marin",
+    "direccion": "Sabana",
+    "telefono": null,
+    "correo": null,
+    "total": 300000,
+    "created_at": "2025-08-21T01:04:14.803371+00:00",
+    "productos": [
+      {
+        "id": 42,
+        "codigo": "",
+        "nombre": "REXONA CLINICAL POR 2",
+        "precio": 25000,
+        "cantidad": 12
+      }
+    ]
+  },
+  {
+    "id": 31,
+    "cliente": "NEIDY ",
+    "fecha": "2025-08-21",
+    "vendedor": "Edwin Marin",
+    "direccion": "Sabana",
+    "telefono": null,
+    "correo": null,
+    "total": 375000,
+    "created_at": "2025-08-21T01:05:08.335775+00:00",
+    "productos": [
+      {
+        "id": 44,
+        "codigo": "",
+        "nombre": "GILLETTE PRESTOBARBAS 10X12X120",
+        "precio": 375000,
+        "cantidad": 1
+      }
+    ]
+  },
+  {
+    "id": 16,
+    "cliente": "Nelly González ",
+    "fecha": "2025-07-16",
+    "vendedor": "Edwin Marin",
+    "direccion": "SABANA",
+    "telefono": null,
+    "correo": null,
+    "total": 656000,
+    "created_at": "2025-08-20T20:11:52.432369+00:00",
+    "productos": [
+      {
+        "id": 42,
+        "codigo": "",
+        "nombre": "REXONA CLINICAL POR 2",
+        "precio": 25000,
+        "cantidad": 12
+      },
+      {
+        "id": 38,
+        "codigo": "",
+        "nombre": "JABON J&J BABY PACK 3X16X110G",
+        "precio": 40000,
+        "cantidad": 4
+      },
+      {
+        "id": 1755720700716,
+        "nombre": "Bedoyecta amp",
+        "precio": 28000,
+        "cantidad": 7
+      }
+    ]
+  },
+  {
+    "id": 23,
+    "cliente": "NANCY LOPEZ",
+    "fecha": "2025-08-20",
+    "vendedor": "Edwin Marin",
+    "direccion": "PARQUE",
+    "telefono": null,
+    "correo": null,
+    "total": 840000,
+    "created_at": "2025-08-21T00:44:19.235809+00:00",
+    "productos": [
+      {
+        "id": 1755737048217,
+        "nombre": "UMBRELA",
+        "precio": 70000,
+        "cantidad": 12
+      }
+    ]
+  },
+  {
+    "id": 24,
+    "cliente": "YANET GONZÁLEZ ",
+    "fecha": "2025-08-20",
+    "vendedor": "Edwin Marin",
+    "direccion": "Sábana ",
+    "telefono": null,
+    "correo": null,
+    "total": 2212000,
+    "created_at": "2025-08-21T00:53:47.382664+00:00",
+    "productos": [
+      {
+        "id": 39,
+        "codigo": "",
+        "nombre": "HUGGIES ETP 1X50 BLT X6PK",
+        "precio": 26000,
+        "cantidad": 18
+      },
+      {
+        "id": 18,
+        "codigo": "",
+        "nombre": "HUGGIES ETAPA 3 50 PANALES",
+        "precio": 34000,
+        "cantidad": 16
+      },
+      {
+        "id": 1755737372500,
+        "nombre": "HUGGIES ETP 2 X4",
+        "precio": 30000,
+        "cantidad": 40
+      }
+    ]
+  },
+  {
+    "id": 32,
+    "cliente": "CRISTIAN SOLER",
+    "fecha": "2025-08-20",
+    "vendedor": "Edwin Marin",
+    "direccion": "PARQUE ",
+    "telefono": "+57 3214045628",
+    "correo": null,
+    "total": 390000,
+    "created_at": "2025-08-21T01:05:54.078563+00:00",
+    "productos": [
+      {
+        "id": 15,
+        "codigo": "",
+        "nombre": "PILA DURACEL AA 10X6",
+        "precio": 195000,
+        "cantidad": 1
+      },
+      {
+        "id": 14,
+        "codigo": "",
+        "nombre": "PILA DURACELL AAA 10X6",
+        "precio": 195000,
+        "cantidad": 1
+      }
+    ]
+  },
+  {
+    "id": 33,
+    "cliente": "ARNOL DIAZ PENAGOS",
+    "fecha": "2025-08-20",
+    "vendedor": "Edwin Marin",
+    "direccion": "SABANA ",
+    "telefono": "+57 3142418173",
+    "correo": null,
+    "total": 611000,
+    "created_at": "2025-08-21T01:07:28.486144+00:00",
+    "productos": [
+      {
+        "id": 44,
+        "codigo": "",
+        "nombre": "GILLETTE PRESTOBARBAS 10X12X120",
+        "precio": 375000,
+        "cantidad": 1
+      },
+      {
+        "id": 4,
+        "codigo": "",
+        "nombre": "Nosotras multiestilo x 150 caja x 10",
+        "precio": 14000,
+        "cantidad": 10
+      },
+      {
+        "id": 1755738440623,
+        "nombre": "KOTEX NOCTURNA ",
+        "precio": 12000,
+        "cantidad": 8
+      }
+    ]
+  },
+  {
+    "id": 34,
+    "cliente": "JESUS",
+    "fecha": "2025-08-12",
+    "vendedor": "Edwin Marin",
+    "direccion": "SABANA",
+    "telefono": null,
+    "correo": null,
+    "total": 336000,
+    "created_at": "2025-08-21T01:08:48.041958+00:00",
+    "productos": [
+      {
+        "id": 9,
+        "codigo": "",
+        "nombre": "NOSOTRAS CLASICA X 30",
+        "precio": 10000,
+        "cantidad": 16
+      },
+      {
+        "id": 3,
+        "codigo": "",
+        "nombre": "Toallas Nosotras Rapigel ",
+        "precio": 11000,
+        "cantidad": 16
+      }
+    ]
+  },
+  {
+    "id": 36,
+    "cliente": "ADRIAN",
+    "fecha": "2025-08-06",
+    "vendedor": "Edwin Marin",
+    "direccion": "Sábana local ",
+    "telefono": null,
+    "correo": null,
+    "total": 390000,
+    "created_at": "2025-08-21T16:06:24.792063+00:00",
+    "productos": [
+      {
+        "id": 15,
+        "codigo": "",
+        "nombre": "PILA DURACEL AA 10X6",
+        "precio": 195000,
+        "cantidad": 1
+      },
+      {
+        "id": 14,
+        "codigo": "",
+        "nombre": "PILA DURACELL AAA 10X6",
+        "precio": 195000,
+        "cantidad": 1
+      }
+    ]
+  },
+  {
+    "id": 38,
+    "cliente": "MARTHA TABARES",
+    "fecha": "2025-08-06",
+    "vendedor": "Edwin Marin",
+    "direccion": "PARQUE local 123",
+    "telefono": "3453053",
+    "correo": "mt@gmail.com",
+    "total": 1950000,
+    "created_at": "2025-08-21T16:08:22.406814+00:00",
+    "productos": [
+      {
+        "id": 15,
+        "codigo": "",
+        "nombre": "PILA DURACEL AA 10X6",
+        "precio": 195000,
+        "cantidad": 5
+      },
+      {
+        "id": 14,
+        "codigo": "",
+        "nombre": "PILA DURACELL AAA 10X6",
+        "precio": 195000,
+        "cantidad": 5
+      }
+    ]
+  },
+  {
+    "id": 39,
+    "cliente": "ADRIAN",
+    "fecha": "2025-05-12",
+    "vendedor": "Edwin Marin",
+    "direccion": "Sábana local ",
+    "telefono": null,
+    "correo": null,
+    "total": 888000,
+    "created_at": "2025-08-21T17:07:27.713597+00:00",
+    "productos": [
+      {
+        "id": 1755796030693,
+        "nombre": "mieltertos",
+        "precio": 18500,
+        "cantidad": 48
+      }
+    ]
+  },
+  {
+    "id": 40,
+    "cliente": "ALFONSO SALINAS",
+    "fecha": "2025-05-02",
+    "vendedor": "Edwin Marin",
+    "direccion": "Sabana local ",
+    "telefono": null,
+    "correo": null,
+    "total": 4212000,
+    "created_at": "2025-08-21T17:10:15.457612+00:00",
+    "productos": [
+      {
+        "id": 1755796178651,
+        "nombre": "dolex jarabe",
+        "precio": 12000,
+        "cantidad": 261
+      },
+      {
+        "id": 1755796203986,
+        "nombre": "cepillo pro",
+        "precio": 360000,
+        "cantidad": 3
+      }
+    ]
+  },
+  {
+    "id": 41,
+    "cliente": "ALFONSO SALINAS",
+    "fecha": "2025-05-25",
+    "vendedor": "Edwin Marin",
+    "direccion": "Sabana local ",
+    "telefono": null,
+    "correo": null,
+    "total": 960000,
+    "created_at": "2025-08-21T17:11:48.821268+00:00",
+    "productos": [
+      {
+        "id": 25,
+        "codigo": "",
+        "nombre": "GILLETTE MAX 3 X 2 HOJAS",
+        "precio": 16000,
+        "cantidad": 60
+      }
+    ]
+  },
+  {
+    "id": 42,
+    "cliente": "ALFONSO SALINAS",
+    "fecha": "2025-03-15",
+    "vendedor": "Edwin Marin",
+    "direccion": "Sabana local ",
+    "telefono": null,
+    "correo": null,
+    "total": 6480000,
+    "created_at": "2025-08-21T17:13:14.630346+00:00",
+    "productos": [
+      {
+        "id": 1755796358850,
+        "nombre": "mieltertos",
+        "precio": 648000,
+        "cantidad": 5
+      },
+      {
+        "id": 1755796376567,
+        "nombre": "mieltretos",
+        "precio": 648000,
+        "cantidad": 5
+      }
+    ]
+  },
+  {
+    "id": 43,
+    "cliente": "ARNOL DIAZ PENAGOS",
+    "fecha": "2025-03-15",
+    "vendedor": "Edwin Marin",
+    "direccion": "SABANA ",
+    "telefono": "+57 3142418173",
+    "correo": null,
+    "total": 264000,
+    "created_at": "2025-08-21T17:15:29.06849+00:00",
+    "productos": [
+      {
+        "id": 3,
+        "codigo": "",
+        "nombre": "Toallas Nosotras Rapigel ",
+        "precio": 11000,
+        "cantidad": 24
+      }
+    ]
+  },
+  {
+    "id": 44,
+    "cliente": "DANIEL GONZALEZ",
+    "fecha": "2025-05-02",
+    "vendedor": "Edwin Marin",
+    "direccion": "Sabana",
+    "telefono": null,
+    "correo": null,
+    "total": 1656000,
+    "created_at": "2025-08-21T17:17:38.072954+00:00",
+    "productos": [
+      {
+        "id": 1755796644246,
+        "nombre": "tio0 nacho",
+        "precio": 276000,
+        "cantidad": 6
+      }
+    ]
+  },
+  {
+    "id": 45,
+    "cliente": "DIEGO Y MAYERLY",
+    "fecha": "2025-07-05",
+    "vendedor": "Edwin Marin",
+    "direccion": "SABANA",
+    "telefono": "+573112276339",
+    "correo": null,
+    "total": 176000,
+    "created_at": "2025-08-21T17:21:17.77893+00:00",
+    "productos": [
+      {
+        "id": 3,
+        "codigo": "",
+        "nombre": "Toallas Nosotras Rapigel ",
+        "precio": 11000,
+        "cantidad": 16
+      }
+    ]
+  },
+  {
+    "id": 46,
+    "cliente": "DORIS ",
+    "fecha": "2025-01-14",
+    "vendedor": "Edwin Marin",
+    "direccion": "PARQUE ",
+    "telefono": null,
+    "correo": null,
+    "total": 1987999.4,
+    "created_at": "2025-08-21T17:28:16.984157+00:00",
+    "productos": [
+      {
+        "id": 1755797155117,
+        "nombre": "RAPIGEL",
+        "precio": 87999.94,
+        "cantidad": 10
+      },
+      {
+        "id": 1755797180400,
+        "nombre": "DIA Y NOCHE",
+        "precio": 84000,
+        "cantidad": 4
+      },
+      {
+        "id": 1755797198503,
+        "nombre": "KOTEX",
+        "precio": 96000,
+        "cantidad": 3
+      },
+      {
+        "id": 1755797239103,
+        "nombre": "CLASICA",
+        "precio": 80000,
+        "cantidad": 2
+      },
+      {
+        "id": 1755797285831,
+        "nombre": "REXONA CLINICAL CAJA X 24",
+        "precio": 324000,
+        "cantidad": 1
+      }
+    ]
+  },
+  {
+    "id": 47,
+    "cliente": "EDISON -laura",
+    "fecha": "2025-05-06",
+    "vendedor": "Edwin Marin",
+    "direccion": "Parque",
+    "telefono": null,
+    "correo": null,
+    "total": 1008000,
+    "created_at": "2025-08-21T17:31:57.441376+00:00",
+    "productos": [
+      {
+        "id": 1755797492469,
+        "nombre": "PONDS REJUBENETS",
+        "precio": 252000,
+        "cantidad": 4
+      }
+    ]
+  },
+  {
+    "id": 48,
+    "cliente": "FRANK BAEZ",
+    "fecha": "2025-02-04",
+    "vendedor": "Edwin Marin",
+    "direccion": "PARQUE ",
+    "telefono": "+57 3166470853",
+    "correo": null,
+    "total": 3293200,
+    "created_at": "2025-08-21T17:45:54.356616+00:00",
+    "productos": [
+      {
+        "id": 1755798343807,
+        "nombre": "4/2/25 KOTES-ARAWAK",
+        "precio": 3293200,
+        "cantidad": 1
+      }
+    ]
+  },
+  {
+    "id": 49,
+    "cliente": "FRANK BAEZ",
+    "fecha": "2025-03-07",
+    "vendedor": "Edwin Marin",
+    "direccion": "PARQUE ",
+    "telefono": "+57 3166470853",
+    "correo": null,
+    "total": 648000,
+    "created_at": "2025-08-21T17:47:48.202964+00:00",
+    "productos": [
+      {
+        "id": 1755798454819,
+        "nombre": "ARAWAK",
+        "precio": 216000,
+        "cantidad": 3
+      }
+    ]
+  },
+  {
+    "id": 50,
+    "cliente": "FRANK BAEZ",
+    "fecha": "2025-03-07",
+    "vendedor": "Edwin Marin",
+    "direccion": "PARQUE ",
+    "telefono": "+57 3166470853",
+    "correo": null,
+    "total": 594000,
+    "created_at": "2025-08-21T17:48:47.565716+00:00",
+    "productos": [
+      {
+        "id": 1755798519793,
+        "nombre": "NOSOTRAS BUENAS NOCHES",
+        "precio": 198000,
+        "cantidad": 3
+      }
+    ]
+  },
+  {
+    "id": 51,
+    "cliente": "FRANK BAEZ",
+    "fecha": "2025-03-07",
+    "vendedor": "Edwin Marin",
+    "direccion": "PARQUE ",
+    "telefono": "+57 3166470853",
+    "correo": null,
+    "total": 800000,
+    "created_at": "2025-08-21T17:51:47.316373+00:00",
+    "productos": [
+      {
+        "id": 1755798585675,
+        "nombre": "EGO",
+        "precio": 11500,
+        "cantidad": 12
+      },
+      {
+        "id": 1755798604874,
+        "nombre": "DIA Y NOCHE",
+        "precio": 10500,
+        "cantidad": 24
+      },
+      {
+        "id": 1755798647312,
+        "nombre": "PROTECTO",
+        "precio": 30000,
+        "cantidad": 6
+      },
+      {
+        "id": 1755798683867,
+        "nombre": "UNESIA CRAM",
+        "precio": 23000,
+        "cantidad": 10
+      }
+    ]
+  },
+  {
+    "id": 52,
+    "cliente": "FRANK BAEZ",
+    "fecha": "2025-05-06",
+    "vendedor": "Edwin Marin",
+    "direccion": "PARQUE ",
+    "telefono": "+57 3166470853",
+    "correo": null,
+    "total": 1176000,
+    "created_at": "2025-08-21T17:54:42.0845+00:00",
+    "productos": [
+      {
+        "id": 1755798753990,
+        "nombre": "REXONA CLINICAL",
+        "precio": 13500,
+        "cantidad": 48
+      },
+      {
+        "id": 1755798803042,
+        "nombre": "TIO NACHO",
+        "precio": 276000,
+        "cantidad": 1
+      },
+      {
+        "id": 1755798839577,
+        "nombre": "DIA Y NOCHE",
+        "precio": 84000,
+        "cantidad": 3
+      }
+    ]
+  },
+  {
+    "id": 53,
+    "cliente": "FRANK BAEZ",
+    "fecha": "2025-05-06",
+    "vendedor": "Edwin Marin",
+    "direccion": "PARQUE ",
+    "telefono": "+57 3166470853",
+    "correo": null,
+    "total": 1800000,
+    "created_at": "2025-08-21T17:55:45.183533+00:00",
+    "productos": [
+      {
+        "id": 1755798936245,
+        "nombre": "PROTEX",
+        "precio": 180000,
+        "cantidad": 10
+      }
+    ]
+  },
+  {
+    "id": 54,
+    "cliente": "FRANK BAEZ",
+    "fecha": "2025-05-06",
+    "vendedor": "Edwin Marin",
+    "direccion": "PARQUE ",
+    "telefono": "+57 3166470853",
+    "correo": null,
+    "total": 630000,
+    "created_at": "2025-08-21T17:57:38.376584+00:00",
+    "productos": [
+      {
+        "id": 15,
+        "codigo": "",
+        "nombre": "PILA DURACEL AA 10X6",
+        "precio": 195000,
+        "cantidad": 1
+      },
+      {
+        "id": 14,
+        "codigo": "",
+        "nombre": "PILA DURACELL AAA 10X6",
+        "precio": 195000,
+        "cantidad": 1
+      },
+      {
+        "id": 1755799052228,
+        "nombre": "KOTES  VERDEX48",
+        "precio": 240000,
+        "cantidad": 1
+      }
+    ]
+  },
+  {
+    "id": 55,
+    "cliente": "FRANK BAEZ",
+    "fecha": "2025-05-06",
+    "vendedor": "Edwin Marin",
+    "direccion": "PARQUE ",
+    "telefono": "+57 3166470853",
+    "correo": null,
+    "total": 2720000,
+    "created_at": "2025-08-21T17:59:02.814941+00:00",
+    "productos": [
+      {
+        "id": 1755799135707,
+        "nombre": "NOSOTRA CASLICA 10 - TIO NACHO  OTROS",
+        "precio": 2720000,
+        "cantidad": 1
+      }
+    ]
+  },
+  {
+    "id": 56,
+    "cliente": "FRANK BAEZ",
+    "fecha": "2025-07-05",
+    "vendedor": "Edwin Marin",
+    "direccion": "PARQUE ",
+    "telefono": "+57 3166470853",
+    "correo": null,
+    "total": 880000,
+    "created_at": "2025-08-21T17:59:56.027402+00:00",
+    "productos": [
+      {
+        "id": 3,
+        "codigo": "",
+        "nombre": "Toallas Nosotras Rapigel ",
+        "precio": 11000,
+        "cantidad": 80
+      }
+    ]
+  },
+  {
+    "id": 57,
+    "cliente": "ESTEBAN ARTOS",
+    "fecha": "2025-05-06",
+    "vendedor": "Edwin Marin",
+    "direccion": "PARQUE",
+    "telefono": null,
+    "correo": null,
+    "total": 420000,
+    "created_at": "2025-08-22T13:24:44.183754+00:00",
+    "productos": [
+      {
+        "id": 1755869074979,
+        "nombre": "JGB TARRITO ROJO",
+        "precio": 17500,
+        "cantidad": 24
+      }
+    ]
+  },
+  {
+    "id": 58,
+    "cliente": "FERNANDO FERROCARRIL",
+    "fecha": "2024-11-16",
+    "vendedor": "Edwin Marin",
+    "direccion": "FERROCARRIL",
+    "telefono": null,
+    "correo": null,
+    "total": 120000,
+    "created_at": "2025-08-22T13:26:16.26939+00:00",
+    "productos": [
+      {
+        "id": 1755869159249,
+        "nombre": "PROTECTORES NOSOTRAS ",
+        "precio": 12000,
+        "cantidad": 10
+      }
+    ]
+  },
+  {
+    "id": 59,
+    "cliente": "FERNANDO FERROCARRIL",
+    "fecha": "2024-11-16",
+    "vendedor": "Edwin Marin",
+    "direccion": "FERROCARRIL",
+    "telefono": null,
+    "correo": null,
+    "total": 198000,
+    "created_at": "2025-08-22T13:27:20.068894+00:00",
+    "productos": [
+      {
+        "id": 1755869233001,
+        "nombre": "NOSOTRAS BUENAS NOCHES",
+        "precio": 198000,
+        "cantidad": 1
+      }
+    ]
+  },
+  {
+    "id": 60,
+    "cliente": "FREDY ORLANDO ",
+    "fecha": "2025-08-22",
+    "vendedor": "Edwin Marin",
+    "direccion": "SABANA",
+    "telefono": null,
+    "correo": null,
+    "total": 2601600,
+    "created_at": "2025-08-22T13:42:11.242381+00:00",
+    "productos": [
+      {
+        "id": 1755869864447,
+        "nombre": "ARAWAK",
+        "precio": 200000,
+        "cantidad": 1
+      },
+      {
+        "id": 1755869886349,
+        "nombre": "SUNDARK",
+        "precio": 336000,
+        "cantidad": 1
+      },
+      {
+        "id": 1755869910952,
+        "nombre": "RAPIGEL X30",
+        "precio": 168000,
+        "cantidad": 1
+      },
+      {
+        "id": 1755869929269,
+        "nombre": "REXONA CLINICAL",
+        "precio": 324000,
+        "cantidad": 1
+      },
+      {
+        "id": 1755869950526,
+        "nombre": "DIA Y NOCHE ",
+        "precio": 204000,
+        "cantidad": 1
+      },
+      {
+        "id": 1755869969074,
+        "nombre": "GILLETE",
+        "precio": 192000,
+        "cantidad": 1
+      },
+      {
+        "id": 1755869992057,
+        "nombre": "MULTIESTILO",
+        "precio": 140000,
+        "cantidad": 1
+      },
+      {
+        "id": 1755870014695,
+        "nombre": "NOSOTRAS  PROTEX",
+        "precio": 348000,
+        "cantidad": 1
+      },
+      {
+        "id": 1755870036796,
+        "nombre": "CKASICA-RAPIGEL",
+        "precio": 336000,
+        "cantidad": 1
+      },
+      {
+        "id": 1755870054146,
+        "nombre": "TIO NACHO",
+        "precio": 177600,
+        "cantidad": 1
+      },
+      {
+        "id": 1755870069398,
+        "nombre": "GEL EGO",
+        "precio": 176000,
+        "cantidad": 1
+      }
+    ]
+  },
+  {
+    "id": 61,
+    "cliente": "GLADIZ LOPEZ",
+    "fecha": "2025-07-08",
+    "vendedor": "Edwin Marin",
+    "direccion": "SABANA",
+    "telefono": null,
+    "correo": null,
+    "total": 352000,
+    "created_at": "2025-08-22T14:09:19.889307+00:00",
+    "productos": [
+      {
+        "id": 1755871720522,
+        "nombre": "RAPIGEL",
+        "precio": 88000,
+        "cantidad": 4
+      }
+    ]
+  },
+  {
+    "id": 62,
+    "cliente": "GLADIZ LOPEZ",
+    "fecha": "2025-07-08",
+    "vendedor": "Edwin Marin",
+    "direccion": "SABANA",
+    "telefono": null,
+    "correo": null,
+    "total": 176000,
+    "created_at": "2025-08-22T14:10:14.606834+00:00",
+    "productos": [
+      {
+        "id": 1755871809726,
+        "nombre": "RAPIGEL",
+        "precio": 88000,
+        "cantidad": 2
+      }
+    ]
+  },
+  {
+    "id": 63,
+    "cliente": "GLADIZ LOPEZ",
+    "fecha": "2025-07-08",
+    "vendedor": "Edwin Marin",
+    "direccion": "SABANA",
+    "telefono": null,
+    "correo": null,
+    "total": 480000,
+    "created_at": "2025-08-22T14:12:34.343013+00:00",
+    "productos": [
+      {
+        "id": 1755871949584,
+        "nombre": "VITAMINA C",
+        "precio": 480000,
+        "cantidad": 1
+      }
+    ]
+  },
+  {
+    "id": 64,
+    "cliente": "GLADIZ LOPEZ",
+    "fecha": "2025-07-08",
+    "vendedor": "Edwin Marin",
+    "direccion": "SABANA",
+    "telefono": null,
+    "correo": null,
+    "total": 758000,
+    "created_at": "2025-08-22T14:15:55.401059+00:00",
+    "productos": [
+      {
+        "id": 1755872040973,
+        "nombre": "GILLLETE GEL 135ML X24",
+        "precio": 372000,
+        "cantidad": 1
+      },
+      {
+        "id": 1755872119180,
+        "nombre": "GILLEE  45 MLX24",
+        "precio": 156000,
+        "cantidad": 1
+      },
+      {
+        "id": 1755872146024,
+        "nombre": "UNEXIA",
+        "precio": 23000,
+        "cantidad": 10
+      }
+    ]
+  },
+  {
+    "id": 65,
+    "cliente": "HECTOR HERMANO DE ADRIAN",
+    "fecha": "2025-03-11",
+    "vendedor": "Edwin Marin",
+    "direccion": null,
+    "telefono": "34399393",
+    "correo": "hm@gmail.com",
+    "total": 810000,
+    "created_at": "2025-08-22T15:13:26.703243+00:00",
+    "productos": [
+      {
+        "id": 1755875595281,
+        "nombre": "DEO PIES",
+        "precio": 81000,
+        "cantidad": 10
+      }
+    ]
+  },
+  {
+    "id": 66,
+    "cliente": "HECTOR HERMANO DE ADRIAN",
+    "fecha": "2025-03-11",
+    "vendedor": "Edwin Marin",
+    "direccion": null,
+    "telefono": "34399393",
+    "correo": "hm@gmail.com",
+    "total": 1776000,
+    "created_at": "2025-08-22T15:16:11.429302+00:00",
+    "productos": [
+      {
+        "id": 1755875655126,
+        "nombre": "MIELTERTOS ",
+        "precio": 18500,
+        "cantidad": 96
+      }
+    ]
+  },
+  {
+    "id": 67,
+    "cliente": "HECTOR HERMANO DE ADRIAN",
+    "fecha": "2025-03-31",
+    "vendedor": "Edwin Marin",
+    "direccion": null,
+    "telefono": "34399393",
+    "correo": "hm@gmail.com",
+    "total": 1632000,
+    "created_at": "2025-08-22T15:17:46.102807+00:00",
+    "productos": [
+      {
+        "id": 1755875849268,
+        "nombre": "SUMDOWN",
+        "precio": 34000,
+        "cantidad": 48
+      }
+    ]
+  },
+  {
+    "id": 68,
+    "cliente": "HECTOR HERMANO DE ADRIAN",
+    "fecha": "2025-03-14",
+    "vendedor": "Edwin Marin",
+    "direccion": null,
+    "telefono": "34399393",
+    "correo": "hm@gmail.com",
+    "total": 3888000,
+    "created_at": "2025-08-22T15:19:29.799874+00:00",
+    "productos": [
+      {
+        "id": 1755875937754,
+        "nombre": "MIELTRETOS",
+        "precio": 648000,
+        "cantidad": 3
+      },
+      {
+        "id": 1755875956502,
+        "nombre": "MIERTESTOS DIA",
+        "precio": 648000,
+        "cantidad": 3
+      }
+    ]
+  },
+  {
+    "id": 69,
+    "cliente": "HECTOR HERMANO DE ADRIAN",
+    "fecha": "2025-03-14",
+    "vendedor": "Edwin Marin",
+    "direccion": null,
+    "telefono": "34399393",
+    "correo": "hm@gmail.com",
+    "total": 768000,
+    "created_at": "2025-08-22T15:20:48.959626+00:00",
+    "productos": [
+      {
+        "id": 1755876040075,
+        "nombre": "GILLETE 3X2",
+        "precio": 16000,
+        "cantidad": 48
+      }
+    ]
+  },
+  {
+    "id": 70,
+    "cliente": "HECTOR HERMANO DE ADRIAN",
+    "fecha": "2025-05-05",
+    "vendedor": "Edwin Marin",
+    "direccion": null,
+    "telefono": "34399393",
+    "correo": "hm@gmail.com",
+    "total": 552000,
+    "created_at": "2025-08-22T15:21:42.336024+00:00",
+    "productos": [
+      {
+        "id": 1755876098427,
+        "nombre": "NIVEA LABIAL",
+        "precio": 11500,
+        "cantidad": 48
+      }
+    ]
+  },
+  {
+    "id": 71,
+    "cliente": "HECTOR HERMANO DE ADRIAN",
+    "fecha": "2025-05-06",
+    "vendedor": "Edwin Marin",
+    "direccion": null,
+    "telefono": "34399393",
+    "correo": "hm@gmail.com",
+    "total": 560000,
+    "created_at": "2025-08-22T15:23:06.726502+00:00",
+    "productos": [
+      {
+        "id": 1755876149778,
+        "nombre": "PRO CEPILLO  CAJA ",
+        "precio": 120000,
+        "cantidad": 1
+      },
+      {
+        "id": 1755876171029,
+        "nombre": "RAPIGEL ",
+        "precio": 11000,
+        "cantidad": 40
+      }
+    ]
+  },
+  {
+    "id": 72,
+    "cliente": "HECTOR COSTENO",
+    "fecha": "2025-07-05",
+    "vendedor": "Edwin Marin",
+    "direccion": "PARQUE",
+    "telefono": null,
+    "correo": null,
+    "total": 608000,
+    "created_at": "2025-08-22T15:24:19.103065+00:00",
+    "productos": [
+      {
+        "id": 1755876239481,
+        "nombre": "RAPIGEL X 30 ",
+        "precio": 11000,
+        "cantidad": 40
+      },
+      {
+        "id": 1755876254949,
+        "nombre": "DIA Y NOCHE NOSOTRAS",
+        "precio": 10500,
+        "cantidad": 16
+      }
+    ]
+  },
+  {
+    "id": 73,
+    "cliente": "HECTOR COSTENO",
+    "fecha": "2025-07-05",
+    "vendedor": "Edwin Marin",
+    "direccion": "PARQUE",
+    "telefono": null,
+    "correo": null,
+    "total": 900000,
+    "created_at": "2025-08-22T15:25:36.890342+00:00",
+    "productos": [
+      {
+        "id": 1755876333648,
+        "nombre": "PROTEX JABON",
+        "precio": 180000,
+        "cantidad": 5
+      }
+    ]
+  },
+  {
+    "id": 74,
+    "cliente": "HECTOR COSTENO",
+    "fecha": "2025-07-05",
+    "vendedor": "Edwin Marin",
+    "direccion": "PARQUE",
+    "telefono": null,
+    "correo": null,
+    "total": 504000,
+    "created_at": "2025-08-22T15:26:21.697899+00:00",
+    "productos": [
+      {
+        "id": 1755876374800,
+        "nombre": "PONDS REJUVEBESTS",
+        "precio": 21000,
+        "cantidad": 24
+      }
+    ]
+  },
+  {
+    "id": 75,
+    "cliente": "HECTOR COSTENO",
+    "fecha": "2025-04-26",
+    "vendedor": "Edwin Marin",
+    "direccion": "PARQUE",
+    "telefono": null,
+    "correo": null,
+    "total": 480000,
+    "created_at": "2025-08-22T15:29:16.958876+00:00",
+    "productos": [
+      {
+        "id": 1755876498980,
+        "nombre": "GILLETTE X. ",
+        "precio": 192000,
+        "cantidad": 1
+      },
+      {
+        "id": 1755876528734,
+        "nombre": "KOTES X8 NOCHE 24 UNDA",
+        "precio": 288000,
+        "cantidad": 1
+      }
+    ]
+  },
+  {
+    "id": 76,
+    "cliente": "HENRY SANDOBAL",
+    "fecha": "2025-07-05",
+    "vendedor": "Edwin Marin",
+    "direccion": "PARQUE ",
+    "telefono": null,
+    "correo": null,
+    "total": 176000,
+    "created_at": "2025-08-22T15:30:42.649923+00:00",
+    "productos": [
+      {
+        "id": 1755876630583,
+        "nombre": "RAPIGEL X30",
+        "precio": 88000,
+        "cantidad": 2
+      }
+    ]
+  },
+  {
+    "id": 77,
+    "cliente": "HENRY SANDOBAL",
+    "fecha": "2025-07-05",
+    "vendedor": "Edwin Marin",
+    "direccion": "PARQUE ",
+    "telefono": null,
+    "correo": null,
+    "total": 240000,
+    "created_at": "2025-08-22T15:31:37.31057+00:00",
+    "productos": [
+      {
+        "id": 1755876677702,
+        "nombre": "PROTECTO NOSOTRAS NORMAL",
+        "precio": 12000,
+        "cantidad": 20
+      }
+    ]
+  },
+  {
+    "id": 78,
+    "cliente": "JAVIER BUITRAGO ",
+    "fecha": "2025-05-05",
+    "vendedor": "Edwin Marin",
+    "direccion": "Ferrocaril A003",
+    "telefono": "3114411220",
+    "correo": null,
+    "total": 1368000,
+    "created_at": "2025-08-22T15:32:32.664851+00:00",
+    "productos": [
+      {
+        "id": 1755876743796,
+        "nombre": "DOLEX JABE",
+        "precio": 12000,
+        "cantidad": 114
+      }
+    ]
+  },
+  {
+    "id": 79,
+    "cliente": "JESUS",
+    "fecha": "2025-07-05",
+    "vendedor": "Edwin Marin",
+    "direccion": "SABANA",
+    "telefono": null,
+    "correo": null,
+    "total": 830000,
+    "created_at": "2025-08-22T15:34:55.115164+00:00",
+    "productos": [
+      {
+        "id": 1755876860767,
+        "nombre": "RAPIGEL",
+        "precio": 11000,
+        "cantidad": 40
+      },
+      {
+        "id": 15,
+        "codigo": "",
+        "nombre": "PILA DURACEL AA 10X6",
+        "precio": 195000,
+        "cantidad": 2
+      }
+    ]
+  },
+  {
+    "id": 80,
+    "cliente": "JESUS",
+    "fecha": "2025-08-22",
+    "vendedor": "Edwin Marin",
+    "direccion": "SABANA",
+    "telefono": null,
+    "correo": null,
+    "total": 1150000,
+    "created_at": "2025-08-22T15:45:56.924114+00:00",
+    "productos": [
+      {
+        "id": 1755877423152,
+        "nombre": "GILLETE",
+        "precio": 186000,
+        "cantidad": 1
+      },
+      {
+        "id": 1755877461885,
+        "nombre": "UNEXIA 2CAJA X12 ",
+        "precio": 460000,
+        "cantidad": 1
+      },
+      {
+        "id": 1755877486117,
+        "nombre": "PONDSREGUBETRS X24",
+        "precio": 504000,
+        "cantidad": 1
+      }
+    ]
+  },
+  {
+    "id": 81,
+    "cliente": "JESUS",
+    "fecha": "2025-05-25",
+    "vendedor": "Edwin Marin",
+    "direccion": "SABANA",
+    "telefono": null,
+    "correo": null,
+    "total": 552000,
+    "created_at": "2025-08-22T15:47:32.479755+00:00",
+    "productos": [
+      {
+        "id": 1755877607236,
+        "nombre": "TIO NACHO",
+        "precio": 276000,
+        "cantidad": 1
+      },
+      {
+        "id": 1755877646389,
+        "nombre": "NIVEA 11500 LAVIAL",
+        "precio": 276000,
+        "cantidad": 1
+      }
+    ]
+  },
+  {
+    "id": 82,
+    "cliente": "JESUS",
+    "fecha": "2025-05-12",
+    "vendedor": "Edwin Marin",
+    "direccion": "SABANA",
+    "telefono": null,
+    "correo": null,
+    "total": 240000,
+    "created_at": "2025-08-22T15:48:11.074887+00:00",
+    "productos": [
+      {
+        "id": 1755877686434,
+        "nombre": "CLASICA X30",
+        "precio": 80000,
+        "cantidad": 3
+      }
+    ]
+  },
+  {
+    "id": 83,
+    "cliente": "JESUS",
+    "fecha": "2025-04-24",
+    "vendedor": "Edwin Marin",
+    "direccion": "SABANA",
+    "telefono": null,
+    "correo": null,
+    "total": 1166500,
+    "created_at": "2025-08-22T15:54:12.284371+00:00",
+    "productos": [
+      {
+        "id": 1755877772205,
+        "nombre": "NOSTRAS",
+        "precio": 198000,
+        "cantidad": 1
+      },
+      {
+        "id": 1755877791019,
+        "nombre": "PACA NUTRIBEKA",
+        "precio": 168000,
+        "cantidad": 1
+      },
+      {
+        "id": 1755877806141,
+        "nombre": "PROTECTOR",
+        "precio": 99000,
+        "cantidad": 1
+      },
+      {
+        "id": 1755877831103,
+        "nombre": "ACEITE JJ5600",
+        "precio": 403000,
+        "cantidad": 1
+      },
+      {
+        "id": 1755877850073,
+        "nombre": "TAMPOM 11500",
+        "precio": 69000,
+        "cantidad": 1
+      },
+      {
+        "id": 1755877871158,
+        "nombre": "PK NIVEA",
+        "precio": 102000,
+        "cantidad": 1
+      },
+      {
+        "id": 1755877997709,
+        "nombre": "ARDEN 8500",
+        "precio": 127500,
+        "cantidad": 1
+      }
+    ]
+  },
+  {
+    "id": 84,
+    "cliente": "JESUS",
+    "fecha": "2025-05-21",
+    "vendedor": "Edwin Marin",
+    "direccion": "SABANA",
+    "telefono": null,
+    "correo": null,
+    "total": 360000,
+    "created_at": "2025-08-22T15:55:19.050102+00:00",
+    "productos": [
+      {
+        "id": 1755878112643,
+        "nombre": "PROTEX ",
+        "precio": 180000,
+        "cantidad": 2
+      }
+    ]
+  },
+  {
+    "id": 85,
+    "cliente": "JESUS",
+    "fecha": "2025-05-21",
+    "vendedor": "Edwin Marin",
+    "direccion": "SABANA",
+    "telefono": null,
+    "correo": null,
+    "total": 368000,
+    "created_at": "2025-08-22T15:56:33.326161+00:00",
+    "productos": [
+      {
+        "id": 1755878160364,
+        "nombre": "RAPIGEL",
+        "precio": 88000,
+        "cantidad": 2
+      },
+      {
+        "id": 1755878188428,
+        "nombre": "KOTES",
+        "precio": 96000,
+        "cantidad": 2
+      }
+    ]
+  },
+  {
+    "id": 86,
+    "cliente": "JESUS",
+    "fecha": "2025-02-15",
+    "vendedor": "Edwin Marin",
+    "direccion": "SABANA",
+    "telefono": null,
+    "correo": null,
+    "total": 1188000,
+    "created_at": "2025-08-22T15:58:08.724222+00:00",
+    "productos": [
+      {
+        "id": 1755878231181,
+        "nombre": "ARAWAK",
+        "precio": 216000,
+        "cantidad": 1
+      },
+      {
+        "id": 1755878256416,
+        "nombre": "ACID MANTHLECREMA X 100",
+        "precio": 300000,
+        "cantidad": 1
+      },
+      {
+        "id": 1755878284065,
+        "nombre": "ARAWAK NINO POTE24",
+        "precio": 672000,
+        "cantidad": 1
+      }
+    ]
+  },
+  {
+    "id": 88,
+    "cliente": "YANET GONZÁLEZ ",
+    "fecha": "2025-07-05",
+    "vendedor": "Edwin Marin",
+    "direccion": "Sábana ",
+    "telefono": null,
+    "correo": null,
+    "total": 440000,
+    "created_at": "2025-08-22T21:23:14.162156+00:00",
+    "productos": [
+      {
+        "id": 3,
+        "codigo": "",
+        "nombre": "Toallas Nosotras Rapigel ",
+        "precio": 11000,
+        "cantidad": 40
+      }
+    ]
+  },
+  {
+    "id": 89,
+    "cliente": "YANET GONZÁLEZ ",
+    "fecha": "2025-07-02",
+    "vendedor": "Edwin Marin",
+    "direccion": "Sábana ",
+    "telefono": null,
+    "correo": null,
+    "total": 520000,
+    "created_at": "2025-08-22T21:24:58.879313+00:00",
+    "productos": [
+      {
+        "id": 1755897866183,
+        "nombre": "Clásica x30",
+        "precio": 10000,
+        "cantidad": 40
+      },
+      {
+        "id": 1755897892344,
+        "nombre": "Protectores normal x150",
+        "precio": 12000,
+        "cantidad": 10
+      }
+    ]
+  },
+  {
+    "id": 90,
+    "cliente": "YANET GONZÁLEZ ",
+    "fecha": "2025-05-02",
+    "vendedor": "Edwin Marin",
+    "direccion": "Sábana ",
+    "telefono": null,
+    "correo": null,
+    "total": 900000,
+    "created_at": "2025-08-22T21:25:55.370471+00:00",
+    "productos": [
+      {
+        "id": 1755897950025,
+        "nombre": "Protex paca jabón 5",
+        "precio": 180000,
+        "cantidad": 5
+      }
+    ]
+  },
+  {
+    "id": 91,
+    "cliente": "YANET GONZÁLEZ ",
+    "fecha": "2025-05-07",
+    "vendedor": "Edwin Marin",
+    "direccion": "Sábana ",
+    "telefono": null,
+    "correo": null,
+    "total": 960000,
+    "created_at": "2025-08-22T21:27:18.863641+00:00",
+    "productos": [
+      {
+        "id": 1755898028351,
+        "nombre": "Vitamina c paca la sante",
+        "precio": 480000,
+        "cantidad": 2
+      }
+    ]
+  },
+  {
+    "id": 93,
+    "cliente": "RAMIRO",
+    "fecha": "2025-07-29",
+    "vendedor": "Edwin Marin",
+    "direccion": "Ferrocarril",
+    "telefono": "3125250038",
+    "correo": null,
+    "total": 684000,
+    "created_at": "2025-08-23T12:29:32.169442+00:00",
+    "productos": [
+      {
+        "id": 1755952120327,
+        "nombre": "rapigel x10",
+        "precio": 98000,
+        "cantidad": 3
+      },
+      {
+        "id": 15,
+        "codigo": "",
+        "nombre": "PILA DURACEL AA 10X6",
+        "precio": 195000,
+        "cantidad": 2
+      }
+    ]
+  },
+  {
+    "id": 94,
+    "cliente": "MARTHA TABARES",
+    "fecha": "2025-06-11",
+    "vendedor": "Edwin Marin",
+    "direccion": "PARQUE local 123",
+    "telefono": "3453053",
+    "correo": "mt@gmail.com",
+    "total": 3690000,
+    "created_at": "2025-08-23T12:38:54.862182+00:00",
+    "productos": [
+      {
+        "id": 1755952430078,
+        "nombre": "lumbal ",
+        "precio": 30000,
+        "cantidad": 24
+      },
+      {
+        "id": 1755952526141,
+        "nombre": "protex",
+        "precio": 180000,
+        "cantidad": 10
+      },
+      {
+        "id": 1755952626389,
+        "nombre": "pila AA",
+        "precio": 195000,
+        "cantidad": 4
+      },
+      {
+        "id": 1755952673293,
+        "nombre": "pila AAA",
+        "precio": 195000,
+        "cantidad": 2
+      }
+    ]
+  },
+  {
+    "id": 95,
+    "cliente": "WENDY ",
+    "fecha": "2025-08-23",
+    "vendedor": "Edwin Marin",
+    "direccion": "Ferrocarril ",
+    "telefono": null,
+    "correo": null,
+    "total": 1105000,
+    "created_at": "2025-08-23T12:42:21.426426+00:00",
+    "productos": [
+      {
+        "id": 1755952582919,
+        "nombre": "rexona ",
+        "precio": 165000,
+        "cantidad": 1
+      },
+      {
+        "id": 1755952830776,
+        "nombre": "acid manthe",
+        "precio": 25000,
+        "cantidad": 30
+      },
+      {
+        "id": 1755952879581,
+        "nombre": "acid manthe",
+        "precio": 25000,
+        "cantidad": 6
+      },
+      {
+        "id": 1755952932582,
+        "nombre": "saldo factura",
+        "precio": 40000,
+        "cantidad": 1
+      }
+    ]
+  },
+  {
+    "id": 96,
+    "cliente": "NANCY LOPEZ",
+    "fecha": "2025-07-16",
+    "vendedor": "Edwin Marin",
+    "direccion": "PARQUE",
+    "telefono": null,
+    "correo": null,
+    "total": 1280000,
+    "created_at": "2025-08-23T12:43:02.729342+00:00",
+    "productos": [
+      {
+        "id": 1755952931693,
+        "nombre": "RAPIGEL X30",
+        "precio": 88000,
+        "cantidad": 10
+      },
+      {
+        "id": 1755952959349,
+        "nombre": "CLASICA",
+        "precio": 80000,
+        "cantidad": 5
+      }
+    ]
+  },
+  {
+    "id": 97,
+    "cliente": "DANIEL GONZALEZ",
+    "fecha": "2025-07-30",
+    "vendedor": "Edwin Marin",
+    "direccion": "Sabana",
+    "telefono": null,
+    "correo": null,
+    "total": 2520000,
+    "created_at": "2025-08-23T12:48:24.380854+00:00",
+    "productos": [
+      {
+        "id": 1755953268572,
+        "nombre": "BLOQUEADOR UMBRELLA",
+        "precio": 70000,
+        "cantidad": 36
+      }
+    ]
+  },
+  {
+    "id": 98,
+    "cliente": "EDISON -laura",
+    "fecha": "2025-07-30",
+    "vendedor": "Edwin Marin",
+    "direccion": "Parque",
+    "telefono": null,
+    "correo": null,
+    "total": 400000,
+    "created_at": "2025-08-23T12:51:10.273339+00:00",
+    "productos": [
+      {
+        "id": 1755953450812,
+        "nombre": "PACAS NOSOTRAS CLASICA X30",
+        "precio": 80000,
+        "cantidad": 5
+      }
+    ]
+  },
+  {
+    "id": 99,
+    "cliente": "WENDY ",
+    "fecha": "2025-04-08",
+    "vendedor": "Edwin Marin",
+    "direccion": "Ferrocarril ",
+    "telefono": null,
+    "correo": null,
+    "total": 826000,
+    "created_at": "2025-08-23T12:51:17.896698+00:00",
+    "productos": [
+      {
+        "id": 1755953465719,
+        "nombre": "protectores-rexona-rapidel-crema cream-400ml-colgate",
+        "precio": 826000,
+        "cantidad": 1
+      }
+    ]
+  },
+  {
+    "id": 100,
+    "cliente": "WENDY ",
+    "fecha": "2025-04-26",
+    "vendedor": "Edwin Marin",
+    "direccion": "Ferrocarril ",
+    "telefono": null,
+    "correo": null,
+    "total": 384000,
+    "created_at": "2025-08-23T12:56:11.129744+00:00",
+    "productos": [
+      {
+        "id": 1755953763370,
+        "nombre": "gillete mask 3 x2",
+        "precio": 16000,
+        "cantidad": 24
+      }
+    ]
+  },
+  {
+    "id": 101,
+    "cliente": "MARTHA BLANCO",
+    "fecha": "2025-07-29",
+    "vendedor": "Edwin Marin",
+    "direccion": "SÁBANA ",
+    "telefono": "3001234555",
+    "correo": "mb@gmail.com",
+    "total": 736000,
+    "created_at": "2025-08-23T12:59:27.327362+00:00",
+    "productos": [
+      {
+        "id": 1755953784699,
+        "nombre": "PACAS RAID PASTILLAS ",
+        "precio": 300000,
+        "cantidad": 2
+      },
+      {
+        "id": 1755953908909,
+        "nombre": "PACA NIVEA 50 X16",
+        "precio": 8500,
+        "cantidad": 16
+      }
+    ]
+  },
+  {
+    "id": 102,
+    "cliente": "WENDY ",
+    "fecha": "2025-04-26",
+    "vendedor": "Edwin Marin",
+    "direccion": "Ferrocarril ",
+    "telefono": null,
+    "correo": null,
+    "total": 600000,
+    "created_at": "2025-08-23T12:59:54.424547+00:00",
+    "productos": [
+      {
+        "id": 1755953924122,
+        "nombre": "nivea",
+        "precio": 11500,
+        "cantidad": 24
+      },
+      {
+        "id": 1755953988619,
+        "nombre": "rexona clinica x 24 sobres",
+        "precio": 324000,
+        "cantidad": 1
+      }
+    ]
+  },
+  {
+    "id": 103,
+    "cliente": "SARA",
+    "fecha": "2025-07-21",
+    "vendedor": "Edwin Marin",
+    "direccion": "SABANA",
+    "telefono": null,
+    "correo": null,
+    "total": 380000,
+    "created_at": "2025-08-23T13:01:52.281526+00:00",
+    "productos": [
+      {
+        "id": 1755954064419,
+        "nombre": "PACAS NOSOTRAS X 150",
+        "precio": 120000,
+        "cantidad": 2
+      },
+      {
+        "id": 1755954100363,
+        "nombre": "PACA NOSOTRAS AUTOESTILO",
+        "precio": 140000,
+        "cantidad": 1
+      }
+    ]
+  },
+  {
+    "id": 104,
+    "cliente": "WENDY ",
+    "fecha": "2025-04-26",
+    "vendedor": "Edwin Marin",
+    "direccion": "Ferrocarril ",
+    "telefono": null,
+    "correo": null,
+    "total": 384000,
+    "created_at": "2025-08-23T13:02:05.818651+00:00",
+    "productos": [
+      {
+        "id": 1755954067337,
+        "nombre": "gillete gel x1135",
+        "precio": 15500,
+        "cantidad": 12
+      },
+      {
+        "id": 1755954097027,
+        "nombre": "gillete x45 x 12",
+        "precio": 78000,
+        "cantidad": 1
+      },
+      {
+        "id": 1755954116507,
+        "nombre": "protector verde",
+        "precio": 120000,
+        "cantidad": 1
+      }
+    ]
+  },
+  {
+    "id": 105,
+    "cliente": "FLOR CELIS",
+    "fecha": "2025-07-21",
+    "vendedor": "Edwin Marin",
+    "direccion": "PARQUE",
+    "telefono": null,
+    "correo": null,
+    "total": 440000,
+    "created_at": "2025-08-23T13:04:51.715743+00:00",
+    "productos": [
+      {
+        "id": 1755954275731,
+        "nombre": "PACAS RAPIGEL",
+        "precio": 88000,
+        "cantidad": 5
+      }
+    ]
+  },
+  {
+    "id": 106,
+    "cliente": "RAMIRO",
+    "fecha": "2025-08-23",
+    "vendedor": "Edwin Marin",
+    "direccion": "Ferrocarril",
+    "telefono": "3125250038",
+    "correo": null,
+    "total": 840000,
+    "created_at": "2025-08-23T13:15:23.140357+00:00",
+    "productos": [
+      {
+        "id": 1755954916622,
+        "nombre": "TIO NACHO",
+        "precio": 28000,
+        "cantidad": 30
+      }
+    ]
+  },
+  {
+    "id": 107,
+    "cliente": "RAMIRO",
+    "fecha": "2025-08-23",
+    "vendedor": "Edwin Marin",
+    "direccion": "Ferrocarril",
+    "telefono": "3125250038",
+    "correo": null,
+    "total": 960000,
+    "created_at": "2025-08-23T13:16:34.076307+00:00",
+    "productos": [
+      {
+        "id": 1755954981471,
+        "nombre": "DOLEX",
+        "precio": 960000,
+        "cantidad": 1
+      }
+    ]
+  },
+  {
+    "id": 108,
+    "cliente": "Nelly González ",
+    "fecha": "2025-07-26",
+    "vendedor": "Edwin Marin",
+    "direccion": null,
+    "telefono": null,
+    "correo": null,
+    "total": 4404000,
+    "created_at": "2025-08-23T13:16:55.686464+00:00",
+    "productos": [
+      {
+        "id": 1755954737442,
+        "nombre": "MIELTERTOS PASTILLA ",
+        "precio": 18000,
+        "cantidad": 96
+      },
+      {
+        "id": 1755954827650,
+        "nombre": "PACA DE SAVITAL ",
+        "precio": 300000,
+        "cantidad": 1
+      },
+      {
+        "id": 1755954879633,
+        "nombre": "PACA SAVITAL ",
+        "precio": 300000,
+        "cantidad": 1
+      },
+      {
+        "id": 1755954923145,
+        "nombre": "TIO NACHO",
+        "precio": 23000,
+        "cantidad": 12
+      },
+      {
+        "id": 1755954985537,
+        "nombre": "MIELTERTOS NOCHE",
+        "precio": 9000,
+        "cantidad": 200
+      }
+    ]
+  },
+  {
+    "id": 109,
+    "cliente": "RAFA ",
+    "fecha": "2025-08-23",
+    "vendedor": "Edwin Marin",
+    "direccion": "FERROCARRIL",
+    "telefono": null,
+    "correo": null,
+    "total": 648000,
+    "created_at": "2025-08-23T13:20:37.68192+00:00",
+    "productos": [
+      {
+        "id": 1755955216026,
+        "nombre": "REXONA CLINICAL",
+        "precio": 324000,
+        "cantidad": 1
+      },
+      {
+        "id": 1755955229019,
+        "nombre": "REXONA CLINICAL MUJHER",
+        "precio": 324000,
+        "cantidad": 1
+      }
+    ]
+  },
+  {
+    "id": 110,
+    "cliente": "PEDRO MANDRIVA ",
+    "fecha": "2025-08-23",
+    "vendedor": "Edwin Marin",
+    "direccion": "SABANA ",
+    "telefono": null,
+    "correo": null,
+    "total": 1791002,
+    "created_at": "2025-08-23T13:28:04.814804+00:00",
+    "productos": [
+      {
+        "id": 1755955522847,
+        "nombre": "FACTURAS ASNTIGUAS",
+        "precio": 1791000,
+        "cantidad": 1
+      },
+      {
+        "id": 1755955561416,
+        "nombre": "VITAQMINA C",
+        "precio": 1,
+        "cantidad": 1
+      },
+      {
+        "id": 1755955672133,
+        "nombre": "RAPIGEL CLAsica-311000 tio nacho 177600-clasica 576000nosotras multiestilo 475000",
+        "precio": 1,
+        "cantidad": 1
+      }
+    ]
+  },
+  {
+    "id": 111,
+    "cliente": "MARTHA BLANCO",
+    "fecha": "2025-02-28",
+    "vendedor": "Edwin Marin",
+    "direccion": "SÁBANA ",
+    "telefono": "3001234555",
+    "correo": "mb@gmail.com",
+    "total": 1346000,
+    "created_at": "2025-08-23T13:28:16.48336+00:00",
+    "productos": [
+      {
+        "id": 1755955419585,
+        "nombre": "ACIMANCLE",
+        "precio": 25000,
+        "cantidad": 12
+      },
+      {
+        "id": 1755955463600,
+        "nombre": "RAPIGEL",
+        "precio": 440000,
+        "cantidad": 1
+      },
+      {
+        "id": 1755955589177,
+        "nombre": "SOBRE SUNDARK",
+        "precio": 216000,
+        "cantidad": 1
+      },
+      {
+        "id": 1755955627825,
+        "nombre": "SOBRE SUNDARK NIÑOS",
+        "precio": 216000,
+        "cantidad": 1
+      },
+      {
+        "id": 1755955677345,
+        "nombre": "SUNDARK POTE",
+        "precio": 174000,
+        "cantidad": 1
+      }
+    ]
+  },
+  {
+    "id": 112,
+    "cliente": "MARTHA TABARES",
+    "fecha": "2025-08-23",
+    "vendedor": "Edwin Marin",
+    "direccion": "PARQUE local 123",
+    "telefono": "3453053",
+    "correo": "mt@gmail.com",
+    "total": 2956000,
+    "created_at": "2025-08-23T13:29:56.975046+00:00",
+    "productos": [
+      {
+        "id": 1755955790441,
+        "nombre": "rapigel aa aaa kotes rapigel",
+        "precio": 2956000,
+        "cantidad": 1
+      }
+    ]
+  },
+  {
+    "id": 113,
+    "cliente": "NEIDY ",
+    "fecha": "2025-08-23",
+    "vendedor": "Edwin Marin",
+    "direccion": "Sabana",
+    "telefono": null,
+    "correo": null,
+    "total": 176000,
+    "created_at": "2025-08-23T13:34:49.288996+00:00",
+    "productos": [
+      {
+        "id": 1755956072425,
+        "nombre": "RAPIGEL X 30",
+        "precio": 88000,
+        "cantidad": 2
+      }
+    ]
+  },
+  {
+    "id": 114,
+    "cliente": "NORVEY ",
+    "fecha": "2025-07-05",
+    "vendedor": "Edwin Marin",
+    "direccion": "Parque local ",
+    "telefono": null,
+    "correo": null,
+    "total": 2600000,
+    "created_at": "2025-08-23T13:37:55.397947+00:00",
+    "productos": [
+      {
+        "id": 1755956190363,
+        "nombre": "RAPIGEL X30",
+        "precio": 88000,
+        "cantidad": 5
+      },
+      {
+        "id": 1755956261467,
+        "nombre": "Kola  granulada",
+        "precio": 432000,
+        "cantidad": 5
+      }
+    ]
+  },
+  {
+    "id": 115,
+    "cliente": "NORVEY ",
+    "fecha": "2025-05-06",
+    "vendedor": "Edwin Marin",
+    "direccion": "Parque local ",
+    "telefono": null,
+    "correo": null,
+    "total": 1260000,
+    "created_at": "2025-08-23T13:38:53.922472+00:00",
+    "productos": [
+      {
+        "id": 1755956327299,
+        "nombre": "ponds crema 21000",
+        "precio": 252000,
+        "cantidad": 5
+      }
+    ]
+  },
+  {
+    "id": 116,
+    "cliente": "MARTHA BLANCO",
+    "fecha": "2025-02-28",
+    "vendedor": "Fabian Marin",
+    "direccion": "SÁBANA ",
+    "telefono": "3001234555",
+    "correo": "mb@gmail.com",
+    "total": 684000,
+    "created_at": "2025-08-23T13:40:07.348489+00:00",
+    "productos": [
+      {
+        "id": 1755956077119,
+        "nombre": "MEXAN ",
+        "precio": 288000,
+        "cantidad": 1
+      },
+      {
+        "id": 1755956196783,
+        "nombre": "MIELTERTOS ",
+        "precio": 288000,
+        "cantidad": 1
+      },
+      {
+        "id": 1755956313815,
+        "nombre": "CALADER",
+        "precio": 6000,
+        "cantidad": 18
+      }
+    ]
+  },
+  {
+    "id": 117,
+    "cliente": "ROSENDO",
+    "fecha": "2025-05-06",
+    "vendedor": "Edwin Marin",
+    "direccion": "PARQUE",
+    "telefono": null,
+    "correo": null,
+    "total": 1120000,
+    "created_at": "2025-08-23T13:40:33.073448+00:00",
+    "productos": [
+      {
+        "id": 1755956426232,
+        "nombre": "BEDOYECTA",
+        "precio": 28000,
+        "cantidad": 40
+      }
+    ]
+  },
+  {
+    "id": 118,
+    "cliente": "MARIELA ",
+    "fecha": "2025-08-23",
+    "vendedor": "Edwin Marin",
+    "direccion": "Ferrocaril ",
+    "telefono": "300",
+    "correo": null,
+    "total": 180000,
+    "created_at": "2025-08-23T13:43:02.589927+00:00",
+    "productos": [
+      {
+        "id": 1755956577566,
+        "nombre": "PROTEX JABOIN",
+        "precio": 180000,
+        "cantidad": 1
+      }
+    ]
+  },
+  {
+    "id": 120,
+    "cliente": "MARIELA ",
+    "fecha": "2025-07-05",
+    "vendedor": "Edwin Marin",
+    "direccion": "Ferrocaril ",
+    "telefono": "300",
+    "correo": null,
+    "total": 336000,
+    "created_at": "2025-08-23T13:47:43.197543+00:00",
+    "productos": [
+      {
+        "id": 1755956703487,
+        "nombre": "RAPIGEL X 30",
+        "precio": 88000,
+        "cantidad": 2
+      },
+      {
+        "id": 1755956733316,
+        "nombre": "CLASICAX 30",
+        "precio": 80000,
+        "cantidad": 2
+      }
+    ]
+  },
+  {
+    "id": 121,
+    "cliente": "MARCELA CRISTIAN ",
+    "fecha": "2025-08-23",
+    "vendedor": "Edwin Marin",
+    "direccion": "PARQUE ",
+    "telefono": null,
+    "correo": null,
+    "total": 52000.27,
+    "created_at": "2025-08-23T13:54:04.64+00:00",
+    "productos": [
+      {
+        "id": 1755957239928,
+        "nombre": "KOTEX  ",
+        "precio": 52000.27,
+        "cantidad": 1
+      }
+    ]
+  },
+  {
+    "id": 147,
+    "cliente": "MARTHA BLANCO",
+    "fecha": "2025-08-06",
+    "vendedor": "Edwin Marin",
+    "direccion": "SÁBANA ",
+    "telefono": "3001234555",
+    "correo": "mb@gmail.com",
+    "total": 1560000,
+    "created_at": "2025-08-23T14:59:40.62245+00:00",
+    "productos": [
+      {
+        "id": 15,
+        "codigo": "",
+        "nombre": "PILA DURACEL AA 10X6",
+        "precio": 195000,
+        "cantidad": 4
+      },
+      {
+        "id": 14,
+        "codigo": "",
+        "nombre": "PILA DURACELL AAA 10X6",
+        "precio": 195000,
+        "cantidad": 4
+      }
+    ]
+  },
+  {
+    "id": 122,
+    "cliente": "MARTHA BLANCO",
+    "fecha": "2025-04-01",
+    "vendedor": "Edwin Marin",
+    "direccion": "SÁBANA ",
+    "telefono": "3001234555",
+    "correo": "mb@gmail.com",
+    "total": 2972000,
+    "created_at": "2025-08-23T13:55:18.467191+00:00",
+    "productos": [
+      {
+        "id": 1755956825647,
+        "nombre": "SOMDOWN",
+        "precio": 34000,
+        "cantidad": 12
+      },
+      {
+        "id": 1755956862592,
+        "nombre": "ARAWAK",
+        "precio": 18000,
+        "cantidad": 36
+      },
+      {
+        "id": 1755956887075,
+        "nombre": "RAPIGEL",
+        "precio": 88000,
+        "cantidad": 5
+      },
+      {
+        "id": 1755956977144,
+        "nombre": "NUTRIBELA ACONDICIONADOR ",
+        "precio": 14000,
+        "cantidad": 12
+      },
+      {
+        "id": 1755957011291,
+        "nombre": "NUTRIBELA SOBRES ",
+        "precio": 8500,
+        "cantidad": 24
+      },
+      {
+        "id": 1755957082884,
+        "nombre": "JHONSSON ",
+        "precio": 19000,
+        "cantidad": 12
+      },
+      {
+        "id": 1755957145296,
+        "nombre": "TALCO MEXANA ",
+        "precio": 18000,
+        "cantidad": 15
+      },
+      {
+        "id": 1755957172932,
+        "nombre": "NIVEA ROLON ",
+        "precio": 8500,
+        "cantidad": 36
+      },
+      {
+        "id": 1755957198031,
+        "nombre": "TOALLA DIA  Y NOCHE ",
+        "precio": 10500,
+        "cantidad": 8
+      },
+      {
+        "id": 1755957240608,
+        "nombre": "CERA EGO ",
+        "precio": 11500,
+        "cantidad": 12
+      },
+      {
+        "id": 1755957259841,
+        "nombre": "EGO GEL ",
+        "precio": 6500,
+        "cantidad": 12
+      }
+    ]
+  },
+  {
+    "id": 123,
+    "cliente": "LORENA CASTAÑEDA ",
+    "fecha": "2025-08-23",
+    "vendedor": "Edwin Marin",
+    "direccion": "Sabana",
+    "telefono": null,
+    "correo": null,
+    "total": 260000,
+    "created_at": "2025-08-23T13:56:11.353662+00:00",
+    "productos": [
+      {
+        "id": 1755957350674,
+        "nombre": "MULTIESTILO",
+        "precio": 140000,
+        "cantidad": 1
+      },
+      {
+        "id": 1755957363839,
+        "nombre": "PROTECTOR NORMAL",
+        "precio": 120000,
+        "cantidad": 1
+      }
+    ]
+  },
+  {
+    "id": 124,
+    "cliente": "MARTHA BLANCO",
+    "fecha": "2025-04-25",
+    "vendedor": "Edwin Marin",
+    "direccion": "SÁBANA ",
+    "telefono": "3001234555",
+    "correo": "mb@gmail.com",
+    "total": 384000,
+    "created_at": "2025-08-23T13:58:40.061775+00:00",
+    "productos": [
+      {
+        "id": 1755957424404,
+        "nombre": "GILLET MAX ",
+        "precio": 384000,
+        "cantidad": 1
+      }
+    ]
+  },
+  {
+    "id": 125,
+    "cliente": "LORENA CASTAÑEDA ",
+    "fecha": "2025-08-23",
+    "vendedor": "Edwin Marin",
+    "direccion": "Sabana",
+    "telefono": null,
+    "correo": null,
+    "total": 672000,
+    "created_at": "2025-08-23T14:00:16.219738+00:00",
+    "productos": [
+      {
+        "id": 1755957584878,
+        "nombre": "VITAMINA C",
+        "precio": 480000,
+        "cantidad": 1
+      },
+      {
+        "id": 1755957610894,
+        "nombre": "KOTES NOCURNA 2 PACAS",
+        "precio": 192000,
+        "cantidad": 1
+      }
+    ]
+  },
+  {
+    "id": 126,
+    "cliente": "LIBEY SALINAS ",
+    "fecha": "2025-08-23",
+    "vendedor": "Edwin Marin",
+    "direccion": "Ferrocaril ",
+    "telefono": null,
+    "correo": null,
+    "total": 2206000,
+    "created_at": "2025-08-23T14:01:32.896003+00:00",
+    "productos": [
+      {
+        "id": 1755957672274,
+        "nombre": "VARIOS",
+        "precio": 2206000,
+        "cantidad": 1
+      }
+    ]
+  },
+  {
+    "id": 127,
+    "cliente": "LIBEY SALINAS ",
+    "fecha": "2025-07-05",
+    "vendedor": "Edwin Marin",
+    "direccion": "Ferrocaril ",
+    "telefono": null,
+    "correo": null,
+    "total": 440000,
+    "created_at": "2025-08-23T14:03:11.850313+00:00",
+    "productos": [
+      {
+        "id": 1755957771490,
+        "nombre": "RAPIGEL",
+        "precio": 88000,
+        "cantidad": 5
+      }
+    ]
+  },
+  {
+    "id": 128,
+    "cliente": "LUCERO ",
+    "fecha": "2025-05-20",
+    "vendedor": "Edwin Marin",
+    "direccion": "Parque ",
+    "telefono": null,
+    "correo": null,
+    "total": 900000,
+    "created_at": "2025-08-23T14:03:55.033007+00:00",
+    "productos": [
+      {
+        "id": 1755957821426,
+        "nombre": "PROTEX",
+        "precio": 180000,
+        "cantidad": 5
+      }
+    ]
+  },
+  {
+    "id": 129,
+    "cliente": "LUCHO",
+    "fecha": "2025-04-26",
+    "vendedor": "Edwin Marin",
+    "direccion": "Ferrocarril",
+    "telefono": null,
+    "correo": null,
+    "total": 1296000,
+    "created_at": "2025-08-23T14:05:00.94238+00:00",
+    "productos": [
+      {
+        "id": 1755957887158,
+        "nombre": "ARAWAK",
+        "precio": 216000,
+        "cantidad": 6
+      }
+    ]
+  },
+  {
+    "id": 130,
+    "cliente": "MARTHA BLANCO",
+    "fecha": "2025-04-25",
+    "vendedor": "Edwin Marin",
+    "direccion": "SÁBANA ",
+    "telefono": "3001234555",
+    "correo": "mb@gmail.com",
+    "total": 2178000,
+    "created_at": "2025-08-23T14:05:59.123381+00:00",
+    "productos": [
+      {
+        "id": 1755957614995,
+        "nombre": "DURACELL AA",
+        "precio": 195000,
+        "cantidad": 4
+      },
+      {
+        "id": 1755957646299,
+        "nombre": "DURACELL AAA",
+        "precio": 195000,
+        "cantidad": 2
+      },
+      {
+        "id": 1755957660919,
+        "nombre": "ARAWAK ",
+        "precio": 216000,
+        "cantidad": 2
+      },
+      {
+        "id": 1755957721483,
+        "nombre": "TOALLA CLASICA TELA ",
+        "precio": 80000,
+        "cantidad": 5
+      },
+      {
+        "id": 1755957859701,
+        "nombre": "RAPIGEL ",
+        "precio": 88000,
+        "cantidad": 2
+      }
+    ]
+  },
+  {
+    "id": 131,
+    "cliente": "ALEJANDRA LADY",
+    "fecha": "2025-08-23",
+    "vendedor": "Edwin Marin",
+    "direccion": "PARQUE",
+    "telefono": null,
+    "correo": null,
+    "total": 1008000,
+    "created_at": "2025-08-23T14:12:43.394919+00:00",
+    "productos": [
+      {
+        "id": 1755958353372,
+        "nombre": "PONDS REJUBENETES",
+        "precio": 252000,
+        "cantidad": 4
+      }
+    ]
+  },
+  {
+    "id": 132,
+    "cliente": "LEIDY YORWIS",
+    "fecha": "2025-01-15",
+    "vendedor": "Edwin Marin",
+    "direccion": "PARQUE",
+    "telefono": null,
+    "correo": null,
+    "total": 190000,
+    "created_at": "2025-08-23T14:15:33.082792+00:00",
+    "productos": [
+      {
+        "id": 1755958505075,
+        "nombre": "KLENES",
+        "precio": 95000,
+        "cantidad": 2
+      }
+    ]
+  },
+  {
+    "id": 133,
+    "cliente": "KELLY HERMANA DE ADRIAN",
+    "fecha": "2025-01-15",
+    "vendedor": "Edwin Marin",
+    "direccion": "Ferrocarril",
+    "telefono": null,
+    "correo": null,
+    "total": 1080000,
+    "created_at": "2025-08-23T14:16:16.889232+00:00",
+    "productos": [
+      {
+        "id": 1755958565587,
+        "nombre": "PROTEX",
+        "precio": 180000,
+        "cantidad": 6
+      }
+    ]
+  },
+  {
+    "id": 135,
+    "cliente": "MARTHA BLANCO",
+    "fecha": "2025-04-30",
+    "vendedor": "Edwin Marin",
+    "direccion": "SÁBANA ",
+    "telefono": "3001234555",
+    "correo": "mb@gmail.com",
+    "total": 864000,
+    "created_at": "2025-08-23T14:18:10.927359+00:00",
+    "productos": [
+      {
+        "id": 1755958652976,
+        "nombre": "ARAWAK SOBRES ",
+        "precio": 216000,
+        "cantidad": 1
+      },
+      {
+        "id": 1755958666246,
+        "nombre": "ARAWAK NIÑOS ",
+        "precio": 216000,
+        "cantidad": 1
+      },
+      {
+        "id": 1755958680491,
+        "nombre": "ARAWAK ADULTO ",
+        "precio": 216000,
+        "cantidad": 2
+      }
+    ]
+  },
+  {
+    "id": 136,
+    "cliente": "KELLY HERMANA DE ADRIAN",
+    "fecha": "2025-07-05",
+    "vendedor": "Edwin Marin",
+    "direccion": "Ferrocarril",
+    "telefono": null,
+    "correo": null,
+    "total": 1542000,
+    "created_at": "2025-08-23T14:18:38.505918+00:00",
+    "productos": [
+      {
+        "id": 1755958665823,
+        "nombre": "RAPIGEL",
+        "precio": 88000,
+        "cantidad": 10
+      },
+      {
+        "id": 1755958682868,
+        "nombre": "TAMPOM KOTES",
+        "precio": 11500,
+        "cantidad": 20
+      },
+      {
+        "id": 1755958702822,
+        "nombre": "KOLA GRANULA",
+        "precio": 18000,
+        "cantidad": 24
+      }
+    ]
+  },
+  {
+    "id": 137,
+    "cliente": "MARTHA BLANCO",
+    "fecha": "2025-05-03",
+    "vendedor": "Edwin Marin",
+    "direccion": "SÁBANA ",
+    "telefono": "3001234555",
+    "correo": "mb@gmail.com",
+    "total": 276000,
+    "created_at": "2025-08-23T14:19:23.347296+00:00",
+    "productos": [
+      {
+        "id": 1755958743590,
+        "nombre": "TIO NACHO ",
+        "precio": 276000,
+        "cantidad": 1
+      }
+    ]
+  },
+  {
+    "id": 138,
+    "cliente": "JUAN CARLOS PLAZA",
+    "fecha": "2025-02-23",
+    "vendedor": "Edwin Marin",
+    "direccion": "PARQUE",
+    "telefono": null,
+    "correo": null,
+    "total": 2160000,
+    "created_at": "2025-08-23T14:19:42.114775+00:00",
+    "productos": [
+      {
+        "id": 1755958777003,
+        "nombre": "ARAWAK",
+        "precio": 216000,
+        "cantidad": 10
+      }
+    ]
+  },
+  {
+    "id": 139,
+    "cliente": "MARTHA BLANCO",
+    "fecha": "2025-05-05",
+    "vendedor": "Edwin Marin",
+    "direccion": "SÁBANA ",
+    "telefono": "3001234555",
+    "correo": "mb@gmail.com",
+    "total": 384000,
+    "created_at": "2025-08-23T14:25:58.03999+00:00",
+    "productos": [
+      {
+        "id": 1755959034163,
+        "nombre": "NOSOTRAS NORMAL ",
+        "precio": 240000,
+        "cantidad": 1
+      },
+      {
+        "id": 1755959135234,
+        "nombre": "DOLEX ",
+        "precio": 12000,
+        "cantidad": 12
+      }
+    ]
+  },
+  {
+    "id": 140,
+    "cliente": "MARTHA BLANCO",
+    "fecha": "2025-05-09",
+    "vendedor": "Edwin Marin",
+    "direccion": "SÁBANA ",
+    "telefono": "3001234555",
+    "correo": "mb@gmail.com",
+    "total": 504000,
+    "created_at": "2025-08-23T14:28:42.841167+00:00",
+    "productos": [
+      {
+        "id": 1755959261067,
+        "nombre": "PONDS REJUVENESS ",
+        "precio": 252000,
+        "cantidad": 2
+      }
+    ]
+  },
+  {
+    "id": 141,
+    "cliente": "JHON SALINAS",
+    "fecha": "2025-08-23",
+    "vendedor": "Edwin Marin",
+    "direccion": "SABANA",
+    "telefono": null,
+    "correo": null,
+    "total": 1656000,
+    "created_at": "2025-08-23T14:29:06.796223+00:00",
+    "productos": [
+      {
+        "id": 1755959339191,
+        "nombre": "KOTES",
+        "precio": 1656000,
+        "cantidad": 1
+      }
+    ]
+  },
+  {
+    "id": 142,
+    "cliente": "MARTHA BLANCO",
+    "fecha": "2025-05-20",
+    "vendedor": "Edwin Marin",
+    "direccion": "SÁBANA ",
+    "telefono": "3001234555",
+    "correo": "mb@gmail.com",
+    "total": 288000,
+    "created_at": "2025-08-23T14:30:27.940225+00:00",
+    "productos": [
+      {
+        "id": 1755959406746,
+        "nombre": "KOTEX BUENAS NOCHES ",
+        "precio": 96000,
+        "cantidad": 3
+      }
+    ]
+  },
+  {
+    "id": 143,
+    "cliente": "MARTHA BLANCO",
+    "fecha": "2025-07-05",
+    "vendedor": "Edwin Marin",
+    "direccion": "SÁBANA ",
+    "telefono": "3001234555",
+    "correo": "mb@gmail.com",
+    "total": 1056000,
+    "created_at": "2025-08-23T14:31:21.136575+00:00",
+    "productos": [
+      {
+        "id": 1755959465923,
+        "nombre": "RAPIGEL ",
+        "precio": 88000,
+        "cantidad": 12
+      }
+    ]
+  },
+  {
+    "id": 144,
+    "cliente": "MARTHA BLANCO",
+    "fecha": "2025-05-06",
+    "vendedor": "Edwin Marin",
+    "direccion": "SÁBANA ",
+    "telefono": "3001234555",
+    "correo": "mb@gmail.com",
+    "total": 650000,
+    "created_at": "2025-08-23T14:33:40.670268+00:00",
+    "productos": [
+      {
+        "id": 1755959536837,
+        "nombre": "KOLA GRANULADA ",
+        "precio": 210000,
+        "cantidad": 2
+      },
+      {
+        "id": 1755959576610,
+        "nombre": "UNEXIA ",
+        "precio": 23000,
+        "cantidad": 10
+      }
+    ]
+  },
+  {
+    "id": 145,
+    "cliente": "RAUL  ZIPA ",
+    "fecha": "2025-08-23",
+    "vendedor": "Edwin Marin",
+    "direccion": "Parque",
+    "telefono": "31",
+    "correo": "worwiz",
+    "total": 1425000,
+    "created_at": "2025-08-23T14:33:54.19895+00:00",
+    "productos": [
+      {
+        "id": 1755959622059,
+        "nombre": "TALVO MEXSANA ",
+        "precio": 1425000,
+        "cantidad": 1
+      }
+    ]
+  },
+  {
+    "id": 146,
+    "cliente": "JHON CRUZ",
+    "fecha": "2025-08-23",
+    "vendedor": "Edwin Marin",
+    "direccion": "SABANA",
+    "telefono": null,
+    "correo": null,
+    "total": 5695000,
+    "created_at": "2025-08-23T14:57:01.135352+00:00",
+    "productos": [
+      {
+        "id": 1755961013845,
+        "nombre": "VARIAS",
+        "precio": 5695000,
+        "cantidad": 1
+      }
+    ]
+  },
+  {
+    "id": 149,
+    "cliente": "NORVEY ",
+    "fecha": "2025-07-16",
+    "vendedor": "Edwin Marin",
+    "direccion": "Parque local ",
+    "telefono": null,
+    "correo": null,
+    "total": 280000,
+    "created_at": "2025-08-23T15:01:50.211357+00:00",
+    "productos": [
+      {
+        "id": 1755961295106,
+        "nombre": "PROTECTOR NOSOTRAS MULTIESTILO ",
+        "precio": 140000,
+        "cantidad": 2
+      }
+    ]
+  },
+  {
+    "id": 150,
+    "cliente": "ADRIAN",
+    "fecha": "2025-04-11",
+    "vendedor": "Edwin Marin",
+    "direccion": "Sábana local ",
+    "telefono": null,
+    "correo": null,
+    "total": 390000,
+    "created_at": "2025-08-23T15:01:51.446384+00:00",
+    "productos": [
+      {
+        "id": 15,
+        "codigo": "",
+        "nombre": "PILA DURACEL AA 10X6",
+        "precio": 195000,
+        "cantidad": 1
+      },
+      {
+        "id": 14,
+        "codigo": "",
+        "nombre": "PILA DURACELL AAA 10X6",
+        "precio": 195000,
+        "cantidad": 1
+      }
+    ]
+  },
+  {
+    "id": 151,
+    "cliente": "CARMENSA ",
+    "fecha": "2025-07-05",
+    "vendedor": "Edwin Marin",
+    "direccion": "Ferrocarril",
+    "telefono": null,
+    "correo": null,
+    "total": 177000,
+    "created_at": "2025-08-23T15:32:32.537763+00:00",
+    "productos": [
+      {
+        "id": 1755963142828,
+        "nombre": "RAPIGEL",
+        "precio": 177000,
+        "cantidad": 1
+      }
+    ]
+  },
+  {
+    "id": 152,
+    "cliente": "DIEGO Y MAYERLY",
+    "fecha": "2025-07-08",
+    "vendedor": "Edwin Marin",
+    "direccion": "SABANA",
+    "telefono": "+573112276339",
+    "correo": null,
+    "total": 440000,
+    "created_at": "2025-08-23T15:35:56.712925+00:00",
+    "productos": [
+      {
+        "id": 1755963340524,
+        "nombre": "RAPIGEL",
+        "precio": 88000,
+        "cantidad": 5
+      }
+    ]
+  },
+  {
+    "id": 153,
+    "cliente": "LUCHO",
+    "fecha": "2025-08-23",
+    "vendedor": "Edwin Marin",
+    "direccion": "Ferrocarril",
+    "telefono": null,
+    "correo": null,
+    "total": 1728000,
+    "created_at": "2025-08-23T16:00:29.04504+00:00",
+    "productos": [
+      {
+        "id": 1755964822183,
+        "nombre": "ARAWAK",
+        "precio": 1728000,
+        "cantidad": 1
+      }
+    ]
+  },
+  {
+    "id": 154,
+    "cliente": "WILLIAN LOPEZ",
+    "fecha": "2025-08-23",
+    "vendedor": "Edwin Marin",
+    "direccion": "Parque ",
+    "telefono": null,
+    "correo": null,
+    "total": 960000,
+    "created_at": "2025-08-23T16:30:30.46079+00:00",
+    "productos": [
+      {
+        "id": 1755966623387,
+        "nombre": "VITAMINA C LA SANTE ",
+        "precio": 480000,
+        "cantidad": 2
+      }
+    ]
+  },
+  {
+    "id": 157,
+    "cliente": "ROBINSON NEW YORK",
+    "fecha": "2025-08-26",
+    "vendedor": "Edwin Marin",
+    "direccion": "CC FERROCARRIL",
+    "telefono": "3204966508",
+    "correo": null,
+    "total": 3900000,
+    "created_at": "2025-08-26T20:26:17.098642+00:00",
+    "productos": [
+      {
+        "id": 15,
+        "codigo": "",
+        "nombre": "PILA DURACEL AA 10X6",
+        "precio": 195000,
+        "cantidad": 10
+      },
+      {
+        "id": 14,
+        "codigo": "",
+        "nombre": "PILA DURACELL AAA 10X6",
+        "precio": 195000,
+        "cantidad": 10
+      }
+    ]
+  },
+  {
+    "id": 158,
+    "cliente": "JHON CRUZ",
+    "fecha": "2025-08-26",
+    "vendedor": "Edwin Marin",
+    "direccion": "SABANA",
+    "telefono": null,
+    "correo": null,
+    "total": 480000,
+    "created_at": "2025-08-26T20:52:36.326848+00:00",
+    "productos": [
+      {
+        "id": 1756241122984,
+        "nombre": "Kotes buenas noches ",
+        "precio": 12000,
+        "cantidad": 40
+      }
+    ]
+  },
+  {
+    "id": 159,
+    "cliente": "NEIDY ",
+    "fecha": "2025-08-26",
+    "vendedor": "Edwin Marin",
+    "direccion": "Sabana",
+    "telefono": null,
+    "correo": null,
+    "total": 164000,
+    "created_at": "2025-08-26T20:53:59.412843+00:00",
+    "productos": [
+      {
+        "id": 9,
+        "codigo": "",
+        "nombre": "TOALLAS NOSOTRAS CLASICA X 30",
+        "precio": 10000,
+        "cantidad": 8
+      },
+      {
+        "id": 8,
+        "codigo": "",
+        "nombre": "TOALLAS NOSOTRAS DIA Y NOCHE X24",
+        "precio": 84000,
+        "cantidad": 1
+      }
+    ]
+  },
+  {
+    "id": 160,
+    "cliente": "JESUS",
+    "fecha": "2025-09-01",
+    "vendedor": "Edwin Marin",
+    "direccion": "SABANA",
+    "telefono": "3196887331",
+    "correo": null,
+    "total": 1384400,
+    "created_at": "2025-09-01T14:36:02.035593+00:00",
+    "productos": [
+      {
+        "id": 35,
+        "codigo": "",
+        "nombre": "NOSOTRAS BUENAS NOCHES +PROTE...",
+        "precio": 17500,
+        "cantidad": 12
+      },
+      {
+        "id": 5,
+        "codigo": "",
+        "nombre": "PROTECTORES NOSOTRAS NORMAL x 150 X 10 CAJAS",
+        "precio": 120000,
+        "cantidad": 2
+      },
+      {
+        "id": 60,
+        "codigo": "",
+        "nombre": "JABÓN NEKO ",
+        "precio": 49000,
+        "cantidad": 8
+      },
+      {
+        "id": 62,
+        "codigo": "",
+        "nombre": "BALANCE WOMEN CLINICAL 70 g",
+        "precio": 5800,
+        "cantidad": 24
+      },
+      {
+        "id": 61,
+        "codigo": "",
+        "nombre": "BALANCE CLINICAL CREMA 70 g",
+        "precio": 5800,
+        "cantidad": 24
+      },
+      {
+        "id": 65,
+        "codigo": "",
+        "nombre": "TIO NACHO CONTROL CASPA 415 ENGROSADOR",
+        "precio": 22000,
+        "cantidad": 12
+      }
+    ]
+  },
+  {
+    "id": 162,
+    "cliente": "CARMENSA ",
+    "fecha": "2025-09-02",
+    "vendedor": "Edwin Marin",
+    "direccion": "Ferrocarril",
+    "telefono": "3224153032",
+    "correo": null,
+    "total": 160000,
+    "created_at": "2025-09-03T13:33:47.826354+00:00",
+    "productos": [
+      {
+        "id": 9,
+        "codigo": "",
+        "nombre": "TOALLAS NOSOTRAS CLASICA X 30",
+        "precio": 10000,
+        "cantidad": 16
+      }
+    ]
+  },
+  {
+    "id": 163,
+    "cliente": "JAVIER BUITRAGO ",
+    "fecha": "2025-09-02",
+    "vendedor": "Edwin Marin",
+    "direccion": "Ferrocaril A003",
+    "telefono": "3114411220",
+    "correo": null,
+    "total": 936000,
+    "created_at": "2025-09-03T13:35:23.534697+00:00",
+    "productos": [
+      {
+        "id": 1756906469214,
+        "nombre": "TEATRICAL ",
+        "precio": 18000,
+        "cantidad": 12
+      },
+      {
+        "id": 66,
+        "codigo": "",
+        "nombre": "Ponds crema facial ",
+        "precio": 20000,
+        "cantidad": 36
+      }
+    ]
+  },
+  {
+    "id": 164,
+    "cliente": "NORVEY ",
+    "fecha": "2025-09-02",
+    "vendedor": "Edwin Marin",
+    "direccion": "Parque local ",
+    "telefono": null,
+    "correo": null,
+    "total": 2616000,
+    "created_at": "2025-09-03T13:37:01.713891+00:00",
+    "productos": [
+      {
+        "id": 66,
+        "codigo": "",
+        "nombre": "Ponds crema facial ",
+        "precio": 20000,
+        "cantidad": 120
+      },
+      {
+        "id": 67,
+        "codigo": "",
+        "nombre": "TEATRICAL ACLADORA",
+        "precio": 18000,
+        "cantidad": 12
+      }
+    ]
+  },
+  {
+    "id": 165,
+    "cliente": "RAUL  ZIPA ",
+    "fecha": "2025-09-02",
+    "vendedor": "Edwin Marin",
+    "direccion": "Parque",
+    "telefono": "31",
+    "correo": "worwiz",
+    "total": 500000,
+    "created_at": "2025-09-03T13:38:08.827711+00:00",
+    "productos": [
+      {
+        "id": 68,
+        "codigo": "",
+        "nombre": "GILLETE VENUS MU",
+        "precio": 25000,
+        "cantidad": 20
+      }
+    ]
+  },
+  {
+    "id": 166,
+    "cliente": "HECTOR HERMANO DE ADRIAN",
+    "fecha": "2025-09-02",
+    "vendedor": "Edwin Marin",
+    "direccion": "SABANA",
+    "telefono": "34399393",
+    "correo": "hm@gmail.com",
+    "total": 1950000,
+    "created_at": "2025-09-03T13:39:15.926671+00:00",
+    "productos": [
+      {
+        "id": 68,
+        "codigo": "",
+        "nombre": "GILLETE VENUS MU",
+        "precio": 25000,
+        "cantidad": 30
+      },
+      {
+        "id": 66,
+        "codigo": "",
+        "nombre": "Ponds crema facial ",
+        "precio": 20000,
+        "cantidad": 60
+      }
+    ]
+  },
+  {
+    "id": 167,
+    "cliente": "ADRIAN",
+    "fecha": "2025-09-02",
+    "vendedor": "Edwin Marin",
+    "direccion": "Sábana local ",
+    "telefono": "3115793179",
+    "correo": null,
+    "total": 2622000,
+    "created_at": "2025-09-03T13:41:49.778173+00:00",
+    "productos": [
+      {
+        "id": 68,
+        "codigo": "",
+        "nombre": "GILLETE VENUS MU",
+        "precio": 25000,
+        "cantidad": 30
+      },
+      {
+        "id": 66,
+        "codigo": "",
+        "nombre": "Ponds crema facial ",
+        "precio": 20000,
+        "cantidad": 72
+      },
+      {
+        "id": 67,
+        "codigo": "",
+        "nombre": "TEATRICAL ACLADORA",
+        "precio": 18000,
+        "cantidad": 24
+      }
+    ]
+  },
+  {
+    "id": 168,
+    "cliente": "MARTHA BLANCO",
+    "fecha": "2025-09-02",
+    "vendedor": "Edwin Marin",
+    "direccion": "SÁBANA ",
+    "telefono": "3001234555",
+    "correo": "mb@gmail.com",
+    "total": 2325000,
+    "created_at": "2025-09-03T13:45:21.867686+00:00",
+    "productos": [
+      {
+        "id": 68,
+        "codigo": "",
+        "nombre": "GILLETE VENUS MU",
+        "precio": 25000,
+        "cantidad": 10
+      },
+      {
+        "id": 47,
+        "codigo": "",
+        "nombre": "MEXSANA TALCO 300+85G X15",
+        "precio": 19000,
+        "cantidad": 15
+      },
+      {
+        "id": 4,
+        "codigo": "",
+        "nombre": "PROTECTORES NOSOTRAS MULTIESTILO x 150  x 10 CAJAS",
+        "precio": 140000,
+        "cantidad": 1
+      },
+      {
+        "id": 8,
+        "codigo": "",
+        "nombre": "TOALLAS NOSOTRAS DIA Y NOCHE X24",
+        "precio": 84000,
+        "cantidad": 1
+      },
+      {
+        "id": 15,
+        "codigo": "",
+        "nombre": "PILA DURACEL AA 10X6",
+        "precio": 195000,
+        "cantidad": 1
+      },
+      {
+        "id": 14,
+        "codigo": "",
+        "nombre": "PILA DURACELL AAA 10X6",
+        "precio": 195000,
+        "cantidad": 1
+      },
+      {
+        "id": 60,
+        "codigo": "",
+        "nombre": "JABÓN NEKO DOCENA",
+        "precio": 49000,
+        "cantidad": 24
+      }
+    ]
+  },
+  {
+    "id": 169,
+    "cliente": "MARTHA TABARES",
+    "fecha": "2025-09-03",
+    "vendedor": "Edwin Marin",
+    "direccion": "PARQUE local 123",
+    "telefono": "3453053",
+    "correo": "mt@gmail.com",
+    "total": 730000,
+    "created_at": "2025-09-03T13:47:10.156656+00:00",
+    "productos": [
+      {
+        "id": 66,
+        "codigo": "",
+        "nombre": "Ponds crema facial ",
+        "precio": 20000,
+        "cantidad": 24
+      },
+      {
+        "id": 68,
+        "codigo": "",
+        "nombre": "GILLETE VENUS MU",
+        "precio": 25000,
+        "cantidad": 10
+      }
+    ]
+  }
+]

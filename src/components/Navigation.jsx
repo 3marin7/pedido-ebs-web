@@ -20,6 +20,7 @@ const Navigation = () => {
             <>
               <Link to="/" style={{ marginRight: '10px' }}>Facturación</Link>
               <Link to="/facturas" style={{ marginRight: '10px' }}>Facturas Guardadas</Link>
+              <Link to="/gestion-inventario" style={{ marginRight: '10px' }}>📦 Inventario</Link> {/* NUEVO ENLACE */}
               <Link to="/reportes-cobros" style={{ marginRight: '10px' }}>Reportes</Link>
               <Link to="/catalogo" style={{ marginRight: '10px' }}>Productos</Link>
               <Link to="/catalogo-clientes" style={{ marginRight: '10px' }}>Clientes</Link>
