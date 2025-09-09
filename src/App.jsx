@@ -1,5 +1,5 @@
 import React, { useState, useEffect, createContext, useContext } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import InvoiceScreen from './components/InvoiceScreen';
 import FacturasGuardadas from './components/FacturasGuardadas';
 import FacturaDetalle from './components/FacturaDetalle';
@@ -11,7 +11,7 @@ import GestionPedidos from './components/GestionPedidos';
 import Login from './components/Login';
 import NotFound from './components/NotFound';
 import Navigation from './components/Navigation';
-import GestionInventario from './components/GestionInventario'; // Nuevo componente
+import GestionInventario from './components/GestionInventario';
 
 // Contexto de autenticación
 const AuthContext = createContext();
@@ -22,31 +22,53 @@ export const useAuth = () => {
 };
 
 // Componente para proteger rutas según el rol
-const ProtectedRoute = ({ children, requiredRole }) => {
-  const { user } = useAuth();
-  
-  if (!user) {
-    return <Navigate to="/login" replace />;
+const ProtectedRoute = ({ children, requiredRoles = [] }) => {
+  const { user, isLoading, checkSession } = useAuth();
+  const location = useLocation();
+
+  // Verificación de sesión al montar el componente
+  useEffect(() => {
+    if (!isLoading && user) {
+      const isSessionValid = checkSession();
+      if (!isSessionValid) {
+        console.log('Sesión expirada o inválida');
+      }
+    }
+  }, [location.pathname, user, isLoading, checkSession]);
+
+  // Estado de carga
+  if (isLoading) {
+    return <div className="flex justify-center items-center h-screen">
+      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+    </div>;
   }
-  
-  if (requiredRole && user.role !== requiredRole && user.role !== 'admin') {
+
+  // Redirección si no está autenticado
+  if (!user) {
+    console.log(`Redirigiendo a login desde: ${location.pathname}`);
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
+
+  // Verificar roles si se especifican
+  if (requiredRoles.length > 0 && !requiredRoles.includes(user.role)) {
     return <Navigate to="/unauthorized" replace />;
   }
-  
+
+  // Renderizar contenido protegido
   return children;
 };
 
 function App() {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Simular verificación de sesión al cargar la app
+  // Verificación de sesión al cargar la app
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     }
-    setLoading(false);
+    setIsLoading(false);
   }, []);
 
   // Función de login
@@ -61,17 +83,24 @@ function App() {
     localStorage.removeItem('user');
   };
 
-  const value = {
-    user,
-    login,
-    logout
+  // Función para verificar la sesión
+  const checkSession = () => {
+    const storedUser = localStorage.getItem('user');
+    if (!storedUser) {
+      logout();
+      return false;
+    }
+    return true;
   };
 
-  if (loading) {
-    return <div className="flex justify-center items-center h-screen">
-      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
-    </div>;
-  }
+  const value = {
+    user,
+    isLoading,
+    login,
+    logout,
+    checkSession,
+    isAuthenticated: !!user
+  };
 
   return (
     <AuthContext.Provider value={value}>
@@ -83,7 +112,7 @@ function App() {
             user ? <Navigate to="/" replace /> : <Login />
           } />
           
-          {/* Rutas protegidas */}
+          {/* Ruta principal según rol */}
           <Route path="/" element={
             <ProtectedRoute>
               {user?.role === 'cliente' ? 
@@ -95,32 +124,32 @@ function App() {
           
           {/* Rutas para administrador */}
           <Route path="/facturas" element={
-            <ProtectedRoute requiredRole="admin">
+            <ProtectedRoute requiredRoles={['admin']}>
               <FacturasGuardadas />
             </ProtectedRoute>
           } />
           
           <Route path="/factura/:id" element={
-            <ProtectedRoute requiredRole="admin">
+            <ProtectedRoute requiredRoles={['admin']}>
               <FacturaDetalle />
             </ProtectedRoute>
           } />
           
           <Route path="/reportes-cobros" element={
-            <ProtectedRoute requiredRole="admin">
+            <ProtectedRoute requiredRoles={['admin']}>
               <ReportesCobros />
             </ProtectedRoute>
           } />
           
           <Route path="/catalogo" element={
-            <ProtectedRoute requiredRole="admin">
+            <ProtectedRoute requiredRoles={['admin', 'inventario']}>
               <CatalogoProductos mode="admin" />
             </ProtectedRoute>
           } />
           
-          {/* NUEVA RUTA: Gestión de Inventario */}
+          {/* Rutas para gestión de inventario */}
           <Route path="/gestion-inventario" element={
-            <ProtectedRoute requiredRole="admin">
+            <ProtectedRoute requiredRoles={['admin', 'inventario']}>
               <GestionInventario />
             </ProtectedRoute>
           } />
@@ -128,28 +157,23 @@ function App() {
           {/* Ruta pública para catálogo de clientes */}
           <Route path="/catalogo-clientes" element={<CatalogoClientes />} />
           
+          {/* Rutas para gestión de pedidos */}
           <Route path="/gestion-pedidos" element={
-            <ProtectedRoute requiredRole="admin">
-              <GestionPedidos />
+            <ProtectedRoute requiredRoles={['admin', 'inventario', 'vendedor']}>
+              <GestionPedidos mode="vendedor" />
             </ProtectedRoute>
           } />
           
           {/* Rutas para vendedor */}
           <Route path="/clientes" element={
-            <ProtectedRoute requiredRole="vendedor">
+            <ProtectedRoute requiredRoles={['admin', 'vendedor', 'inventario']}>
               <ClientesScreen />
-            </ProtectedRoute>
-          } />
-          
-          <Route path="/gestion-pedidos-vendedor" element={
-            <ProtectedRoute requiredRole="vendedor">
-              <GestionPedidos mode="vendedor" />
             </ProtectedRoute>
           } />
           
           {/* Ruta para cliente */}
           <Route path="/catalogo-cliente" element={
-            <ProtectedRoute requiredRole="cliente">
+            <ProtectedRoute requiredRoles={['cliente']}>
               <CatalogoProductos mode="cliente" />
             </ProtectedRoute>
           } />

@@ -10,11 +10,12 @@ const Login = () => {
   const [error, setError] = useState('');
   const { login } = useAuth();
 
-  // Datos de usuarios de ejemplo
+  // Datos de usuarios de ejemplo (actualizados con el nuevo rol)
   const users = [
     { id: 1, username: 'EBS', password: 'E1', role: 'admin' },
     { id: 2, username: 'v', password: 'v1', role: 'vendedor' },
-    { id: 3, username: 'c', password: 'c', role: 'cliente' }
+    { id: 3, username: 'c', password: 'c', role: 'cliente' },
+    { id: 4, username: 'laura', password: 'laura123', role: 'inventario' }
   ];
 
   const handleSubmit = (e) => {
@@ -73,7 +74,7 @@ const Login = () => {
           
           <div className="catalog-section">
             <div className="catalog-icon">
-              <i className="fas fa-store"></i>
+              <i className="fas fa-store">📦</i>
             </div>
             <h2>Explora nuestro catálogo</h2>
             <p>Descubre todos nuestros productos disponibles y realiza tus pedidos directamente por WhatsApp sin necesidad de crear una cuenta.</p>

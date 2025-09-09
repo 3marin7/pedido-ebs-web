@@ -1,46 +1,102 @@
-// components/Navigation.js
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../App';
+import './Navigation.css';
 
 const Navigation = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLogout = () => {
     logout();
     navigate('/login');
   };
 
+  // Determinar qué enlaces mostrar según el rol
+  const getAvailableLinks = () => {
+    const commonLinks = [
+      { path: '/', label: 'Inicio', icon: '🏠' }
+    ];
+
+    if (user.role === 'admin') {
+      return [
+        ...commonLinks,
+        { path: '/facturas', label: 'Facturas', icon: '📄' },
+        { path: '/reportes-cobros', label: 'Reportes', icon: '📊' },
+        { path: '/catalogo', label: 'Productos', icon: '📦' },
+        { path: '/gestion-inventario', label: 'Inventario', icon: '📋' },
+        { path: '/gestion-pedidos', label: 'Pedidos', icon: '🛒' },
+        { path: '/clientes', label: 'Clientes', icon: '👥' }
+      ];
+    }
+
+    if (user.role === 'vendedor') {
+      return [
+        ...commonLinks,
+        { path: '/catalogo', label: 'Productos', icon: '📦' },
+        { path: '/gestion-pedidos', label: 'Pedidos', icon: '🛒' },
+        { path: '/clientes', label: 'Clientes', icon: '👥' }
+      ];
+    }
+
+    if (user.role === 'inventario') {
+      return [
+        ...commonLinks,
+        { path: '/catalogo', label: 'Productos', icon: '📦' },
+        { path: '/gestion-inventario', label: 'Inventario', icon: '📋' },
+        { path: '/gestion-pedidos', label: 'Pedidos', icon: '🛒' },
+        { path: '/clientes', label: 'Clientes', icon: '👥' }
+      ];
+    }
+
+    if (user.role === 'cliente') {
+      return [
+        ...commonLinks,
+        { path: '/catalogo-cliente', label: 'Catálogo', icon: '📚' }
+      ];
+    }
+
+    return commonLinks;
+  };
+
+  // Verificar si la ruta está activa
+  const isActiveLink = (path) => {
+    if (path === '/') {
+      return location.pathname === '/';
+    }
+    return location.pathname.startsWith(path);
+  };
+
   return (
-    <nav style={{ padding: '10px', backgroundColor: '#f0f0f0' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-        <div>
-          {user?.role === 'admin' && (
-            <>
-              <Link to="/" style={{ marginRight: '10px' }}>Facturación</Link>
-              <Link to="/facturas" style={{ marginRight: '10px' }}>Facturas Guardadas</Link>
-              <Link to="/gestion-inventario" style={{ marginRight: '10px' }}>📦 Inventario</Link> {/* NUEVO ENLACE */}
-              <Link to="/reportes-cobros" style={{ marginRight: '10px' }}>Reportes</Link>
-              <Link to="/catalogo" style={{ marginRight: '10px' }}>Productos</Link>
-              <Link to="/catalogo-clientes" style={{ marginRight: '10px' }}>Clientes</Link>
-              <Link to="/gestion-pedidos" style={{ marginRight: '10px' }}>Pedidos</Link>
-            </>
-          )}
-          {user?.role === 'vendedor' && (
-            <>
-              <Link to="/" style={{ marginRight: '10px' }}>Facturación</Link>
-              <Link to="/clientes" style={{ marginRight: '10px' }}>Clientes</Link>
-              <Link to="/gestion-pedidos-vendedor" style={{ marginRight: '10px' }}>Pedidos</Link>
-            </>
-          )}
-          {user?.role === 'cliente' && (
-            <Link to="/catalogo-cliente">Catálogo</Link>
-          )}
+    <nav className="navigation">
+      <div className="nav-container">
+        <div className="nav-brand">
+          <h2>Distribuciones EBS</h2>
+          <span className="user-role">{user.role}</span>
         </div>
-        <div>
-          <span style={{ marginRight: '10px' }}>Hola, {user?.username}</span>
-          <button onClick={handleLogout}>Cerrar Sesión</button>
+        
+        <div className="nav-links">
+          {getAvailableLinks().map(link => (
+            <Link 
+              key={link.path} 
+              to={link.path} 
+              className={`nav-link ${isActiveLink(link.path) ? 'active' : ''}`}
+            >
+              {link.icon && <span style={{marginRight: '0.5rem'}}>{link.icon}</span>}
+              {link.label}
+            </Link>
+          ))}
+        </div>
+        
+        <div className="nav-user">
+          <span className="username">Hola, {user.username}</span>
+          <button 
+            onClick={handleLogout} 
+            className="logout-btn"
+          >
+            <span>🚪</span> Cerrar sesión
+          </button>
         </div>
       </div>
     </nav>
