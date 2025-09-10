@@ -66,3 +66,37 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+/* Mejoras específicas para navegación táctil */
+@media (max-width: 768px) {
+  /* Elementos interactivos con tamaño mínimo para dedos */
+  .nav-link, .logout-btn, button, .btn {
+    min-height: 44px;
+    min-width: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  /* Mejor feedback táctil */
+  .nav-link:active, .logout-btn:active, button:active {
+    background-color: rgba(255, 255, 255, 0.3);
+    transform: scale(0.98);
+  }
+  
+  /* Previene el zoom en inputs en iOS */
+  input, select, textarea {
+    font-size: 16px;
+  }
+  
+  /* Mejora el scroll en móviles */
+  .nav-links {
+    -webkit-overflow-scrolling: touch;
+    overflow-y: auto;
+    max-height: 70vh;
+  }
+  
+  /* Asegura que el contenido no esté detrás de la barra de navegación */
+  .main-content {
+    padding-top: 70px;
+  }
+}

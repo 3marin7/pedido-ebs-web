@@ -177,4 +177,21 @@ input, select, textarea, button {
     padding: 1rem;
     margin-bottom: 1rem;
   }
+}/* Asegura que el contenido no quede oculto detrás de la barra de navegación fija */
+body {
+  margin: 0;
+  padding: 0;
+}
+
+/* Para dispositivos móviles */
+@media (max-width: 768px) {
+  body {
+    padding-top: 60px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    padding-top: 50px !important;
+  }
 }

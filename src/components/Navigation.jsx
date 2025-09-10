@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../App';
 import './Navigation.css';
@@ -8,6 +8,8 @@ const Navigation = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const menuRef = useRef(null);
+  const toggleRef = useRef(null);
 
   const handleLogout = () => {
     logout();
@@ -17,6 +19,24 @@ const Navigation = () => {
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
+
+  // Cerrar menú al hacer clic fuera de él
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target) && 
+          toggleRef.current && !toggleRef.current.contains(event.target)) {
+        setIsMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('touchstart', handleClickOutside);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+    };
+  }, []);
 
   // Determinar qué enlaces mostrar según el rol
   const getAvailableLinks = () => {
@@ -84,17 +104,22 @@ const Navigation = () => {
           
           {/* Botón de menú hamburguesa para móviles */}
           <button 
-            className="mobile-menu-toggle"
+            ref={toggleRef}
+            className={`mobile-menu-toggle ${isMenuOpen ? 'active' : ''}`}
             onClick={toggleMenu}
             aria-label="Abrir menú"
+            aria-expanded={isMenuOpen}
           >
-            <span></span>
-            <span></span>
-            <span></span>
+            <span className="hamburger-line"></span>
+            <span className="hamburger-line"></span>
+            <span className="hamburger-line"></span>
           </button>
         </div>
         
-        <div className={`nav-links ${isMenuOpen ? 'nav-links-open' : ''}`}>
+        <div 
+          ref={menuRef}
+          className={`nav-links ${isMenuOpen ? 'nav-links-open' : ''}`}
+        >
           {availableLinks.map(link => (
             <Link 
               key={link.path} 
@@ -122,7 +147,10 @@ const Navigation = () => {
       
       {/* Overlay para cerrar el menú al hacer clic fuera */}
       {isMenuOpen && (
-        <div className="mobile-overlay" onClick={() => setIsMenuOpen(false)}></div>
+        <div 
+          className="mobile-overlay" 
+          onClick={() => setIsMenuOpen(false)}
+        ></div>
       )}
     </nav>
   );
