@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../App';
 import './Navigation.css';
@@ -7,10 +7,15 @@ const Navigation = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
     navigate('/login');
+  };
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
   };
 
   // Determinar qué enlaces mostrar según el rol
@@ -68,23 +73,37 @@ const Navigation = () => {
     return location.pathname.startsWith(path);
   };
 
+  const availableLinks = getAvailableLinks();
+
   return (
     <nav className="navigation">
       <div className="nav-container">
         <div className="nav-brand">
           <h2>Distribuciones EBS</h2>
           <span className="user-role">{user.role}</span>
+          
+          {/* Botón de menú hamburguesa para móviles */}
+          <button 
+            className="mobile-menu-toggle"
+            onClick={toggleMenu}
+            aria-label="Abrir menú"
+          >
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
         </div>
         
-        <div className="nav-links">
-          {getAvailableLinks().map(link => (
+        <div className={`nav-links ${isMenuOpen ? 'nav-links-open' : ''}`}>
+          {availableLinks.map(link => (
             <Link 
               key={link.path} 
               to={link.path} 
               className={`nav-link ${isActiveLink(link.path) ? 'active' : ''}`}
+              onClick={() => setIsMenuOpen(false)}
             >
-              {link.icon && <span style={{marginRight: '0.5rem'}}>{link.icon}</span>}
-              {link.label}
+              {link.icon && <span className="nav-icon">{link.icon}</span>}
+              <span className="nav-label">{link.label}</span>
             </Link>
           ))}
         </div>
@@ -95,10 +114,16 @@ const Navigation = () => {
             onClick={handleLogout} 
             className="logout-btn"
           >
-            <span>🚪</span> Cerrar sesión
+            <span className="logout-icon">🚪</span>
+            <span className="logout-text">Cerrar sesión</span>
           </button>
         </div>
       </div>
+      
+      {/* Overlay para cerrar el menú al hacer clic fuera */}
+      {isMenuOpen && (
+        <div className="mobile-overlay" onClick={() => setIsMenuOpen(false)}></div>
+      )}
     </nav>
   );
 };
