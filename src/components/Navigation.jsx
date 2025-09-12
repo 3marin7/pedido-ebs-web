@@ -49,7 +49,8 @@ const Navigation = () => {
         ...commonLinks,
         { path: '/facturas', label: 'Facturas', icon: '📄' },
         { path: '/reportes-cobros', label: 'Reportes', icon: '📊' },
-        { path: '/dashboard', label: 'Dashboard', icon: '📈' }, // ← AÑADE ESTA LÍNEA
+        { path: '/dashboard', label: 'Dashboard', icon: '📈' },
+        { path: '/mapa-locales', label: 'Mapa de Locales', icon: '🗺️' }, // ← AÑADIDO AQUÍ
         { path: '/catalogo', label: 'Productos', icon: '📦' },
         { path: '/gestion-inventario', label: 'Inventario', icon: '📋' },
         { path: '/gestion-pedidos', label: 'Pedidos', icon: '🛒' },

@@ -1,0 +1,388 @@
+/* MallMap.css */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.mall-map-container {
+  background-color: #f0f2f5;
+  color: #333;
+  padding: 20px;
+  min-height: 100vh;
+}
+
+.mall-header {
+  background: #2c3e50;
+  color: white;
+  padding: 20px;
+  text-align: center;
+  border-radius: 12px 12px 0 0;
+}
+
+.mall-header h1 {
+  margin-bottom: 10px;
+  font-size: 28px;
+}
+
+.mall-description {
+  color: #ecf0f1;
+  margin-bottom: 15px;
+}
+
+.mall-controls {
+  display: flex;
+  justify-content: space-between;
+  padding: 15px 20px;
+  background: #34495e;
+  color: white;
+}
+
+.search-box {
+  flex: 1;
+  max-width: 300px;
+}
+
+.search-box input {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 4px;
+}
+
+.view-options {
+  display: flex;
+  gap: 10px;
+}
+
+.view-options button {
+  background: #1abc9c;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.view-options button:hover {
+  background: #16a085;
+}
+
+.view-options button.active {
+  background: #16a085;
+  font-weight: bold;
+}
+
+.mall-main-content {
+  display: flex;
+  min-height: 500px;
+  background: white;
+}
+
+.locals-list {
+  width: 300px;
+  background: #ecf0f1;
+  padding: 15px;
+  overflow-y: auto;
+  border-right: 1px solid #ddd;
+}
+
+.locals-list h2 {
+  margin-bottom: 15px;
+  color: #2c3e50;
+  font-size: 18px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #3498db;
+}
+
+.locals-container {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.local-item {
+  padding: 12px;
+  margin-bottom: 8px;
+  background: white;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border-left: 4px solid #3498db;
+}
+
+.local-item:hover {
+  background: #d6eaf8;
+  transform: translateX(5px);
+}
+
+.local-item.selected {
+  background: #d4e6f1;
+  border-left: 4px solid #e74c3c;
+  font-weight: bold;
+}
+
+.map-container {
+  flex: 1;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.map-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  grid-gap: 10px;
+  width: 100%;
+  max-width: 800px;
+}
+
+.map-cell {
+  aspect-ratio: 1;
+  background: #eafaf1;
+  border: 1px solid #aed6f1;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  text-align: center;
+  padding: 5px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.map-cell:hover {
+  background: #d1f2eb;
+  transform: scale(1.05);
+}
+
+.map-cell.occupied {
+  background: #d6eaf8;
+  border: 2px solid #3498db;
+  font-weight: bold;
+}
+
+.map-cell.selected {
+  background: #f9e79f;
+  border: 2px solid #f1c40f;
+  box-shadow: 0 0 10px rgba(241, 196, 15, 0.5);
+}
+
+.map-legend {
+  margin-top: 20px;
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 14px;
+}
+
+.legend-color {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+}
+
+.legend-color.available {
+  background-color: #eafaf1;
+  border: 1px solid #aed6f1;
+}
+
+.legend-color.occupied {
+  background-color: #d6eaf8;
+  border: 1px solid #3498db;
+}
+
+.legend-color.selected {
+  background-color: #f9e79f;
+  border: 1px solid #f1c40f;
+}
+
+.local-details {
+  margin-top: 20px;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 800px;
+}
+
+.local-details h3 {
+  color: #2c3e50;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #ddd;
+}
+
+.detail-item {
+  margin-bottom: 8px;
+  display: flex;
+}
+
+.detail-label {
+  font-weight: bold;
+  min-width: 100px;
+  color: #7f8c8d;
+}
+
+.mall-footer {
+  text-align: center;
+  padding: 15px;
+  background: #2c3e50;
+  color: white;
+  font-size: 14px;
+  border-radius: 0 0 12px 12px;
+}
+
+@media (max-width: 768px) {
+  .mall-main-content {
+    flex-direction: column;
+  }
+  
+  .locals-list {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .map-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  .mall-controls {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .search-box {
+    max-width: 100%;
+  }
+}/* Estilos para el modo edición */
+.editing-notice {
+  color: #e74c3c;
+  font-weight: bold;
+  margin-left: 10px;
+}
+
+.local-actions, .map-cell-actions, .edit-actions {
+  display: flex;
+  gap: 5px;
+  margin-top: 5px;
+}
+
+.edit-btn, .release-btn, .reset-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 4px;
+  border-radius: 3px;
+  transition: background 0.2s;
+}
+
+.edit-btn:hover {
+  background: #3498db;
+  color: white;
+}
+
+.release-btn:hover {
+  background: #e74c3c;
+  color: white;
+}
+
+.reset-btn {
+  font-size: 18px;
+}
+
+.reset-btn:hover {
+  background: #f39c12;
+  color: white;
+}
+
+.local-info {
+  flex: 1;
+}
+
+.client-name {
+  font-weight: bold;
+}
+
+/* Modal de edición */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 400px;
+}
+
+.form-group {
+  margin: 15px 0;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.save-btn, .cancel-btn {
+  padding: 8px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.save-btn {
+  background: #2ecc71;
+  color: white;
+}
+
+.cancel-btn {
+  background: #e74c3c;
+  color: white;
+}
+
+/* Mejoras para la lista de locales */
+.local-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}

@@ -12,7 +12,8 @@ import Login from './components/Login';
 import NotFound from './components/NotFound';
 import Navigation from './components/Navigation';
 import GestionInventario from './components/GestionInventario';
-import DashboardVentas from './components/DashboardVentas'; // Nueva importación
+import DashboardVentas from './components/DashboardVentas';
+import MallMap from './components/MallMap';
 
 // Contexto de autenticación
 const AuthContext = createContext();
@@ -134,6 +135,13 @@ function App() {
           <Route path="/dashboard" element={
             <ProtectedRoute requiredRoles={['admin']}>
               <DashboardVentas />
+            </ProtectedRoute>
+          } />
+          
+          {/* Ruta para el Mapa de Locales */}
+          <Route path="/mapa-locales" element={
+            <ProtectedRoute requiredRoles={['admin']}>
+              <MallMap />
             </ProtectedRoute>
           } />
           
