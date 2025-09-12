@@ -12,6 +12,7 @@ import Login from './components/Login';
 import NotFound from './components/NotFound';
 import Navigation from './components/Navigation';
 import GestionInventario from './components/GestionInventario';
+import DashboardVentas from './components/DashboardVentas'; // Nueva importación
 
 // Contexto de autenticación
 const AuthContext = createContext();
@@ -126,6 +127,13 @@ function App() {
           <Route path="/facturas" element={
             <ProtectedRoute requiredRoles={['admin']}>
               <FacturasGuardadas />
+            </ProtectedRoute>
+          } />
+          
+          {/* Nueva ruta para Dashboard de Ventas */}
+          <Route path="/dashboard" element={
+            <ProtectedRoute requiredRoles={['admin']}>
+              <DashboardVentas />
             </ProtectedRoute>
           } />
           

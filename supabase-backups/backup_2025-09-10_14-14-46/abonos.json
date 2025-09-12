@@ -745,5 +745,194 @@
     "metodo": "Efectivo",
     "nota": null,
     "created_at": "2025-09-03T13:46:00.828305+00:00"
+  },
+  {
+    "id": 92,
+    "factura_id": 105,
+    "fecha": "2025-09-03",
+    "monto": 440000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2025-09-03T22:42:38.326391+00:00"
+  },
+  {
+    "id": 93,
+    "factura_id": 89,
+    "fecha": "2025-09-03",
+    "monto": 220000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2025-09-03T22:43:23.069346+00:00"
+  },
+  {
+    "id": 94,
+    "factura_id": 114,
+    "fecha": "2025-09-03",
+    "monto": 500000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2025-09-03T22:48:20.936124+00:00"
+  },
+  {
+    "id": 95,
+    "factura_id": 123,
+    "fecha": "2025-09-04",
+    "monto": 96000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2025-09-04T21:21:15.231868+00:00"
+  },
+  {
+    "id": 96,
+    "factura_id": 125,
+    "fecha": "2025-09-04",
+    "monto": 304000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2025-09-04T21:21:45.177994+00:00"
+  },
+  {
+    "id": 97,
+    "factura_id": 60,
+    "fecha": "2025-09-04",
+    "monto": 200000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2025-09-04T21:22:08.911595+00:00"
+  },
+  {
+    "id": 98,
+    "factura_id": 133,
+    "fecha": "2025-08-22",
+    "monto": 400000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2025-09-05T20:00:59.105552+00:00"
+  },
+  {
+    "id": 99,
+    "factura_id": 133,
+    "fecha": "2025-09-05",
+    "monto": 680000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2025-09-05T20:03:11.389908+00:00"
+  },
+  {
+    "id": 100,
+    "factura_id": 11,
+    "fecha": "2025-09-05",
+    "monto": 200000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2025-09-05T20:52:00.180175+00:00"
+  },
+  {
+    "id": 101,
+    "factura_id": 43,
+    "fecha": "2025-09-05",
+    "monto": 32000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2025-09-05T20:55:43.579486+00:00"
+  },
+  {
+    "id": 102,
+    "factura_id": 108,
+    "fecha": "2025-09-05",
+    "monto": 700000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2025-09-05T21:06:46.946151+00:00"
+  },
+  {
+    "id": 103,
+    "factura_id": 75,
+    "fecha": "2025-09-05",
+    "monto": 150000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2025-09-05T21:44:51.409641+00:00"
+  },
+  {
+    "id": 104,
+    "factura_id": 99,
+    "fecha": "2025-09-06",
+    "monto": 100000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2025-09-06T21:56:13.260092+00:00"
+  },
+  {
+    "id": 105,
+    "factura_id": 78,
+    "fecha": "2025-09-06",
+    "monto": 200000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2025-09-06T21:59:56.849436+00:00"
+  },
+  {
+    "id": 106,
+    "factura_id": 108,
+    "fecha": "2025-09-08",
+    "monto": 250000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2025-09-08T21:45:44.055024+00:00"
+  },
+  {
+    "id": 107,
+    "factura_id": 36,
+    "fecha": "2025-09-09",
+    "monto": 217000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2025-09-09T20:26:49.985844+00:00"
+  },
+  {
+    "id": 108,
+    "factura_id": 36,
+    "fecha": "2025-09-09",
+    "monto": 173000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2025-09-09T20:28:15.012964+00:00"
+  },
+  {
+    "id": 109,
+    "factura_id": 38,
+    "fecha": "2025-09-09",
+    "monto": 1000000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2025-09-09T21:17:10.726033+00:00"
+  },
+  {
+    "id": 110,
+    "factura_id": 60,
+    "fecha": "2025-09-09",
+    "monto": 100000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2025-09-09T21:53:01.940151+00:00"
+  },
+  {
+    "id": 112,
+    "factura_id": 182,
+    "fecha": "2025-09-10",
+    "monto": 360000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2025-09-10T12:50:53.236939+00:00"
+  },
+  {
+    "id": 113,
+    "factura_id": 194,
+    "fecha": "2025-09-10",
+    "monto": 557000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2025-09-10T13:23:07.078313+00:00"
   }
 ]

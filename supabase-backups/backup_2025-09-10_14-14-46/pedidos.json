@@ -34,6 +34,95 @@
     "fecha_actualizacion": "2025-09-03T13:32:10.232+00:00"
   },
   {
+    "id": 123,
+    "cliente_nombre": "Lorena castañeda",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 61,
+        "activo": true,
+        "codigo": null,
+        "nombre": "BALANCE CLINICAL CREMA 70 g",
+        "precio": 5800,
+        "cantidad": 24,
+        "categoria": "Desodorantes",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756316074/gpjk0gfsktxaasvnc5fg.png",
+        "descripcion": "caja x 24  139200"
+      },
+      {
+        "id": 62,
+        "activo": true,
+        "codigo": null,
+        "nombre": "BALANCE WOMEN CLINICAL 70 g",
+        "precio": 5800,
+        "cantidad": 24,
+        "categoria": "Desodorantes",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756316094/hmsm3xgtnasngzindb3g.png",
+        "descripcion": "Caja x 24 139200"
+      },
+      {
+        "id": 38,
+        "activo": true,
+        "codigo": null,
+        "nombre": "JABON J&J BABY PACK 3X16X110G",
+        "precio": 40000,
+        "cantidad": 12,
+        "categoria": "Jabones y Geles",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756910449/shxo4lfef6dcndr3lftu.jpg",
+        "descripcion": "DOCENA 40000 "
+      },
+      {
+        "id": 59,
+        "activo": true,
+        "codigo": null,
+        "nombre": "KOTEX x24 BUENAS NOCHES",
+        "precio": 12000,
+        "cantidad": 16,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756247109/mqqrxuawhbjzbsemkgwt.jpg",
+        "descripcion": "PACA X8 96000"
+      },
+      {
+        "id": 47,
+        "activo": true,
+        "codigo": null,
+        "nombre": "MEXSANA TALCO 300+85G X15",
+        "precio": 19000,
+        "cantidad": 15,
+        "categoria": "Desodorantes",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756217481/tabzqqlu2a3d4fhx8hxi.png",
+        "descripcion": "Paca x 15 285000"
+      },
+      {
+        "id": 55,
+        "activo": true,
+        "codigo": null,
+        "nombre": "REXONA CLINICAL COLACILBLE 30G",
+        "precio": 32000,
+        "cantidad": 2,
+        "categoria": "Desodorantes",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756218750/n5ctj0evesmky3n8lldd.png",
+        "descripcion": null
+      },
+      {
+        "id": 8,
+        "activo": true,
+        "codigo": null,
+        "nombre": "TOALLAS NOSOTRAS DIA Y NOCHE X24",
+        "precio": 84000,
+        "cantidad": 2,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756217770/v1dbqec9nq3lxtsjrinj.png",
+        "descripcion": "C/U 10500"
+      }
+    ],
+    "total": 1467400,
+    "estado": "entregado",
+    "fecha_creacion": "2025-09-03T22:33:19.983+00:00",
+    "fecha_actualizacion": "2025-09-10T12:17:36.893+00:00"
+  },
+  {
     "id": 111,
     "cliente_nombre": "Héctor costeño",
     "cliente_telefono": "3004583117",
@@ -55,6 +144,51 @@
     "estado": "en_preparacion",
     "fecha_creacion": "2025-09-01T21:37:11.492+00:00",
     "fecha_actualizacion": "2025-09-03T13:32:25.717+00:00"
+  },
+  {
+    "id": 124,
+    "cliente_nombre": "Lafa",
+    "cliente_telefono": "3112969569",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 61,
+        "activo": true,
+        "codigo": null,
+        "nombre": "BALANCE CLINICAL CREMA 70 g",
+        "precio": 5800,
+        "cantidad": 3,
+        "categoria": "Desodorantes",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756316074/gpjk0gfsktxaasvnc5fg.png",
+        "descripcion": "caja x 24  139200"
+      },
+      {
+        "id": 26,
+        "activo": true,
+        "codigo": null,
+        "nombre": "CREMA DE PEINAR CON ACEITE DE ARGAN Y S6",
+        "precio": 12500,
+        "cantidad": 6,
+        "categoria": "Cuidado del Cabello",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756216677/pwvlbeboak2emcbogiif.png",
+        "descripcion": "CAJA X 24: 300000"
+      },
+      {
+        "id": 63,
+        "activo": true,
+        "codigo": null,
+        "nombre": "EGO ATTRATION 240 ml",
+        "precio": 6500,
+        "cantidad": 1,
+        "categoria": "Jabones y Geles",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756323536/b0gtb1f38cgdhspburlt.jpg",
+        "descripcion": null
+      }
+    ],
+    "total": 98900,
+    "estado": "entregado",
+    "fecha_creacion": "2025-09-05T14:51:46.675+00:00",
+    "fecha_actualizacion": "2025-09-10T12:17:19.263+00:00"
   },
   {
     "id": 112,
@@ -91,6 +225,29 @@
     "fecha_actualizacion": "2025-09-03T13:31:51.972+00:00"
   },
   {
+    "id": 125,
+    "cliente_nombre": "wwwww",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 61,
+        "activo": true,
+        "codigo": null,
+        "nombre": "BALANCE CLINICAL CREMA 70 g",
+        "precio": 5800,
+        "cantidad": 4,
+        "categoria": "Desodorantes",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756316074/gpjk0gfsktxaasvnc5fg.png",
+        "descripcion": "caja x 24  139200"
+      }
+    ],
+    "total": 23200,
+    "estado": "entregado",
+    "fecha_creacion": "2025-09-05T15:03:29.888+00:00",
+    "fecha_actualizacion": "2025-09-10T12:08:50.135+00:00"
+  },
+  {
     "id": 113,
     "cliente_nombre": "Norvey",
     "cliente_telefono": "3004583117",
@@ -125,6 +282,73 @@
     "fecha_actualizacion": "2025-09-03T13:29:25.775+00:00"
   },
   {
+    "id": 126,
+    "cliente_nombre": "Ferney",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "C/u cilacixke",
+    "productos": [
+      {
+        "id": 63,
+        "activo": true,
+        "codigo": null,
+        "nombre": "EGO ATTRATION 240 ml",
+        "precio": 6500,
+        "cantidad": 24,
+        "categoria": "Jabones y Geles",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756323536/b0gtb1f38cgdhspburlt.jpg",
+        "descripcion": null
+      },
+      {
+        "id": 47,
+        "activo": true,
+        "codigo": null,
+        "nombre": "MEXSANA TALCO 300+85G X15",
+        "precio": 19000,
+        "cantidad": 15,
+        "categoria": "Desodorantes",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756217481/tabzqqlu2a3d4fhx8hxi.png",
+        "descripcion": "Paca x 15 285000"
+      },
+      {
+        "id": 55,
+        "activo": true,
+        "codigo": null,
+        "nombre": "REXONA CLINICAL COLACILBLE 30G",
+        "precio": 32000,
+        "cantidad": 6,
+        "categoria": "Desodorantes",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756218750/n5ctj0evesmky3n8lldd.png",
+        "descripcion": null
+      },
+      {
+        "id": 70,
+        "activo": true,
+        "codigo": null,
+        "nombre": "ENJUAGUE BUCAL LISTERINE COOL MINT 1.5 L",
+        "precio": 30000,
+        "cantidad": 12,
+        "categoria": "Producto del Dia Promocion",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756989541/rpk58nbdagvvkmysuo1k.png",
+        "descripcion": "CAJA X 6 180000"
+      },
+      {
+        "id": 69,
+        "activo": true,
+        "codigo": null,
+        "nombre": "ENJUAGUE BUCAL LISTERINE COOL MINT 1L",
+        "precio": 22000,
+        "cantidad": 24,
+        "categoria": "Producto del Dia Promocion",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756905042/whblrshjfjezxrwap2et.png",
+        "descripcion": "CAJA X 6 UNIDADES 132000"
+      }
+    ],
+    "total": 1521000,
+    "estado": "entregado",
+    "fecha_creacion": "2025-09-06T22:40:43.337+00:00",
+    "fecha_actualizacion": "2025-09-10T12:01:56.956+00:00"
+  },
+  {
     "id": 114,
     "cliente_nombre": "Raúl yorwiz",
     "cliente_telefono": "3004583117",
@@ -146,6 +370,40 @@
     "estado": "en_preparacion",
     "fecha_creacion": "2025-09-01T22:08:38.113+00:00",
     "fecha_actualizacion": "2025-09-03T13:29:53.401+00:00"
+  },
+  {
+    "id": 127,
+    "cliente_nombre": "Neidy",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 70,
+        "activo": true,
+        "codigo": null,
+        "nombre": "ENJUAGUE BUCAL LISTERINE COOL MINT 1.5 L",
+        "precio": 30000,
+        "cantidad": 6,
+        "categoria": "Producto del Dia Promocion",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756989541/rpk58nbdagvvkmysuo1k.png",
+        "descripcion": "CAJA X 6 180000"
+      },
+      {
+        "id": 69,
+        "activo": true,
+        "codigo": null,
+        "nombre": "ENJUAGUE BUCAL LISTERINE COOL MINT 1L",
+        "precio": 22000,
+        "cantidad": 6,
+        "categoria": "Producto del Dia Promocion",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756905042/whblrshjfjezxrwap2et.png",
+        "descripcion": "CAJA X 6 UNIDADES 132000"
+      }
+    ],
+    "total": 312000,
+    "estado": "pendiente",
+    "fecha_creacion": "2025-09-08T21:25:21.424+00:00",
+    "fecha_actualizacion": "2025-09-08T21:25:21.831733+00:00"
   },
   {
     "id": 115,
@@ -180,6 +438,74 @@
     "estado": "entregado",
     "fecha_creacion": "2025-09-01T22:19:59.293+00:00",
     "fecha_actualizacion": "2025-09-03T13:30:03.271+00:00"
+  },
+  {
+    "id": 129,
+    "cliente_nombre": "iiiiiiiiii",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 11,
+        "activo": true,
+        "codigo": null,
+        "nombre": "ELIZABET ARDEN 40 GR",
+        "precio": 2000,
+        "cantidad": 10,
+        "categoria": "Desodorantes",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756216850/jkfdupjdhojdjplpmy8f.png",
+        "descripcion": "CAJA X 12"
+      },
+      {
+        "id": 70,
+        "activo": true,
+        "codigo": null,
+        "nombre": "ENJUAGUE BUCAL LISTERINE COOL MINT 1.5 L",
+        "precio": 30000,
+        "cantidad": 5,
+        "categoria": "Producto del Dia Promocion",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756989541/rpk58nbdagvvkmysuo1k.png",
+        "descripcion": "CAJA X 6 180000"
+      }
+    ],
+    "total": 170000,
+    "estado": "cancelado",
+    "fecha_creacion": "2025-09-09T18:10:45.908+00:00",
+    "fecha_actualizacion": "2025-09-10T12:02:19.025+00:00"
+  },
+  {
+    "id": 128,
+    "cliente_nombre": "iiiiiiiiii",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 11,
+        "activo": true,
+        "codigo": null,
+        "nombre": "ELIZABET ARDEN 40 GR",
+        "precio": 2000,
+        "cantidad": 10,
+        "categoria": "Desodorantes",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756216850/jkfdupjdhojdjplpmy8f.png",
+        "descripcion": "CAJA X 12"
+      },
+      {
+        "id": 70,
+        "activo": true,
+        "codigo": null,
+        "nombre": "ENJUAGUE BUCAL LISTERINE COOL MINT 1.5 L",
+        "precio": 30000,
+        "cantidad": 5,
+        "categoria": "Producto del Dia Promocion",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756989541/rpk58nbdagvvkmysuo1k.png",
+        "descripcion": "CAJA X 6 180000"
+      }
+    ],
+    "total": 170000,
+    "estado": "cancelado",
+    "fecha_creacion": "2025-09-09T18:10:31.725+00:00",
+    "fecha_actualizacion": "2025-09-10T12:02:28.66+00:00"
   },
   {
     "id": 116,
@@ -440,62 +766,6 @@
     "fecha_actualizacion": "2025-09-03T13:28:05.451+00:00"
   },
   {
-    "id": 121,
-    "cliente_nombre": "Doris",
-    "cliente_telefono": "3004583117",
-    "cliente_notas": "Ninguna",
-    "productos": [
-      {
-        "id": 68,
-        "activo": true,
-        "codigo": null,
-        "nombre": "GILLETE VENUS MU",
-        "precio": 25000,
-        "cantidad": 10,
-        "categoria": "Bloqueadores y Cuidado de la Piel",
-        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756760222/gqa4ncsymcxmmrp692ie.jpg",
-        "descripcion": "X8"
-      },
-      {
-        "id": 9,
-        "activo": true,
-        "codigo": null,
-        "nombre": "TOALLAS NOSOTRAS CLASICA X 30",
-        "precio": 10000,
-        "cantidad": 80,
-        "categoria": "Toallas",
-        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756217702/wxoskdeordvqs15fkj8a.png",
-        "descripcion": "CAJA X 8 80000"
-      },
-      {
-        "id": 5,
-        "activo": true,
-        "codigo": null,
-        "nombre": "PROTECTORES NOSOTRAS NORMAL x 150 X 10 CAJAS",
-        "precio": 120000,
-        "cantidad": 1,
-        "categoria": "Toallas",
-        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756217827/rr1iihl79wav1riegf6a.png",
-        "descripcion": "C/U 12000"
-      },
-      {
-        "id": 4,
-        "activo": true,
-        "codigo": null,
-        "nombre": "PROTECTORES NOSOTRAS MULTIESTILO x 150  x 10 CAJAS",
-        "precio": 140000,
-        "cantidad": 1,
-        "categoria": "Toallas",
-        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756217857/g5jpd7snqpwywzx9jaue.png",
-        "descripcion": "C/U 14000"
-      }
-    ],
-    "total": 1310000,
-    "estado": "pendiente",
-    "fecha_creacion": "2025-09-02T20:24:04.712+00:00",
-    "fecha_actualizacion": "2025-09-02T20:24:06.533449+00:00"
-  },
-  {
     "id": 108,
     "cliente_nombre": "Jesus",
     "cliente_telefono": "3196887331",
@@ -585,6 +855,62 @@
     "fecha_actualizacion": "2025-09-03T13:27:52.627+00:00"
   },
   {
+    "id": 121,
+    "cliente_nombre": "Doris",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 68,
+        "activo": true,
+        "codigo": null,
+        "nombre": "GILLETE VENUS MU",
+        "precio": 25000,
+        "cantidad": 10,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756760222/gqa4ncsymcxmmrp692ie.jpg",
+        "descripcion": "X8"
+      },
+      {
+        "id": 9,
+        "activo": true,
+        "codigo": null,
+        "nombre": "TOALLAS NOSOTRAS CLASICA X 30",
+        "precio": 10000,
+        "cantidad": 80,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756217702/wxoskdeordvqs15fkj8a.png",
+        "descripcion": "CAJA X 8 80000"
+      },
+      {
+        "id": 5,
+        "activo": true,
+        "codigo": null,
+        "nombre": "PROTECTORES NOSOTRAS NORMAL x 150 X 10 CAJAS",
+        "precio": 120000,
+        "cantidad": 1,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756217827/rr1iihl79wav1riegf6a.png",
+        "descripcion": "C/U 12000"
+      },
+      {
+        "id": 4,
+        "activo": true,
+        "codigo": null,
+        "nombre": "PROTECTORES NOSOTRAS MULTIESTILO x 150  x 10 CAJAS",
+        "precio": 140000,
+        "cantidad": 1,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756217857/g5jpd7snqpwywzx9jaue.png",
+        "descripcion": "C/U 14000"
+      }
+    ],
+    "total": 1310000,
+    "estado": "entregado",
+    "fecha_creacion": "2025-09-02T20:24:04.712+00:00",
+    "fecha_actualizacion": "2025-09-10T12:17:42.58+00:00"
+  },
+  {
     "id": 109,
     "cliente_nombre": "Carmensa",
     "cliente_telefono": "3004583117",
@@ -626,9 +952,9 @@
       }
     ],
     "total": 1950000,
-    "estado": "pendiente",
+    "estado": "entregado",
     "fecha_creacion": "2025-09-03T14:18:23.287+00:00",
-    "fecha_actualizacion": "2025-09-03T14:18:23.707398+00:00"
+    "fecha_actualizacion": "2025-09-04T03:05:06.411+00:00"
   },
   {
     "id": 81,

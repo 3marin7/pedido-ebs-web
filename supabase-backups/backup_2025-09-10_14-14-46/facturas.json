@@ -3806,5 +3806,739 @@
         "cantidad": 10
       }
     ]
+  },
+  {
+    "id": 170,
+    "cliente": "JESUS",
+    "fecha": "2025-09-04",
+    "vendedor": "Edwin Marin",
+    "direccion": "SABANA",
+    "telefono": "3196887331",
+    "correo": null,
+    "total": 3082000,
+    "created_at": "2025-09-04T17:19:23.517374+00:00",
+    "productos": [
+      {
+        "id": 66,
+        "codigo": "",
+        "nombre": "Ponds crema facial ",
+        "precio": 20000,
+        "cantidad": 120
+      },
+      {
+        "id": 67,
+        "codigo": "",
+        "nombre": "TEATRICAL ACLADORA",
+        "precio": 18000,
+        "cantidad": 24
+      },
+      {
+        "id": 68,
+        "codigo": "",
+        "nombre": "GILLETE VENUS MU",
+        "precio": 25000,
+        "cantidad": 10
+      }
+    ]
+  },
+  {
+    "id": 190,
+    "cliente": "WENDY ",
+    "fecha": "2025-09-10",
+    "vendedor": "Edwin Marin",
+    "direccion": "Ferrocarril ",
+    "telefono": "3105675464",
+    "correo": null,
+    "total": 624000,
+    "created_at": "2025-09-10T13:10:06.922929+00:00",
+    "productos": [
+      {
+        "id": 70,
+        "codigo": "",
+        "nombre": "ENJUAGUE BUCAL LISTERINE COOL MINT 1.5 L",
+        "precio": 30000,
+        "cantidad": 12
+      },
+      {
+        "id": 69,
+        "codigo": "",
+        "nombre": "ENJUAGUE BUCAL LISTERINE COOL MINT 1L",
+        "precio": 22000,
+        "cantidad": 12
+      }
+    ]
+  },
+  {
+    "id": 191,
+    "cliente": "LIBEY SALINAS ",
+    "fecha": "2025-09-10",
+    "vendedor": "Edwin Marin",
+    "direccion": "Ferrocaril ",
+    "telefono": "3007079647",
+    "correo": null,
+    "total": 624000,
+    "created_at": "2025-09-10T13:11:16.046369+00:00",
+    "productos": [
+      {
+        "id": 70,
+        "codigo": "",
+        "nombre": "ENJUAGUE BUCAL LISTERINE COOL MINT 1.5 L",
+        "precio": 30000,
+        "cantidad": 12
+      },
+      {
+        "id": 69,
+        "codigo": "",
+        "nombre": "ENJUAGUE BUCAL LISTERINE COOL MINT 1L",
+        "precio": 22000,
+        "cantidad": 12
+      }
+    ]
+  },
+  {
+    "id": 192,
+    "cliente": "MARIELA ",
+    "fecha": "2025-09-08",
+    "vendedor": "Edwin Marin",
+    "direccion": "Ferrocaril ",
+    "telefono": "300",
+    "correo": null,
+    "total": 360000,
+    "created_at": "2025-09-10T13:12:31.133749+00:00",
+    "productos": [
+      {
+        "id": 70,
+        "codigo": "",
+        "nombre": "ENJUAGUE BUCAL LISTERINE COOL MINT 1.5 L",
+        "precio": 30000,
+        "cantidad": 12
+      }
+    ]
+  },
+  {
+    "id": 171,
+    "cliente": "MARTHA BLANCO",
+    "fecha": "2025-09-04",
+    "vendedor": "Edwin Marin",
+    "direccion": "SÁBANA ",
+    "telefono": "3001234555",
+    "correo": "mb@gmail.com",
+    "total": 1149000,
+    "created_at": "2025-09-04T17:24:06.0409+00:00",
+    "productos": [
+      {
+        "id": 68,
+        "codigo": "",
+        "nombre": "GILLETE VENUS MU",
+        "precio": 25000,
+        "cantidad": 10
+      },
+      {
+        "id": 47,
+        "codigo": "",
+        "nombre": "MEXSANA TALCO 300+85G X15",
+        "precio": 19000,
+        "cantidad": 15
+      },
+      {
+        "id": 4,
+        "codigo": "",
+        "nombre": "PROTECTORES NOSOTRAS MULTIESTILO x 150  x 10 CAJAS",
+        "precio": 140000,
+        "cantidad": 1
+      },
+      {
+        "id": 8,
+        "codigo": "",
+        "nombre": "TOALLAS NOSOTRAS DIA Y NOCHE X24",
+        "precio": 84000,
+        "cantidad": 1
+      },
+      {
+        "id": 15,
+        "codigo": "",
+        "nombre": "PILA DURACEL AA 10X6",
+        "precio": 195000,
+        "cantidad": 1
+      },
+      {
+        "id": 14,
+        "codigo": "",
+        "nombre": "PILA DURACELL AAA 10X6",
+        "precio": 195000,
+        "cantidad": 1
+      }
+    ]
+  },
+  {
+    "id": 172,
+    "cliente": "MARTHA TABARES",
+    "fecha": "2025-09-04",
+    "vendedor": "Edwin Marin",
+    "direccion": "PARQUE local 123",
+    "telefono": "3453053",
+    "correo": "mt@gmail.com",
+    "total": 730000,
+    "created_at": "2025-09-04T17:25:05.475146+00:00",
+    "productos": [
+      {
+        "id": 66,
+        "codigo": "",
+        "nombre": "Ponds crema facial ",
+        "precio": 20000,
+        "cantidad": 24
+      },
+      {
+        "id": 68,
+        "codigo": "",
+        "nombre": "GILLETE VENUS MU",
+        "precio": 25000,
+        "cantidad": 10
+      }
+    ]
+  },
+  {
+    "id": 173,
+    "cliente": "ROBINSON NEW YORK",
+    "fecha": "2025-09-04",
+    "vendedor": "Edwin Marin",
+    "direccion": "CC FERROCARRIL",
+    "telefono": "3204966508",
+    "correo": null,
+    "total": 1950000,
+    "created_at": "2025-09-04T17:25:44.63986+00:00",
+    "productos": [
+      {
+        "id": 15,
+        "codigo": "",
+        "nombre": "PILA DURACEL AA 10X6",
+        "precio": 195000,
+        "cantidad": 10
+      }
+    ]
+  },
+  {
+    "id": 174,
+    "cliente": "JESUS",
+    "fecha": "2025-09-04",
+    "vendedor": "Edwin Marin",
+    "direccion": "SABANA",
+    "telefono": "3196887331",
+    "correo": null,
+    "total": 1248000,
+    "created_at": "2025-09-04T17:27:01.960887+00:00",
+    "productos": [
+      {
+        "id": 70,
+        "codigo": "",
+        "nombre": "ENJUAGUE BUCAL LISTERINE COOL MINT 1.5 L",
+        "precio": 30000,
+        "cantidad": 24
+      },
+      {
+        "id": 69,
+        "codigo": "",
+        "nombre": "ENJUAGUE BUCAL LISTERINE COOL MINT 1L",
+        "precio": 22000,
+        "cantidad": 24
+      }
+    ]
+  },
+  {
+    "id": 175,
+    "cliente": "NORVEY ",
+    "fecha": "2025-09-05",
+    "vendedor": "Edwin Marin",
+    "direccion": "Parque local ",
+    "telefono": null,
+    "correo": null,
+    "total": 1584000,
+    "created_at": "2025-09-05T19:29:16.598687+00:00",
+    "productos": [
+      {
+        "id": 69,
+        "codigo": "",
+        "nombre": "ENJUAGUE BUCAL LISTERINE COOL MINT 1L",
+        "precio": 22000,
+        "cantidad": 72
+      }
+    ]
+  },
+  {
+    "id": 179,
+    "cliente": "SARA",
+    "fecha": "2025-09-10",
+    "vendedor": "Edwin Marin",
+    "direccion": "SABANA",
+    "telefono": null,
+    "correo": null,
+    "total": 1844000,
+    "created_at": "2025-09-10T12:30:24.892023+00:00",
+    "productos": [
+      {
+        "id": 66,
+        "codigo": "",
+        "nombre": "Ponds crema facial ",
+        "precio": 20000,
+        "cantidad": 36
+      },
+      {
+        "id": 68,
+        "codigo": "",
+        "nombre": "GILLETE VENUS MU",
+        "precio": 25000,
+        "cantidad": 20
+      },
+      {
+        "id": 70,
+        "codigo": "",
+        "nombre": "ENJUAGUE BUCAL LISTERINE COOL MINT 1.5 L",
+        "precio": 30000,
+        "cantidad": 12
+      },
+      {
+        "id": 69,
+        "codigo": "",
+        "nombre": "ENJUAGUE BUCAL LISTERINE COOL MINT 1L",
+        "precio": 22000,
+        "cantidad": 12
+      }
+    ]
+  },
+  {
+    "id": 180,
+    "cliente": "LORENA CASTAÑEDA ",
+    "fecha": "2025-09-10",
+    "vendedor": "Edwin Marin",
+    "direccion": "Sabana",
+    "telefono": "3214058023",
+    "correo": null,
+    "total": 2547400,
+    "created_at": "2025-09-10T12:37:02.097485+00:00",
+    "productos": [
+      {
+        "id": 70,
+        "codigo": "",
+        "nombre": "ENJUAGUE BUCAL LISTERINE COOL MINT 1.5 L",
+        "precio": 30000,
+        "cantidad": 36
+      },
+      {
+        "id": 61,
+        "codigo": "",
+        "nombre": "BALANCE CLINICAL CREMA 70 g",
+        "precio": 5800,
+        "cantidad": 24
+      },
+      {
+        "id": 62,
+        "codigo": "",
+        "nombre": "BALANCE WOMEN CLINICAL 70 g",
+        "precio": 5800,
+        "cantidad": 24
+      },
+      {
+        "id": 38,
+        "codigo": "",
+        "nombre": "JABON J&J BABY PACK 3X16X110G",
+        "precio": 40000,
+        "cantidad": 12
+      },
+      {
+        "id": 59,
+        "codigo": "",
+        "nombre": "KOTEX x24 BUENAS NOCHES",
+        "precio": 12000,
+        "cantidad": 16
+      },
+      {
+        "id": 47,
+        "codigo": "",
+        "nombre": "MEXSANA TALCO 300+85G X15",
+        "precio": 19000,
+        "cantidad": 15
+      },
+      {
+        "id": 55,
+        "codigo": "",
+        "nombre": "REXONA CLINICAL COLACILBLE 30G",
+        "precio": 32000,
+        "cantidad": 2
+      },
+      {
+        "id": 8,
+        "codigo": "",
+        "nombre": "TOALLAS NOSOTRAS DIA Y NOCHE X24",
+        "precio": 84000,
+        "cantidad": 2
+      }
+    ]
+  },
+  {
+    "id": 181,
+    "cliente": "ADRIAN",
+    "fecha": "2025-09-10",
+    "vendedor": "Edwin Marin",
+    "direccion": "Sábana local ",
+    "telefono": "3115793179",
+    "correo": null,
+    "total": 360000,
+    "created_at": "2025-09-10T12:39:18.095342+00:00",
+    "productos": [
+      {
+        "id": 70,
+        "codigo": "",
+        "nombre": "ENJUAGUE BUCAL LISTERINE COOL MINT 1.5 L",
+        "precio": 30000,
+        "cantidad": 12
+      }
+    ]
+  },
+  {
+    "id": 182,
+    "cliente": "MARTHA BLANCO",
+    "fecha": "2025-09-10",
+    "vendedor": "Edwin Marin",
+    "direccion": "SÁBANA ",
+    "telefono": "3001234555",
+    "correo": "mb@gmail.com",
+    "total": 360000,
+    "created_at": "2025-09-10T12:49:51.578053+00:00",
+    "productos": [
+      {
+        "id": 70,
+        "codigo": "",
+        "nombre": "ENJUAGUE BUCAL LISTERINE COOL MINT 1.5 L",
+        "precio": 30000,
+        "cantidad": 12
+      }
+    ]
+  },
+  {
+    "id": 183,
+    "cliente": "TILSIA",
+    "fecha": "2025-09-10",
+    "vendedor": "Edwin Marin",
+    "direccion": "SABANA",
+    "telefono": null,
+    "correo": null,
+    "total": 216000,
+    "created_at": "2025-09-10T12:51:44.079226+00:00",
+    "productos": [
+      {
+        "id": 67,
+        "codigo": "",
+        "nombre": "TEATRICAL ACLADORA",
+        "precio": 18000,
+        "cantidad": 12
+      }
+    ]
+  },
+  {
+    "id": 184,
+    "cliente": "DORIS ",
+    "fecha": "2025-09-10",
+    "vendedor": "Edwin Marin",
+    "direccion": "PARQUE ",
+    "telefono": null,
+    "correo": null,
+    "total": 1310000,
+    "created_at": "2025-09-10T12:53:48.942437+00:00",
+    "productos": [
+      {
+        "id": 68,
+        "codigo": "",
+        "nombre": "GILLETE VENUS MU",
+        "precio": 25000,
+        "cantidad": 10
+      },
+      {
+        "id": 9,
+        "codigo": "",
+        "nombre": "TOALLAS NOSOTRAS CLASICA X 30",
+        "precio": 10000,
+        "cantidad": 80
+      },
+      {
+        "id": 5,
+        "codigo": "",
+        "nombre": "PROTECTORES NOSOTRAS NORMAL x 150 X 10 CAJAS",
+        "precio": 120000,
+        "cantidad": 1
+      },
+      {
+        "id": 4,
+        "codigo": "",
+        "nombre": "PROTECTORES NOSOTRAS MULTIESTILO x 150  x 10 CAJAS",
+        "precio": 140000,
+        "cantidad": 1
+      }
+    ]
+  },
+  {
+    "id": 185,
+    "cliente": "KELLY HERMANA DE ADRIAN",
+    "fecha": "2025-09-06",
+    "vendedor": "Edwin Marin",
+    "direccion": "Ferrocarril",
+    "telefono": null,
+    "correo": null,
+    "total": 2954800,
+    "created_at": "2025-09-10T12:58:59.16305+00:00",
+    "productos": [
+      {
+        "id": 70,
+        "codigo": "",
+        "nombre": "ENJUAGUE BUCAL LISTERINE COOL MINT 1.5 L",
+        "precio": 30000,
+        "cantidad": 18
+      },
+      {
+        "id": 60,
+        "codigo": "",
+        "nombre": "JABÓN NEKO DOCENA",
+        "precio": 49000,
+        "cantidad": 4
+      },
+      {
+        "id": 42,
+        "codigo": "",
+        "nombre": "REXONA CLINICAL POR 2",
+        "precio": 25000,
+        "cantidad": 6
+      },
+      {
+        "id": 68,
+        "codigo": "",
+        "nombre": "GILLETE VENUS MU",
+        "precio": 25000,
+        "cantidad": 20
+      },
+      {
+        "id": 54,
+        "codigo": "",
+        "nombre": "PONDS CREMA S 100 G",
+        "precio": 18000,
+        "cantidad": 12
+      },
+      {
+        "id": 61,
+        "codigo": "",
+        "nombre": "BALANCE CLINICAL CREMA 70 g",
+        "precio": 5800,
+        "cantidad": 48
+      },
+      {
+        "id": 62,
+        "codigo": "",
+        "nombre": "BALANCE WOMEN CLINICAL 70 g",
+        "precio": 5800,
+        "cantidad": 48
+      },
+      {
+        "id": 63,
+        "codigo": "",
+        "nombre": "EGO ATTRATION 240 ml",
+        "precio": 6500,
+        "cantidad": 24
+      },
+      {
+        "id": 55,
+        "codigo": "",
+        "nombre": "REXONA CLINICAL COLACILBLE 30G",
+        "precio": 32000,
+        "cantidad": 20
+      }
+    ]
+  },
+  {
+    "id": 186,
+    "cliente": "JAVIER BUITRAGO ",
+    "fecha": "2025-09-05",
+    "vendedor": "Edwin Marin",
+    "direccion": "Ferrocaril A003",
+    "telefono": "3114411220",
+    "correo": null,
+    "total": 360000,
+    "created_at": "2025-09-10T13:01:05.581889+00:00",
+    "productos": [
+      {
+        "id": 70,
+        "codigo": "",
+        "nombre": "ENJUAGUE BUCAL LISTERINE COOL MINT 1.5 L",
+        "precio": 30000,
+        "cantidad": 12
+      }
+    ]
+  },
+  {
+    "id": 187,
+    "cliente": "FREDY ORLANDO ",
+    "fecha": "2025-09-10",
+    "vendedor": "Edwin Marin",
+    "direccion": "SABANA",
+    "telefono": "3103386651",
+    "correo": null,
+    "total": 312000,
+    "created_at": "2025-09-10T13:02:16.659905+00:00",
+    "productos": [
+      {
+        "id": 70,
+        "codigo": "",
+        "nombre": "ENJUAGUE BUCAL LISTERINE COOL MINT 1.5 L",
+        "precio": 30000,
+        "cantidad": 6
+      },
+      {
+        "id": 69,
+        "codigo": "",
+        "nombre": "ENJUAGUE BUCAL LISTERINE COOL MINT 1L",
+        "precio": 22000,
+        "cantidad": 6
+      }
+    ]
+  },
+  {
+    "id": 188,
+    "cliente": "JHON CRUZ",
+    "fecha": "2025-09-05",
+    "vendedor": "Edwin Marin",
+    "direccion": "SABANA",
+    "telefono": null,
+    "correo": null,
+    "total": 180000,
+    "created_at": "2025-09-10T13:05:14.695475+00:00",
+    "productos": [
+      {
+        "id": 70,
+        "codigo": "",
+        "nombre": "ENJUAGUE BUCAL LISTERINE COOL MINT 1.5 L",
+        "precio": 30000,
+        "cantidad": 6
+      }
+    ]
+  },
+  {
+    "id": 189,
+    "cliente": "CARMENSA ",
+    "fecha": "2025-09-10",
+    "vendedor": "Edwin Marin",
+    "direccion": "Ferrocarril",
+    "telefono": "3224153032",
+    "correo": null,
+    "total": 312000,
+    "created_at": "2025-09-10T13:08:17.708094+00:00",
+    "productos": [
+      {
+        "id": 70,
+        "codigo": "",
+        "nombre": "ENJUAGUE BUCAL LISTERINE COOL MINT 1.5 L",
+        "precio": 30000,
+        "cantidad": 6
+      },
+      {
+        "id": 69,
+        "codigo": "",
+        "nombre": "ENJUAGUE BUCAL LISTERINE COOL MINT 1L",
+        "precio": 22000,
+        "cantidad": 6
+      }
+    ]
+  },
+  {
+    "id": 193,
+    "cliente": "HECTOR COSTENO",
+    "fecha": "2025-09-08",
+    "vendedor": "Edwin Marin",
+    "direccion": "PARQUE",
+    "telefono": "3215762269",
+    "correo": null,
+    "total": 1883000,
+    "created_at": "2025-09-10T13:18:41.567257+00:00",
+    "productos": [
+      {
+        "id": 70,
+        "codigo": "",
+        "nombre": "ENJUAGUE BUCAL LISTERINE COOL MINT 1.5 L",
+        "precio": 30000,
+        "cantidad": 12
+      },
+      {
+        "id": 4,
+        "codigo": "",
+        "nombre": "PROTECTORES NOSOTRAS MULTIESTILO x 150  x 10 CAJAS",
+        "precio": 140000,
+        "cantidad": 1
+      },
+      {
+        "id": 8,
+        "codigo": "",
+        "nombre": "TOALLAS NOSOTRAS DIA Y NOCHE X24",
+        "precio": 84000,
+        "cantidad": 2
+      },
+      {
+        "id": 15,
+        "codigo": "",
+        "nombre": "PILA DURACEL AA 10X6",
+        "precio": 195000,
+        "cantidad": 1
+      },
+      {
+        "id": 66,
+        "codigo": "",
+        "nombre": "Ponds crema facial ",
+        "precio": 20000,
+        "cantidad": 36
+      },
+      {
+        "id": 42,
+        "codigo": "",
+        "nombre": "REXONA CLINICAL POR 2",
+        "precio": 25000,
+        "cantidad": 12
+      }
+    ]
+  },
+  {
+    "id": 194,
+    "cliente": "FERNEY SALINAS",
+    "fecha": "2025-09-10",
+    "vendedor": "Edwin Marin",
+    "direccion": "Ferrocaril ",
+    "telefono": "3123484686",
+    "correo": null,
+    "total": 1557000,
+    "created_at": "2025-09-10T13:22:27.738853+00:00",
+    "productos": [
+      {
+        "id": 70,
+        "codigo": "",
+        "nombre": "ENJUAGUE BUCAL LISTERINE COOL MINT 1.5 L",
+        "precio": 30000,
+        "cantidad": 12
+      },
+      {
+        "id": 69,
+        "codigo": "",
+        "nombre": "ENJUAGUE BUCAL LISTERINE COOL MINT 1L",
+        "precio": 22000,
+        "cantidad": 24
+      },
+      {
+        "id": 47,
+        "codigo": "",
+        "nombre": "MEXSANA TALCO 300+85G X15",
+        "precio": 19000,
+        "cantidad": 15
+      },
+      {
+        "id": 55,
+        "codigo": "",
+        "nombre": "REXONA CLINICAL COLACILBLE 30G",
+        "precio": 32000,
+        "cantidad": 12
+      }
+    ]
   }
 ]
