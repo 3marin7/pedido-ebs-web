@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import MovimientosInventario from './MovimientosInventario';
 import HistorialInventario from './HistorialInventario';
-
+import MejoresProductos from './MejoresProductos';
+import './DashboardProducts.css';
 export default function GestionInventario() {
   const [vistaActual, setVistaActual] = useState('movimientos');
 
@@ -31,6 +32,16 @@ export default function GestionInventario() {
             >
               📊 Ver Historial
             </button>
+            <button
+              onClick={() => setVistaActual('mejores')}
+              className={`py-3 px-6 rounded-t-md font-medium text-sm transition-colors ${
+                vistaActual === 'mejores'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-blue-500 text-white hover:bg-blue-600'
+              }`}
+            >
+              🏆 Mejores Productos
+            </button>
           </div>
         </div>
       </div>
@@ -39,6 +50,7 @@ export default function GestionInventario() {
       <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         {vistaActual === 'movimientos' && <MovimientosInventario />}
         {vistaActual === 'historial' && <HistorialInventario />}
+        {vistaActual === 'mejores' && <MejoresProductos />}
       </div>
     </div>
   );

@@ -36,6 +36,7 @@ const InvoiceScreen = () => {
   // Estados para clientes
   const [clientes, setClientes] = useState([]);
   const [cargando, setCargando] = useState(false);
+  const [erroresStock, setErroresStock] = useState({});
 
   const vendedores = ['Edwin Marin', 'Fredy Marin', 'Fabian Marin'];
 
@@ -74,6 +75,19 @@ const InvoiceScreen = () => {
     cargarDatosIniciales();
   }, []);
 
+  // Función para verificar stock disponible
+  const verificarStockDisponible = (productoId, cantidadRequerida) => {
+    const producto = productosCatalogo.find(p => p.id === productoId);
+    if (!producto) return 0;
+    
+    // Verificar si hay stock definido (puede ser null/undefined)
+    const stockActual = producto.stock !== null && producto.stock !== undefined 
+      ? producto.stock 
+      : Infinity;
+    
+    return Math.max(0, stockActual - cantidadRequerida);
+  };
+
   // Función para agregar producto manualmente
   const agregarProducto = () => {
     if (!nombreProducto || !cantidadProducto || !precioProducto) {
@@ -94,17 +108,33 @@ const InvoiceScreen = () => {
       return;
     }
 
+    // Buscar el producto en el catálogo para verificar stock
+    const productoCatalogo = productosCatalogo.find(p => 
+      p.nombre.toLowerCase() === nombreProducto.toLowerCase()
+    );
+
+    if (productoCatalogo && productoCatalogo.stock !== null && productoCatalogo.stock !== undefined) {
+      const stockDisponible = verificarStockDisponible(productoCatalogo.id, cantidad);
+      
+      if (stockDisponible < 0) {
+        alert(`No hay suficiente stock. Solo quedan ${productoCatalogo.stock} unidades.`);
+        return;
+      }
+    }
+
     const nuevoProducto = {
       id: Date.now(),
       nombre: nombreProducto,
       cantidad: cantidad,
       precio: precio,
+      producto_id: productoCatalogo?.id || null
     };
 
     setProductos([...productos, nuevoProducto]);
     setNombreProducto('');
     setCantidadProducto('');
     setPrecioProducto('');
+    setErroresStock({});
   };
 
   // Función para agregar desde catálogo
@@ -114,15 +144,39 @@ const InvoiceScreen = () => {
       return;
     }
 
+    // Verificar stock antes de agregar
+    if (producto.stock !== null && producto.stock !== undefined && producto.stock <= 0) {
+      alert('No hay stock disponible para este producto');
+      return;
+    }
+
     setProductos(prevProductos => {
-      const existe = prevProductos.find(p => p.nombre === producto.nombre);
+      const existe = prevProductos.find(p => p.producto_id === producto.id);
+      
       if (existe) {
+        // Verificar si al aumentar la cantidad se supera el stock
+        const nuevaCantidad = existe.cantidad + 1;
+        const stockDisponible = verificarStockDisponible(producto.id, nuevaCantidad);
+        
+        if (stockDisponible < 0) {
+          alert(`No hay suficiente stock. Solo quedan ${producto.stock} unidades.`);
+          return prevProductos;
+        }
+        
         return prevProductos.map(p => 
-          p.nombre === producto.nombre 
-            ? { ...p, cantidad: p.cantidad + 1 } 
+          p.producto_id === producto.id 
+            ? { ...p, cantidad: nuevaCantidad } 
             : p
         );
       }
+      
+      // Verificar stock para nuevo producto
+      const stockDisponible = verificarStockDisponible(producto.id, 1);
+      if (stockDisponible < 0) {
+        alert(`No hay suficiente stock. Solo quedan ${producto.stock} unidades.`);
+        return prevProductos;
+      }
+      
       return [
         ...prevProductos,
         {
@@ -130,16 +184,59 @@ const InvoiceScreen = () => {
           nombre: producto.nombre,
           cantidad: 1,
           precio: producto.precio,
-          codigo: producto.codigo || ''
+          codigo: producto.codigo || '',
+          producto_id: producto.id
         }
       ];
     });
+    
+    setErroresStock({});
     setMostrarCatalogo(false);
+  };
+
+  // Función para actualizar inventario después de una venta
+  const actualizarInventario = async (productosVendidos) => {
+    try {
+      for (const producto of productosVendidos) {
+        if (producto.producto_id) {
+          // Obtener el producto actual de la base de datos
+          const { data: productoActual, error } = await supabase
+            .from('productos')
+            .select('stock')
+            .eq('id', producto.producto_id)
+            .single();
+          
+          if (error) throw error;
+          
+          // Calcular nuevo stock
+          const stockActual = productoActual.stock !== null ? productoActual.stock : 0;
+          const nuevoStock = Math.max(0, stockActual - producto.cantidad);
+          
+          // Actualizar el stock en la base de datos
+          const { error: updateError } = await supabase
+            .from('productos')
+            .update({ stock: nuevoStock })
+            .eq('id', producto.producto_id);
+          
+          if (updateError) throw updateError;
+          
+          console.log(`Stock actualizado para ${producto.nombre}: ${stockActual} -> ${nuevoStock}`);
+        }
+      }
+    } catch (error) {
+      console.error('Error actualizando inventario:', error);
+      throw new Error('No se pudo actualizar el inventario');
+    }
   };
 
   // Funciones para gestión de productos
   const eliminarProducto = (id) => {
     setProductos(productos.filter(p => p.id !== id));
+    setErroresStock(prev => {
+      const newErrors = { ...prev };
+      delete newErrors[id];
+      return newErrors;
+    });
   };
 
   const iniciarEdicionCantidad = (producto) => {
@@ -154,17 +251,56 @@ const InvoiceScreen = () => {
       return;
     }
 
+    const producto = productos.find(p => p.id === id);
+    if (!producto) return;
+
+    // Verificar stock si es un producto del catálogo
+    if (producto.producto_id) {
+      const stockDisponible = verificarStockDisponible(producto.producto_id, cantidad);
+      
+      if (stockDisponible < 0) {
+        const productoCatalogo = productosCatalogo.find(p => p.id === producto.producto_id);
+        alert(`No hay suficiente stock. Solo quedan ${productoCatalogo.stock} unidades.`);
+        return;
+      }
+    }
+
     const productosActualizados = productos.map(p => 
       p.id === id ? { ...p, cantidad: cantidad } : p
     );
+    
     setProductos(productosActualizados);
     setEditandoProductoId(null);
     setCantidadEditada('');
+    setErroresStock(prev => {
+      const newErrors = { ...prev };
+      delete newErrors[id];
+      return newErrors;
+    });
   };
 
   const cancelarEdicion = () => {
     setEditandoProductoId(null);
     setCantidadEditada('');
+  };
+
+  // Función para verificar stock antes de mostrar la vista previa
+  const verificarStockAntesDeVenta = () => {
+    const errores = {};
+    
+    for (const producto of productos) {
+      if (producto.producto_id) {
+        const stockDisponible = verificarStockDisponible(producto.producto_id, producto.cantidad);
+        
+        if (stockDisponible < 0) {
+          const productoCatalogo = productosCatalogo.find(p => p.id === producto.producto_id);
+          errores[producto.id] = `Solo ${productoCatalogo.stock} disponibles`;
+        }
+      }
+    }
+    
+    setErroresStock(errores);
+    return Object.keys(errores).length === 0;
   };
 
   // Funciones para factura
@@ -173,6 +309,13 @@ const InvoiceScreen = () => {
       alert('Complete cliente, vendedor y agregue productos');
       return;
     }
+    
+    // Verificar stock antes de continuar
+    if (!verificarStockAntesDeVenta()) {
+      alert('Hay problemas de stock con algunos productos. Revise las cantidades.');
+      return;
+    }
+    
     setMostrarVistaPrevia(true);
   };
 
@@ -207,7 +350,10 @@ const InvoiceScreen = () => {
 
       if (error) throw error;
 
-      alert('Factura guardada exitosamente!');
+      // Actualizar inventario después de guardar la factura
+      await actualizarInventario(productos);
+
+      alert('Factura guardada exitosamente! Inventario actualizado.');
       setMostrarVistaPrevia(false);
       
       // Limpiar formulario
@@ -217,10 +363,11 @@ const InvoiceScreen = () => {
       setCorreo('');
       setProductos([]);
       setVendedorSeleccionado('');
+      setErroresStock({});
       
     } catch (error) {
       console.error('Error guardando factura:', error);
-      alert('Error al guardar la factura');
+      alert('Error al guardar la factura: ' + error.message);
     } finally {
       setCargando(false);
     }
@@ -294,15 +441,20 @@ const InvoiceScreen = () => {
                 productosFiltrados.map(producto => (
                   <div 
                     key={producto.id} 
-                    className="producto-catalogo-item"
-                    onClick={() => agregarProductoDesdeCatalogo(producto)}
+                    className={`producto-catalogo-item ${producto.stock === 0 ? 'sin-stock' : ''}`}
+                    onClick={() => producto.stock !== 0 && agregarProductoDesdeCatalogo(producto)}
                   >
                     <div className="producto-info">
                       <h4>{producto.nombre}</h4>
                       {producto.codigo && <span className="producto-codigo">#{producto.codigo}</span>}
                     </div>
-                    <div className="producto-precio">
-                      ${producto.precio?.toFixed(2) || '0.00'}
+                    <div className="producto-details">
+                      <div className="producto-precio">
+                        ${producto.precio?.toFixed(2) || '0.00'}
+                      </div>
+                      <div className={`producto-stock ${producto.stock === 0 ? 'stock-agotado' : producto.stock < 5 ? 'stock-bajo' : 'stock-disponible'}`}>
+                        {producto.stock !== null ? `${producto.stock} disponibles` : 'Stock ilimitado'}
+                      </div>
                     </div>
                   </div>
                 ))
@@ -393,7 +545,7 @@ const InvoiceScreen = () => {
             </div>
           </div>
 
-          {/* Línea 3: Email y Vendedor */}
+          {/* Línea 3: Email and Vendor */}
           <div className="form-row">
             <div className="form-group" style={{flex: 1}}>
               <input
@@ -463,7 +615,7 @@ const InvoiceScreen = () => {
             <div className="productos-list">
               <h3>Productos Agregados:</h3>
               {productos.map((p) => (
-                <div key={p.id} className="producto-item">
+                <div key={p.id} className={`producto-item ${erroresStock[p.id] ? 'error-stock' : ''}`}>
                   <div className="producto-info">
                     <span className="producto-nombre">{p.nombre}</span>
                     {editandoProductoId === p.id ? (
@@ -492,6 +644,9 @@ const InvoiceScreen = () => {
                     ) : (
                       <span className="producto-detalle">
                         {p.cantidad} x ${p.precio.toFixed(2)} = ${(p.cantidad * p.precio).toFixed(2)}
+                        {erroresStock[p.id] && (
+                          <span className="error-message"> - {erroresStock[p.id]}</span>
+                        )}
                       </span>
                     )}
                   </div>
@@ -525,7 +680,7 @@ const InvoiceScreen = () => {
             <button 
               className="button preview-button" 
               onClick={mostrarPrevia}
-              disabled={productos.length === 0 || !cliente || !vendedorSeleccionado}
+              disabled={productos.length === 0 || !cliente || !vendedorSeleccionado || Object.keys(erroresStock).length > 0}
             >
               Vista Previa
             </button>

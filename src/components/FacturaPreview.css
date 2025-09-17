@@ -134,4 +134,88 @@
   .boton-volver, .boton-guardar {
     width: 100%;
   }
+}/* Estilos para la sección de movimientos de inventario */
+.seccion-inventario {
+  margin: 20px 0;
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  border-left: 4px solid #007bff;
+}
+
+.seccion-inventario h3 {
+  margin-bottom: 15px;
+  color: #2c3e50;
+  font-size: 16px;
+}
+
+.tabla-movimientos {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 15px;
+  background-color: white;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.tabla-movimientos th {
+  background-color: #e9ecef;
+  padding: 10px;
+  text-align: left;
+  font-weight: 600;
+  color: #495057;
+  border-bottom: 2px solid #dee2e6;
+}
+
+.tabla-movimientos td {
+  padding: 10px;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.tabla-movimientos tr:last-child td {
+  border-bottom: none;
+}
+
+.badge {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.badge.salida {
+  background-color: #fff5f5;
+  color: #e53e3e;
+  border: 1px solid #fed7d7;
+}
+
+.info-movimiento {
+  background-color: white;
+  padding: 12px;
+  border-radius: 6px;
+  border-left: 3px solid #38a169;
+}
+
+.info-movimiento p {
+  margin: 5px 0;
+  font-size: 14px;
+}
+
+/* Mejoras responsivas */
+@media (max-width: 768px) {
+  .tabla-movimientos {
+    display: block;
+    overflow-x: auto;
+  }
+  
+  .seccion-inventario {
+    padding: 10px;
+  }
+  
+  .tabla-movimientos th,
+  .tabla-movimientos td {
+    padding: 8px 5px;
+    font-size: 14px;
+  }
 }

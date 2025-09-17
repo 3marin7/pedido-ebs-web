@@ -693,4 +693,53 @@ select {
 .button:active {
   transform: translateY(0);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}/* Estilos para validación de stock */
+.error-stock {
+  border-left: 4px solid #ff4757 !important;
+  background-color: #fff5f5;
+}
+
+.error-message {
+  color: #ff4757;
+  font-size: 0.85em;
+  margin-left: 10px;
+  font-weight: bold;
+}
+
+.producto-details {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 5px;
+}
+
+.producto-stock {
+  font-size: 0.8em;
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-weight: bold;
+}
+
+.stock-disponible {
+  background-color: #e3fcef;
+  color: #0ca678;
+}
+
+.stock-bajo {
+  background-color: #fff9db;
+  color: #e67700;
+}
+
+.stock-agotado {
+  background-color: #fff5f5;
+  color: #ff6b6b;
+}
+
+.sin-stock {
+  opacity: 0.6;
+  cursor: not-allowed !important;
+}
+
+.sin-stock:hover {
+  background-color: #f8f9fa !important;
 }

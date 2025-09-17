@@ -386,3 +386,615 @@
   justify-content: space-between;
   align-items: center;
 }
+/* Estilos para el mapa con pasillos */
+.map-grid-with-pasillos {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 900px;
+}
+
+.map-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.pasillo-horizontal, .pasillo-vertical {
+  background-color: #f8f9fa;
+  border: 2px dashed #ccc;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 5px;
+}
+
+.pasillo-horizontal {
+  height: 40px;
+  width: 100%;
+}
+
+.pasillo-vertical {
+  width: 40px;
+  height: 100px;
+  flex-direction: column;
+}
+
+.pasillo-label {
+  font-size: 10px;
+  color: #666;
+  font-weight: bold;
+  text-align: center;
+}
+
+.pasillo-color {
+  width: 20px;
+  height: 20px;
+  background-color: #f8f9fa;
+  border: 2px dashed #ccc;
+  border-radius: 4px;
+}
+
+/* Mejoras para las celdas de locales */
+.map-cell {
+  width: 100px;
+  height: 100px;
+  margin: 5px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.local-number {
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.client-name-small {
+  font-size: 10px;
+  text-align: center;
+  margin-top: 5px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 90px;
+}
+
+/* Filtro por sector */
+.sector-filter {
+  margin-bottom: 15px;
+  padding: 10px;
+  background: #f8f9fa;
+  border-radius: 5px;
+}
+
+.sector-filter select {
+  margin-left: 10px;
+  padding: 5px;
+  border-radius: 3px;
+  border: 1px solid #ddd;
+}
+
+.sector-badge {
+  font-size: 10px;
+  background: #e8f4fd;
+  color: #3498db;
+  padding: 2px 5px;
+  border-radius: 10px;
+  margin-top: 3px;
+}/* Estilos para el mapa con zonas */
+.map-grid-with-zones {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.zone-title {
+  background-color: #2c3e50;
+  color: white;
+  padding: 10px;
+  text-align: center;
+  font-weight: bold;
+  margin: 10px 0 5px 0;
+  border-radius: 5px;
+}
+
+.zone-container {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 5px;
+}
+
+.zone-row {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 10px;
+}
+
+.pasillo-horizontal {
+  background-color: #f1f8ff;
+  border: 2px dashed #a0c5e8;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 10px 0;
+  border-radius: 5px;
+}
+
+.pasillo-label {
+  font-size: 14px;
+  color: #3498db;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.pasillo-color {
+  width: 20px;
+  height: 20px;
+  background-color: #f1f8ff;
+  border: 2px dashed #a0c5e8;
+  border-radius: 4px;
+}
+
+/* Mejoras para las celdas de locales */
+.map-cell {
+  width: 120px;
+  height: 120px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  background: white;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.map-cell:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.map-cell.occupied {
+  border-color: #3498db;
+  background: #e8f4fd;
+}
+
+.map-cell.selected {
+  border-color: #f39c12;
+  background: #fef5e7;
+  box-shadow: 0 0 0 3px rgba(243, 156, 18, 0.3);
+}
+
+.local-number {
+  font-weight: bold;
+  font-size: 16px;
+  margin-bottom: 5px;
+}
+
+.client-name-small {
+  font-size: 11px;
+  text-align: center;
+  padding: 0 5px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100px;
+  color: #555;
+}
+
+/* Filtro por sector */
+.sector-filter {
+  margin-bottom: 15px;
+  padding: 10px;
+  background: #f8f9fa;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sector-filter span {
+  font-weight: bold;
+  color: #555;
+}
+
+.sector-filter select {
+  padding: 5px 10px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  background: white;
+}
+
+.sector-badge {
+  font-size: 10px;
+  background: #e8f4fd;
+  color: #3498db;
+  padding: 3px 8px;
+  border-radius: 12px;
+  margin-top: 5px;
+  font-weight: bold;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .map-cell {
+    width: 100px;
+    height: 100px;
+  }
+  
+  .zone-row {
+    gap: 10px;
+  }
+  
+  .client-name-small {
+    font-size: 10px;
+    max-width: 80px;
+  }
+}/* Estilos para el mapa como en la imagen */
+.map-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.map-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+.local-container {
+  width: 120px;
+  height: 120px;
+}
+
+.local-box {
+  width: 100%;
+  height: 100%;
+  border: 2px solid #3498db;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: white;
+  cursor: pointer;
+  transition: all 0.2s;
+  padding: 5px;
+}
+
+.local-box:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.local-number {
+  font-weight: bold;
+  font-size: 16px;
+  margin-bottom: 5px;
+}
+
+.local-name {
+  font-size: 12px;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100px;
+  color: #555;
+}
+
+/* Pasillos */
+.pasillo-vertical {
+  width: 80px;
+  height: 120px;
+  background-color: #f1f8ff;
+  border: 2px dashed #a0c5e8;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 5px;
+}
+
+.pasillo-horizontal {
+  width: 100%;
+  height: 60px;
+  background-color: #f1f8ff;
+  border: 2px dashed #a0c5e8;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 5px;
+  margin: 10px 0;
+}
+
+.pasillo-text {
+  font-size: 14px;
+  color: #3498db;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+/* Cafetería */
+.cafeteria-center {
+  width: 80px;
+  height: 120px;
+  background-color: #ffeaa7;
+  border: 2px solid #fdcb6e;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 5px;
+}
+
+.cafeteria-text {
+  font-size: 14px;
+  color: #d35400;
+  font-weight: bold;
+  text-transform: uppercase;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  transform: rotate(180deg);
+}
+
+/* Leyenda */
+.cafeteria-color {
+  width: 20px;
+  height: 20px;
+  background-color: #ffeaa7;
+  border: 2px solid #fdcb6e;
+  border-radius: 4px;
+}
+
+/* Estados de los locales */
+.local-box.occupied {
+  background: #e8f4fd;
+  border-color: #3498db;
+}
+
+.local-box.selected {
+  background: #fef5e7;
+  border-color: #f39c12;
+  box-shadow: 0 0 0 3px rgba(243, 156, 18, 0.3);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .local-container {
+    width: 80px;
+    height: 80px;
+  }
+  
+  .pasillo-vertical, .cafeteria-center {
+    width: 60px;
+    height: 80px;
+  }
+  
+  .local-number {
+    font-size: 14px;
+  }
+  
+  .local-name {
+    font-size: 10px;
+    max-width: 70px;
+  }
+  
+  .pasillo-text, .cafeteria-text {
+    font-size: 10px;
+  }
+}/* Estilos para el diseño del centro comercial */
+.mall-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.mall-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+}
+
+.local-square {
+  width: 100px;
+  height: 100px;
+  border: 2px solid #3498db;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: white;
+  cursor: pointer;
+  transition: all 0.2s;
+  padding: 5px;
+}
+
+.local-square:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  border-color: #2980b9;
+}
+
+.local-square.occupied {
+  background: #e8f4fd;
+  border-color: #3498db;
+}
+
+.local-square.selected {
+  background: #fef5e7;
+  border-color: #f39c12;
+  box-shadow: 0 0 0 3px rgba(243, 156, 18, 0.3);
+}
+
+.local-num {
+  font-weight: bold;
+  font-size: 14px;
+  margin-bottom: 3px;
+  color: #2c3e50;
+}
+
+.local-client {
+  font-size: 11px;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 90px;
+  color: #555;
+}
+
+/* Pasillos verdes */
+.green-hall {
+  width: 20px;
+  height: 100px;
+  background-color: #d4f7e6;
+  border: 1px solid #2ecc71;
+  border-radius: 3px;
+}
+
+.green-hall.horizontal {
+  width: 100%;
+  height: 20px;
+}
+
+.green-hall-color {
+  width: 20px;
+  height: 20px;
+  background-color: #d4f7e6;
+  border: 1px solid #2ecc71;
+  border-radius: 3px;
+}
+
+/* Cafetería */
+.cafeteria-center {
+  width: 100px;
+  height: 100px;
+  background-color: #ffeaa7;
+  border: 2px solid #fdcb6e;
+  border-radius: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.cafeteria-text {
+  font-size: 14px;
+  color: #d35400;
+  font-weight: bold;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.cafeteria-color {
+  width: 20px;
+  height: 20px;
+  background-color: #ffeaa7;
+  border: 2px solid #fdcb6e;
+  border-radius: 3px;
+}
+
+/* Espacios vacíos */
+.empty-space {
+  width: 100px;
+  height: 100px;
+  background-color: transparent;
+}
+
+/* Leyenda */
+.map-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  justify-content: center;
+  margin-top: 20px;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 14px;
+}
+
+.legend-color {
+  width: 20px;
+  height: 20px;
+  border-radius: 3px;
+}
+
+.legend-color.available {
+  background: white;
+  border: 2px solid #3498db;
+}
+
+.legend-color.occupied {
+  background: #e8f4fd;
+  border: 2px solid #3498db;
+}
+
+.legend-color.selected {
+  background: #fef5e7;
+  border: 2px solid #f39c12;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .local-square {
+    width: 70px;
+    height: 70px;
+  }
+  
+  .local-num {
+    font-size: 12px;
+  }
+  
+  .local-client {
+    font-size: 9px;
+    max-width: 60px;
+  }
+  
+  .green-hall {
+    width: 15px;
+    height: 70px;
+  }
+  
+  .green-hall.horizontal {
+    height: 15px;
+  }
+  
+  .cafeteria-center {
+    width: 70px;
+    height: 70px;
+  }
+  
+  .cafeteria-text {
+    font-size: 11px;
+  }
+  
+  .empty-space {
+    width: 70px;
+    height: 70px;
+  }
+}
