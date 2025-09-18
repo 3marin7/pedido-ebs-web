@@ -9,6 +9,8 @@ const FacturasGuardadas = () => {
   const [abonos, setAbonos] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [busqueda, setBusqueda] = useState('');
+  const [busquedaVendedor, setBusquedaVendedor] = useState('');
+  const [vendedores, setVendedores] = useState([]);
   const [orden, setOrden] = useState('recientes');
   const [mostrarConfirmacion, setMostrarConfirmacion] = useState(null);
   const [mostrarResumen, setMostrarResumen] = useState(false);
@@ -18,6 +20,9 @@ const FacturasGuardadas = () => {
   // Nuevos estados para la autenticación de eliminación
   const [password, setPassword] = useState('');
   const [errorPassword, setErrorPassword] = useState('');
+  // Nuevos estados para los resúmenes organizados
+  const [resumenActivo, setResumenActivo] = useState('general');
+  const [busquedaClienteResumen, setBusquedaClienteResumen] = useState('');
 
   // Cargar facturas y abonos desde Supabase
   useEffect(() => {
@@ -42,6 +47,14 @@ const FacturasGuardadas = () => {
         
         setFacturas(facturasData || []);
         setAbonos(abonosData || []);
+        
+        // Extraer lista única de vendedores
+        const vendedoresUnicos = [...new Set(facturasData
+          .filter(f => f.vendedor) // Filtrar vendedores no nulos
+          .map(f => f.vendedor)
+          .sort())];
+        setVendedores(vendedoresUnicos);
+        
       } catch (error) {
         console.error("Error cargando datos:", error);
         alert('Error al cargar las facturas y abonos');
@@ -80,10 +93,12 @@ const FacturasGuardadas = () => {
       const termino = busqueda.toLowerCase();
       const coincideBusqueda = (
         factura.cliente?.toLowerCase().includes(termino) ||
-        factura.vendedor?.toLowerCase().includes(termino) ||
         factura.id?.toString().includes(busqueda) ||
         factura.fecha?.includes(busqueda)
       );
+      
+      // Filtrar por vendedor si se ha seleccionado uno
+      const coincideVendedor = busquedaVendedor === '' || factura.vendedor === busquedaVendedor;
       
       // Calcular estado para esta factura individualmente
       const abonosFactura = abonos.filter(abono => abono.factura_id === factura.id);
@@ -93,7 +108,7 @@ const FacturasGuardadas = () => {
       
       // Mostrar siempre si hay búsqueda activa o si se eligió mostrar pagadas
       // O si la factura no está pagada
-      return coincideBusqueda && (mostrarPagadas || !estaPagada || busqueda !== '');
+      return coincideBusqueda && coincideVendedor && (mostrarPagadas || !estaPagada || busqueda !== '');
     }).sort((a, b) => {
       switch (orden) {
         case 'antiguos': return new Date(a.fecha) - new Date(b.fecha);
@@ -119,6 +134,7 @@ const FacturasGuardadas = () => {
       cantidadGeneral: facturas.length,
       cantidadFiltrada: facturasProcesadas.length,
       porCliente: {},
+      porVendedor: {},
       promedioGeneral: 0,
       promedioFiltrado: 0,
       totalAbonado: 0,
@@ -143,6 +159,21 @@ const FacturasGuardadas = () => {
       stats.porCliente[f.cliente].total += f.total || 0;
       stats.porCliente[f.cliente].abonado += f.totalAbonado || 0;
       stats.porCliente[f.cliente].saldo += (f.saldo > 0 ? f.saldo : 0) || 0;
+      
+      // Estadísticas por vendedor
+      if (!stats.porVendedor[f.vendedor]) {
+        stats.porVendedor[f.vendedor] = {
+          cantidad: 0,
+          total: 0,
+          abonado: 0,
+          saldo: 0,
+          promedio: 0
+        };
+      }
+      stats.porVendedor[f.vendedor].cantidad++;
+      stats.porVendedor[f.vendedor].total += f.total || 0;
+      stats.porVendedor[f.vendedor].abonado += f.totalAbonado || 0;
+      stats.porVendedor[f.vendedor].saldo += (f.saldo > 0 ? f.saldo : 0) || 0;
     });
 
     facturasProcesadas.forEach(f => {
@@ -161,11 +192,30 @@ const FacturasGuardadas = () => {
       stats.porCliente[cliente].promedio = 
         stats.porCliente[cliente].total / stats.porCliente[cliente].cantidad;
     });
+    
+    Object.keys(stats.porVendedor).forEach(vendedor => {
+      stats.porVendedor[vendedor].promedio = 
+        stats.porVendedor[vendedor].total / stats.porVendedor[vendedor].cantidad;
+    });
 
     return stats;
   };
 
   const estadisticas = calcularEstadisticas();
+
+  // Función para obtener deuda rápida por cliente
+  const obtenerDeudaCliente = (nombreCliente) => {
+    const cliente = estadisticas.porCliente[nombreCliente];
+    if (!cliente) return null;
+    
+    return {
+      nombre: nombreCliente,
+      facturas: cliente.cantidad,
+      total: cliente.total,
+      abonado: cliente.abonado,
+      saldo: cliente.saldo
+    };
+  };
 
   // Eliminar factura (y sus abonos asociados)
   const eliminarFactura = async (id) => {
@@ -211,6 +261,13 @@ const FacturasGuardadas = () => {
       // Actualizar estado local
       setFacturas(facturas.filter(f => f.id !== id));
       setAbonos(abonos.filter(a => a.factura_id !== id));
+      
+      // Actualizar lista de vendedores si es necesario
+      const vendedoresActualizados = [...new Set(facturas
+        .filter(f => f.id !== id && f.vendedor)
+        .map(f => f.vendedor)
+        .sort())];
+      setVendedores(vendedoresActualizados);
       
     } catch (error) {
       console.error("Error eliminando factura:", error);
@@ -368,6 +425,13 @@ const FacturasGuardadas = () => {
         setFacturas(nuevasFacturas || []);
         setAbonos(nuevosAbonos || []);
         
+        // Actualizar lista de vendedores
+        const vendedoresUnicos = [...new Set(nuevasFacturas
+          .filter(f => f.vendedor)
+          .map(f => f.vendedor)
+          .sort())];
+        setVendedores(vendedoresUnicos);
+        
         alert('✅ Importación completada con éxito');
         
       } catch (error) {
@@ -490,7 +554,7 @@ const FacturasGuardadas = () => {
         <div className="search-box">
           <input
             type="text"
-            placeholder="🔍 Buscar por cliente, vendedor, ID o fecha..."
+            placeholder="🔍 Buscar por cliente, ID o fecha..."
             value={busqueda}
             onChange={(e) => setBusqueda(e.target.value)}
             disabled={importando || cargando}
@@ -498,6 +562,18 @@ const FacturasGuardadas = () => {
         </div>
         
         <div className="filtros-avanzados">
+          <select 
+            value={busquedaVendedor} 
+            onChange={(e) => setBusquedaVendedor(e.target.value)}
+            className="vendedor-select"
+            disabled={importando || cargando}
+          >
+            <option value="">Todos los vendedores</option>
+            {vendedores.map(vendedor => (
+              <option key={vendedor} value={vendedor}>{vendedor}</option>
+            ))}
+          </select>
+          
           <select 
             value={orden} 
             onChange={(e) => setOrden(e.target.value)}
@@ -517,80 +593,148 @@ const FacturasGuardadas = () => {
           <span className="contador">
             {facturasProcesadas.length} de {facturas.length} facturas
             {!mostrarPagadas && ' (ocultando pagadas)'}
+            {busquedaVendedor && ` - Vendedor: ${busquedaVendedor}`}
           </span>
         </div>
       </div>
 
       {mostrarResumen && (
         <div className="resumen-section">
-          <div className="resumen-card">
-            <h4><i className="fas fa-chart-pie"></i> Resumen General</h4>
-            <div className="resumen-stats">
-              <div className="stat-item">
-                <span>Total Facturas</span>
-                <strong>{estadisticas.cantidadGeneral}</strong>
-              </div>
-              <div className="stat-item">
-                <span>Valor Total</span>
-                <strong>{formatMoneda(estadisticas.totalGeneral)}</strong>
-              </div>
-              <div className="stat-item">
-                <span>Total Abonado</span>
-                <strong>{formatMoneda(estadisticas.totalAbonado)}</strong>
-              </div>
-              <div className="stat-item">
-                <span>Saldo Pendiente</span>
-                <strong className="saldo-pendiente">{formatMoneda(estadisticas.totalSaldoPendiente)}</strong>
-              </div>
-              <div className="stat-item">
-                <span>Promedio/Factura</span>
-                <strong>{formatMoneda(estadisticas.promedioGeneral)}</strong>
-              </div>
-              <div className="stat-item">
-                <span>Total Abonos</span>
-                <strong>{abonos.length}</strong>
-              </div>
-            </div>
+          <div className="resumen-tabs">
+            <button 
+              className={resumenActivo === 'general' ? 'tab-active' : ''}
+              onClick={() => setResumenActivo('general')}
+            >
+              <i className="fas fa-chart-pie"></i> General
+            </button>
+            <button 
+              className={resumenActivo === 'vendedor' ? 'tab-active' : ''}
+              onClick={() => setResumenActivo('vendedor')}
+            >
+              <i className="fas fa-user-tie"></i> Por Vendedor
+            </button>
+            <button 
+              className={resumenActivo === 'clientes' ? 'tab-active' : ''}
+              onClick={() => setResumenActivo('clientes')}
+            >
+              <i className="fas fa-users"></i> Por Cliente
+            </button>
           </div>
 
-          <div className="resumen-card">
-            <h4><i className="fas fa-filter"></i> Resultados Filtrados</h4>
-            <div className="resumen-stats">
-              <div className="stat-item">
-                <span>Facturas</span>
-                <strong>{estadisticas.cantidadFiltrada}</strong>
+          {resumenActivo === 'general' && (
+            <div className="resumen-content">
+              <div className="resumen-card">
+                <h4><i className="fas fa-chart-pie"></i> Resumen General</h4>
+                <div className="resumen-stats grid-3">
+                  <div className="stat-item highlight">
+                    <span>Total Facturas</span>
+                    <strong>{estadisticas.cantidadGeneral}</strong>
+                  </div>
+                  <div className="stat-item highlight">
+                    <span>Valor Total</span>
+                    <strong>{formatMoneda(estadisticas.totalGeneral)}</strong>
+                  </div>
+                  <div className="stat-item highlight">
+                    <span>Promedio/Factura</span>
+                    <strong>{formatMoneda(estadisticas.promedioGeneral)}</strong>
+                  </div>
+                  <div className="stat-item">
+                    <span>Total Abonado</span>
+                    <strong>{formatMoneda(estadisticas.totalAbonado)}</strong>
+                  </div>
+                  <div className="stat-item saldo">
+                    <span>Saldo Pendiente</span>
+                    <strong>{formatMoneda(estadisticas.totalSaldoPendiente)}</strong>
+                  </div>
+                  <div className="stat-item">
+                    <span>Total Abonos</span>
+                    <strong>{abonos.length}</strong>
+                  </div>
+                </div>
               </div>
-              <div className="stat-item">
-                <span>Valor Total</span>
-                <strong>{formatMoneda(estadisticas.totalFiltrado)}</strong>
-              </div>
-              <div className="stat-item">
-                <span>Promedio/Factura</span>
-                <strong>{formatMoneda(estadisticas.promedioFiltrado)}</strong>
+
+              <div className="resumen-card">
+                <h4><i className="fas fa-filter"></i> Resultados Filtrados</h4>
+                <div className="resumen-stats grid-2">
+                  <div className="stat-item">
+                    <span>Facturas</span>
+                    <strong>{estadisticas.cantidadFiltrada}</strong>
+                  </div>
+                  <div className="stat-item">
+                    <span>Valor Total</span>
+                    <strong>{formatMoneda(estadisticas.totalFiltrado)}</strong>
+                  </div>
+                  <div className="stat-item">
+                    <span>Promedio/Factura</span>
+                    <strong>{formatMoneda(estadisticas.promedioFiltrado)}</strong>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
+          )}
 
-          {busqueda && Object.keys(estadisticas.porCliente).length > 0 && (
-            <div className="resumen-card clientes-resumen">
-              <h4><i className="fas fa-users"></i> Clientes Encontrados</h4>
-              <div className="clientes-list">
-                {Object.entries(estadisticas.porCliente).map(([cliente, datos]) => (
-                  <div key={cliente} className="cliente-item">
-                    <span className="cliente-nombre">{cliente}</span>
-                    <div className="cliente-stats">
-                      <span>{datos.cantidad} factura(s)</span>
-                      <div>
-                        <strong>{formatMoneda(datos.total)}</strong>
-                        <small> ({formatMoneda(datos.promedio)} c/u)</small>
+          {resumenActivo === 'vendedor' && (
+            <div className="resumen-content">
+              <div className="resumen-card">
+                <h4><i className="fas fa-user-tie"></i> Estadísticas por Vendedor</h4>
+                <div className="vendedores-list">
+                  {Object.entries(estadisticas.porVendedor)
+                    .sort((a, b) => b[1].total - a[1].total)
+                    .map(([vendedor, datos]) => (
+                      <div key={vendedor} className="vendedor-item">
+                        <span className="vendedor-nombre">{vendedor}</span>
+                        <div className="vendedor-stats">
+                          <div className="stat">
+                            <span>{datos.cantidad} facturas</span>
+                            <strong>{formatMoneda(datos.total)}</strong>
+                          </div>
+                          <div className="stat">
+                            <span>Abonado: {formatMoneda(datos.abonado)}</span>
+                            <span>Saldo: {formatMoneda(datos.saldo)}</span>
+                          </div>
+                        </div>
                       </div>
-                      <div className="cliente-saldos">
-                        <span>Abonado: {formatMoneda(datos.abonado)}</span>
-                        <span>Saldo: {formatMoneda(datos.saldo)}</span>
+                    ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {resumenActivo === 'clientes' && (
+            <div className="resumen-content">
+              <div className="resumen-header">
+                <h4><i className="fas fa-users"></i> Resumen por Cliente</h4>
+                <input
+                  type="text"
+                  placeholder="🔍 Buscar cliente..."
+                  value={busquedaClienteResumen}
+                  onChange={(e) => setBusquedaClienteResumen(e.target.value)}
+                  className="busqueda-cliente"
+                />
+              </div>
+              <div className="clientes-list">
+                {Object.entries(estadisticas.porCliente)
+                  .filter(([cliente]) => 
+                    cliente.toLowerCase().includes(busquedaClienteResumen.toLowerCase())
+                  )
+                  .sort((a, b) => b[1].saldo - a[1].saldo)
+                  .map(([cliente, datos]) => (
+                    <div key={cliente} className="cliente-item">
+                      <span className="cliente-nombre">{cliente}</span>
+                      <div className="cliente-stats">
+                        <div className="stat">
+                          <span>{datos.cantidad} factura(s)</span>
+                          <strong>{formatMoneda(datos.total)}</strong>
+                        </div>
+                        <div className="stat">
+                          <span>Abonado: {formatMoneda(datos.abonado)}</span>
+                          <span className={datos.saldo > 0 ? 'saldo-pendiente' : 'saldo-pagado'}>
+                            Saldo: {formatMoneda(datos.saldo)}
+                          </span>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
               </div>
             </div>
           )}
@@ -611,12 +755,12 @@ const FacturasGuardadas = () => {
             <i className="fas fa-file-excel"></i>
           </div>
           <h3>
-            {busqueda 
+            {busqueda || busquedaVendedor
               ? 'No se encontraron facturas con ese criterio' 
               : 'No hay facturas registradas'}
           </h3>
           <p>
-            {busqueda
+            {busqueda || busquedaVendedor
               ? 'Intenta con otro término de búsqueda'
               : 'Crea tu primera factura haciendo clic en "Nueva Factura"'}
           </p>

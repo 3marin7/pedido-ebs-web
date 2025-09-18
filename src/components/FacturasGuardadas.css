@@ -577,4 +577,152 @@
   font-size: 12px;
   margin-top: 5px;
   display: block;
+}/* Pestañas de resumen */
+.resumen-tabs {
+  display: flex;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #ddd;
+}
+
+.resumen-tabs button {
+  padding: 0.75rem 1.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  color: #666;
+  border-bottom: 3px solid transparent;
+}
+
+.resumen-tabs button.tab-active {
+  color: #3498db;
+  border-bottom-color: #3498db;
+}
+
+.resumen-tabs button:hover {
+  color: #2980b9;
+}
+
+/* Contenido de resumen */
+.resumen-content {
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Grid para estadísticas */
+.resumen-stats.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.resumen-stats.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.stat-item.highlight {
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  padding: 1rem;
+  border-left: 4px solid #3498db;
+}
+
+.stat-item.saldo {
+  background-color: #fff5f5;
+  border-left: 4px solid #e74c3c;
+}
+
+/* Listas de vendedores y clientes */
+.vendedores-list, .clientes-list {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.vendedor-item, .cliente-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem;
+  border-bottom: 1px solid #eee;
+  align-items: center;
+}
+
+.vendedor-item:hover, .cliente-item:hover {
+  background-color: #f8f9fa;
+}
+
+.vendedor-nombre, .cliente-nombre {
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.vendedor-stats, .cliente-stats {
+  text-align: right;
+}
+
+.vendedor-stats .stat, .cliente-stats .stat {
+  margin-bottom: 0.25rem;
+}
+
+.vendedor-stats strong, .cliente-stats strong {
+  display: block;
+  margin-top: 0.25rem;
+}
+
+/* Header de resumen con búsqueda */
+.resumen-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.busqueda-cliente {
+  padding: 0.5rem 1rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  width: 250px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .resumen-stats.grid-3,
+  .resumen-stats.grid-2 {
+    grid-template-columns: 1fr;
+  }
+  
+  .resumen-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  
+  .busqueda-cliente {
+    width: 100%;
+  }
+  
+  .vendedor-item, .cliente-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  
+  .vendedor-stats, .cliente-stats {
+    text-align: left;
+    width: 100%;
+  }
+  
+  .resumen-tabs {
+    flex-wrap: wrap;
+  }
+  
+  .resumen-tabs button {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+  }
 }
