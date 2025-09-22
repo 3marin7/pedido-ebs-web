@@ -200,15 +200,16 @@ body {
   cursor: pointer;
 }
 
-/* Lista de productos en vista individual */
-.product-list-single {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  padding: 15px;
+/* GRID DE PRODUCTOS DE 2 COLUMNAS */
+.product-grid-two-columns {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  padding: 12px;
 }
 
-.product-card-single {
+/* Tarjetas de producto optimizadas para 2 columnas */
+.product-card {
   border: 1px solid var(--medium-gray);
   border-radius: 12px;
   overflow: hidden;
@@ -216,54 +217,57 @@ body {
   background: var(--white);
   position: relative;
   box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
-.product-card-single.selected {
+.product-card.selected {
   border-color: var(--primary-color);
   box-shadow: 0 0 0 2px var(--primary-color);
 }
 
-.product-image-container-single {
+.product-image-container {
   position: relative;
   width: 100%;
-  height: 220px;
+  height: 160px; /* Reducido para 2 columnas */
   background: var(--light-gray);
 }
 
-.product-image-single {
+.product-image {
   width: 100%;
   height: 100%;
   object-fit: contain;
   transition: opacity 0.3s;
 }
 
-.selected-badge-single {
+.selected-badge {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 8px;
+  right: 8px;
   background: var(--primary-color);
   color: white;
-  width: 30px;
-  height: 30px;
+  width: 25px;
+  height: 25px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1rem;
+  font-size: 0.8rem;
   z-index: 2;
 }
 
 /* Botón para expandir imagen */
-.expand-image-btn-single {
+.expand-image-btn {
   position: absolute;
-  bottom: 10px;
-  right: 10px;
+  bottom: 8px;
+  right: 8px;
   background: rgba(0, 0, 0, 0.7);
   color: white;
   border: none;
   border-radius: 50%;
-  width: 36px;
-  height: 36px;
+  width: 30px;
+  height: 30px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -271,76 +275,90 @@ body {
   opacity: 0.8;
   transition: opacity 0.3s ease;
   z-index: 2;
+  font-size: 0.8rem;
 }
 
-.expand-image-btn-single:hover {
+.expand-image-btn:hover {
   opacity: 1;
   background: rgba(0, 0, 0, 0.9);
   transform: scale(1.1);
 }
 
-.product-info-single {
-  padding: 15px;
+.product-info {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
 }
 
-.product-name-single {
-  font-size: 1.2rem;
-  margin-bottom: 8px;
+.product-name {
+  font-size: 1rem;
+  margin-bottom: 6px;
   color: var(--text-color);
   font-weight: 600;
+  line-height: 1.2;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
-.product-price-single {
+.product-price {
   font-weight: bold;
   color: var(--primary-color);
-  font-size: 1.3rem;
-  margin: 10px 0;
+  font-size: 1.1rem;
+  margin: 8px 0;
 }
 
-.product-code-single, .product-category-single {
-  font-size: 0.9rem;
+.product-code, .product-category {
+  font-size: 0.8rem;
   color: var(--dark-gray);
-  margin-bottom: 5px;
+  margin-bottom: 4px;
 }
 
-.product-description-single {
+.product-description {
   color: var(--dark-gray);
-  margin: 10px 0;
-  line-height: 1.4;
-  font-size: 0.95rem;
+  margin: 6px 0;
+  line-height: 1.3;
+  font-size: 0.85rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
-.product-category-single {
+.product-category {
   display: inline-block;
   background: var(--light-gray);
-  padding: 5px 12px;
-  border-radius: 15px;
-  margin-top: 5px;
-  font-size: 0.8rem;
+  padding: 4px 10px;
+  border-radius: 12px;
+  margin-top: 4px;
+  font-size: 0.75rem;
 }
 
-/* Botón de agregar al carrito */
+/* Botón de agregar al carrito optimizado */
 .add-to-cart-btn {
   width: 100%;
-  padding: 14px;
-  margin-top: 15px;
+  padding: 10px;
+  margin-top: 10px;
   background-color: var(--primary-color);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: 6px;
   font-weight: bold;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 6px;
   cursor: pointer;
   transition: all 0.3s ease;
-  font-size: 1rem;
+  font-size: 0.9rem;
+  flex-shrink: 0;
 }
 
 .add-to-cart-btn:hover {
   background-color: #3e8e41;
-  transform: translateY(-2px);
+  transform: translateY(-1px);
 }
 
 .add-to-cart-btn.added {
@@ -349,6 +367,43 @@ body {
 
 .add-to-cart-btn.added:hover {
   background-color: #128C7E;
+}
+
+/* Responsive para grid de 2 columnas */
+@media (max-width: 480px) {
+  .product-grid-two-columns {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    padding: 10px;
+  }
+  
+  .product-image-container {
+    height: 180px;
+  }
+}
+
+@media (min-width: 768px) {
+  .product-grid-two-columns {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    padding: 15px;
+  }
+  
+  .product-image-container {
+    height: 180px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .product-grid-two-columns {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    padding: 20px;
+  }
+  
+  .product-image-container {
+    height: 200px;
+  }
 }
 
 /* Modal para imagen ampliada */
@@ -731,7 +786,7 @@ body {
   transform: scale(1.1);
 }
 
-/* Información del cliente dentro del carrito - COMPRIMIDA */
+/* Información del cliente dentro del carrito */
 .cliente-info-cart {
   background: #f8f9fa;
   padding: 15px;
@@ -747,17 +802,17 @@ body {
   text-align: center;
 }
 
-.cliente-form-compact {
+.cliente-form {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
-.form-group-compact {
+.form-group {
   position: relative;
 }
 
-.form-group-compact input {
+.form-group input {
   width: 100%;
   padding: 12px;
   border: 1px solid #ddd;
@@ -766,7 +821,7 @@ body {
   box-sizing: border-box;
 }
 
-.form-group-compact input::placeholder {
+.form-group input::placeholder {
   color: #888;
 }
 
@@ -1124,6 +1179,7 @@ body {
   align-items: center;
   gap: 10px;
 }
+
 /* CatalogoClientes.css - Mejoras para el botón de carrito */
 
 /* Botón de carrito en la barra superior */
@@ -1344,7 +1400,9 @@ body {
     font-size: 0.8rem;
     padding: 3px 8px;
   }
-}/* Estilos para la barra de navegación inferior */
+}
+
+/* Estilos para la barra de navegación inferior */
 .bottom-nav {
   position: fixed;
   bottom: 0;

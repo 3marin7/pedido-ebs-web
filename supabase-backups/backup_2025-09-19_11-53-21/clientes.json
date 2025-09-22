@@ -363,17 +363,6 @@
     "actualizado_en": "2025-08-20T15:01:48.770933+00:00"
   },
   {
-    "id": 42,
-    "nombre": "FABIAN SOLER",
-    "direccion": "Parque",
-    "telefono": "",
-    "correo": "",
-    "clasificacion": 3,
-    "fecha_registro": "2025-08-20T15:02:14.26857+00:00",
-    "creado_en": "2025-08-20T15:02:14.26857+00:00",
-    "actualizado_en": "2025-08-20T15:02:14.26857+00:00"
-  },
-  {
     "id": 43,
     "nombre": "GLADIZ LOPEZ",
     "direccion": "SABANA",
@@ -427,6 +416,17 @@
     "fecha_registro": "2025-08-20T01:11:46.528641+00:00",
     "creado_en": "2025-08-20T01:11:46.528641+00:00",
     "actualizado_en": "2025-08-20T15:09:08.285+00:00"
+  },
+  {
+    "id": 42,
+    "nombre": "FABIAN SOLER",
+    "direccion": "Parque L int 4 104",
+    "telefono": "3008647449",
+    "correo": "",
+    "clasificacion": 3,
+    "fecha_registro": "2025-08-20T15:02:14.26857+00:00",
+    "creado_en": "2025-08-20T15:02:14.26857+00:00",
+    "actualizado_en": "2025-09-16T16:55:50.539+00:00"
   },
   {
     "id": 47,

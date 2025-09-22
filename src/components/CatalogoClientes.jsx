@@ -359,33 +359,33 @@ const CatalogoClientes = () => {
           <p>Prueba con otros términos de búsqueda o selecciona otra categoría</p>
         </div>
       ) : (
-        <div className="product-list-single">
+        <div className="product-grid-two-columns">
           {productosFiltradosLista.map(producto => {
             const estaSeleccionado = productosSeleccionados.some(p => p.id === producto.id);
             return (
               <div 
                 key={producto.id} 
-                className={`product-card-single ${estaSeleccionado ? 'selected' : ''}`}
+                className={`product-card ${estaSeleccionado ? 'selected' : ''}`}
               >
-                <div className="product-image-container-single">
+                <div className="product-image-container">
                   <img 
                     src={producto.imagen_url || 'https://via.placeholder.com/300?text=Producto'} 
                     alt={producto.nombre}
                     loading="lazy"
-                    className="product-image-single"
+                    className="product-image"
                     onError={(e) => {
                       e.target.src = 'https://via.placeholder.com/300?text=Imagen+no+disponible';
                     }}
                   />
                   {estaSeleccionado && (
-                    <div className="selected-badge-single">
+                    <div className="selected-badge">
                       <i className="fas fa-check"></i>
                     </div>
                   )}
                   
                   {/* Botón para ampliar imagen */}
                   <button 
-                    className="expand-image-btn-single"
+                    className="expand-image-btn"
                     onClick={(e) => abrirImagenAmpliada(producto, e)}
                     aria-label="Ampliar imagen"
                   >
@@ -393,17 +393,17 @@ const CatalogoClientes = () => {
                   </button>
                 </div>
                 
-                <div className="product-info-single">
-                  <h3 className="product-name-single">{producto.nombre}</h3>
+                <div className="product-info">
+                  <h3 className="product-name">{producto.nombre}</h3>
                   {producto.codigo && (
-                    <p className="product-code-single">Ref: {producto.codigo}</p>
+                    <p className="product-code">Ref: {producto.codigo}</p>
                   )}
                   {producto.descripcion && (
-                    <p className="product-description-single">{producto.descripcion}</p>
+                    <p className="product-description">{producto.descripcion}</p>
                   )}
-                  <p className="product-price-single">{formatPrecio(producto.precio)}</p>
+                  <p className="product-price">{formatPrecio(producto.precio)}</p>
                   {producto.categoria && (
-                    <span className="product-category-single">{producto.categoria}</span>
+                    <span className="product-category">{producto.categoria}</span>
                   )}
                   
                   <button 
@@ -612,7 +612,7 @@ const CatalogoClientes = () => {
                     ))}
                   </div>
                   
-                  {/* Información del cliente dentro del carrito - SIN MODIFICAR */}
+                  {/* Información del cliente dentro del carrito */}
                   <div className="cliente-info-cart">
                     <h3>Completa tus datos para enviar el pedido</h3>
                     <div className="cliente-form">

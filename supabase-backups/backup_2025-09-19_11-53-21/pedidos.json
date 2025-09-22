@@ -542,6 +542,29 @@
     "fecha_actualizacion": "2025-09-03T13:32:30.858+00:00"
   },
   {
+    "id": 130,
+    "cliente_nombre": "Yanet gonzalez",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 47,
+        "activo": true,
+        "codigo": null,
+        "nombre": "MEXSANA TALCO 300+85G X15",
+        "precio": 19000,
+        "cantidad": 30,
+        "categoria": "Desodorantes",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756217481/tabzqqlu2a3d4fhx8hxi.png",
+        "descripcion": "Paca x 15 285000"
+      }
+    ],
+    "total": 570000,
+    "estado": "cancelado",
+    "fecha_creacion": "2025-09-12T20:33:25.399+00:00",
+    "fecha_actualizacion": "2025-09-17T17:48:42.547+00:00"
+  },
+  {
     "id": 117,
     "cliente_nombre": "Adrian",
     "cliente_telefono": "3004583117",
@@ -587,6 +610,73 @@
     "fecha_actualizacion": "2025-09-03T13:30:15.82+00:00"
   },
   {
+    "id": 131,
+    "cliente_nombre": "Yanet gonzalez",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 11,
+        "activo": true,
+        "codigo": null,
+        "nombre": "ELIZABET ARDEN 40 GR",
+        "precio": 2000,
+        "cantidad": 24,
+        "categoria": "Desodorantes",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756216850/jkfdupjdhojdjplpmy8f.png",
+        "descripcion": "CAJA X 12"
+      },
+      {
+        "id": 47,
+        "activo": true,
+        "codigo": null,
+        "nombre": "MEXSANA TALCO 300+85G X15",
+        "precio": 19000,
+        "cantidad": 30,
+        "categoria": "Desodorantes",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756217481/tabzqqlu2a3d4fhx8hxi.png",
+        "descripcion": "Paca x 15 285000"
+      },
+      {
+        "id": 45,
+        "activo": true,
+        "codigo": null,
+        "nombre": "PROTEX BALANCE JABON BARRA X72...",
+        "precio": 180000,
+        "cantidad": 3,
+        "categoria": "Jabones y Geles",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756218454/tcw0v8jhuzwopuroznph.png",
+        "descripcion": "PACA X72"
+      },
+      {
+        "id": 8,
+        "activo": true,
+        "codigo": null,
+        "nombre": "TOALLAS NOSOTRAS DIA Y NOCHE X24",
+        "precio": 84000,
+        "cantidad": 4,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756217770/v1dbqec9nq3lxtsjrinj.png",
+        "descripcion": "C/U 10500"
+      },
+      {
+        "id": 26,
+        "activo": true,
+        "codigo": null,
+        "nombre": "CREMA DE PEINAR CON ACEITE DE ARGAN Y S6",
+        "precio": 12500,
+        "cantidad": 24,
+        "categoria": "Cuidado del Cabello",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756216677/pwvlbeboak2emcbogiif.png",
+        "descripcion": "CAJA X 24: 300000"
+      }
+    ],
+    "total": 1794000,
+    "estado": "entregado",
+    "fecha_creacion": "2025-09-12T20:52:36.397+00:00",
+    "fecha_actualizacion": "2025-09-17T17:48:36.015+00:00"
+  },
+  {
     "id": 118,
     "cliente_nombre": "Jesus",
     "cliente_telefono": "3004583117",
@@ -630,6 +720,40 @@
     "estado": "entregado",
     "fecha_creacion": "2025-09-01T22:48:35.047+00:00",
     "fecha_actualizacion": "2025-09-03T13:29:41.502+00:00"
+  },
+  {
+    "id": 132,
+    "cliente_nombre": "Fernando Ferrocaril",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 26,
+        "activo": true,
+        "codigo": null,
+        "nombre": "CREMA DE PEINAR CON ACEITE DE ARGAN Y S6",
+        "precio": 12500,
+        "cantidad": 12,
+        "categoria": "Cuidado del Cabello",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756216677/pwvlbeboak2emcbogiif.png",
+        "descripcion": "CAJA X 24: 300000"
+      },
+      {
+        "id": 29,
+        "activo": true,
+        "codigo": null,
+        "nombre": "SHAMPOO ACEITE DE ARGAN Y ARG",
+        "precio": 12500,
+        "cantidad": 24,
+        "categoria": "Cuidado del Cabello",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756132821/w17qiwdva20cc4wna9dp.jpg",
+        "descripcion": "Paca x 24 300000"
+      }
+    ],
+    "total": 450000,
+    "estado": "pendiente",
+    "fecha_creacion": "2025-09-18T21:39:23.262+00:00",
+    "fecha_actualizacion": "2025-09-18T21:39:24.493546+00:00"
   },
   {
     "id": 119,
