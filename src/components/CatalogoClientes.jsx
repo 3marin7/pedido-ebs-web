@@ -22,6 +22,8 @@ const CatalogoClientes = () => {
   const [pedidoEnviado, setPedidoEnviado] = useState(false);
   const [numeroPedido, setNumeroPedido] = useState(null);
   const [imagenAmpliada, setImagenAmpliada] = useState(null);
+  // Nuevo estado para el ordenamiento
+  const [ordenamiento, setOrdenamiento] = useState('nombre-asc');
 
   const location = useLocation();
 
@@ -91,6 +93,11 @@ const CatalogoClientes = () => {
     setCategoriaFiltro(e.target.value);
   };
 
+  // Nuevo handler para el ordenamiento
+  const handleOrdenamientoChange = (e) => {
+    setOrdenamiento(e.target.value);
+  };
+
   const toggleMostrarCarrito = () => {
     setMostrarCarrito(prev => !prev);
   };
@@ -106,9 +113,9 @@ const CatalogoClientes = () => {
     setImagenAmpliada(null);
   };
 
-  // Filtrar productos con useCallback para mejor rendimiento
+  // Filtrar y ordenar productos con useCallback para mejor rendimiento
   const productosFiltrados = useCallback(() => {
-    return productos.filter(producto => {
+    let productosFiltrados = productos.filter(producto => {
       const terminoBusqueda = busqueda.toLowerCase();
       const coincideBusqueda = 
         producto.nombre.toLowerCase().includes(terminoBusqueda) || 
@@ -119,8 +126,31 @@ const CatalogoClientes = () => {
       
       return coincideBusqueda && coincideCategoria;
     });
-  }, [productos, busqueda, categoriaFiltro]);
 
+    // Aplicar ordenamiento
+    productosFiltrados.sort((a, b) => {
+      switch (ordenamiento) {
+        case 'precio-asc':
+          return (a.precio || 0) - (b.precio || 0);
+        
+        case 'precio-desc':
+          return (b.precio || 0) - (a.precio || 0);
+        
+        case 'nombre-asc':
+          return a.nombre.localeCompare(b.nombre);
+        
+        case 'nombre-desc':
+          return b.nombre.localeCompare(a.nombre);
+        
+        default:
+          return 0;
+      }
+    });
+
+    return productosFiltrados;
+  }, [productos, busqueda, categoriaFiltro, ordenamiento]);
+
+  // Resto del código se mantiene igual...
   // Formatear precio
   const formatPrecio = (precio) => {
     return new Intl.NumberFormat('es-CO', {
@@ -307,7 +337,7 @@ const CatalogoClientes = () => {
           </button>
         </div>
         
-        {/* Filtros en barra pegajosa */}
+        {/* Filtros en barra pegajosa - CON SELECTOR DE ORDENAMIENTO */}
         <div className="sticky-filters">
           <div className="search-container">
             <i className="fas fa-search"></i>
@@ -327,15 +357,29 @@ const CatalogoClientes = () => {
             )}
           </div>
           
-          <select 
-            value={categoriaFiltro}
-            onChange={handleCategoriaChange}
-            className="category-selector"
-          >
-            {categorias.map(cat => (
-              <option key={cat} value={cat}>{cat}</option>
-            ))}
-          </select>
+          <div className="filters-row">
+            <select 
+              value={categoriaFiltro}
+              onChange={handleCategoriaChange}
+              className="category-selector"
+            >
+              {categorias.map(cat => (
+                <option key={cat} value={cat}>{cat}</option>
+              ))}
+            </select>
+            
+            {/* Selector de ordenamiento */}
+            <select 
+              value={ordenamiento}
+              onChange={handleOrdenamientoChange}
+              className="order-selector"
+            >
+              <option value="nombre-asc">Nombre A-Z</option>
+              <option value="nombre-desc">Nombre Z-A</option>
+              <option value="precio-asc">Precio: Menor a Mayor</option>
+              <option value="precio-desc">Precio: Mayor a Menor</option>
+            </select>
+          </div>
         </div>
       </header>
 
@@ -470,7 +514,7 @@ const CatalogoClientes = () => {
         </div>
       )}
 
-      {/* Bottom Navigation - MODIFICADO */}
+      {/* Bottom Navigation */}
       <div className="bottom-nav">
         <button 
           className="whatsapp-button nav-button"
