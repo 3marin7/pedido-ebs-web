@@ -22,8 +22,8 @@ const CatalogoClientes = () => {
   const [pedidoEnviado, setPedidoEnviado] = useState(false);
   const [numeroPedido, setNumeroPedido] = useState(null);
   const [imagenAmpliada, setImagenAmpliada] = useState(null);
-  // Nuevo estado para el ordenamiento
   const [ordenamiento, setOrdenamiento] = useState('nombre-asc');
+  const [cantidadesRapidas] = useState([12, 24, 36, 48, 60, 72]);
 
   const location = useLocation();
 
@@ -93,7 +93,6 @@ const CatalogoClientes = () => {
     setCategoriaFiltro(e.target.value);
   };
 
-  // Nuevo handler para el ordenamiento
   const handleOrdenamientoChange = (e) => {
     setOrdenamiento(e.target.value);
   };
@@ -104,7 +103,7 @@ const CatalogoClientes = () => {
 
   // Función para abrir imagen ampliada
   const abrirImagenAmpliada = (producto, e) => {
-    e.stopPropagation(); // Prevenir que se active la selección del producto
+    e.stopPropagation();
     setImagenAmpliada(producto);
   };
 
@@ -113,7 +112,7 @@ const CatalogoClientes = () => {
     setImagenAmpliada(null);
   };
 
-  // Filtrar y ordenar productos con useCallback para mejor rendimiento
+  // Filtrar y ordenar productos
   const productosFiltrados = useCallback(() => {
     let productosFiltrados = productos.filter(producto => {
       const terminoBusqueda = busqueda.toLowerCase();
@@ -132,16 +131,12 @@ const CatalogoClientes = () => {
       switch (ordenamiento) {
         case 'precio-asc':
           return (a.precio || 0) - (b.precio || 0);
-        
         case 'precio-desc':
           return (b.precio || 0) - (a.precio || 0);
-        
         case 'nombre-asc':
           return a.nombre.localeCompare(b.nombre);
-        
         case 'nombre-desc':
           return b.nombre.localeCompare(a.nombre);
-        
         default:
           return 0;
       }
@@ -150,7 +145,6 @@ const CatalogoClientes = () => {
     return productosFiltrados;
   }, [productos, busqueda, categoriaFiltro, ordenamiento]);
 
-  // Resto del código se mantiene igual...
   // Formatear precio
   const formatPrecio = (precio) => {
     return new Intl.NumberFormat('es-CO', {
@@ -185,13 +179,37 @@ const CatalogoClientes = () => {
     }
   };
 
-  // Actualizar cantidad de un producto seleccionado
-  const actualizarCantidad = (id, cantidad) => {
+  // Funciones mejoradas para manejar cantidades
+  const actualizarCantidad = (id, cantidad, esCantidadRapida = false) => {
+    let nuevaCantidad;
+    
+    if (esCantidadRapida) {
+      // Si es una cantidad rápida, sumarla a la cantidad actual
+      const cantidadActual = productosSeleccionados.find(p => p.id === id)?.cantidad || 0;
+      nuevaCantidad = cantidadActual + cantidad;
+    } else {
+      // Si es un cambio normal
+      nuevaCantidad = Math.max(1, Math.min(parseInt(cantidad) || 1, 999));
+    }
+    
+    // Limitar a 999 como máximo
+    nuevaCantidad = Math.min(nuevaCantidad, 999);
+    
+    setProductosSeleccionados(prev => 
+      prev.map(p => p.id === id ? { ...p, cantidad: nuevaCantidad } : p)
+    );
+  };
+
+  const establecerCantidadExacta = (id, cantidad) => {
     const nuevaCantidad = Math.max(1, Math.min(parseInt(cantidad) || 1, 999));
     
     setProductosSeleccionados(prev => 
       prev.map(p => p.id === id ? { ...p, cantidad: nuevaCantidad } : p)
     );
+  };
+
+  const resetearCantidad = (id, cantidad) => {
+    establecerCantidadExacta(id, cantidad);
   };
 
   // Calcular total
@@ -229,14 +247,14 @@ const CatalogoClientes = () => {
     setProductosSeleccionados([]);
     setClienteInfo(prev => ({
       ...prev,
-      notas: '' // Limpiar notas pero mantener nombre y teléfono
+      notas: ''
     }));
     setPedidoEnviado(false);
     setNumeroPedido(null);
     setMostrarCarrito(false);
   };
 
-  // Generar enlace de WhatsApp - VERSIÓN CORREGIDA
+  // Generar enlace de WhatsApp
   const enviarPedidoWhatsApp = async () => {
     if (enviandoPedido) return;
     
@@ -252,7 +270,7 @@ const CatalogoClientes = () => {
     setEnviandoPedido(true);
 
     try {
-      // 1. Primero guardar el pedido en la base de datos
+      // Guardar el pedido en la base de datos
       const { data: pedido, error } = await supabase
         .from('pedidos')
         .insert([
@@ -270,13 +288,11 @@ const CatalogoClientes = () => {
 
       if (error) throw error;
 
-      // Guardar número de pedido para mostrarlo en la confirmación
       setNumeroPedido(pedido[0].id);
 
-      // 2. Preparar mensaje para WhatsApp - FORMATO MEJORADO
-      const numeroWhatsApp = '573004583117'; // Número corregido con código de país
+      // Preparar mensaje para WhatsApp
+      const numeroWhatsApp = '573004583117';
       
-      // Crear mensaje con formato más limpio
       let mensaje = `*¡NUEVO PEDIDO!*%0A%0A`;
       mensaje += `*Cliente:* ${clienteInfo.nombre}%0A`;
       mensaje += `*Teléfono:* ${clienteInfo.telefono}%0A%0A`;
@@ -299,16 +315,11 @@ const CatalogoClientes = () => {
       mensaje += `*📅 FECHA:* ${new Date().toLocaleDateString('es-CO')}%0A%0A`;
       mensaje += `_Pedido generado desde Catálogo Digital_`;
 
-      // Crear URL de WhatsApp - FORMA ALTERNATIVA MÁS CONFIABLE
       const url = `https://api.whatsapp.com/send?phone=${numeroWhatsApp}&text=${mensaje}`;
       
-      // Mostrar confirmación
       setPedidoEnviado(true);
-      
-      // Abrir WhatsApp inmediatamente
       window.open(url, '_blank');
       
-      // Cerrar el estado de envío después de un breve tiempo
       setTimeout(() => {
         setEnviandoPedido(false);
       }, 2000);
@@ -337,7 +348,7 @@ const CatalogoClientes = () => {
           </button>
         </div>
         
-        {/* Filtros en barra pegajosa - CON SELECTOR DE ORDENAMIENTO */}
+        {/* Filtros en barra pegajosa */}
         <div className="sticky-filters">
           <div className="search-container">
             <i className="fas fa-search"></i>
@@ -368,7 +379,6 @@ const CatalogoClientes = () => {
               ))}
             </select>
             
-            {/* Selector de ordenamiento */}
             <select 
               value={ordenamiento}
               onChange={handleOrdenamientoChange}
@@ -427,7 +437,6 @@ const CatalogoClientes = () => {
                     </div>
                   )}
                   
-                  {/* Botón para ampliar imagen */}
                   <button 
                     className="expand-image-btn"
                     onClick={(e) => abrirImagenAmpliada(producto, e)}
@@ -528,7 +537,6 @@ const CatalogoClientes = () => {
           )}
         </button>
         
-        {/* Texto agregado en la esquina derecha */}
         <div className="brand-text">
           EBS Hermanos Marin - ING. Edwin Marin 3004583117
         </div>
@@ -572,7 +580,7 @@ const CatalogoClientes = () => {
         </div>
       )}
 
-      {/* Carrito mejorado */}
+      {/* Carrito mejorado con cantidades rápidas */}
       {mostrarCarrito && (
         <div className="cart-overlay">
           <div className="cart-content">
@@ -599,10 +607,35 @@ const CatalogoClientes = () => {
                 <>
                   <div className="cart-items">
                     {productosSeleccionados.map(producto => (
-                      <div key={producto.id} className="cart-item">
+                      <div key={producto.id} className="cart-item" data-id={producto.id}>
+                        {/* Badge para cantidades grandes */}
+                        {(producto.cantidad || 1) >= 12 && (
+                          <div className="large-quantity-badge">
+                            <i className="fas fa-bolt"></i> Lote {(producto.cantidad || 1)}u
+                          </div>
+                        )}
+                        
                         <div className="item-info">
                           <h4>{producto.nombre}</h4>
                           <span className="item-price">{formatPrecio(producto.precio)} c/u</span>
+                          
+                          {/* Botones de cantidades rápidas */}
+                          <div className="quick-quantity-buttons">
+                            <span className="quick-quantity-label">Agregar:</span>
+                            {cantidadesRapidas.map(cantidad => (
+                              <button
+                                key={cantidad}
+                                className="quick-quantity-btn"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  actualizarCantidad(producto.id, cantidad, true);
+                                }}
+                                title={`Agregar ${cantidad} unidades`}
+                              >
+                                +{cantidad}
+                              </button>
+                            ))}
+                          </div>
                         </div>
                         
                         <div className="quantity-controls">
@@ -626,7 +659,12 @@ const CatalogoClientes = () => {
                               value={producto.cantidad || 1}
                               onChange={(e) => {
                                 e.stopPropagation();
-                                actualizarCantidad(producto.id, e.target.value);
+                                establecerCantidadExacta(producto.id, e.target.value);
+                              }}
+                              onBlur={(e) => {
+                                if (!e.target.value || parseInt(e.target.value) < 1) {
+                                  establecerCantidadExacta(producto.id, 1);
+                                }
                               }}
                               min="1"
                               max="999"
@@ -656,7 +694,7 @@ const CatalogoClientes = () => {
                     ))}
                   </div>
                   
-                  {/* Información del cliente dentro del carrito */}
+                  {/* Información del cliente */}
                   <div className="cliente-info-cart">
                     <h3>Completa tus datos para enviar el pedido</h3>
                     <div className="cliente-form">
@@ -696,7 +734,7 @@ const CatalogoClientes = () => {
                       name="notas"
                       value={clienteInfo.notas}
                       onChange={handleInputChange}
-                      placeholder="Ej: Necesito el pedido para el viernes, local, direccion, etc ."
+                      placeholder="Ej: Necesito el pedido para el viernes, local, direccion, etc."
                       rows="3"
                     />
                   </div>
@@ -706,7 +744,7 @@ const CatalogoClientes = () => {
                     <span className="total-amount">{formatPrecio(calcularTotal())}</span>
                   </div>
 
-                  {/* Botones de acción en el carrito */}
+                  {/* Botones de acción */}
                   <div className="cart-actions">
                     <button 
                       className="continue-shopping-btn"

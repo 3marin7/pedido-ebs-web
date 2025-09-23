@@ -75,53 +75,64 @@ body {
 
 /* Botón del carrito mejorado */
 .cart-button {
-  background: none;
-  border: none;
   position: relative;
-  color: var(--text-color);
+  background: linear-gradient(145deg, #25d366, #128c7e);
+  border: none;
+  border-radius: 50%;
   width: 50px;
   height: 50px;
+  color: white;
+  font-size: 1.2rem;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(18, 140, 126, 0.3);
+  transition: all 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
-  transition: transform 0.2s ease;
 }
 
 .cart-button:hover {
-  transform: scale(1.1);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(18, 140, 126, 0.4);
+  background: linear-gradient(145deg, #128c7e, #0a6e5e);
 }
 
-.cart-icon-container {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-}
-
-.cart-icon-container i {
-  font-size: 1.8rem;
-  color: var(--primary-color);
+.cart-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(18, 140, 126, 0.3);
 }
 
 .cart-badge {
   position: absolute;
   top: -5px;
   right: -5px;
-  background: var(--primary-color);
+  background: #ff4757;
   color: white;
+  border-radius: 50%;
   width: 22px;
   height: 22px;
-  border-radius: 50%;
-  font-size: 0.8rem;
+  font-size: 0.7rem;
   font-weight: bold;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  animation: pulse 1.5s infinite;
   border: 2px solid white;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(255, 71, 87, 0.7);
+  }
+  70% {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 8px rgba(255, 71, 87, 0);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(255, 71, 87, 0);
+  }
 }
 
 /* Filtros */
@@ -185,8 +196,15 @@ body {
   color: var(--error-color);
 }
 
-.category-selector {
+/* Filtros en fila */
+.filters-row {
+  display: flex;
+  gap: 10px;
   width: 100%;
+}
+
+.category-selector, .order-selector {
+  flex: 1;
   padding: 12px 15px;
   border: 1px solid var(--medium-gray);
   border-radius: 25px;
@@ -200,7 +218,7 @@ body {
   cursor: pointer;
 }
 
-/* GRID DE PRODUCTOS DE 2 COLUMNAS - CORREGIDO */
+/* GRID DE PRODUCTOS DE 2 COLUMNAS */
 .product-grid-two-columns {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -230,7 +248,7 @@ body {
 .product-image-container {
   position: relative;
   width: 100%;
-  height: 150px; /* Optimizado para 2 columnas en móvil */
+  height: 150px;
   background: var(--light-gray);
 }
 
@@ -257,7 +275,6 @@ body {
   z-index: 2;
 }
 
-/* Botón para expandir imagen */
 .expand-image-btn {
   position: absolute;
   bottom: 8px;
@@ -338,7 +355,6 @@ body {
   font-size: 0.7rem;
 }
 
-/* Botón de agregar al carrito optimizado */
 .add-to-cart-btn {
   width: 100%;
   padding: 8px;
@@ -371,7 +387,7 @@ body {
   background-color: #128C7E;
 }
 
-/* RESPONSIVE CORREGIDO - SIEMPRE 2 COLUMNAS EN MÓVIL */
+/* RESPONSIVE */
 @media (max-width: 480px) {
   .product-grid-two-columns {
     grid-template-columns: repeat(2, 1fr);
@@ -390,9 +406,19 @@ body {
   .product-price {
     font-size: 0.9rem;
   }
+  
+  .filters-row {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .category-selector, .order-selector {
+    width: 100%;
+    font-size: 0.9rem;
+    padding: 10px 12px;
+  }
 }
 
-/* Para móviles muy pequeños, ajustamos pero mantenemos 2 columnas */
 @media (max-width: 320px) {
   .product-grid-two-columns {
     grid-template-columns: repeat(2, 1fr);
@@ -445,8 +471,6 @@ body {
     height: 200px;
   }
 }
-
-/* El resto del CSS se mantiene igual... */
 
 /* Modal para imagen ampliada */
 .image-modal-overlay {
@@ -569,70 +593,73 @@ body {
   background-color: #cc0000;
 }
 
-/* Responsive para el modal */
-@media (max-width: 768px) {
-  .image-modal-content {
-    max-width: 95%;
-    max-height: 95%;
-  }
-  
-  .modal-image-container {
-    max-height: 50vh;
-  }
-  
-  .modal-image {
-    max-height: 50vh;
-  }
-}
-
 /* Bottom Navigation */
 .bottom-nav {
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
-  background: var(--white);
-  display: flex;
-  justify-content: space-around;
-  padding: 10px 0;
-  box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
-  z-index: 100;
-}
-
-.nav-button {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  font-size: 0.8rem;
-  background: none;
-  border: none;
-  gap: 5px;
-  color: var(--text-color);
-  padding: 8px;
-  min-width: 70px;
-  cursor: pointer;
-}
-
-.nav-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.nav-button i {
-  font-size: 1.2rem;
-}
-
-.whatsapp-button {
-  background-color: var(--whatsapp-color);
-  color: white;
-  border: none;
+  background: #fff;
+  border-top: 1px solid #e0e0e0;
   padding: 10px 15px;
-  border-radius: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+.brand-text {
+  position: absolute;
+  right: 15px;
+  color: #666;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.whatsapp-button.nav-button {
+  background: linear-gradient(145deg, #25d366, #128c7e);
+  border: none;
+  border-radius: 50px;
+  padding: 12px 24px;
+  color: white;
   font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(18, 140, 126, 0.3);
+  transition: all 0.3s ease;
   display: flex;
   align-items: center;
   gap: 8px;
-  cursor: pointer;
+  position: relative;
+}
+
+.whatsapp-button.nav-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(18, 140, 126, 0.4);
+  background: linear-gradient(145deg, #128c7e, #0a6e5e);
+}
+
+.whatsapp-button.nav-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.nav-badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: #ff4757;
+  color: white;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: pulse 1.5s infinite;
 }
 
 /* Carrito */
@@ -704,14 +731,33 @@ body {
 
 /* ESTILOS MEJORADOS PARA LOS ITEMS DEL CARRITO */
 .cart-item {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 10px;
   padding: 15px;
-  border-radius: 8px;
+  border-radius: 10px;
   background: var(--white);
   box-shadow: var(--shadow);
-  position: relative;
+  transition: all 0.3s ease;
+}
+
+.cart-item:hover {
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+/* Badge para cantidades grandes */
+.large-quantity-badge {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  background: #ff9500;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 0.7rem;
+  font-weight: bold;
+  z-index: 1;
 }
 
 .item-info {
@@ -732,12 +778,54 @@ body {
   font-size: 0.9rem;
 }
 
+/* Botones de cantidades rápidas */
+.quick-quantity-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 8px;
+  align-items: center;
+}
+
+.quick-quantity-label {
+  font-size: 0.75rem;
+  color: var(--dark-gray);
+  margin-right: 5px;
+  font-weight: 500;
+}
+
+.quick-quantity-btn {
+  background: linear-gradient(145deg, #6c757d, #5a6268);
+  color: white;
+  border: none;
+  border-radius: 15px;
+  padding: 4px 8px;
+  font-size: 0.7rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 30px;
+  text-align: center;
+}
+
+.quick-quantity-btn:hover {
+  background: linear-gradient(145deg, #5a6268, #4a5258);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.quick-quantity-btn:active {
+  transform: translateY(0);
+}
+
 /* CONTROLES DE CANTIDAD MEJORADOS */
 .quantity-controls {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-top: 10px;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
 .quantity-selector {
@@ -748,6 +836,7 @@ body {
   overflow: hidden;
   background: var(--white);
   box-shadow: var(--shadow);
+  min-width: 120px;
 }
 
 .quantity-btn {
@@ -778,7 +867,7 @@ body {
 }
 
 .quantity-input {
-  width: 45px;
+  width: 50px;
   height: 36px;
   text-align: center;
   border: none;
@@ -793,10 +882,6 @@ body {
 .quantity-input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
-}
-
-.quantity-input[value="1"] {
-  color: var(--error-color);
 }
 
 .item-total {
@@ -925,7 +1010,7 @@ body {
 .send-order-button {
   width: 100%;
   padding: 15px;
-  background-color: var(--whatsapp-color);
+  background: linear-gradient(145deg, #25d366, #128c7e);
   color: white;
   border: none;
   border-radius: 8px;
@@ -935,16 +1020,21 @@ body {
   justify-content: space-between;
   align-items: center;
   cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.send-order-button:disabled {
-  background-color: #cccccc;
-  cursor: not-allowed;
+  transition: all 0.3s ease;
+  position: relative;
 }
 
 .send-order-button:hover:not(:disabled) {
-  background-color: #128C7E;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(18, 140, 126, 0.4);
+  background: linear-gradient(145deg, #128c7e, #0a6e5e);
+}
+
+.send-order-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
 .send-order-button i {
@@ -952,10 +1042,31 @@ body {
 }
 
 .total-on-button {
-  background-color: rgba(255,255,255,0.2);
-  padding: 5px 10px;
+  position: absolute;
+  bottom: -8px;
+  right: 16px;
+  background: #ff9500;
+  color: white;
   border-radius: 20px;
-  font-size: 0.9rem;
+  padding: 4px 10px;
+  font-size: 0.85rem;
+  font-weight: bold;
+  box-shadow: 0 2px 6px rgba(255, 149, 0, 0.3);
+}
+
+.loading-spinner-small {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: white;
+  animation: spin 0.8s ease infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* Notificación de cantidad */
@@ -1016,34 +1127,6 @@ body {
   margin-bottom: 15px;
 }
 
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-/* Efectos de animación */
-@keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-  100% { transform: scale(1); }
-}
-
-.quantity-updated {
-  animation: pulse 0.3s ease;
-}
-
-/* Indicadores de carga */
-.loading-spinner-small {
-  width: 16px;
-  height: 16px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-radius: 50%;
-  border-top-color: white;
-  animation: spin 1s ease-in-out infinite;
-  margin-right: 8px;
-  display: inline-block;
-}
-
 /* Confirmación de envío */
 .confirmation-overlay {
   position: fixed;
@@ -1086,24 +1169,6 @@ body {
   line-height: 1.5;
 }
 
-/* Mejora para el carrito vacío */
-.empty-cart {
-  text-align: center;
-  padding: 30px 0;
-}
-
-.empty-cart i {
-  font-size: 3rem;
-  color: #ccc;
-  margin-bottom: 15px;
-}
-
-.empty-cart p {
-  color: #666;
-  margin-bottom: 20px;
-}
-
-/* Confirmación de envío mejorada */
 .confirmation-buttons {
   display: flex;
   gap: 10px;
@@ -1114,14 +1179,6 @@ body {
 
 .confirmation-buttons button {
   min-width: 120px;
-}
-
-.confirmation-content p {
-  margin-bottom: 10px;
-}
-
-.confirmation-content strong {
-  color: var(--primary-color);
 }
 
 /* Botones mejorados */
@@ -1187,29 +1244,6 @@ body {
   font-size: 0.9rem;
 }
 
-/* Ajuste para el contenedor de enviar pedido */
-.send-order-container {
-  width: 100%;
-}
-
-/* Responsive para botones en pantallas pequeñas */
-@media (max-width: 480px) {
-  .cart-actions {
-    gap: 8px;
-  }
-  
-  .continue-shopping-btn,
-  .send-order-button {
-    padding: 12px;
-    font-size: 0.9rem;
-  }
-  
-  .continue-shopping-btn i,
-  .send-order-button i {
-    font-size: 0.8rem;
-  }
-}
-
 /* Mensaje de error */
 .error-message {
   background-color: #ffebee;
@@ -1222,315 +1256,57 @@ body {
   gap: 10px;
 }
 
-/* CatalogoClientes.css - Mejoras para el botón de carrito */
-
-/* Botón de carrito en la barra superior */
-.cart-button {
-  position: relative;
-  background: linear-gradient(145deg, #25d366, #128c7e);
-  border: none;
-  border-radius: 50%;
-  width: 50px;
-  height: 50px;
-  color: white;
-  font-size: 1.2rem;
-  cursor: pointer;
-  box-shadow: 0 4px 12px rgba(18, 140, 126, 0.3);
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+/* Efectos de animación para cambios de cantidad */
+.quantity-update {
+  animation: quantityPulse 0.3s ease;
 }
 
-.cart-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(18, 140, 126, 0.4);
-  background: linear-gradient(145deg, #128c7e, #0a6e5e);
+@keyframes quantityPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
 }
 
-.cart-button:active {
-  transform: translateY(0);
-  box-shadow: 0 2px 8px rgba(18, 140, 126, 0.3);
-}
-
-/* Badge de notificación en el carrito */
-.cart-badge {
-  position: absolute;
-  top: -5px;
-  right: -5px;
-  background: #ff4757;
-  color: white;
-  border-radius: 50%;
-  width: 22px;
-  height: 22px;
-  font-size: 0.7rem;
-  font-weight: bold;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  animation: pulse 1.5s infinite;
-}
-
-@keyframes pulse {
-  0% {
-    transform: scale(1);
-    box-shadow: 0 0 0 0 rgba(255, 71, 87, 0.7);
-  }
-  70% {
-    transform: scale(1.05);
-    box-shadow: 0 0 0 8px rgba(255, 71, 87, 0);
-  }
-  100% {
-    transform: scale(1);
-    box-shadow: 0 0 0 0 rgba(255, 71, 87, 0);
-  }
-}
-
-/* Botón de WhatsApp en la navegación inferior */
-.whatsapp-button.nav-button {
-  background: linear-gradient(145deg, #25d366, #128c7e);
-  border: none;
-  border-radius: 50px;
-  padding: 12px 24px;
-  color: white;
-  font-weight: bold;
-  font-size: 1rem;
-  cursor: pointer;
-  box-shadow: 0 4px 12px rgba(18, 140, 126, 0.3);
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  position: relative;
-}
-
-.whatsapp-button.nav-button:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(18, 140, 126, 0.4);
-  background: linear-gradient(145deg, #128c7e, #0a6e5e);
-}
-
-.whatsapp-button.nav-button:active:not(:disabled) {
-  transform: translateY(0);
-  box-shadow: 0 2px 8px rgba(18, 140, 126, 0.3);
-}
-
-.whatsapp-button.nav-button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
-}
-
-/* Badge en el botón de navegación */
-.nav-badge {
-  position: absolute;
-  top: -8px;
-  right: -8px;
-  background: #ff4757;
-  color: white;
-  border-radius: 50%;
-  width: 24px;
-  height: 24px;
-  font-size: 0.8rem;
-  font-weight: bold;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  animation: pulse 1.5s infinite;
-}
-
-/* Botón de enviar pedido en el carrito */
-.send-order-button {
-  background: linear-gradient(145deg, #25d366, #128c7e);
-  border: none;
-  border-radius: 12px;
-  padding: 16px 24px;
-  color: white;
-  font-weight: bold;
-  font-size: 1.1rem;
-  cursor: pointer;
-  box-shadow: 0 4px 12px rgba(18, 140, 126, 0.3);
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  position: relative;
-  width: 100%;
-  justify-content: center;
-}
-
-.send-order-button:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(18, 140, 126, 0.4);
-  background: linear-gradient(145deg, #128c7e, #0a6e5e);
-}
-
-.send-order-button:active:not(:disabled) {
-  transform: translateY(0);
-  box-shadow: 0 2px 8px rgba(18, 140, 126, 0.3);
-}
-
-.send-order-button:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
-}
-
-/* Indicador de precio en el botón de enviar */
-.total-on-button {
-  position: absolute;
-  bottom: -8px;
-  right: 16px;
-  background: #ff9500;
-  color: white;
-  border-radius: 20px;
-  padding: 4px 10px;
-  font-size: 0.85rem;
-  font-weight: bold;
-  box-shadow: 0 2px 6px rgba(255, 149, 0, 0.3);
-}
-
-/* Spinner de carga para el botón */
-.loading-spinner-small {
-  width: 18px;
-  height: 18px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-radius: 50%;
-  border-top-color: white;
-  animation: spin 0.8s ease infinite;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-/* Responsive para móviles */
-@media (max-width: 768px) {
-  .cart-button {
-    width: 45px;
-    height: 45px;
-    font-size: 1.1rem;
+/* Responsive adicional */
+@media (max-width: 480px) {
+  .cart-actions {
+    gap: 8px;
   }
   
-  .cart-badge {
-    width: 20px;
-    height: 20px;
-    font-size: 0.65rem;
-  }
-  
-  .whatsapp-button.nav-button {
-    padding: 10px 20px;
+  .continue-shopping-btn,
+  .send-order-button {
+    padding: 12px;
     font-size: 0.9rem;
   }
   
-  .nav-badge {
-    width: 20px;
-    height: 20px;
+  .quick-quantity-buttons {
+    gap: 3px;
+  }
+  
+  .quick-quantity-btn {
+    padding: 3px 6px;
+    font-size: 0.65rem;
+    min-width: 25px;
+  }
+  
+  .quick-quantity-label {
     font-size: 0.7rem;
   }
   
-  .send-order-button {
-    padding: 14px 20px;
-    font-size: 1rem;
+  .quantity-controls {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
   }
   
-  .total-on-button {
-    font-size: 0.8rem;
-    padding: 3px 8px;
+  .quantity-selector {
+    align-self: center;
   }
 }
 
-/* Estilos para la barra de navegación inferior */
-.bottom-nav {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: #fff;
-  border-top: 1px solid #e0e0e0;
-  padding: 10px 15px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
-  z-index: 1000;
-}
-
-.brand-text {
-  position: absolute;
-  right: 15px;
-  color: #666;
-  font-size: 12px;
-  font-weight: 500;
-}
-
-/* Ajustar el botón principal para que no se superponga */
-.whatsapp-button.nav-button {
-  position: relative;
-  margin: 0;
-}
-
-/* Asegurar que el texto de marca no se vea en pantallas muy pequeñas */
 @media (max-width: 320px) {
   .brand-text {
     font-size: 10px;
     right: 10px;
   }
 }
-/* Estilos para los filtros en fila */
-.filters-row {
-  display: flex;
-  gap: 10px;
-  width: 100%;
-}
-
-.category-selector {
-  flex: 1;
-  padding: 12px 15px;
-  border: 1px solid var(--medium-gray);
-  border-radius: 25px;
-  font-size: 1rem;
-  appearance: none;
-  background-color: var(--light-gray);
-  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-  background-repeat: no-repeat;
-  background-position: right 10px center;
-  background-size: 1em;
-  cursor: pointer;
-}
-
-.order-selector {
-  flex: 1;
-  padding: 12px 15px;
-  border: 1px solid var(--medium-gray);
-  border-radius: 25px;
-  font-size: 1rem;
-  appearance: none;
-  background-color: var(--light-gray);
-  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-  background-repeat: no-repeat;
-  background-position: right 10px center;
-  background-size: 1em;
-  cursor: pointer;
-}
-
-/* Responsive para los selectores en móvil */
-@media (max-width: 480px) {
-  .filters-row {
-    flex-direction: column;
-    gap: 8px;
-  }
-  
-  .category-selector,
-  .order-selector {
-    width: 100%;
-    font-size: 0.9rem;
-    padding: 10px 12px;
-  }
-}
-
-/* El resto del CSS se mantiene igual... */
