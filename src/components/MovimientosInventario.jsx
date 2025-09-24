@@ -13,12 +13,27 @@ export default function MovimientosInventario() {
   });
 
   const [productos, setProductos] = useState([]);
+  const [productosFiltrados, setProductosFiltrados] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [busqueda, setBusqueda] = useState('');
 
   useEffect(() => {
     cargarProductos();
   }, []);
+
+  // Filtrar productos cuando cambia la búsqueda
+  useEffect(() => {
+    if (busqueda.trim() === '') {
+      setProductosFiltrados(productos);
+    } else {
+      const filtrados = productos.filter(producto =>
+        producto.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
+        producto.id.toString().includes(busqueda)
+      );
+      setProductosFiltrados(filtrados);
+    }
+  }, [busqueda, productos]);
 
   const cargarProductos = async () => {
     try {
@@ -31,6 +46,7 @@ export default function MovimientosInventario() {
         setError('Error al cargar productos: ' + error.message);
       } else {
         setProductos(data);
+        setProductosFiltrados(data);
         setError('');
       }
     } catch (err) {
@@ -96,6 +112,7 @@ export default function MovimientosInventario() {
           motivo: '',
           observaciones: ''
         });
+        setBusqueda(''); // Limpiar búsqueda
         cargarProductos();
       }
     } catch (err) {
@@ -105,7 +122,11 @@ export default function MovimientosInventario() {
     setLoading(false);
   };
 
-  // Opciones para los menús desplegables de motivos - VALORES EXACTOS que espera la base de datos
+  const limpiarBusqueda = () => {
+    setBusqueda('');
+  };
+
+  // Opciones para los menús desplegables de motivos
   const motivosEntrada = [
     { value: 'compra', label: 'Compra' },
     { value: 'devolucion', label: 'Devolución' },
@@ -140,6 +161,40 @@ export default function MovimientosInventario() {
       <div className="movimientos-content">
         <form onSubmit={handleSubmit} className="movimientos-form">
           
+          {/* Buscador de Productos */}
+          <div className="form-group">
+            <label className="form-label">
+              🔍 Buscar Producto
+            </label>
+            <div className="search-container">
+              <input
+                type="text"
+                placeholder="Escribe el nombre o ID del producto..."
+                value={busqueda}
+                onChange={(e) => setBusqueda(e.target.value)}
+                className="search-input"
+              />
+              {busqueda && (
+                <button 
+                  type="button" 
+                  onClick={limpiarBusqueda}
+                  className="clear-search"
+                  title="Limpiar búsqueda"
+                >
+                  ✕
+                </button>
+              )}
+            </div>
+            {busqueda && (
+              <div className="search-info">
+                <span>
+                  {productosFiltrados.length} producto(s) encontrado(s)
+                  {productosFiltrados.length === 0 && ' - No se encontraron resultados'}
+                </span>
+              </div>
+            )}
+          </div>
+
           {/* Producto */}
           <div className="form-group">
             <label className="form-label">
@@ -152,12 +207,17 @@ export default function MovimientosInventario() {
               className="form-select"
             >
               <option value="">Seleccionar Producto</option>
-              {productos.map((producto) => (
+              {productosFiltrados.map((producto) => (
                 <option key={producto.id} value={producto.id}>
-                  {producto.nombre} - Stock: {producto.stock}
+                  {producto.nombre} - Stock: {producto.stock} - ID: {producto.id}
                 </option>
               ))}
             </select>
+            {productosFiltrados.length === 0 && busqueda && (
+              <div className="no-results">
+                No se encontraron productos que coincidan con "{busqueda}"
+              </div>
+            )}
           </div>
 
           {/* Tipo de Movimiento y Cantidad en misma línea */}
