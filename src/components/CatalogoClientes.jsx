@@ -580,7 +580,7 @@ const CatalogoClientes = () => {
         </div>
       )}
 
-      {/* Carrito mejorado con cantidades rápidas */}
+      {/* Carrito mejorado con imágenes de productos */}
       {mostrarCarrito && (
         <div className="cart-overlay">
           <div className="cart-content">
@@ -614,6 +614,18 @@ const CatalogoClientes = () => {
                             <i className="fas fa-bolt"></i> Lote {(producto.cantidad || 1)}u
                           </div>
                         )}
+                        
+                        {/* Imagen del producto en el carrito */}
+                        <div className="cart-item-image-container">
+                          <img 
+                            src={producto.imagen_url || 'https://via.placeholder.com/100?text=Producto'} 
+                            alt={producto.nombre}
+                            className="cart-item-image"
+                            onError={(e) => {
+                              e.target.src = 'https://via.placeholder.com/100?text=Imagen';
+                            }}
+                          />
+                        </div>
                         
                         <div className="item-info">
                           <h4>{producto.nombre}</h4>
