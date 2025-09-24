@@ -742,4 +742,208 @@ select {
 
 .sin-stock:hover {
   background-color: #f8f9fa !important;
+}/* Estilos para controles rápidos de cantidad */
+.controles-rapidos {
+  margin-top: 10px;
+}
+
+.botones-rapidos {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+
+.cantidad-rapida-btn {
+  background-color: #e2e8f0 !important;
+  color: #4a5568 !important;
+  border: 1px solid #cbd5e0 !important;
+  padding: 4px 8px !important;
+  font-size: 12px !important;
+  min-width: auto !important;
+  height: 28px !important;
+}
+
+.cantidad-rapida-btn:hover {
+  background-color: #cbd5e0 !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Mejoras para la visualización en móviles */
+@media (max-width: 768px) {
+  .botones-rapidos {
+    gap: 3px;
+  }
+  
+  .cantidad-rapida-btn {
+    padding: 3px 6px !important;
+    font-size: 11px !important;
+    height: 26px !important;
+    min-width: 40px !important;
+  }
+  
+  .producto-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .producto-acciones {
+    margin-top: 10px;
+    width: 100%;
+    justify-content: flex-end;
+  }
+  
+  .controles-rapidos {
+    width: 100%;
+  }
+}
+
+/* Estilos para el input de edición de cantidad */
+.editar-cantidad-container {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  margin-top: 5px;
+}
+
+.editar-cantidad-input {
+  width: 80px;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+/* Mejora visual para productos con errores de stock */
+.error-stock {
+  border-left-color: #e53e3e !important;
+  background-color: #fed7d7 !important;
+}
+
+.error-message {
+  color: #e53e3e;
+  font-weight: bold;
+  font-size: 12px;
+  margin-left: 10px;
+}
+
+/* Estilos para la información del producto */
+.producto-detalle {
+  font-weight: 600;
+  color: #2d3748;
+  font-size: 14px;
+}/* Estilos para controles rápidos de cantidad */
+.controles-rapidos {
+  margin-top: 10px;
+}
+
+.botones-rapidos {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+
+.cantidad-rapida-btn {
+  background-color: #e2e8f0 !important;
+  color: #4a5568 !important;
+  border: 1px solid #cbd5e0 !important;
+  padding: 4px 8px !important;
+  font-size: 12px !important;
+  min-width: auto !important;
+  height: 28px !important;
+  flex: 1;
+  min-width: 40px;
+  max-width: 60px;
+}
+
+.cantidad-rapida-btn:hover {
+  background-color: #cbd5e0 !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Mejoras para la visualización en móviles */
+@media (max-width: 768px) {
+  .botones-rapidos {
+    gap: 3px;
+  }
+  
+  .cantidad-rapida-btn {
+    padding: 3px 6px !important;
+    font-size: 11px !important;
+    height: 26px !important;
+    min-width: 35px !important;
+    max-width: 50px !important;
+    flex: 1;
+  }
+  
+  .producto-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .producto-acciones {
+    margin-top: 10px;
+    width: 100%;
+    justify-content: flex-end;
+  }
+  
+  .controles-rapidos {
+    width: 100%;
+  }
+}
+
+/* Para pantallas muy pequeñas */
+@media (max-width: 480px) {
+  .botones-rapidos {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 4px;
+  }
+  
+  .cantidad-rapida-btn {
+    min-width: 30px !important;
+    font-size: 10px !important;
+    padding: 2px 4px !important;
+  }
+}
+
+/* Estilos para el input de edición de cantidad */
+.editar-cantidad-container {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  margin-top: 5px;
+}
+
+.editar-cantidad-input {
+  width: 80px;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+/* Mejora visual para productos con errores de stock */
+.error-stock {
+  border-left-color: #e53e3e !important;
+  background-color: #fed7d7 !important;
+}
+
+.error-message {
+  color: #e53e3e;
+  font-weight: bold;
+  font-size: 12px;
+  margin-left: 10px;
+}
+
+/* Estilos para la información del producto */
+.producto-detalle {
+  font-weight: 600;
+  color: #2d3748;
+  font-size: 14px;
+  margin-top: 5px;
+  display: block;
 }

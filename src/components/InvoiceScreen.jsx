@@ -239,6 +239,64 @@ const InvoiceScreen = () => {
     });
   };
 
+  // Función para actualizar cantidad rápidamente
+  const actualizarCantidadRapida = (productoId, incremento) => {
+    const producto = productos.find(p => p.id === productoId);
+    if (!producto) return;
+
+    const nuevaCantidad = Math.max(1, producto.cantidad + incremento);
+
+    // Verificar stock si es un producto del catálogo
+    if (producto.producto_id) {
+      const stockDisponible = verificarStockDisponible(producto.producto_id, nuevaCantidad);
+      
+      if (stockDisponible < 0) {
+        const productoCatalogo = productosCatalogo.find(p => p.id === producto.producto_id);
+        alert(`No hay suficiente stock. Solo quedan ${productoCatalogo.stock} unidades.`);
+        return;
+      }
+    }
+
+    const productosActualizados = productos.map(p => 
+      p.id === productoId ? { ...p, cantidad: nuevaCantidad } : p
+    );
+    
+    setProductos(productosActualizados);
+    setErroresStock(prev => {
+      const newErrors = { ...prev };
+      delete newErrors[productoId];
+      return newErrors;
+    });
+  };
+
+  // Función para establecer cantidad específica
+  const establecerCantidadEspecifica = (productoId, cantidad) => {
+    const producto = productos.find(p => p.id === productoId);
+    if (!producto) return;
+
+    // Verificar stock si es un producto del catálogo
+    if (producto.producto_id) {
+      const stockDisponible = verificarStockDisponible(producto.producto_id, cantidad);
+      
+      if (stockDisponible < 0) {
+        const productoCatalogo = productosCatalogo.find(p => p.id === producto.producto_id);
+        alert(`No hay suficiente stock. Solo quedan ${productoCatalogo.stock} unidades.`);
+        return;
+      }
+    }
+
+    const productosActualizados = productos.map(p => 
+      p.id === productoId ? { ...p, cantidad: cantidad } : p
+    );
+    
+    setProductos(productosActualizados);
+    setErroresStock(prev => {
+      const newErrors = { ...prev };
+      delete newErrors[productoId];
+      return newErrors;
+    });
+  };
+
   const iniciarEdicionCantidad = (producto) => {
     setEditandoProductoId(producto.id);
     setCantidadEditada(producto.cantidad.toString());
@@ -618,44 +676,107 @@ const InvoiceScreen = () => {
                 <div key={p.id} className={`producto-item ${erroresStock[p.id] ? 'error-stock' : ''}`}>
                   <div className="producto-info">
                     <span className="producto-nombre">{p.nombre}</span>
-                    {editandoProductoId === p.id ? (
-                      <div className="editar-cantidad-container">
-                        <input
-                          type="number"
-                          value={cantidadEditada}
-                          onChange={(e) => setCantidadEditada(e.target.value)}
-                          min="1"
-                          className="editar-cantidad-input"
-                          autoFocus
-                        />
-                        <button 
-                          className="button small-button success-button"
-                          onClick={() => guardarEdicionCantidad(p.id)}
-                        >
-                          <i className="fas fa-check"></i>
-                        </button>
-                        <button 
-                          className="button small-button danger-button"
-                          onClick={cancelarEdicion}
-                        >
-                          <i className="fas fa-times"></i>
-                        </button>
-                      </div>
-                    ) : (
-                      <span className="producto-detalle">
-                        {p.cantidad} x ${p.precio.toFixed(2)} = ${(p.cantidad * p.precio).toFixed(2)}
-                        {erroresStock[p.id] && (
-                          <span className="error-message"> - {erroresStock[p.id]}</span>
-                        )}
-                      </span>
-                    )}
+                    
+                   {/* Botones de edición rápida */}
+<div className="controles-rapidos">
+  <div className="botones-rapidos">
+    <button 
+      className="button small-button cantidad-rapida-btn"
+      onClick={() => actualizarCantidadRapida(p.id, -1)}
+      title="Reducir 1"
+    >
+      -1
+    </button>
+    <button 
+      className="button small-button cantidad-rapida-btn"
+      onClick={() => actualizarCantidadRapida(p.id, 1)}
+      title="Agregar 1"
+    >
+      +1
+    </button>
+    <button 
+      className="button small-button cantidad-rapida-btn"
+      onClick={() => actualizarCantidadRapida(p.id, 12)}
+      title="Agregar docena"
+    >
+      +12
+    </button>
+    <button 
+      className="button small-button cantidad-rapida-btn"
+      onClick={() => actualizarCantidadRapida(p.id, 24)}
+      title="Agregar 2 docenas"
+    >
+      +24
+    </button>
+    <button 
+      className="button small-button cantidad-rapida-btn"
+      onClick={() => actualizarCantidadRapida(p.id, 36)}
+      title="Agregar 3 docenas"
+    >
+      +36
+    </button>
+    <button 
+      className="button small-button cantidad-rapida-btn"
+      onClick={() => establecerCantidadEspecifica(p.id, 12)}
+      title="Establecer a docena"
+    >
+      12
+    </button>
+    <button 
+      className="button small-button cantidad-rapida-btn"
+      onClick={() => establecerCantidadEspecifica(p.id, 24)}
+      title="Establecer a 2 docenas"
+    >
+      24
+    </button>
+    <button 
+      className="button small-button cantidad-rapida-btn"
+      onClick={() => establecerCantidadEspecifica(p.id, 36)}
+      title="Establecer a 3 docenas"
+    >
+      36
+    </button>
+  </div>
+  
+  {editandoProductoId === p.id ? (
+    <div className="editar-cantidad-container">
+      <input
+        type="number"
+        value={cantidadEditada}
+        onChange={(e) => setCantidadEditada(e.target.value)}
+        min="1"
+        className="editar-cantidad-input"
+        autoFocus
+      />
+      <button 
+        className="button small-button success-button"
+        onClick={() => guardarEdicionCantidad(p.id)}
+      >
+        <i className="fas fa-check"></i>
+      </button>
+      <button 
+        className="button small-button danger-button"
+        onClick={cancelarEdicion}
+      >
+        <i className="fas fa-times"></i>
+      </button>
+    </div>
+  ) : (
+    <span className="producto-detalle">
+      {p.cantidad} x ${p.precio.toFixed(2)} = ${(p.cantidad * p.precio).toFixed(2)}
+      {erroresStock[p.id] && (
+        <span className="error-message"> - {erroresStock[p.id]}</span>
+      )}
+    </span>
+  )}
+</div>
                   </div>
                   <div className="producto-acciones">
                     {editandoProductoId !== p.id && (
                       <button
                         className="button info-button small-button"
                         onClick={() => iniciarEdicionCantidad(p)}
-                        title="Editar cantidad"
+                        title="Editar cantidad manualmente"
                       >
                         <i className="fas fa-edit"></i>
                       </button>
