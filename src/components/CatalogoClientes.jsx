@@ -154,19 +154,21 @@ const CatalogoClientes = () => {
     }).format(precio || 0);
   };
 
-  // Manejar selección de productos
+  // Manejar selección de productos - AHORA AGREGA AL INICIO
   const toggleProductoSeleccionado = (producto) => {
-    const existe = productosSeleccionados.find(p => p.id === producto.id);
+    const existeIndex = productosSeleccionados.findIndex(p => p.id === producto.id);
     
-    if (existe) {
+    if (existeIndex !== -1) {
       setProductosSeleccionados(prev => prev.filter(p => p.id !== producto.id));
     } else {
       const nuevoProducto = { 
         ...producto, 
         cantidad: 1,
-        precio: producto.precio || 0
+        precio: producto.precio || 0,
+        fechaAgregado: new Date() // Para mantener el orden
       };
-      setProductosSeleccionados(prev => [...prev, nuevoProducto]);
+      // Agregar al inicio del array
+      setProductosSeleccionados(prev => [nuevoProducto, ...prev]);
       
       // Mostrar notificación
       setShowQuantityNotification(true);
@@ -206,10 +208,6 @@ const CatalogoClientes = () => {
     setProductosSeleccionados(prev => 
       prev.map(p => p.id === id ? { ...p, cantidad: nuevaCantidad } : p)
     );
-  };
-
-  const resetearCantidad = (id, cantidad) => {
-    establecerCantidadExacta(id, cantidad);
   };
 
   // Calcular total
@@ -580,7 +578,7 @@ const CatalogoClientes = () => {
         </div>
       )}
 
-      {/* Carrito mejorado con imágenes de productos */}
+      {/* Carrito mejorado con botones horizontales y orden inverso */}
       {mostrarCarrito && (
         <div className="cart-overlay">
           <div className="cart-content">
@@ -606,6 +604,7 @@ const CatalogoClientes = () => {
               ) : (
                 <>
                   <div className="cart-items">
+                    {/* Los productos se muestran en orden inverso (último agregado primero) */}
                     {productosSeleccionados.map(producto => (
                       <div key={producto.id} className="cart-item" data-id={producto.id}>
                         {/* Badge para cantidades grandes */}
@@ -622,7 +621,7 @@ const CatalogoClientes = () => {
                             alt={producto.nombre}
                             className="cart-item-image"
                             onError={(e) => {
-                              e.target.src = 'https://via.placeholder.com/100?text=Imagen';
+                              e.target.src = 'https://via.placeholder.com/100?text=Imagen+no+disponible';
                             }}
                           />
                         </div>
@@ -631,22 +630,24 @@ const CatalogoClientes = () => {
                           <h4>{producto.nombre}</h4>
                           <span className="item-price">{formatPrecio(producto.precio)} c/u</span>
                           
-                          {/* Botones de cantidades rápidas */}
+                          {/* Botones de cantidades rápidas EN HORIZONTAL */}
                           <div className="quick-quantity-buttons">
                             <span className="quick-quantity-label">Agregar:</span>
-                            {cantidadesRapidas.map(cantidad => (
-                              <button
-                                key={cantidad}
-                                className="quick-quantity-btn"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  actualizarCantidad(producto.id, cantidad, true);
-                                }}
-                                title={`Agregar ${cantidad} unidades`}
-                              >
-                                +{cantidad}
-                              </button>
-                            ))}
+                            <div className="quick-quantity-grid">
+                              {cantidadesRapidas.map(cantidad => (
+                                <button
+                                  key={cantidad}
+                                  className="quick-quantity-btn"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    actualizarCantidad(producto.id, cantidad, true);
+                                  }}
+                                  title={`Agregar ${cantidad} unidades`}
+                                >
+                                  +{cantidad}
+                                </button>
+                              ))}
+                            </div>
                           </div>
                         </div>
                         
