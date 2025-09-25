@@ -15,7 +15,7 @@ const Login = () => {
     { id: 1, username: 'EBS', password: 'E1', role: 'admin' },
     { id: 2, username: 'v', password: 'v1', role: 'vendedor' },
     { id: 3, username: 'c', password: 'c', role: 'cliente' },
-    { id: 4, username: 'laura', password: 'laura123', role: 'inventario' }
+    { id: 4, username: 'Inv', password: 'inv123', role: 'inventario' }
   ];
 
   const handleSubmit = (e) => {
