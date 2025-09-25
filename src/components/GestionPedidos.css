@@ -11,10 +11,16 @@
   gap: 10px;
 }
 
+.filtros label {
+  font-weight: bold;
+  color: #333;
+}
+
 .filtros select {
-  padding: 8px;
+  padding: 8px 12px;
   border-radius: 4px;
   border: 1px solid #ddd;
+  background-color: white;
 }
 
 .lista-pedidos {
@@ -26,8 +32,15 @@
 .pedido-card {
   border: 1px solid #ddd;
   border-radius: 8px;
-  padding: 15px;
+  padding: 20px;
   background-color: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.pedido-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
 .pedido-header {
@@ -35,71 +48,1060 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 15px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid #eee;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.pedido-header h3 {
+  margin: 0;
+  color: #333;
 }
 
 .estado-badge {
-  padding: 4px 8px;
-  border-radius: 12px;
+  padding: 6px 16px;
+  border-radius: 20px;
   font-size: 12px;
   font-weight: bold;
   text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
+/* Estados corregidos para coincidir con tu componente */
 .estado-badge.pendiente {
   background-color: #fff3cd;
   color: #856404;
+  border: 1px solid #ffeaa7;
 }
 
 .estado-badge.confirmado {
   background-color: #d1ecf1;
   color: #0c5460;
+  border: 1px solid #bee5eb;
 }
 
 .estado-badge.en_preparacion {
-  background-color: #d4edda;
-  color: #155724;
+  background-color: #ffeaa7;
+  color: #856404;
+  border: 1px solid #ffd43b;
 }
 
 .estado-badge.enviado {
   background-color: #cce5ff;
   color: #004085;
+  border: 1px solid #99ccff;
 }
 
 .estado-badge.entregado {
   background-color: #d4edda;
   color: #155724;
+  border: 1px solid #c3e6cb;
 }
 
 .estado-badge.cancelado {
   background-color: #f8d7da;
   color: #721c24;
+  border: 1px solid #f1b0b7;
+}
+
+.pedido-info {
+  margin-bottom: 15px;
 }
 
 .pedido-info p {
-  margin: 5px 0;
+  margin: 8px 0;
+  color: #555;
 }
 
+/* Barra de progreso */
+.progreso-preparacion {
+  margin: 20px 0;
+  padding: 15px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: 8px;
+  border-left: 4px solid #ffc107;
+}
+
+.progreso-info {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  font-size: 14px;
+  font-weight: bold;
+  color: #495057;
+}
+
+.barra-progreso {
+  height: 12px;
+  background-color: #e9ecef;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.progreso-llenado {
+  height: 100%;
+  background: linear-gradient(90deg, #ffc107, #28a745);
+  transition: width 0.5s ease;
+  border-radius: 6px;
+}
+
+/* Lista de productos */
 .productos-pedido {
-  margin: 15px 0;
+  margin: 20px 0;
 }
 
 .productos-pedido h4 {
-  margin-bottom: 8px;
+  margin-bottom: 15px;
+  color: #333;
+  border-bottom: 2px solid #007bff;
+  padding-bottom: 8px;
+  font-size: 16px;
 }
 
 .productos-pedido ul {
   list-style-type: none;
   padding-left: 0;
+  margin: 0;
 }
 
-.productos-pedido li {
-  padding: 5px 0;
+.producto-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 15px;
   border-bottom: 1px solid #f0f0f0;
+  transition: all 0.3s ease;
+  margin-bottom: 5px;
+  border-radius: 6px;
+}
+
+.producto-item.clickeable {
+  cursor: pointer;
+  border-left: 4px solid transparent;
+}
+
+.producto-item.clickeable:hover {
+  background-color: #f8f9fa;
+  border-left-color: #007bff;
+  transform: translateX(5px);
+  box-shadow: 0 2px 8px rgba(0,123,255,0.1);
+}
+
+.producto-item.preparado {
+  background-color: #d4edda;
+  border-left-color: #28a745;
+  opacity: 0.9;
+}
+
+.producto-item.preparado .producto-info {
+  text-decoration: line-through;
+  opacity: 0.7;
+}
+
+.producto-info {
+  display: flex;
+  gap: 15px;
+  flex: 1;
+  align-items: center;
+}
+
+.cantidad {
+  font-weight: bold;
+  min-width: 40px;
+  background-color: #007bff;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  text-align: center;
+  font-size: 12px;
+}
+
+.nombre {
+  flex: 1;
+  font-weight: 500;
+  color: #333;
+}
+
+.precio {
+  font-weight: bold;
+  min-width: 120px;
+  text-align: right;
+  color: #28a745;
+  font-size: 14px;
+}
+
+.indicador-preparacion {
+  margin-left: 15px;
+  min-width: 100px;
+  text-align: center;
+}
+
+.checkbox-preparacion {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.checkmark {
+  color: #28a745;
+  font-weight: bold;
+  font-size: 16px;
+  background-color: #fff;
+  padding: 4px 8px;
+  border-radius: 50%;
+  border: 2px solid #28a745;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pending {
+  color: #6c757d;
+  font-size: 16px;
+  font-weight: bold;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.estado-texto {
+  font-size: 11px;
+  color: #6c757d;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .acciones-pedido {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 2px solid #f0f0f0;
+  gap: 15px;
+}
+
+.acciones-pedido select {
+  padding: 10px 15px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  background-color: white;
+  font-size: 14px;
+  min-width: 180px;
+}
+
+.btn-whatsapp {
+  background: linear-gradient(135deg, #25D366, #128C7E);
+  color: white;
+  padding: 10px 20px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.btn-whatsapp:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
+}
+
+.loading {
+  text-align: center;
+  padding: 60px 20px;
+  font-size: 18px;
+  color: #6c757d;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  margin: 20px 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .gestion-pedidos {
+    padding: 10px;
+  }
+  
+  .pedido-card {
+    padding: 15px;
+  }
+  
+  .pedido-header {
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  
+  .acciones-pedido {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .acciones-pedido select {
+    width: 100%;
+  }
+  
+  .btn-whatsapp {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .producto-info {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+  }
+  
+  .precio {
+    text-align: left;
+    min-width: auto;
+  }
+}/* Estilos para el sistema de seguimiento */
+.estadisticas-rapidas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.estadistica {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  border-left: 4px solid #007bff;
+}
+
+.estadistica .numero {
+  display: block;
+  font-size: 2em;
+  font-weight: bold;
+  color: #007bff;
+}
+
+.estadistica .label {
+  font-size: 0.9em;
+  color: #666;
+}
+
+/* Sistema de etapas de preparación */
+.etapas-preparacion {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.etapa {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 2px solid #e9ecef;
+  transition: all 0.3s ease;
+}
+
+.etapa.activa {
+  border-color: #007bff;
+  background: #e7f3ff;
+}
+
+.etapa.completada {
+  border-color: #28a745;
+  background: #d4edda;
+}
+
+.numero-etapa {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #6c757d;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.etapa.activa .numero-etapa {
+  background: #007bff;
+}
+
+.etapa.completada .numero-etapa {
+  background: #28a745;
+}
+
+.check-etapa {
+  margin-left: auto;
+  color: #28a745;
+  font-weight: bold;
+}
+
+/* Acciones de preparación */
+.acciones-preparacion {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.btn-accion {
+  padding: 12px 20px;
+  border: 2px solid #007bff;
+  background: white;
+  color: #007bff;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: bold;
+}
+
+.btn-accion:hover:not(:disabled) {
+  background: #007bff;
+  color: white;
+  transform: translateY(-2px);
+}
+
+.btn-accion.completado {
+  background: #28a745;
+  border-color: #28a745;
+  color: white;
+}
+
+.btn-accion:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  border-color: #6c757d;
+  color: #6c757d;
+}
+
+/* Indicadores de estado */
+.indicadores-estado {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 15px;
+}
+
+.indicador {
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.indicador.positivo {
+  background: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+/* Mejoras visuales para productos */
+.estado-preparacion {
+  min-width: 120px;
+  text-align: center;
+}
+
+.estado-completado {
+  color: #28a745;
+  font-weight: bold;
+  background: #d4edda;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.estado-pendiente {
+  color: #856404;
+  font-weight: bold;
+  background: #fff3cd;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+/* Panel de control mejorado */
+.panel-control-pedido {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 20px;
+  align-items: end;
+}
+
+.control-estado {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.control-estado label {
+  font-weight: bold;
+  color: #333;
+}
+
+.acciones-comunicacion {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-imprimir {
+  padding: 10px 20px;
+  background: #6c757d;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.btn-imprimir:hover {
+  background: #545b62;
+}/* Agrega estos estilos a tu archivo GestionPedidos.css */
+
+.estadisticas-rapidas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.estadistica {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  border-left: 4px solid #007bff;
+}
+
+.estadistica .numero {
+  display: block;
+  font-size: 2em;
+  font-weight: bold;
+  color: #007bff;
+}
+
+.estadistica .label {
+  font-size: 0.9em;
+  color: #666;
+}
+
+/* Sistema de etapas de preparación */
+.etapas-preparacion {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.etapa {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 2px solid #e9ecef;
+  transition: all 0.3s ease;
+}
+
+.etapa.activa {
+  border-color: #007bff;
+  background: #e7f3ff;
+}
+
+.etapa.completada {
+  border-color: #28a745;
+  background: #d4edda;
+}
+
+.numero-etapa {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #6c757d;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.etapa.activa .numero-etapa {
+  background: #007bff;
+}
+
+.etapa.completada .numero-etapa {
+  background: #28a745;
+}
+
+.check-etapa {
+  margin-left: auto;
+  color: #28a745;
+  font-weight: bold;
+}
+
+/* Acciones de preparación */
+.acciones-preparacion {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.btn-accion {
+  padding: 12px 20px;
+  border: 2px solid #007bff;
+  background: white;
+  color: #007bff;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: bold;
+}
+
+.btn-accion:hover:not(:disabled) {
+  background: #007bff;
+  color: white;
+  transform: translateY(-2px);
+}
+
+.btn-accion.completado {
+  background: #28a745;
+  border-color: #28a745;
+  color: white;
+}
+
+.btn-accion:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  border-color: #6c757d;
+  color: #6c757d;
+}
+
+/* Indicadores de estado */
+.indicadores-estado {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 15px;
+}
+
+.indicador {
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.indicador.positivo {
+  background: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+/* Estados de productos */
+.estado-preparacion {
+  min-width: 120px;
+  text-align: center;
+}
+
+.estado-completado {
+  color: #28a745;
+  font-weight: bold;
+  background: #d4edda;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.estado-pendiente {
+  color: #856404;
+  font-weight: bold;
+  background: #fff3cd;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+/* Panel de control mejorado */
+.panel-control-pedido {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 20px;
+  align-items: end;
+}
+
+.control-estado {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.control-estado label {
+  font-weight: bold;
+  color: #333;
+}
+
+.acciones-comunicacion {
+  display: flex;
+  gap: 10px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .etapas-preparacion {
+    grid-template-columns: 1fr;
+  }
+  
+  .panel-control-pedido {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+  
+  .acciones-preparacion {
+    grid-template-columns: 1fr;
+  }
+}/* Estilos para la gestión de faltantes */
+.faltante-badge {
+  background: #fff3cd;
+  color: #856404;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: bold;
+  border: 1px solid #ffeaa7;
+}
+
+.total-faltantes {
+  font-size: 12px;
+  color: #dc3545;
+  font-weight: normal;
+}
+
+.faltante-indicator {
+  margin-left: 5px;
+}
+
+.info-faltantes {
+  color: #856404;
+  font-size: 12px;
+  background: #fff3cd;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+/* Estados de productos faltantes */
+.producto-item.faltante {
+  background-color: #fff3cd;
+  border-left: 4px solid #ffc107;
+}
+
+.estado-faltante {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #fff3cd;
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: 1px solid #ffc107;
+}
+
+.texto-faltante {
+  color: #856404;
+  font-weight: bold;
+  font-size: 12px;
+}
+
+.btn-quitar-faltante {
+  background: none;
+  border: none;
+  color: #856404;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 12px;
+}
+
+.btn-quitar-faltante:hover {
+  background: #856404;
+  color: white;
+}
+
+.estado-completado-con-opciones {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-marcar-faltante {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 14px;
+}
+
+.btn-marcar-faltante:hover {
+  background: #fff3cd;
+}
+
+/* Modal de faltantes */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-faltante {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  width: 90%;
+  max-width: 500px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 10px;
+}
+
+.btn-cerrar {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #666;
+}
+
+.modal-content {
+  margin-bottom: 20px;
+}
+
+.producto-info-modal {
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  border-left: 4px solid #007bff;
+}
+
+.campo-motivo, .campo-observaciones {
+  margin-bottom: 15px;
+}
+
+.campo-motivo label, .campo-observaciones label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.campo-motivo select, .campo-observaciones textarea {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.info-quitar-faltante {
+  background: #e7f3ff;
+  padding: 15px;
+  border-radius: 6px;
+  border-left: 4px solid #007bff;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.btn-cancelar {
+  padding: 10px 20px;
+  border: 1px solid #ddd;
+  background: white;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn-confirmar {
+  padding: 10px 20px;
+  border: none;
+  background: #dc3545;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn-confirmar:hover {
+  background: #c82333;
+}/* Estilos de debugging */
+.debug-info {
+  background: #e7f3ff;
+  padding: 10px;
+  border-radius: 6px;
+  margin-bottom: 15px;
+  border-left: 4px solid #007bff;
+  font-size: 12px;
+}
+
+.btn-debug, .btn-reintentar {
+  background: #6c757d;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin: 5px;
+  font-size: 14px;
+}
+
+.btn-debug:hover, .btn-reintentar:hover {
+  background: #545b62;
+}
+
+.btn-debug-small {
+  background: none;
+  border: none;
+  color: #007bff;
+  cursor: pointer;
+  text-decoration: underline;
+  font-size: inherit;
+}
+
+.loading, .error-container, .no-pedidos {
+  text-align: center;
+  padding: 40px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  margin: 20px 0;
+}
+
+.error-container {
+  background: #f8d7da;
+  border-left: 4px solid #dc3545;
+}
+
+.no-pedidos {
+  background: #e7f3ff;
+  border-left: 4px solid #007bff;
+}
+
+.acciones-vacio {
+  margin-top: 20px;
+}
+
+/* Estilos básicos para que se vea algo */
+.gestion-pedidos {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.filtros {
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.filtros label {
+  font-weight: bold;
+}
+
+.filtros select {
+  padding: 8px 12px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+}
+
+.estadisticas-rapidas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.estadistica {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.estadistica .numero {
+  display: block;
+  font-size: 2em;
+  font-weight: bold;
+  color: #007bff;
+}
+
+.lista-pedidos {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.pedido-card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  background: white;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.pedido-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.estado-badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.producto-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.panel-control-pedido {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -108,27 +1110,10 @@
   border-top: 1px solid #eee;
 }
 
-.acciones-pedido select {
-  padding: 8px;
-  border-radius: 4px;
-  border: 1px solid #ddd;
-}
-
 .btn-whatsapp {
-  background-color: #25D366;
+  background: #25D366;
   color: white;
-  padding: 8px 15px;
-  border-radius: 4px;
+  padding: 10px 15px;
+  border-radius: 6px;
   text-decoration: none;
-  font-weight: bold;
-}
-
-.btn-whatsapp:hover {
-  background-color: #128C7E;
-}
-
-.loading {
-  text-align: center;
-  padding: 40px;
-  font-size: 18px;
 }
