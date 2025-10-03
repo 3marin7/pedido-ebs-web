@@ -591,4 +591,56 @@
     background-color: #000;
     color: #fff;
   }
+}/* Estilos para impresión */
+@media print {
+  .factura-actions-bar,
+  .abono-form,
+  .abonos-table-container .acciones-cell {
+    display: none !important;
+  }
+  
+  .factura-detalle-container {
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    box-shadow: none;
+  }
+  
+  .factura-header,
+  .factura-info-grid,
+  .productos-table-container,
+  .abonos-section {
+    margin-bottom: 1cm;
+    page-break-inside: avoid;
+  }
+  
+  .factura-footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+  }
+}.total-letras-container {
+  margin: 20px 0;
+  padding: 15px;
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.total-letras {
+  font-size: 16px;
+  font-weight: bold;
+  color: #495057;
+  text-transform: uppercase;
+}
+
+/* Para la versión de impresión (ya incluida en el HTML) */
+.total-letras {
+  margin: 0.2cm 0;
+  padding: 0.2cm;
+  border: 1px solid #000;
+  background-color: #f9f9f9;
+  font-size: 10px;
+  text-align: center;
 }

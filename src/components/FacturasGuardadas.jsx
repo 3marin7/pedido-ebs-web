@@ -479,6 +479,13 @@ const FacturasGuardadas = () => {
     return <span className={`estado ${clases[estado] || ''}`}>{estado}</span>;
   };
 
+  // Función para truncar texto largo
+  const truncarTexto = (texto, longitud = 25) => {
+    if (!texto) return '';
+    if (texto.length <= longitud) return texto;
+    return texto.substring(0, longitud) + '...';
+  };
+
   return (
     <div className="facturas-container">
       <header className="facturas-header">
@@ -770,42 +777,72 @@ const FacturasGuardadas = () => {
           {facturasProcesadas.map((factura) => (
             <article key={factura.id} className="factura-card">
               <header className="factura-card-header">
-                <span className="factura-id">#{factura.id.toString().padStart(6, '0')}</span>
-                <time className="factura-fecha">
-                  {formatFecha(factura.fecha)}
-                </time>
+                <div className="factura-header-top">
+                  <span className="factura-id">#{factura.id.toString().padStart(6, '0')}</span>
+                  <time className="factura-fecha">
+                    {formatFecha(factura.fecha)}
+                  </time>
+                </div>
+                {formatEstado(factura.estado)}
               </header>
               
               <div className="factura-card-body">
-                <h3 className="factura-cliente">{factura.cliente}</h3>
-                <p className="factura-vendedor">
-                  <span>Vendedor:</span> {factura.vendedor}
-                </p>
+                <div className="factura-info-cliente-vendedor">
+                  <div className="info-line">
+                    <strong>CLIENTE:</strong> {factura.cliente}
+                  </div>
+                  <div className="info-line">
+                    <strong>VENDEDOR:</strong> {factura.vendedor}
+                  </div>
+                  {factura.direccion && (
+                    <div className="info-line">
+                      <strong>DIRECCIÓN:</strong> {truncarTexto(factura.direccion, 20)}
+                    </div>
+                  )}
+                  {factura.telefono && (
+                    <div className="info-line">
+                      <strong>TELÉFONO:</strong> {factura.telefono}
+                    </div>
+                  )}
+                </div>
                 
-                <div className="factura-stats">
-                  <div className="stat-item">
-                    <span>Productos</span>
-                    <strong>{factura.productos?.length || 0}</strong>
+                <div className="productos-section">
+                  <div className="productos-header">
+                    <strong>PRODUCTO</strong>
+                    <strong>CANT</strong>
                   </div>
-                  <div className="stat-item">
-                    <span>Total</span>
-                    <strong className="total-amount">
-                      {formatMoneda(factura.total)}
-                    </strong>
+                  <div className="productos-list">
+                    {factura.productos?.map((producto, index) => (
+                      <div key={index} className="producto-item">
+                        <span className="producto-nombre">
+                          {truncarTexto(producto.nombre, 30)}
+                        </span>
+                        <span className="producto-cantidad">
+                          {producto.cantidad}
+                        </span>
+                      </div>
+                    ))}
                   </div>
-                  <div className="stat-item">
-                    <span>Abonado</span>
-                    <strong>{formatMoneda(factura.totalAbonado)}</strong>
+                </div>
+                
+                <div className="factura-totales">
+                  <div className="total-line">
+                    <span>PRODUCTOS:</span>
+                    <span>{factura.productos?.length || 0}</span>
                   </div>
-                  <div className="stat-item">
-                    <span>Saldo</span>
+                  <div className="total-line">
+                    <span>TOTAL:</span>
+                    <strong>{formatMoneda(factura.total)}</strong>
+                  </div>
+                  <div className="total-line">
+                    <span>ABONADO:</span>
+                    <span>{formatMoneda(factura.totalAbonado)}</span>
+                  </div>
+                  <div className="total-line saldo">
+                    <span>SALDO:</span>
                     <strong className={factura.saldo > 0 ? 'saldo-pendiente' : 'saldo-pagado'}>
                       {formatMoneda(factura.saldo)}
                     </strong>
-                  </div>
-                  <div className="stat-item">
-                    <span>Estado</span>
-                    {formatEstado(factura.estado)}
                   </div>
                 </div>
               </div>

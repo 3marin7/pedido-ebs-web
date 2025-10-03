@@ -19,6 +19,87 @@ const FacturaDetalle = () => {
   const [editandoAbono, setEditandoAbono] = useState(null);
   const [mostrarFormAbono, setMostrarFormAbono] = useState(false);
 
+  // Función para convertir números a letras
+  const convertirNumeroALetras = (numero) => {
+    const unidades = ['', 'UNO', 'DOS', 'TRES', 'CUATRO', 'CINCO', 'SEIS', 'SIETE', 'OCHO', 'NUEVE'];
+    const decenas = ['', 'DIEZ', 'VEINTE', 'TREINTA', 'CUARENTA', 'CINCUENTA', 'SESENTA', 'SETENTA', 'OCHENTA', 'NOVENTA'];
+    const especiales = ['DIEZ', 'ONCE', 'DOCE', 'TRECE', 'CATORCE', 'QUINCE', 'DIECISÉIS', 'DIECISIETE', 'DIECIOCHO', 'DIECINUEVE'];
+    const centenas = ['', 'CIENTO', 'DOSCIENTOS', 'TRESCIENTOS', 'CUATROCIENTOS', 'QUINIENTOS', 'SEISCIENTOS', 'SETECIENTOS', 'OCHOCIENTOS', 'NOVECIENTOS'];
+
+    if (numero === 0) return 'CERO PESOS';
+    if (numero > 999999999) return 'NÚMERO DEMASIADO GRANDE';
+
+    let letras = '';
+
+    // Convertir millones
+    if (numero >= 1000000) {
+      const millones = Math.floor(numero / 1000000);
+      if (millones === 1) {
+        letras += 'UN MILLÓN ';
+      } else {
+        letras += convertirGrupo(millones) + ' MILLONES ';
+      }
+      numero %= 1000000;
+    }
+
+    // Convertir miles
+    if (numero >= 1000) {
+      const miles = Math.floor(numero / 1000);
+      if (miles === 1) {
+        letras += 'MIL ';
+      } else {
+        letras += convertirGrupo(miles) + ' MIL ';
+      }
+      numero %= 1000;
+    }
+
+    // Convertir centenas, decenas y unidades
+    if (numero > 0) {
+      letras += convertirGrupo(numero);
+    }
+
+    return letras.trim() + ' PESOS';
+
+    function convertirGrupo(n) {
+      let grupo = '';
+      const c = Math.floor(n / 100);
+      const d = Math.floor((n % 100) / 10);
+      const u = n % 10;
+
+      // Centenas
+      if (c > 0) {
+        if (n === 100) {
+          grupo += 'CIEN';
+        } else {
+          grupo += centenas[c] + ' ';
+        }
+      }
+
+      // Decenas y unidades
+      if (d > 0) {
+        if (d === 1) {
+          if (u === 0) {
+            grupo += 'DIEZ';
+          } else {
+            grupo += especiales[u];
+          }
+          return grupo;
+        } else if (d === 2 && u > 0) {
+          grupo += 'VEINTI' + unidades[u].toLowerCase();
+        } else {
+          grupo += decenas[d];
+          if (u > 0) {
+            grupo += ' Y ' + unidades[u];
+          }
+        }
+      } else if (u > 0) {
+        grupo += unidades[u];
+      }
+
+      return grupo.trim();
+    }
+  };
+
   // Cargar factura y abonos desde Supabase
   useEffect(() => {
     const cargarFacturaYAbonos = async () => {
@@ -61,6 +142,7 @@ const FacturaDetalle = () => {
       Cliente: ${factura.cliente}
       Fecha: ${new Date(factura.fecha).toLocaleDateString()}
       Total: $${factura.total.toFixed(2)}
+      Total en letras: ${convertirNumeroALetras(Math.round(factura.total))}
       Saldo Pendiente: $${(factura.total - calcularTotalAbonado()).toFixed(2)}
       Productos: ${factura.productos.map(p => `\n  - ${p.nombre} (${p.cantidad} x $${p.precio.toFixed(2)})`).join('')}
       Abonos: ${abonos.length > 0 ? abonos.map(a => `\n  - $${a.monto.toFixed(2)} (${new Date(a.fecha).toLocaleDateString()})`).join('') : ' Ninguno'}
@@ -71,7 +153,279 @@ const FacturaDetalle = () => {
   };
 
   const imprimirFactura = () => {
-    window.print();
+    // Abrir ventana de impresión con el diseño específico para papel oficio
+    const ventanaImpresion = window.open('', '_blank', 'width=800,height=1000');
+    
+    const contenidoImpresion = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>Cuenta de Cobro #${factura.id.toString().padStart(6, '0')}</title>
+          <style>
+            @page {
+              size: letter; /* Tamaño oficio */
+              margin: 0.5cm;
+            }
+            body {
+              font-family: Arial, sans-serif;
+              margin: 0;
+              padding: 0;
+              font-size: 12px;
+              line-height: 1.2;
+            }
+            .pagina-oficio {
+              width: 21.59cm; /* Ancho oficio */
+              height: 27.94cm; /* Alto oficio */
+              page-break-after: always;
+              display: flex;
+              flex-direction: column;
+            }
+            .seccion-cuenta {
+              flex: 1;
+              border: 1px solid #000;
+              margin-bottom: 0.5cm;
+              padding: 0.3cm;
+              box-sizing: border-box;
+            }
+            .titulo-seccion {
+              text-align: center;
+              font-weight: bold;
+              margin-bottom: 0.2cm;
+              border-bottom: 1px solid #000;
+              padding-bottom: 0.1cm;
+            }
+            .encabezado {
+              display: flex;
+              justify-content: space-between;
+              margin-bottom: 0.3cm;
+            }
+            .numero-cuenta {
+              font-weight: bold;
+              font-size: 14px;
+            }
+            .fecha {
+              font-size: 12px;
+            }
+            .info-cliente-vendedor {
+              display: grid;
+              grid-template-columns: 1fr 1fr;
+              gap: 0.5cm;
+              margin-bottom: 0.3cm;
+            }
+            .info-item h4 {
+              margin: 0 0 0.1cm 0;
+              font-size: 11px;
+            }
+            .info-item p {
+              margin: 0;
+              border-bottom: 1px solid #ddd;
+              padding-bottom: 0.1cm;
+            }
+            .tabla-productos {
+              width: 100%;
+              border-collapse: collapse;
+              margin-bottom: 0.3cm;
+            }
+            .tabla-productos th, .tabla-productos td {
+              border: 1px solid #000;
+              padding: 0.1cm;
+              text-align: left;
+              font-size: 10px;
+            }
+            .tabla-productos th {
+              background-color: #f0f0f0;
+            }
+            .total-letras {
+              margin: 0.2cm 0;
+              padding: 0.2cm;
+              border: 1px solid #000;
+              background-color: #f9f9f9;
+              font-size: 10px;
+              text-align: center;
+            }
+            .resumen-total {
+              display: flex;
+              justify-content: space-between;
+              margin-top: 0.3cm;
+              font-weight: bold;
+            }
+            .estado {
+              text-align: center;
+              margin-top: 0.2cm;
+              font-weight: bold;
+            }
+            .footer {
+              text-align: center;
+              margin-top: 0.3cm;
+              font-size: 10px;
+            }
+            .logo {
+              font-weight: bold;
+              margin-top: 0.1cm;
+            }
+            @media print {
+              body {
+                margin: 0;
+                padding: 0;
+              }
+              .pagina-oficio {
+                height: 100%;
+                width: 100%;
+              }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="pagina-oficio">
+            <!-- ORIGINAL - PARA EL CLIENTE -->
+            <div class="seccion-cuenta">
+              <div class="titulo-seccion">ORIGINAL - PARA EL CLIENTE</div>
+              <div class="encabezado">
+                <div>
+                  <div><strong>DISTRIBUCIONES EBS</strong></div>
+                  <div>Cuenta de Cobro</div>
+                </div>
+                <div class="fecha">${formatearFecha(factura.fecha)}</div>
+              </div>
+              
+              <div class="numero-cuenta">CUENTA DE COBRO #${factura.id.toString().padStart(6, '0')}</div>
+              
+              <div class="info-cliente-vendedor">
+                <div class="info-item">
+                  <h4>CLIENTE:</h4>
+                  <p>${factura.cliente}</p>
+                  <h4>DIRECCIÓN:</h4>
+                  <p>${factura.direccion || 'SABANA NO ESPECIFICADO'}</p>
+                </div>
+                <div class="info-item">
+                  <h4>VENDEDOR:</h4>
+                  <p>${factura.vendedor}</p>
+                  <h4>TELÉFONO:</h4>
+                  <p>${factura.telefono || 'NO ESPECIFICADO'}</p>
+                </div>
+              </div>
+              
+              <table class="tabla-productos">
+                <thead>
+                  <tr>
+                    <th>PRODUCTO</th>
+                    <th>CANT</th>
+                    <th>PRECIO UNIT.</th>
+                    <th>SUBTOTAL</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${factura.productos.map(producto => `
+                    <tr>
+                      <td>${producto.nombre}</td>
+                      <td>${producto.cantidad}</td>
+                      <td>${formatearMonedaImpresion(producto.precio)}</td>
+                      <td>${formatearMonedaImpresion(producto.cantidad * producto.precio)}</td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
+
+              <div class="total-letras">
+                <strong>SON: ${convertirNumeroALetras(Math.round(factura.total))}</strong>
+              </div>
+              
+              <div class="resumen-total">
+                <div>PRODUCTOS: ${factura.productos.length}</div>
+                <div>TOTAL: ${formatearMonedaImpresion(factura.total)}</div>
+                <div>ABONADO: ${formatearMonedaImpresion(calcularTotalAbonado())}</div>
+                <div>SALDO: ${formatearMonedaImpresion(calcularSaldoPendiente())}</div>
+              </div>
+              
+              <div class="estado">ESTADO: ${estaPagada() ? 'PAGADA' : 'PENDIENTE'}</div>
+              
+              <div class="footer">
+                <div>Gracias por su preferencia. Para cualquier aclaración, presentar esta cuenta de cobro.</div>
+                <div class="logo">EBS - Sistema de Ebs-Hermanos Marin</div>
+              </div>
+            </div>
+            
+            <!-- COPIA - PARA EL ARCHIVO -->
+            <div class="seccion-cuenta">
+              <div class="titulo-seccion">COPIA - PARA EL ARCHIVO</div>
+              <div class="encabezado">
+                <div>
+                  <div><strong>DISTRIBUCIONES EBS</strong></div>
+                  <div>Cuenta de Cobro</div>
+                </div>
+                <div class="fecha">${formatearFecha(factura.fecha)}</div>
+              </div>
+              
+              <div class="numero-cuenta">CUENTA DE COBRO #${factura.id.toString().padStart(6, '0')}</div>
+              
+              <div class="info-cliente-vendedor">
+                <div class="info-item">
+                  <h4>CLIENTE:</h4>
+                  <p>${factura.cliente}</p>
+                  <h4>DIRECCIÓN:</h4>
+                  <p>${factura.direccion || 'SABANA NO ESPECIFICADO'}</p>
+                </div>
+                <div class="info-item">
+                  <h4>VENDEDOR:</h4>
+                  <p>${factura.vendedor}</p>
+                  <h4>TELÉFONO:</h4>
+                  <p>${factura.telefono || 'NO ESPECIFICADO'}</p>
+                </div>
+              </div>
+              
+              <table class="tabla-productos">
+                <thead>
+                  <tr>
+                    <th>PRODUCTO</th>
+                    <th>CANT</th>
+                    <th>PRECIO UNIT.</th>
+                    <th>SUBTOTAL</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${factura.productos.map(producto => `
+                    <tr>
+                      <td>${producto.nombre}</td>
+                      <td>${producto.cantidad}</td>
+                      <td>${formatearMonedaImpresion(producto.precio)}</td>
+                      <td>${formatearMonedaImpresion(producto.cantidad * producto.precio)}</td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
+
+              <div class="total-letras">
+                <strong>SON: ${convertirNumeroALetras(Math.round(factura.total))}</strong>
+              </div>
+              
+              <div class="resumen-total">
+                <div>PRODUCTOS: ${factura.productos.length}</div>
+                <div>TOTAL: ${formatearMonedaImpresion(factura.total)}</div>
+                <div>ABONADO: ${formatearMonedaImpresion(calcularTotalAbonado())}</div>
+                <div>SALDO: ${formatearMonedaImpresion(calcularSaldoPendiente())}</div>
+              </div>
+              
+              <div class="estado">ESTADO: ${estaPagada() ? 'PAGADA' : 'PENDIENTE'}</div>
+              
+              <div class="footer">
+                <div>Gracias por su preferencia. Para cualquier aclaración, presentar esta cuenta de cobro.</div>
+                <div class="logo">EBS - Sistema de Ebs-Hermanos Marin</div>
+              </div>
+            </div>
+          </div>
+        </body>
+      </html>
+    `;
+    
+    ventanaImpresion.document.write(contenidoImpresion);
+    ventanaImpresion.document.close();
+    
+    // Esperar a que se cargue el contenido antes de imprimir
+    ventanaImpresion.onload = function() {
+      ventanaImpresion.print();
+      // Cerrar la ventana después de imprimir (opcional)
+      // ventanaImpresion.close();
+    };
   };
 
   const calcularTotalAbonado = () => {
@@ -247,6 +601,12 @@ const FacturaDetalle = () => {
     }).format(monto);
   };
 
+  const formatearMonedaImpresion = (monto) => {
+    return `$ ${new Intl.NumberFormat('es-CO', { 
+      minimumFractionDigits: 0
+    }).format(monto)}`;
+  };
+
   const formatearFecha = (fecha) => {
     return new Date(fecha).toLocaleDateString('es-ES', {
       year: 'numeric',
@@ -327,6 +687,13 @@ const FacturaDetalle = () => {
         <div className="header-total">
           <span>Total Cuenta de Cobro</span>
           <h2>{formatearMoneda(factura.total)}</h2>
+        </div>
+      </div>
+
+      {/* Mostrar total en letras en la vista normal también */}
+      <div className="total-letras-container">
+        <div className="total-letras">
+          <strong>SON: {convertirNumeroALetras(Math.round(factura.total))}</strong>
         </div>
       </div>
 
