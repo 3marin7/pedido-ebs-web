@@ -6,16 +6,94 @@ const MallMap = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [editLocal, setEditLocal] = useState(null);
   const [newClientName, setNewClientName] = useState('');
-  
-  // Datos iniciales de los clientes (algunos vacíos para locales sin asignar)
-  const initialClients = [
-    "david", "lux hele lucero", "rosendo", "jomi", "jhon fredy andrea", "Rodrigo",
-    "edison", "citto", "camilo", "jhoana", "jorpe", "edison laura",
-    "laux", "raul", "novardo", "nathalia", "flor celi", "henry",
-    "henry", "raul -camilo", "ANDRE", "esteban artos", "", "",
-    "", "", "fior", "adenis", "marijha", "laydi aleja", "albeiro",
-    "marcela", "yudy", "norvey norvey", "damiel soler", "", "", "", "", "", ""
-  ];
+  const [showClientTable, setShowClientTable] = useState(false);
+  const [selectedClientFromTable, setSelectedClientFromTable] = useState(null);
+
+  // Base de datos COMPLETA de clientes desde tu SQL
+  const availableClients = useMemo(() => [
+    { id: '1', name: 'MARTHA TABARES', phone: '3453053', email: 'mt@gmail.com', classification: '4', address: 'PARQUE local 123' },
+    { id: '2', name: 'MARTHA BLANCO', phone: '3001234555', email: 'mb@gmail.com', classification: '3', address: 'SÁBANA' },
+    { id: '3', name: 'HECTOR HERMANO DE ADRIAN', phone: '34399393', email: 'hm@gmail.com', classification: '5', address: 'SABANA' },
+    { id: '4', name: 'ADRIAN', phone: '3115793179', email: '', classification: '3', address: 'Sábana local' },
+    { id: '5', name: 'YANET GONZÁLEZ', phone: '3132548549', email: '', classification: '3', address: 'Sábana' },
+    { id: '6', name: 'WENDY', phone: '3105675464', email: '', classification: '3', address: 'Ferrocarril' },
+    { id: '7', name: 'ALFONSO SALINAS', phone: '', email: '', classification: '3', address: 'Sabana local' },
+    { id: '8', name: 'JAVIER BUITRAGO', phone: '3114411220', email: '', classification: '3', address: 'Ferrocaril A003' },
+    { id: '9', name: 'LORENA CASTAÑEDA', phone: '3214058023', email: '', classification: '4', address: 'Sabana' },
+    { id: '10', name: 'LIBEY SALINAS', phone: '3007079647', email: '', classification: '3', address: 'Ferrocaril' },
+    { id: '11', name: 'MARIELA', phone: '300', email: '', classification: '3', address: 'Ferrocaril' },
+    { id: '12', name: 'RAUL ZIPA', phone: '31', email: 'worwiz', classification: '3', address: 'Parque' },
+    { id: '13', name: 'RAMIRO', phone: '3125250038', email: '', classification: '3', address: 'Ferrocarril' },
+    { id: '14', name: 'FERNEY SALINAS', phone: '3123484686', email: '', classification: '3', address: 'Ferrocaril' },
+    { id: '15', name: 'ELEMETRIO', phone: '', email: '', classification: '4', address: 'Parque' },
+    { id: '16', name: 'CARMENSA', phone: '3224153032', email: '', classification: '3', address: 'Ferrocarril' },
+    { id: '17', name: 'ARNOL DIAZ PENAGOS', phone: '+57 3142418173', email: '', classification: '3', address: 'SABANA' },
+    { id: '18', name: 'CRISTIAN SOLER', phone: '+57 3214045628', email: '', classification: '3', address: 'PARQUE' },
+    { id: '19', name: 'DIEGO Y MAYERLY', phone: '+573112276339', email: '', classification: '3', address: 'SABANA' },
+    { id: '20', name: 'DIEGO MONO', phone: '3126607756', email: '', classification: '1', address: 'FERROCARRIL' },
+    { id: '21', name: 'DORIS', phone: '', email: '', classification: '1', address: 'PARQUE' },
+    { id: '22', name: 'ESTEBAN ARTOS', phone: '', email: '', classification: '4', address: 'PARQUE' },
+    { id: '23', name: 'FERNANDO FERROCARRIL', phone: '', email: '', classification: '2', address: 'FERROCARRIL' },
+    { id: '24', name: 'FRANK BAEZ', phone: '+57 3166470853', email: '', classification: '2', address: 'PARQUE' },
+    { id: '25', name: 'FREDY ORLANDO', phone: '3103386651', email: '', classification: '2', address: 'SABANA' },
+    { id: '26', name: 'HECTOR COSTENO', phone: '3215762269', email: '', classification: '3', address: 'PARQUE' },
+    { id: '27', name: 'HENRY SANDOBAL', phone: '', email: '', classification: '4', address: 'PARQUE' },
+    { id: '28', name: 'JESUS', phone: '3196887331', email: '', classification: '3', address: 'SABANA' },
+    { id: '29', name: 'JHON CRUZ', phone: '', email: '', classification: '3', address: 'SABANA' },
+    { id: '30', name: 'JUAN CARLOS PLAZA', phone: '', email: '', classification: '2', address: 'PARQUE' },
+    { id: '31', name: 'KELLY HERMANA DE ADRIAN', phone: '', email: '', classification: '3', address: 'Ferrocarril' },
+    { id: '32', name: 'LUCERO', phone: '', email: '', classification: '3', address: 'Parque' },
+    { id: '33', name: 'LUCHO', phone: '', email: '', classification: '4', address: 'Ferrocarril' },
+    { id: '34', name: 'LUZ HELENA', phone: '', email: '', classification: '2', address: 'Parque' },
+    { id: '35', name: 'MARCELA Y DIEGO', phone: '', email: '', classification: '2', address: 'Parque' },
+    { id: '36', name: 'NEIDY', phone: '', email: '', classification: '3', address: 'Sabana' },
+    { id: '37', name: 'NORVEY', phone: '', email: '', classification: '3', address: 'Parque local' },
+    { id: '38', name: 'PAOLA LOPEZ', phone: '', email: '', classification: '1', address: 'Ferrocarril' },
+    { id: '39', name: 'SARA', phone: '', email: '', classification: '4', address: 'SABANA' },
+    { id: '40', name: 'TILSIA', phone: '', email: '', classification: '1', address: 'SABANA' },
+    { id: '41', name: 'WILLIAN LOPEZ', phone: '', email: '', classification: '3', address: 'Parque' },
+    { id: '42', name: 'FABIAN SOLER', phone: '3008647449', email: '', classification: '3', address: 'Parque L int 4 104' },
+    { id: '43', name: 'GLADIZ LOPEZ', phone: '', email: '', classification: '3', address: 'SABANA' },
+    { id: '44', name: 'JORGE', phone: '', email: '', classification: '3', address: 'Parque' },
+    { id: '45', name: 'DANIEL GONZALEZ', phone: '', email: '', classification: '3', address: 'Sabana' },
+    { id: '46', name: 'EDISON -laura', phone: '', email: '', classification: '3', address: 'Parque' },
+    { id: '47', name: 'NATHALY', phone: '', email: '', classification: '3', address: 'Parque' },
+    { id: '48', name: 'CECY', phone: '', email: '', classification: '3', address: 'Parque' },
+    { id: '49', name: 'EDWIN SOLER', phone: '', email: '', classification: '4', address: 'Parque' },
+    { id: '50', name: 'ROBINSON NEW YORK', phone: '3204966508', email: '', classification: '3', address: 'CC FERROCARRIL' },
+    { id: '51', name: 'Nelly González', phone: '', email: '', classification: '4', address: 'SABANA' },
+    { id: '52', name: 'LEIDY PAOLA TORRES', phone: '3043945256', email: '', classification: '3', address: 'Sabana' },
+    { id: '53', name: 'NANCY LOPEZ', phone: '', email: '', classification: '3', address: 'PARQUE' },
+    { id: '54', name: 'HERIBERTO', phone: '', email: '', classification: '3', address: 'CENTRO CARACAS' },
+    { id: '55', name: 'FLOR CELIS', phone: '', email: '', classification: '3', address: 'PARQUE' },
+    { id: '56', name: 'RAFA', phone: '', email: '', classification: '3', address: 'FERROCARRIL' },
+    { id: '57', name: 'PEDRO MANDRIVA', phone: '', email: '', classification: '3', address: 'SABANA' },
+    { id: '58', name: 'ROSENDO', phone: '', email: '', classification: '3', address: 'PARQUE' },
+    { id: '59', name: 'MARCELA CRISTIAN', phone: '', email: '', classification: '2', address: 'PARQUE' },
+    { id: '60', name: 'ALEJANDRA LADY', phone: '', email: '', classification: '4', address: 'PARQUE' },
+    { id: '61', name: 'LEIDY YORWIS', phone: '', email: '', classification: '3', address: 'PARQUE' },
+    { id: '62', name: 'JHON SALINAS', phone: '', email: '', classification: '3', address: 'SABANA' },
+    { id: '63', name: 'MARCOS', phone: '', email: '', classification: '5', address: 'parque' },
+    { id: '64', name: 'LUZ', phone: '', email: '', classification: '4', address: 'parque' },
+    { id: '65', name: 'magdalena', phone: '', email: '', classification: '3', address: 'parque' },
+    { id: '66', name: 'ANDREA DIAZ', phone: '', email: '', classification: '3', address: 'PARQUE' },
+    { id: '67', name: 'JUAN PABLO', phone: '', email: '', classification: '5', address: 'Ferrocarril' }
+  ], []);
+
+  // Función para obtener el nombre de la clasificación
+  const getClassificationName = (classification) => {
+    const classifications = {
+      '1': 'Premium',
+      '2': 'Oro',
+      '3': 'Plata',
+      '4': 'Bronce',
+      '5': 'Básico'
+    };
+    return classifications[classification] || 'Sin clasificación';
+  };
+
+  // Datos iniciales VACÍOS para 120 locales
+  const initialClients = Array(120).fill('');
 
   // Cargar datos desde localStorage o usar los iniciales
   const [clients, setClients] = useState(() => {
@@ -23,89 +101,245 @@ const MallMap = () => {
     return savedClients ? JSON.parse(savedClients) : initialClients;
   });
 
-  // Guardar en localStorage cuando cambien los clientes
+  // Cargar clientes asignados desde localStorage
+  const [assignedClients, setAssignedClients] = useState(() => {
+    const saved = localStorage.getItem('assignedClients');
+    return saved ? JSON.parse(saved) : {};
+  });
+
+  // Guardar en localStorage cuando cambien los datos
   useEffect(() => {
     localStorage.setItem('mallClients', JSON.stringify(clients));
-  }, [clients]);
+    localStorage.setItem('assignedClients', JSON.stringify(assignedClients));
+  }, [clients, assignedClients]);
 
   // Estado para la aplicación
   const [selectedLocal, setSelectedLocal] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [viewFilter, setViewFilter] = useState('all');
+  const [clientSearchTerm, setClientSearchTerm] = useState('');
+  const [zoneFilter, setZoneFilter] = useState('all');
 
-  // Generar datos de locales (36 locales como en tu diseño)
+  // Función para determinar el tipo de local
+  const getLocalType = (localNumber) => {
+    if (localNumber <= 40) return 'sabana';
+    if (localNumber <= 80) return 'plaza';
+    return 'ferrocarril';
+  };
+
+  // Función para obtener el nombre completo del tipo
+  const getLocalTypeName = (type) => {
+    const typeNames = {
+      'sabana': 'Sabana',
+      'plaza': 'Plaza', 
+      'ferrocarril': 'Ferrocarril'
+    };
+    return typeNames[type] || type;
+  };
+
+  // Generar datos de locales (120 locales)
   const locals = useMemo(() => {
-    return Array.from({ length: 36 }, (_, i) => {
+    return Array.from({ length: 120 }, (_, i) => {
       const localNumber = i + 1;
-      const isOccupied = localNumber <= clients.length && clients[localNumber - 1] && clients[localNumber - 1].trim() !== '';
+      const isOccupied = clients[localNumber - 1] && clients[localNumber - 1].trim() !== '';
+      const clientData = assignedClients[localNumber];
+      const localType = getLocalType(localNumber);
       
       return {
         id: localNumber,
         number: localNumber,
         isOccupied,
         clientName: isOccupied ? clients[localNumber - 1] : null,
-        area: (Math.floor(Math.random() * 5) + 5) * 10,
-        phone: isOccupied ? `+57 ${3000000000 + localNumber}` : 'N/A'
+        clientData: clientData || null,
+        area: (Math.floor(Math.random() * 8) + 8) * 10,
+        phone: clientData?.phone || 'N/A',
+        type: localType,
+        typeName: getLocalTypeName(localType)
       };
     });
-  }, [clients]);
+  }, [clients, assignedClients]);
 
-  // Filtrar locales
+  // Filtrar locales por zona y estado
   const filteredLocals = useMemo(() => {
     return locals.filter(local => {
+      if (zoneFilter !== 'all' && local.type !== zoneFilter) return false;
       if (viewFilter === 'available' && local.isOccupied) return false;
       if (viewFilter === 'occupied' && !local.isOccupied) return false;
-      
       if (searchTerm && local.isOccupied) {
         return local.clientName.toLowerCase().includes(searchTerm.toLowerCase());
       }
-      
       return true;
     });
-  }, [locals, searchTerm, viewFilter]);
+  }, [locals, searchTerm, viewFilter, zoneFilter]);
+
+  // Filtrar clientes disponibles (SOLO los no asignados)
+  const filteredAvailableClients = useMemo(() => {
+    const assignedClientIds = new Set(
+      Object.values(assignedClients)
+        .filter(client => client && client.id)
+        .map(client => client.id)
+    );
+    
+    const unassignedClients = availableClients.filter(client => 
+      !assignedClientIds.has(client.id)
+    );
+
+    return unassignedClients.filter(client => 
+      client.name.toLowerCase().includes(clientSearchTerm.toLowerCase()) ||
+      client.address.toLowerCase().includes(clientSearchTerm.toLowerCase()) ||
+      getClassificationName(client.classification).toLowerCase().includes(clientSearchTerm.toLowerCase())
+    );
+  }, [clientSearchTerm, assignedClients, availableClients]);
+
+  // Obtener clientes no asignados
+  const unassignedClients = useMemo(() => {
+    const assignedClientIds = new Set(
+      Object.values(assignedClients)
+        .filter(client => client && client.id)
+        .map(client => client.id)
+    );
+    
+    return availableClients.filter(client => 
+      !assignedClientIds.has(client.id)
+    );
+  }, [assignedClients, availableClients]);
+
+  // Manejar cambio de zona
+  const handleZoneChange = (zone) => {
+    setZoneFilter(zone);
+    setViewFilter('all');
+    setSearchTerm('');
+  };
+
+  // Mostrar todos los locales
+  const handleShowAll = () => {
+    setZoneFilter('all');
+  };
 
   // Manejar la selección de un local
   const handleSelectLocal = (local) => {
     setSelectedLocal(local);
-    setIsEditing(false);
-    setEditLocal(null);
-    setNewClientName('');
   };
 
   // Iniciar edición de un local
   const handleEditLocal = (local, e) => {
-    e.stopPropagation();
+    if (e) e.stopPropagation();
     setEditLocal(local);
     setNewClientName(local.isOccupied ? local.clientName : '');
     setIsEditing(true);
+    setShowClientTable(true);
+    setSelectedClientFromTable(null);
   };
 
-  // Guardar cambios en un local
+  // Seleccionar cliente desde la tabla
+  const handleSelectClientFromTable = (client) => {
+    setSelectedClientFromTable(client);
+    setNewClientName(client.name);
+  };
+
+  // Asignar cliente seleccionado al local
+  const handleAssignClient = () => {
+    if (!editLocal || !selectedClientFromTable) {
+      alert('Por favor selecciona un cliente de la tabla');
+      return;
+    }
+
+    const updatedClients = [...clients];
+    // Asegurar que el array tenga 120 elementos
+    while (updatedClients.length < 120) {
+      updatedClients.push('');
+    }
+    
+    // Actualizar nombre del cliente
+    updatedClients[editLocal.number - 1] = selectedClientFromTable.name;
+    
+    // Actualizar datos completos del cliente
+    const updatedAssignedClients = {
+      ...assignedClients,
+      [editLocal.number]: selectedClientFromTable
+    };
+
+    setClients(updatedClients);
+    setAssignedClients(updatedAssignedClients);
+    
+    // Actualizar local seleccionado si es el mismo
+    if (selectedLocal && selectedLocal.number === editLocal.number) {
+      setSelectedLocal({
+        ...selectedLocal,
+        isOccupied: true,
+        clientName: selectedClientFromTable.name,
+        clientData: selectedClientFromTable
+      });
+    }
+    
+    // Limpiar estado de edición
+    setIsEditing(false);
+    setEditLocal(null);
+    setNewClientName('');
+    setSelectedClientFromTable(null);
+    setShowClientTable(false);
+  };
+
+  // Guardar cambios en un local (método manual)
   const handleSaveEdit = () => {
     if (!editLocal) return;
 
     const updatedClients = [...clients];
+    // Asegurar que el array tenga 120 elementos
+    while (updatedClients.length < 120) {
+      updatedClients.push('');
+    }
     
     if (newClientName.trim() === '') {
-      // Si el nombre está vacío, liberar el local
-      if (editLocal.number <= updatedClients.length) {
-        updatedClients[editLocal.number - 1] = '';
+      // Liberar el local
+      updatedClients[editLocal.number - 1] = '';
+      const updatedAssignedClients = { ...assignedClients };
+      delete updatedAssignedClients[editLocal.number];
+      setAssignedClients(updatedAssignedClients);
+      
+      // Actualizar local seleccionado si es el mismo
+      if (selectedLocal && selectedLocal.number === editLocal.number) {
+        setSelectedLocal({
+          ...selectedLocal,
+          isOccupied: false,
+          clientName: null,
+          clientData: null
+        });
       }
     } else {
       // Asignar nuevo cliente
-      if (editLocal.number > updatedClients.length) {
-        // Extender el array si es necesario
-        while (updatedClients.length < editLocal.number) {
-          updatedClients.push('');
+      updatedClients[editLocal.number - 1] = newClientName;
+      
+      // Buscar si el cliente existe en la base de datos
+      const clientFromDb = availableClients.find(
+        client => client.name.toLowerCase() === newClientName.toLowerCase()
+      );
+      
+      if (clientFromDb) {
+        const updatedAssignedClients = {
+          ...assignedClients,
+          [editLocal.number]: clientFromDb
+        };
+        setAssignedClients(updatedAssignedClients);
+        
+        // Actualizar local seleccionado si es el mismo
+        if (selectedLocal && selectedLocal.number === editLocal.number) {
+          setSelectedLocal({
+            ...selectedLocal,
+            isOccupied: true,
+            clientName: newClientName,
+            clientData: clientFromDb
+          });
         }
       }
-      updatedClients[editLocal.number - 1] = newClientName;
     }
 
     setClients(updatedClients);
     setIsEditing(false);
     setEditLocal(null);
     setNewClientName('');
+    setShowClientTable(false);
+    setSelectedClientFromTable(null);
   };
 
   // Cancelar edición
@@ -113,15 +347,45 @@ const MallMap = () => {
     setIsEditing(false);
     setEditLocal(null);
     setNewClientName('');
+    setShowClientTable(false);
+    setSelectedClientFromTable(null);
   };
 
   // Liberar un local (quitar cliente)
   const handleReleaseLocal = (localNumber, e) => {
-    e.stopPropagation();
+    if (e) e.stopPropagation();
+    
     const updatedClients = [...clients];
-    if (localNumber <= updatedClients.length) {
-      updatedClients[localNumber - 1] = '';
-      setClients(updatedClients);
+    // Asegurar que el array tenga 120 elementos
+    while (updatedClients.length < 120) {
+      updatedClients.push('');
+    }
+    updatedClients[localNumber - 1] = '';
+    
+    const updatedAssignedClients = { ...assignedClients };
+    delete updatedAssignedClients[localNumber];
+    
+    setClients(updatedClients);
+    setAssignedClients(updatedAssignedClients);
+    
+    // Actualizar local seleccionado si es el mismo
+    if (selectedLocal && selectedLocal.number === localNumber) {
+      setSelectedLocal({
+        ...selectedLocal,
+        isOccupied: false,
+        clientName: null,
+        clientData: null
+      });
+    }
+  };
+
+  // Toggle modo edición
+  const handleToggleEditMode = () => {
+    if (isEditing) {
+      // Si estamos desactivando el modo edición, limpiar estados relacionados
+      handleCancelEdit();
+    } else {
+      setIsEditing(true);
     }
   };
 
@@ -129,222 +393,230 @@ const MallMap = () => {
   const handleResetData = () => {
     if (window.confirm('¿Estás seguro de que quieres restablecer todos los datos? Se perderán los cambios.')) {
       setClients(initialClients);
+      setAssignedClients({});
+      setZoneFilter('all');
+      setSelectedLocal(null);
     }
   };
 
-  // Renderizar el mapa con diseño de pasillos verdes
+  // Estadísticas por zona
+  const zoneStats = useMemo(() => {
+    const sabanaLocals = locals.filter(local => local.type === 'sabana');
+    const plazaLocals = locals.filter(local => local.type === 'plaza');
+    const ferrocarrilLocals = locals.filter(local => local.type === 'ferrocarril');
+
+    return {
+      sabana: {
+        total: sabanaLocals.length,
+        occupied: sabanaLocals.filter(local => local.isOccupied).length,
+        available: sabanaLocals.filter(local => !local.isOccupied).length
+      },
+      plaza: {
+        total: plazaLocals.length,
+        occupied: plazaLocals.filter(local => local.isOccupied).length,
+        available: plazaLocals.filter(local => !local.isOccupied).length
+      },
+      ferrocarril: {
+        total: ferrocarrilLocals.length,
+        occupied: ferrocarrilLocals.filter(local => local.isOccupied).length,
+        available: ferrocarrilLocals.filter(local => !local.isOccupied).length
+      }
+    };
+  }, [locals]);
+
+  // Estadísticas generales
+  const stats = useMemo(() => {
+    const occupied = locals.filter(local => local.isOccupied).length;
+    const available = 120 - occupied;
+    return { occupied, available };
+  }, [locals]);
+
+  // Renderizar el mapa con diseño de 120 locales organizados por zonas
   const renderMapGrid = () => {
     return (
-      <div className="mall-layout">
-        {/* Fila 1 */}
-        <div className="mall-row">
-          <div className="local-square" onClick={() => handleSelectLocal(locals[0])}>
-            <div className="local-num">L-1</div>
-            <div className="local-client">{clients[0] || 'Disponible'}</div>
+      <div className="mall-layout-large">
+        {/* Botones de filtro por zona mejorados */}
+        <div className="zones-controls">
+          <div className="filter-section">
+            <span className="filter-label">Filtrar por zona:</span>
+            <div className="zones-container">
+              <button 
+                className={`zone-btn ${zoneFilter === 'ferrocarril' ? 'active' : ''}`}
+                onClick={() => handleZoneChange('ferrocarril')}
+              >
+                Zona Ferrocarril
+              </button>
+              <button 
+                className={`zone-btn ${zoneFilter === 'sabana' ? 'active' : ''}`}
+                onClick={() => handleZoneChange('sabana')}
+              >
+                Zona Sabana
+              </button>
+              <button 
+                className={`zone-btn ${zoneFilter === 'plaza' ? 'active' : ''}`}
+                onClick={() => handleZoneChange('plaza')}
+              >
+                Zona Plaza
+              </button>
+            </div>
           </div>
-          <div className="local-square" onClick={() => handleSelectLocal(locals[1])}>
-            <div className="local-num">L-2</div>
-            <div className="local-client">{clients[1] || 'Disponible'}</div>
+          <button 
+            className={`show-all-btn ${zoneFilter === 'all' ? 'active' : ''}`}
+            onClick={handleShowAll}
+          >
+            Mostrar todos
+          </button>
+        </div>
+
+        {/* Indicador de filtro activo */}
+        {zoneFilter !== 'all' && (
+          <div className="active-filter-indicator">
+            <span>Mostrando: <strong>{getLocalTypeName(zoneFilter)}</strong> ({filteredLocals.length} locales)</span>
+            <button 
+              onClick={handleShowAll}
+              className="clear-filter-btn"
+            >
+              ✕ Mostrar todas las zonas
+            </button>
           </div>
-          <div className="green-hall"></div>
-          <div className="local-square" onClick={() => handleSelectLocal(locals[2])}>
-            <div className="local-num">L-3</div>
-            <div className="local-client">{clients[2] || 'Disponible'}</div>
+        )}
+
+        {/* CONTENIDO DE LOCALES */}
+        <div className="locals-grid-container">
+          {filteredLocals.length > 0 ? (
+            <div className="locals-grid">
+              {filteredLocals.map(local => (
+                <div
+                  key={local.id}
+                  className={`local-square ${local.isOccupied ? 'occupied' : 'available'} ${local.type} ${
+                    selectedLocal?.id === local.id ? 'selected' : ''
+                  }`}
+                  onClick={() => handleSelectLocal(local)}
+                  title={`Local ${local.number} - ${local.typeName}${local.isOccupied ? ` - ${local.clientName}` : ' - Disponible'}`}
+                >
+                  <div className="local-num">L-{local.number}</div>
+                  <div className="local-client">
+                    {local.isOccupied ? (
+                      <span className="client-name-short">
+                        {local.clientName.length > 8 ? local.clientName.substring(0, 8) + '...' : local.clientName}
+                      </span>
+                    ) : (
+                      'Disp.'
+                    )}
+                  </div>
+                  {local.clientData && (
+                    <div className="client-classification">
+                      {getClassificationName(local.clientData.classification)}
+                    </div>
+                  )}
+                  {isEditing && (
+                    <div className="local-overlay-actions">
+                      <button 
+                        className="edit-overlay-btn"
+                        onClick={(e) => handleEditLocal(local, e)}
+                        title="Editar local"
+                      >
+                        ✏️
+                      </button>
+                      {local.isOccupied && (
+                        <button 
+                          className="release-overlay-btn"
+                          onClick={(e) => handleReleaseLocal(local.number, e)}
+                          title="Liberar local"
+                        >
+                          🗑️
+                        </button>
+                      )}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="empty-state">
+              <h3>No hay locales disponibles</h3>
+              <p>No se encontraron locales en esta zona con los filtros actuales.</p>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  };
+
+  // Renderizar lista de locales mejorada
+  const renderLocalsList = () => {
+    return (
+      <div className="locals-list-improved">
+        <h2>
+          Locales {zoneFilter !== 'all' ? `de ${getLocalTypeName(zoneFilter)}` : 'de Todas las Zonas'} 
+          {isEditing && <span className="editing-badge">(Edición)</span>}
+        </h2>
+        
+        <div className="locals-stats-improved">
+          <div className="stat-card">
+            <span className="stat-number">{filteredLocals.filter(l => l.isOccupied).length}</span>
+            <span className="stat-label">Ocupados</span>
           </div>
-          <div className="local-square" onClick={() => handleSelectLocal(locals[3])}>
-            <div className="local-num">L-4</div>
-            <div className="local-client">{clients[3] || 'Disponible'}</div>
+          <div className="stat-card">
+            <span className="stat-number">{filteredLocals.filter(l => !l.isOccupied).length}</span>
+            <span className="stat-label">Disponibles</span>
           </div>
-          <div className="green-hall"></div>
-          <div className="local-square" onClick={() => handleSelectLocal(locals[4])}>
-            <div className="local-num">L-5</div>
-            <div className="local-client">{clients[4] || 'Disponible'}</div>
-          </div>
-          <div className="local-square" onClick={() => handleSelectLocal(locals[5])}>
-            <div className="local-num">L-6</div>
-            <div className="local-client">{clients[5] || 'Disponible'}</div>
+          <div className="stat-card">
+            <span className="stat-number">{unassignedClients.length}</span>
+            <span className="stat-label">Clientes Libres</span>
           </div>
         </div>
 
-        {/* Pasillo horizontal verde */}
-        <div className="green-hall horizontal"></div>
-
-        {/* Fila 2 */}
-        <div className="mall-row">
-          <div className="local-square" onClick={() => handleSelectLocal(locals[6])}>
-            <div className="local-num">L-7</div>
-            <div className="local-client">{clients[6] || 'Disponible'}</div>
-          </div>
-          <div className="local-square" onClick={() => handleSelectLocal(locals[7])}>
-            <div className="local-num">L-8</div>
-            <div className="local-client">{clients[7] || 'Disponible'}</div>
-          </div>
-          <div className="green-hall"></div>
-          <div className="local-square" onClick={() => handleSelectLocal(locals[8])}>
-            <div className="local-num">L-9</div>
-            <div className="local-client">{clients[8] || 'Disponible'}</div>
-          </div>
-          <div className="local-square" onClick={() => handleSelectLocal(locals[9])}>
-            <div className="local-num">L-10</div>
-            <div className="local-client">{clients[9] || 'Disponible'}</div>
-          </div>
-          <div className="green-hall"></div>
-          <div className="local-square" onClick={() => handleSelectLocal(locals[10])}>
-            <div className="local-num">L-11</div>
-            <div className="local-client">{clients[10] || 'Disponible'}</div>
-          </div>
-          <div className="local-square" onClick={() => handleSelectLocal(locals[11])}>
-            <div className="local-num">L-12</div>
-            <div className="local-client">{clients[11] || 'Disponible'}</div>
-          </div>
-        </div>
-
-        {/* Pasillo horizontal verde */}
-        <div className="green-hall horizontal"></div>
-
-        {/* Fila 3 */}
-        <div className="mall-row">
-          <div className="local-square" onClick={() => handleSelectLocal(locals[12])}>
-            <div className="local-num">L-13</div>
-            <div className="local-client">{clients[12] || 'Disponible'}</div>
-          </div>
-          <div className="local-square" onClick={() => handleSelectLocal(locals[13])}>
-            <div className="local-num">L-14</div>
-            <div className="local-client">{clients[13] || 'Disponible'}</div>
-          </div>
-          <div className="green-hall"></div>
-          <div className="cafeteria-center">
-            <div className="cafeteria-text">CAFETERÍA</div>
-          </div>
-          <div className="green-hall"></div>
-          <div className="local-square" onClick={() => handleSelectLocal(locals[14])}>
-            <div className="local-num">L-15</div>
-            <div className="local-client">{clients[14] || 'Disponible'}</div>
-          </div>
-          <div className="local-square" onClick={() => handleSelectLocal(locals[15])}>
-            <div className="local-num">L-16</div>
-            <div className="local-client">{clients[15] || 'Disponible'}</div>
-          </div>
-        </div>
-
-        {/* Pasillo horizontal verde */}
-        <div className="green-hall horizontal"></div>
-
-        {/* Fila 4 */}
-        <div className="mall-row">
-          <div className="local-square" onClick={() => handleSelectLocal(locals[16])}>
-            <div className="local-num">L-17</div>
-            <div className="local-client">{clients[16] || 'Disponible'}</div>
-          </div>
-          <div className="local-square" onClick={() => handleSelectLocal(locals[17])}>
-            <div className="local-num">L-18</div>
-            <div className="local-client">{clients[17] || 'Disponible'}</div>
-          </div>
-          <div className="green-hall"></div>
-          <div className="local-square" onClick={() => handleSelectLocal(locals[18])}>
-            <div className="local-num">L-19</div>
-            <div className="local-client">{clients[18] || 'Disponible'}</div>
-          </div>
-          <div className="local-square" onClick={() => handleSelectLocal(locals[19])}>
-            <div className="local-num">L-20</div>
-            <div className="local-client">{clients[19] || 'Disponible'}</div>
-          </div>
-          <div className="green-hall"></div>
-          <div className="local-square" onClick={() => handleSelectLocal(locals[20])}>
-            <div className="local-num">L-21</div>
-            <div className="local-client">{clients[20] || 'Disponible'}</div>
-          </div>
-          <div className="local-square" onClick={() => handleSelectLocal(locals[21])}>
-            <div className="local-num">L-22</div>
-            <div className="local-client">{clients[21] || 'Disponible'}</div>
-          </div>
-        </div>
-
-        {/* Pasillo horizontal verde */}
-        <div className="green-hall horizontal"></div>
-
-        {/* Fila 5 */}
-        <div className="mall-row">
-          <div className="local-square" onClick={() => handleSelectLocal(locals[22])}>
-            <div className="local-num">L-23</div>
-            <div className="local-client">{clients[22] || 'Disponible'}</div>
-          </div>
-          <div className="local-square" onClick={() => handleSelectLocal(locals[23])}>
-            <div className="local-num">L-24</div>
-            <div className="local-client">{clients[23] || 'Disponible'}</div>
-          </div>
-          <div className="green-hall"></div>
-          <div className="local-square" onClick={() => handleSelectLocal(locals[24])}>
-            <div className="local-num">L-25</div>
-            <div className="local-client">{clients[24] || 'Disponible'}</div>
-          </div>
-          <div className="local-square" onClick={() => handleSelectLocal(locals[25])}>
-            <div className="local-num">L-26</div>
-            <div className="local-client">{clients[25] || 'Disponible'}</div>
-          </div>
-          <div className="green-hall"></div>
-          <div className="local-square" onClick={() => handleSelectLocal(locals[26])}>
-            <div className="local-num">L-27</div>
-            <div className="local-client">{clients[26] || 'Disponible'}</div>
-          </div>
-          <div className="local-square" onClick={() => handleSelectLocal(locals[27])}>
-            <div className="local-num">L-28</div>
-            <div className="local-client">{clients[27] || 'Disponible'}</div>
-          </div>
-        </div>
-
-        {/* Pasillo horizontal verde */}
-        <div className="green-hall horizontal"></div>
-
-        {/* Fila 6 */}
-        <div className="mall-row">
-          <div className="local-square" onClick={() => handleSelectLocal(locals[28])}>
-            <div className="local-num">L-29</div>
-            <div className="local-client">{clients[28] || 'Disponible'}</div>
-          </div>
-          <div className="local-square" onClick={() => handleSelectLocal(locals[29])}>
-            <div className="local-num">L-30</div>
-            <div className="local-client">{clients[29] || 'Disponible'}</div>
-          </div>
-          <div className="green-hall"></div>
-          <div className="local-square" onClick={() => handleSelectLocal(locals[30])}>
-            <div className="local-num">L-31</div>
-            <div className="local-client">{clients[30] || 'Disponible'}</div>
-          </div>
-          <div className="local-square" onClick={() => handleSelectLocal(locals[31])}>
-            <div className="local-num">L-32</div>
-            <div className="local-client">{clients[31] || 'Disponible'}</div>
-          </div>
-          <div className="green-hall"></div>
-          <div className="local-square" onClick={() => handleSelectLocal(locals[32])}>
-            <div className="local-num">L-33</div>
-            <div className="local-client">{clients[32] || 'Disponible'}</div>
-          </div>
-          <div className="local-square" onClick={() => handleSelectLocal(locals[33])}>
-            <div className="local-num">L-34</div>
-            <div className="local-client">{clients[33] || 'Disponible'}</div>
-          </div>
-        </div>
-
-        {/* Pasillo horizontal verde */}
-        <div className="green-hall horizontal"></div>
-
-        {/* Fila 7 */}
-        <div className="mall-row">
-          <div className="local-square" onClick={() => handleSelectLocal(locals[34])}>
-            <div className="local-num">L-35</div>
-            <div className="local-client">{clients[34] || 'Disponible'}</div>
-          </div>
-          <div className="local-square" onClick={() => handleSelectLocal(locals[35])}>
-            <div className="local-num">L-36</div>
-            <div className="local-client">{clients[35] || 'Disponible'}</div>
-          </div>
-          <div className="green-hall"></div>
-          <div className="empty-space"></div>
-          <div className="empty-space"></div>
-          <div className="green-hall"></div>
-          <div className="empty-space"></div>
-          <div className="empty-space"></div>
+        <div className="locals-container-improved">
+          {filteredLocals.length > 0 ? (
+            filteredLocals.map(local => (
+              <div
+                key={local.id}
+                className={`local-item-improved ${selectedLocal?.id === local.id ? 'selected' : ''} ${local.type}`}
+                onClick={() => handleSelectLocal(local)}
+              >
+                <div className="local-header-improved">
+                  <span className="local-number-improved">Local {local.number}</span>
+                  <span className="local-zone-improved">{local.typeName}</span>
+                  {local.clientData && (
+                    <span className="client-classification-badge-improved">
+                      {getClassificationName(local.clientData.classification)}
+                    </span>
+                  )}
+                </div>
+                <div className="local-body-improved">
+                  <span className="client-name-improved">
+                    {local.isOccupied ? local.clientName : 'Disponible'}
+                  </span>
+                </div>
+                {isEditing && (
+                  <div className="local-actions-improved">
+                    <button 
+                      className="edit-btn-improved"
+                      onClick={(e) => handleEditLocal(local, e)}
+                      title="Editar local"
+                    >
+                      ✏️
+                    </button>
+                    {local.isOccupied && (
+                      <button 
+                        className="release-btn-improved"
+                        onClick={(e) => handleReleaseLocal(local.number, e)}
+                        title="Liberar local"
+                      >
+                        🗑️
+                      </button>
+                    )}
+                  </div>
+                )}
+              </div>
+            ))
+          ) : (
+            <div className="empty-state-list">
+              <h3>No se encontraron locales</h3>
+              <p>Intenta con otros filtros o muestra todas las zonas.</p>
+            </div>
+          )}
         </div>
       </div>
     );
@@ -355,9 +627,59 @@ const MallMap = () => {
       <header className="mall-header">
         <h1>Mapa de Locales - Centro Comercial</h1>
         <p className="mall-description">
-          Visualiza y gestiona los locales comerciales. 
-          {isEditing && <span className="editing-notice"> Modo edición activado</span>}
+          Total: 120 locales | Ocupados: {stats.occupied} | Disponibles: {stats.available} | 
+          Clientes registrados: {availableClients.length} | Sin asignar: {unassignedClients.length}
+          {isEditing && <span className="editing-notice"> 🟢 Modo edición activado</span>}
         </p>
+        
+        {/* Estadísticas por zona mejoradas */}
+        <div className="zones-stats-improved">
+          <div 
+            className={`zone-stat-improved sabana ${zoneFilter === 'sabana' ? 'active' : ''}`}
+            onClick={() => handleZoneChange('sabana')}
+          >
+            <span className="zone-name-improved">Sabana</span>
+            <span className="zone-numbers-improved">
+              {zoneStats.sabana.occupied}/{zoneStats.sabana.total}
+            </span>
+            <div className="zone-progress">
+              <div 
+                className="zone-progress-fill" 
+                style={{width: `${(zoneStats.sabana.occupied / zoneStats.sabana.total) * 100}%`}}
+              ></div>
+            </div>
+          </div>
+          <div 
+            className={`zone-stat-improved plaza ${zoneFilter === 'plaza' ? 'active' : ''}`}
+            onClick={() => handleZoneChange('plaza')}
+          >
+            <span className="zone-name-improved">Plaza</span>
+            <span className="zone-numbers-improved">
+              {zoneStats.plaza.occupied}/{zoneStats.plaza.total}
+            </span>
+            <div className="zone-progress">
+              <div 
+                className="zone-progress-fill" 
+                style={{width: `${(zoneStats.plaza.occupied / zoneStats.plaza.total) * 100}%`}}
+              ></div>
+            </div>
+          </div>
+          <div 
+            className={`zone-stat-improved ferrocarril ${zoneFilter === 'ferrocarril' ? 'active' : ''}`}
+            onClick={() => handleZoneChange('ferrocarril')}
+          >
+            <span className="zone-name-improved">Ferrocarril</span>
+            <span className="zone-numbers-improved">
+              {zoneStats.ferrocarril.occupied}/{zoneStats.ferrocarril.total}
+            </span>
+            <div className="zone-progress">
+              <div 
+                className="zone-progress-fill" 
+                style={{width: `${(zoneStats.ferrocarril.occupied / zoneStats.ferrocarril.total) * 100}%`}}
+              ></div>
+            </div>
+          </div>
+        </div>
       </header>
       
       <div className="mall-controls">
@@ -392,11 +714,20 @@ const MallMap = () => {
           >
             Ocupados
           </button>
+          
+          {/* BOTÓN CORREGIDO: Modo Edición */}
           <button 
-            className={isEditing ? 'active' : ''}
-            onClick={() => setIsEditing(!isEditing)}
+            className={`edit-mode-btn ${isEditing ? 'editing-active' : ''}`}
+            onClick={handleToggleEditMode}
           >
-            {isEditing ? 'Cancelar Edición' : 'Modo Edición'}
+            {isEditing ? '🟢 Cancelar Edición' : '⚪ Modo Edición'}
+          </button>
+          
+          <button 
+            onClick={() => setShowClientTable(!showClientTable)}
+            className="clients-btn"
+          >
+            👥 Clientes ({unassignedClients.length})
           </button>
           <button 
             onClick={handleResetData}
@@ -408,110 +739,103 @@ const MallMap = () => {
         </div>
       </div>
       
-      <div className="mall-main-content">
-        <div className="locals-list">
-          <h2>Lista de Locales {isEditing && <span>(Edición)</span>}</h2>
-          <div className="locals-container">
-            {filteredLocals.map(local => (
-              <div
-                key={local.id}
-                className={`local-item ${selectedLocal?.id === local.id ? 'selected' : ''}`}
-                onClick={() => handleSelectLocal(local)}
-              >
-                <div className="local-info">
-                  <span className="local-number">Local {local.number}</span>
-                  <span className="client-name">
-                    {local.isOccupied ? local.clientName : 'Disponible'}
-                  </span>
-                </div>
-                {isEditing && (
-                  <div className="local-actions">
-                    <button 
-                      className="edit-btn"
-                      onClick={(e) => handleEditLocal(local, e)}
-                      title="Editar local"
-                    >
-                      ✏️
-                    </button>
-                    {local.isOccupied && (
-                      <button 
-                        className="release-btn"
-                        onClick={(e) => handleReleaseLocal(local.number, e)}
-                        title="Liberar local"
-                      >
-                        🗑️
-                      </button>
-                    )}
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
+      <div className="mall-main-content-improved">
+        {/* LISTA DE LOCALES MEJORADA */}
+        {renderLocalsList()}
         
-        <div className="map-container">
+        {/* MAPA DE LOCALES */}
+        <div className="map-container-improved">
           {renderMapGrid()}
           
-          <div className="map-legend">
-            <div className="legend-item">
-              <div className="legend-color available"></div>
-              <span>Disponible</span>
-            </div>
-            <div className="legend-item">
-              <div className="legend-color occupied"></div>
-              <span>Ocupado</span>
-            </div>
-            <div className="legend-item">
-              <div className="legend-color selected"></div>
-              <span>Seleccionado</span>
-            </div>
-            <div className="legend-item">
-              <div className="green-hall-color"></div>
-              <span>Pasillo</span>
-            </div>
-            <div className="legend-item">
-              <div className="cafeteria-color"></div>
-              <span>Cafetería</span>
+          <div className="map-legend-improved">
+            <h4>Leyenda</h4>
+            <div className="legend-grid">
+              <div className="legend-item-improved">
+                <div className="legend-color available"></div>
+                <span>Disponible</span>
+              </div>
+              <div className="legend-item-improved">
+                <div className="legend-color occupied"></div>
+                <span>Ocupado</span>
+              </div>
+              <div className="legend-item-improved">
+                <div className="legend-color selected"></div>
+                <span>Seleccionado</span>
+              </div>
+              <div className="legend-item-improved">
+                <div className="legend-color sabana"></div>
+                <span>Sabana</span>
+              </div>
+              <div className="legend-item-improved">
+                <div className="legend-color plaza"></div>
+                <span>Plaza</span>
+              </div>
+              <div className="legend-item-improved">
+                <div className="legend-color ferrocarril"></div>
+                <span>Ferrocarril</span>
+              </div>
             </div>
           </div>
           
-          <div className="local-details">
-            <h3>Información del Local</h3>
+          <div className="local-details-improved">
+            <h3>Información del Local {selectedLocal && `- L-${selectedLocal.number}`}</h3>
             {selectedLocal ? (
               <>
-                <div className="detail-item">
-                  <span className="detail-label">Número:</span>
+                <div className="detail-item-improved">
+                  <span className="detail-label-improved">Número:</span>
                   <span>L-{selectedLocal.number}</span>
                 </div>
-                <div className="detail-item">
-                  <span className="detail-label">Estado:</span>
+                <div className="detail-item-improved">
+                  <span className="detail-label-improved">Zona:</span>
+                  <span className={`zone-badge-improved ${selectedLocal.type}`}>
+                    {selectedLocal.typeName}
+                  </span>
+                </div>
+                <div className="detail-item-improved">
+                  <span className="detail-label-improved">Estado:</span>
                   <span>{selectedLocal.isOccupied ? 'Ocupado' : 'Disponible'}</span>
                 </div>
-                <div className="detail-item">
-                  <span className="detail-label">Cliente:</span>
+                <div className="detail-item-improved">
+                  <span className="detail-label-improved">Cliente:</span>
                   <span>{selectedLocal.isOccupied ? selectedLocal.clientName : 'Por asignar'}</span>
                 </div>
-                <div className="detail-item">
-                  <span className="detail-label">Área:</span>
+                {selectedLocal.clientData && (
+                  <>
+                    <div className="detail-item-improved">
+                      <span className="detail-label-improved">Dirección:</span>
+                      <span>{selectedLocal.clientData.address}</span>
+                    </div>
+                    <div className="detail-item-improved">
+                      <span className="detail-label-improved">Clasificación:</span>
+                      <span className={`classification-badge-improved ${selectedLocal.clientData.classification}`}>
+                        {getClassificationName(selectedLocal.clientData.classification)}
+                      </span>
+                    </div>
+                    <div className="detail-item-improved">
+                      <span className="detail-label-improved">Teléfono:</span>
+                      <span>{selectedLocal.clientData.phone || 'No registrado'}</span>
+                    </div>
+                    <div className="detail-item-improved">
+                      <span className="detail-label-improved">Email:</span>
+                      <span>{selectedLocal.clientData.email || 'No registrado'}</span>
+                    </div>
+                  </>
+                )}
+                <div className="detail-item-improved">
+                  <span className="detail-label-improved">Área:</span>
                   <span>{selectedLocal.area} m²</span>
                 </div>
-                {selectedLocal.isOccupied && (
-                  <div className="detail-item">
-                    <span className="detail-label">Teléfono:</span>
-                    <span>{selectedLocal.phone}</span>
-                  </div>
-                )}
                 {isEditing && (
-                  <div className="edit-actions">
+                  <div className="edit-actions-improved">
                     <button 
-                      className="edit-btn"
+                      className="edit-btn-improved"
                       onClick={(e) => handleEditLocal(selectedLocal, e)}
                     >
-                      ✏️ Editar este local
+                      ✏️ {selectedLocal.isOccupied ? 'Cambiar Cliente' : 'Asignar Cliente'}
                     </button>
                     {selectedLocal.isOccupied && (
                       <button 
-                        className="release-btn"
+                        className="release-btn-improved"
                         onClick={(e) => handleReleaseLocal(selectedLocal.number, e)}
                       >
                         🗑️ Liberar local
@@ -521,42 +845,182 @@ const MallMap = () => {
                 )}
               </>
             ) : (
-              <p>Selecciona un local para ver sus detalles</p>
+              <div className="no-selection-improved">
+                <p>Selecciona un local para ver sus detalles</p>
+                {isEditing && (
+                  <p className="editing-hint">🟢 Modo edición activado - Haz clic en cualquier local para editarlo</p>
+                )}
+              </div>
             )}
           </div>
+        </div>
+      </div>
 
-          {/* Modal de edición */}
-          {isEditing && editLocal && (
-            <div className="modal-overlay">
-              <div className="modal-content">
-                <h3>Editar Local {editLocal.number}</h3>
-                <div className="form-group">
-                  <label htmlFor="clientName">Nombre del Cliente:</label>
+      {/* Modal de edición con tabla de clientes - CORREGIDO */}
+      {isEditing && editLocal && (
+        <div className="modal-overlay active">
+          <div className="modal-content large-modal">
+            <div className="modal-header">
+              <h3>Asignar Cliente al Local {editLocal.number} - {editLocal.typeName}</h3>
+              <button onClick={handleCancelEdit} className="close-modal-btn">×</button>
+            </div>
+            
+            <div className="client-selection-section">
+              <div className="form-group">
+                <label htmlFor="clientName">Nombre del Cliente:</label>
+                <input
+                  type="text"
+                  id="clientName"
+                  value={newClientName}
+                  onChange={(e) => setNewClientName(e.target.value)}
+                  placeholder="Escribe el nombre o selecciona de la tabla"
+                  autoFocus
+                />
+              </div>
+
+              <div className="clients-table-section">
+                <h4>Clientes Disponibles ({filteredAvailableClients.length})</h4>
+                <div className="client-search">
                   <input
                     type="text"
-                    id="clientName"
-                    value={newClientName}
-                    onChange={(e) => setNewClientName(e.target.value)}
-                    placeholder="Dejar vacío para liberar el local"
-                    autoFocus
+                    placeholder="Buscar cliente por nombre, dirección o clasificación..."
+                    value={clientSearchTerm}
+                    onChange={(e) => setClientSearchTerm(e.target.value)}
                   />
                 </div>
-                <div className="modal-actions">
-                  <button onClick={handleSaveEdit} className="save-btn">
-                    💾 Guardar
-                  </button>
-                  <button onClick={handleCancelEdit} className="cancel-btn">
-                    ❌ Cancelar
-                  </button>
+                <div className="clients-table-container">
+                  {filteredAvailableClients.length > 0 ? (
+                    <table className="clients-table">
+                      <thead>
+                        <tr>
+                          <th>Nombre</th>
+                          <th>Dirección</th>
+                          <th>Clasificación</th>
+                          <th>Teléfono</th>
+                          <th>Acción</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {filteredAvailableClients.map(client => (
+                          <tr 
+                            key={client.id}
+                            className={selectedClientFromTable?.id === client.id ? 'selected' : ''}
+                          >
+                            <td><strong>{client.name}</strong></td>
+                            <td>{client.address}</td>
+                            <td>
+                              <span className={`classification-tag ${client.classification}`}>
+                                {getClassificationName(client.classification)}
+                              </span>
+                            </td>
+                            <td>{client.phone || 'No registrado'}</td>
+                            <td>
+                              <button
+                                onClick={() => handleSelectClientFromTable(client)}
+                                className={`select-client-btn ${selectedClientFromTable?.id === client.id ? 'selected' : ''}`}
+                              >
+                                {selectedClientFromTable?.id === client.id ? '✓ Seleccionado' : 'Seleccionar'}
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  ) : (
+                    <div className="no-clients-message">
+                      <p>No se encontraron clientes disponibles con los criterios de búsqueda.</p>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
-          )}
+
+            <div className="modal-actions">
+              {selectedClientFromTable ? (
+                <button onClick={handleAssignClient} className="save-btn primary">
+                  💾 Asignar {selectedClientFromTable.name}
+                </button>
+              ) : newClientName.trim() ? (
+                <button onClick={handleSaveEdit} className="save-btn">
+                  💾 Guardar Manualmente
+                </button>
+              ) : (
+                <button onClick={handleSaveEdit} className="save-btn secondary">
+                  🗑️ Liberar Local
+                </button>
+              )}
+              <button onClick={handleCancelEdit} className="cancel-btn">
+                ❌ Cancelar
+              </button>
+            </div>
+          </div>
         </div>
-      </div>
+      )}
+
+      {/* Panel de tabla de clientes independiente */}
+      {showClientTable && !isEditing && (
+        <div className="clients-panel">
+          <div className="clients-panel-header">
+            <h3>Base de Datos de Clientes ({availableClients.length} registros)</h3>
+            <button 
+              onClick={() => setShowClientTable(false)}
+              className="close-panel-btn"
+            >
+              ×
+            </button>
+          </div>
+          <div className="client-search">
+            <input
+              type="text"
+              placeholder="Buscar cliente por nombre, dirección o clasificación..."
+              value={clientSearchTerm}
+              onChange={(e) => setClientSearchTerm(e.target.value)}
+            />
+          </div>
+          <div className="clients-table-container">
+            <table className="clients-table">
+              <thead>
+                <tr>
+                  <th>Nombre</th>
+                  <th>Dirección</th>
+                  <th>Clasificación</th>
+                  <th>Teléfono</th>
+                  <th>Email</th>
+                  <th>Estado</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredAvailableClients.map(client => {
+                  const isAssigned = Object.values(assignedClients).some(
+                    assigned => assigned && assigned.id === client.id
+                  );
+                  return (
+                    <tr key={client.id} className={isAssigned ? 'assigned' : 'available'}>
+                      <td><strong>{client.name}</strong></td>
+                      <td>{client.address}</td>
+                      <td>
+                        <span className={`classification-tag ${client.classification}`}>
+                          {getClassificationName(client.classification)}
+                        </span>
+                      </td>
+                      <td>{client.phone || 'No registrado'}</td>
+                      <td>{client.email || 'No registrado'}</td>
+                      <td>
+                        <span className={`status-badge ${isAssigned ? 'assigned' : 'available'}`}>
+                          {isAssigned ? 'Asignado' : 'Disponible'}
+                        </span>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
       
       <footer className="mall-footer">
-        <p>Centro Comercial - Mapa de Locales © 2025</p>
+        <p>Centro Comercial - Sistema de Gestión de Locales © 2025</p>
       </footer>
     </div>
   );

@@ -219,6 +219,43 @@ const GestionPedidos = () => {
     return (preparados / total) * 100;
   };
 
+  const calcularProgresoGlobal = (pedido) => {
+    const progresoPreparacion = calcularProgreso(pedido.id);
+    const prep = preparaciones[pedido.id];
+    
+    if (pedido.estado === 'cancelado') return 0;
+    if (pedido.estado === 'entregado') return 100;
+    
+    let progreso = 0;
+    
+    // Base según estado del pedido
+    switch (pedido.estado) {
+      case 'pendiente': progreso = 25; break;
+      case 'en_preparacion': progreso = 50; break;
+      case 'listo_para_entrega': progreso = 75; break;
+      default: progreso = 0;
+    }
+    
+    // Ajustar según preparación real
+    if (pedido.estado === 'en_preparacion') {
+      progreso = 50 + (progresoPreparacion * 0.3); // 50-80% según preparación
+      if (prep?.empaquetado) progreso = 85;
+      if (prep?.verificado) progreso = 95;
+    }
+    
+    return Math.min(100, Math.max(0, progreso));
+  };
+
+  const getColorProgreso = (pedido) => {
+    const progreso = calcularProgresoGlobal(pedido);
+    
+    if (pedido.estado === 'cancelado') return '#6c757d';
+    if (progreso >= 100) return '#28a745';
+    if (progreso >= 75) return '#17a2b8';
+    if (progreso >= 50) return '#ffc107';
+    return '#dc3545';
+  };
+
   const todosProductosProcesados = (pedidoId) => {
     const prep = preparaciones[pedidoId];
     if (!prep?.productos) return false;
@@ -248,10 +285,8 @@ const GestionPedidos = () => {
   const getTextoEstado = (estado) => {
     const estados = {
       pendiente: '⏳ Pendiente',
-      confirmado: '✅ Confirmado',
       en_preparacion: '👨‍🍳 En preparación',
       listo_para_entrega: '📦 Listo para entrega',
-      enviado: '🚚 Enviado',
       entregado: '🎉 Entregado',
       cancelado: '❌ Cancelado'
     };
@@ -397,10 +432,8 @@ const GestionPedidos = () => {
           >
             <option value="todos">📦 Todos los pedidos</option>
             <option value="pendiente">⏳ Pendientes</option>
-            <option value="confirmado">✅ Confirmados</option>
             <option value="en_preparacion">👨‍🍳 En preparación</option>
             <option value="listo_para_entrega">📦 Listos para entrega</option>
-            <option value="enviado">🚚 Enviados</option>
             <option value="entregado">🎉 Entregados</option>
             <option value="cancelado">❌ Cancelados</option>
           </select>
@@ -450,7 +483,9 @@ const GestionPedidos = () => {
           </div>
         ) : (
           pedidos.map(pedido => {
-            const progreso = calcularProgreso(pedido.id);
+            const progreso = calcularProgresoGlobal(pedido);
+            const colorProgreso = getColorProgreso(pedido);
+            const progresoPreparacion = calcularProgreso(pedido.id);
             const todosProcesados = todosProductosProcesados(pedido.id);
             const empaquetado = preparaciones[pedido.id]?.empaquetado || false;
             const verificado = preparaciones[pedido.id]?.verificado || false;
@@ -484,6 +519,51 @@ const GestionPedidos = () => {
                   </div>
                 </div>
 
+                {/* BARRA DE PROGRESO VISUAL MEJORADA */}
+                <div className="progreso-pedido">
+                  <div className="progreso-info">
+                    <span>Progreso del pedido: <strong>{Math.round(progreso)}%</strong></span>
+                    <span className="estado-actual">{getTextoEstado(pedido.estado)}</span>
+                  </div>
+                  <div className="barra-progreso-container">
+                    <div 
+                      className="barra-progreso-llenado" 
+                      style={{ 
+                        width: `${progreso}%`,
+                        backgroundColor: colorProgreso
+                      }}
+                    ></div>
+                  </div>
+                  <div className="etiquetas-progreso">
+                    <span className={`etiqueta ${pedido.estado === 'pendiente' ? 'activa' : ''}`}>
+                      Pendiente
+                    </span>
+                    <span className={`etiqueta ${pedido.estado === 'en_preparacion' ? 'activa' : ''}`}>
+                      En Prep.
+                    </span>
+                    <span className={`etiqueta ${pedido.estado === 'listo_para_entrega' ? 'activa' : ''}`}>
+                      Listo
+                    </span>
+                    <span className={`etiqueta ${pedido.estado === 'entregado' ? 'activa' : ''}`}>
+                      Entregado
+                    </span>
+                  </div>
+                  
+                  {pedido.estado === 'en_preparacion' && (
+                    <div className="progreso-detallado">
+                      <div className="progreso-preparacion">
+                        <span>Preparación: {Math.round(progresoPreparacion)}%</span>
+                        <div className="barra-progreso-preparacion">
+                          <div 
+                            className="barra-progreso-preparacion-llenado" 
+                            style={{ width: `${progresoPreparacion}%` }}
+                          ></div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
                 <div className="pedido-info-cliente">
                   <div className="info-cliente">
                     <p><strong>👤 Cliente:</strong> {pedido.cliente_nombre}</p>
@@ -506,124 +586,99 @@ const GestionPedidos = () => {
                   </div>
                 )}
 
+                {/* SECCIÓN DE PREPARACIÓN CON BOTONES BONITOS */}
                 {pedido.estado === 'en_preparacion' && (
-                  <div className="seguimiento-preparacion">
-                    <div className="etapas-preparacion">
-                      <div className={`etapa ${todosProcesados ? 'completada' : 'activa'}`}>
-                        <span className="numero-etapa">1</span>
-                        <div className="info-etapa">
-                          <span className="texto-etapa">Preparación de Productos</span>
-                          <span className="contador-etapa">
-                            {Object.values(preparaciones[pedido.id]?.productos || {}).filter(Boolean).length}/{productosCount}
-                          </span>
-                        </div>
-                        {todosProcesados && <span className="check-etapa">✓</span>}
-                      </div>
-                      
-                      <div className={`etapa ${empaquetado ? 'completada' : ''} ${todosProcesados && !empaquetado ? 'activa' : ''}`}>
-                        <span className="numero-etapa">2</span>
-                        <div className="info-etapa">
-                          <span className="texto-etapa">Empaquetado</span>
-                          <span className="contador-etapa">
-                            {empaquetado ? 'Completado' : 'Pendiente'}
-                          </span>
-                        </div>
-                        {empaquetado && <span className="check-etapa">✓</span>}
-                      </div>
-                      
-                      <div className={`etapa ${verificado ? 'completada' : ''} ${empaquetado && !verificado ? 'activa' : ''}`}>
-                        <span className="numero-etapa">3</span>
-                        <div className="info-etapa">
-                          <span className="texto-etapa">Verificación Final</span>
-                          <span className="contador-etapa">
-                            {verificado ? 'Verificado' : 'Pendiente'}
-                          </span>
-                        </div>
-                        {verificado && <span className="check-etapa">✓</span>}
+                  <div className="seccion-preparacion">
+                    <div className="header-preparacion">
+                      <h4>👨‍🍳 Preparación de Productos</h4>
+                      <div className="contador-preparacion">
+                        <span className="progreso-texto">
+                          {Object.values(preparaciones[pedido.id]?.productos || {}).filter(Boolean).length}/{productosCount}
+                        </span>
+                        <span className="porcentaje-preparacion">{Math.round(progresoPreparacion)}%</span>
                       </div>
                     </div>
+                    
+                    <div className="barra-progreso-preparacion-global">
+                      <div 
+                        className="barra-progreso-preparacion-llenado-global"
+                        style={{ width: `${progresoPreparacion}%` }}
+                      ></div>
+                    </div>
 
-                    <div className="barra-progreso-global">
-                      <div className="progreso-info">
-                        <span>Progreso general del pedido: <strong>{Math.round(progreso)}%</strong></span>
+                    <div className="productos-pedido">
+                      <div className="header-productos">
+                        <h5>🛍️ Productos del Pedido ({productosCount})</h5>
                         {faltantes > 0 && (
-                          <span className="info-faltantes-progreso">
-                            🚨 {faltantes} producto(s) marcado(s) como faltante(s)
+                          <span className="alert-faltantes-productos">
+                            ⚠️ {faltantes} producto(s) faltante(s)
                           </span>
                         )}
                       </div>
-                      <div className="barra-progreso-container">
-                        <div 
-                          className="barra-progreso-llenado" 
-                          style={{ width: `${progreso}%` }}
-                        ></div>
+                      <div className="lista-productos">
+                        {pedido.productos?.map((producto, index) => {
+                          const estaPreparado = preparaciones[pedido.id]?.productos?.[index];
+                          const esFaltante = preparaciones[pedido.id]?.productos_faltantes?.[index];
+
+                          return (
+                            <div 
+                              key={index}
+                              className={`producto-item ${estaPreparado ? 'preparado' : ''} ${esFaltante ? 'faltante' : ''}`}
+                              onClick={() => marcarProductoPreparado(pedido.id, index)}
+                            >
+                              <div className="producto-info">
+                                <span className="cantidad-producto">{producto.cantidad}x</span>
+                                <span className="nombre-producto">{producto.nombre}</span>
+                                <span className="precio-producto">
+                                  {formatPrecio(producto.precio * producto.cantidad)}
+                                </span>
+                              </div>
+                              
+                              <div className="estado-producto">
+                                {esFaltante ? (
+                                  <span className="estado-faltante">🚨 Faltante</span>
+                                ) : estaPreparado ? (
+                                  <div className="estado-completado">
+                                    <span className="check-icon">✓</span>
+                                    <span>Listo</span>
+                                  </div>
+                                ) : (
+                                  <div className="estado-pendiente">
+                                    <span className="pending-icon">⏳</span>
+                                    <span>Pendiente</span>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
                       </div>
                     </div>
-                  </div>
-                )}
 
-                <div className="productos-pedido">
-                  <div className="header-productos">
-                    <h4>🛍️ Productos del Pedido ({productosCount})</h4>
-                    {faltantes > 0 && (
-                      <span className="alert-faltantes-productos">
-                        ⚠️ {faltantes} producto(s) faltante(s)
-                      </span>
-                    )}
-                  </div>
-                  <div className="lista-productos">
-                    {pedido.productos?.map((producto, index) => {
-                      const estaPreparado = preparaciones[pedido.id]?.productos?.[index];
-                      const esFaltante = preparaciones[pedido.id]?.productos_faltantes?.[index];
-
-                      return (
-                        <div 
-                          key={index}
-                          className={`producto-item ${pedido.estado === 'en_preparacion' ? 'clickeable' : ''} ${estaPreparado ? 'preparado' : ''} ${esFaltante ? 'faltante' : ''}`}
-                          onClick={() => pedido.estado === 'en_preparacion' && marcarProductoPreparado(pedido.id, index)}
-                        >
-                          <div className="producto-info">
-                            <span className="cantidad-producto">{producto.cantidad}x</span>
-                            <span className="nombre-producto">{producto.nombre}</span>
-                            <span className="precio-producto">
-                              {formatPrecio(producto.precio * producto.cantidad)}
-                            </span>
-                          </div>
-                          
-                          {pedido.estado === 'en_preparacion' && (
-                            <div className="estado-producto">
-                              {esFaltante ? (
-                                <span className="estado-faltante">🚨 Faltante</span>
-                              ) : estaPreparado ? (
-                                <span className="estado-completado">✅ Listo</span>
-                              ) : (
-                                <span className="estado-pendiente">⏳ Pendiente</span>
-                              )}
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                {pedido.estado === 'en_preparacion' && (
-                  <>
-                    <div className="acciones-preparacion">
+                    {/* BOTONES BONITOS DE PREPARACIÓN */}
+                    <div className="acciones-preparacion-bonitas">
                       <button 
-                        className={`btn-accion btn-empaquetar ${empaquetado ? 'completado' : ''}`}
+                        className={`btn-preparacion btn-empaquetar ${empaquetado ? 'completado' : ''}`}
                         onClick={() => marcarEmpaquetado(pedido.id)}
                         disabled={!todosProcesados}
                       >
-                        {empaquetado ? '✅ Empaquetado' : '📦 Marcar como Empaquetado'}
+                        <span className="btn-icon">📦</span>
+                        <span className="btn-text">
+                          {empaquetado ? 'Empaquetado' : 'Marcar como Empaquetado'}
+                        </span>
+                        {empaquetado && <span className="btn-check">✓</span>}
                       </button>
                       
                       <button 
-                        className={`btn-accion btn-verificar ${verificado ? 'completado' : ''}`}
+                        className={`btn-preparacion btn-verificar ${verificado ? 'completado' : ''}`}
                         onClick={() => abrirModalVerificacion(pedido.id)}
                         disabled={!empaquetado}
                       >
-                        {verificado ? '🔍 Verificado' : '🔍 Verificar Pedido'}
+                        <span className="btn-icon">🔍</span>
+                        <span className="btn-text">
+                          {verificado ? 'Verificado' : 'Verificar Pedido'}
+                        </span>
+                        {verificado && <span className="btn-check">✓</span>}
                       </button>
                     </div>
 
@@ -643,10 +698,55 @@ const GestionPedidos = () => {
                         )}
                       </div>
                     )}
-                  </>
+                  </div>
                 )}
 
-                {(pedido.estado === 'listo_para_entrega' || pedido.estado === 'enviado' || pedido.estado === 'entregado') && 
+                {/* VISTA SIMPLIFICADA PARA OTROS ESTADOS */}
+                {pedido.estado !== 'en_preparacion' && (
+                  <div className="productos-pedido">
+                    <div className="header-productos">
+                      <h4>🛍️ Productos del Pedido ({productosCount})</h4>
+                      {faltantes > 0 && (
+                        <span className="alert-faltantes-productos">
+                          ⚠️ {faltantes} producto(s) faltante(s)
+                        </span>
+                      )}
+                    </div>
+                    <div className="lista-productos">
+                      {pedido.productos?.map((producto, index) => {
+                        const estaPreparado = preparaciones[pedido.id]?.productos?.[index];
+                        const esFaltante = preparaciones[pedido.id]?.productos_faltantes?.[index];
+
+                        return (
+                          <div 
+                            key={index}
+                            className={`producto-item-simple ${estaPreparado ? 'preparado' : ''} ${esFaltante ? 'faltante' : ''}`}
+                          >
+                            <div className="producto-info">
+                              <span className="cantidad-producto">{producto.cantidad}x</span>
+                              <span className="nombre-producto">{producto.nombre}</span>
+                              <span className="precio-producto">
+                                {formatPrecio(producto.precio * producto.cantidad)}
+                              </span>
+                            </div>
+                            
+                            <div className="estado-producto-simple">
+                              {esFaltante ? (
+                                <span className="estado-faltante-simple">🚨 Faltante</span>
+                              ) : estaPreparado ? (
+                                <span className="estado-completado-simple">✅ Listo</span>
+                              ) : (
+                                <span className="estado-pendiente-simple">⏳ Pendiente</span>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {(pedido.estado === 'listo_para_entrega' || pedido.estado === 'entregado') && 
                  tieneObservaciones && (
                   <div className="observaciones-verificacion historico">
                     <div className="observaciones-header">
@@ -672,7 +772,6 @@ const GestionPedidos = () => {
                       onChange={(e) => actualizarEstadoPedido(pedido.id, e.target.value)}
                     >
                       <option value="pendiente">⏳ Pendiente</option>
-                      <option value="confirmado">✅ Confirmado</option>
                       <option value="en_preparacion">👨‍🍳 En preparación</option>
                       <option 
                         value="listo_para_entrega" 
@@ -680,7 +779,6 @@ const GestionPedidos = () => {
                       >
                         📦 Listo para entrega
                       </option>
-                      <option value="enviado">🚚 Enviado</option>
                       <option value="entregado">🎉 Entregado</option>
                       <option value="cancelado">❌ Cancelado</option>
                     </select>
