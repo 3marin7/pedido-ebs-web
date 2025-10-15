@@ -153,8 +153,8 @@ const FacturaDetalle = () => {
   };
 
   const imprimirFactura = () => {
-    // Abrir ventana de impresión con el diseño específico para papel oficio
-    const ventanaImpresion = window.open('', '_blank', 'width=800,height=1000');
+    // Abrir ventana de impresión con el diseño específico para papel oficio horizontal
+    const ventanaImpresion = window.open('', '_blank', 'width=1000,height=800');
     
     const contenidoImpresion = `
       <!DOCTYPE html>
@@ -163,29 +163,31 @@ const FacturaDetalle = () => {
           <title>Cuenta de Cobro #${factura.id.toString().padStart(6, '0')}</title>
           <style>
             @page {
-              size: letter; /* Tamaño oficio */
+              size: letter landscape; /* Tamaño oficio en horizontal */
               margin: 0.5cm;
             }
             body {
               font-family: Arial, sans-serif;
               margin: 0;
               padding: 0;
-              font-size: 12px;
+              font-size: 10px;
               line-height: 1.2;
             }
             .pagina-oficio {
-              width: 21.59cm; /* Ancho oficio */
-              height: 27.94cm; /* Alto oficio */
+              width: 27.94cm; /* Ancho oficio en horizontal */
+              height: 21.59cm; /* Alto oficio en horizontal */
+              display: grid;
+              grid-template-columns: 1fr 1fr;
+              gap: 0.5cm;
               page-break-after: always;
-              display: flex;
-              flex-direction: column;
             }
             .seccion-cuenta {
-              flex: 1;
               border: 1px solid #000;
-              margin-bottom: 0.5cm;
               padding: 0.3cm;
               box-sizing: border-box;
+              display: flex;
+              flex-direction: column;
+              height: 100%;
             }
             .titulo-seccion {
               text-align: center;
@@ -193,75 +195,123 @@ const FacturaDetalle = () => {
               margin-bottom: 0.2cm;
               border-bottom: 1px solid #000;
               padding-bottom: 0.1cm;
+              font-size: 11px;
             }
             .encabezado {
               display: flex;
               justify-content: space-between;
-              margin-bottom: 0.3cm;
+              margin-bottom: 0.2cm;
+              align-items: flex-start;
             }
             .numero-cuenta {
               font-weight: bold;
-              font-size: 14px;
+              font-size: 12px;
+              margin-bottom: 0.2cm;
+              text-align: center;
             }
             .fecha {
-              font-size: 12px;
+              font-size: 9px;
             }
             .info-cliente-vendedor {
               display: grid;
               grid-template-columns: 1fr 1fr;
-              gap: 0.5cm;
-              margin-bottom: 0.3cm;
+              gap: 0.3cm;
+              margin-bottom: 0.2cm;
             }
             .info-item h4 {
-              margin: 0 0 0.1cm 0;
-              font-size: 11px;
+              margin: 0 0 0.05cm 0;
+              font-size: 9px;
             }
             .info-item p {
               margin: 0;
               border-bottom: 1px solid #ddd;
-              padding-bottom: 0.1cm;
+              padding-bottom: 0.05cm;
+              min-height: 0.4cm;
+              font-size: 9px;
             }
             .tabla-productos {
               width: 100%;
               border-collapse: collapse;
-              margin-bottom: 0.3cm;
+              margin-bottom: 0.2cm;
+              table-layout: fixed;
+              flex-grow: 1;
             }
             .tabla-productos th, .tabla-productos td {
               border: 1px solid #000;
-              padding: 0.1cm;
+              padding: 0.05cm;
               text-align: left;
-              font-size: 10px;
+              font-size: 8px;
+              word-wrap: break-word;
             }
             .tabla-productos th {
               background-color: #f0f0f0;
+              font-weight: bold;
             }
-            .total-letras {
-              margin: 0.2cm 0;
-              padding: 0.2cm;
-              border: 1px solid #000;
-              background-color: #f9f9f9;
-              font-size: 10px;
+            .tabla-productos .col-producto {
+              width: 60%;
+            }
+            .tabla-productos .col-cantidad {
+              width: 10%;
               text-align: center;
             }
-            .resumen-total {
-              display: flex;
-              justify-content: space-between;
-              margin-top: 0.3cm;
+            .tabla-productos .col-precio {
+              width: 15%;
+              text-align: right;
+            }
+            .tabla-productos .col-subtotal {
+              width: 15%;
+              text-align: right;
+            }
+            .total-letras {
+              margin: 0.1cm 0;
+              padding: 0.1cm;
+              border: 1px solid #000;
+              background-color: #f9f9f9;
+              font-size: 9px;
+              text-align: center;
               font-weight: bold;
+            }
+            .resumen-total {
+              display: grid;
+              grid-template-columns: 1fr 1fr 1fr 1fr;
+              gap: 0.2cm;
+              margin-top: 0.2cm;
+              font-weight: bold;
+              text-align: center;
+              font-size: 9px;
+            }
+            .resumen-item {
+              border: 1px solid #000;
+              padding: 0.1cm;
+              background-color: #f0f0f0;
             }
             .estado {
               text-align: center;
-              margin-top: 0.2cm;
+              margin-top: 0.1cm;
               font-weight: bold;
+              font-size: 10px;
+              padding: 0.1cm;
+              border: 1px solid #000;
+              background-color: ${estaPagada() ? '#d4edda' : '#fff3cd'};
+              color: ${estaPagada() ? '#155724' : '#856404'};
             }
             .footer {
               text-align: center;
-              margin-top: 0.3cm;
-              font-size: 10px;
+              margin-top: 0.2cm;
+              font-size: 8px;
+              border-top: 1px solid #000;
+              padding-top: 0.1cm;
             }
             .logo {
               font-weight: bold;
-              margin-top: 0.1cm;
+              margin-top: 0.05cm;
+              font-size: 9px;
+            }
+            .empresa-info {
+              text-align: left;
+            }
+            .empresa-info strong {
+              font-size: 11px;
             }
             @media print {
               body {
@@ -272,6 +322,9 @@ const FacturaDetalle = () => {
                 height: 100%;
                 width: 100%;
               }
+              .seccion-cuenta {
+                border: 1px solid #000;
+              }
             }
           </style>
         </head>
@@ -281,7 +334,7 @@ const FacturaDetalle = () => {
             <div class="seccion-cuenta">
               <div class="titulo-seccion">ORIGINAL - PARA EL CLIENTE</div>
               <div class="encabezado">
-                <div>
+                <div class="empresa-info">
                   <div><strong>DISTRIBUCIONES EBS</strong></div>
                   <div>Cuenta de Cobro</div>
                 </div>
@@ -295,7 +348,7 @@ const FacturaDetalle = () => {
                   <h4>CLIENTE:</h4>
                   <p>${factura.cliente}</p>
                   <h4>DIRECCIÓN:</h4>
-                  <p>${factura.direccion || 'SABANA NO ESPECIFICADO'}</p>
+                  <p>${factura.direccion || 'NO ESPECIFICADO'}</p>
                 </div>
                 <div class="info-item">
                   <h4>VENDEDOR:</h4>
@@ -308,19 +361,19 @@ const FacturaDetalle = () => {
               <table class="tabla-productos">
                 <thead>
                   <tr>
-                    <th>PRODUCTO</th>
-                    <th>CANT</th>
-                    <th>PRECIO UNIT.</th>
-                    <th>SUBTOTAL</th>
+                    <th class="col-producto">PRODUCTO</th>
+                    <th class="col-cantidad">CANT</th>
+                    <th class="col-precio">PRECIO UNIT.</th>
+                    <th class="col-subtotal">SUBTOTAL</th>
                   </tr>
                 </thead>
                 <tbody>
                   ${factura.productos.map(producto => `
                     <tr>
-                      <td>${producto.nombre}</td>
-                      <td>${producto.cantidad}</td>
-                      <td>${formatearMonedaImpresion(producto.precio)}</td>
-                      <td>${formatearMonedaImpresion(producto.cantidad * producto.precio)}</td>
+                      <td class="col-producto">${producto.nombre}</td>
+                      <td class="col-cantidad">${producto.cantidad}</td>
+                      <td class="col-precio">${formatearMonedaImpresion(producto.precio)}</td>
+                      <td class="col-subtotal">${formatearMonedaImpresion(producto.cantidad * producto.precio)}</td>
                     </tr>
                   `).join('')}
                 </tbody>
@@ -331,10 +384,22 @@ const FacturaDetalle = () => {
               </div>
               
               <div class="resumen-total">
-                <div>PRODUCTOS: ${factura.productos.length}</div>
-                <div>TOTAL: ${formatearMonedaImpresion(factura.total)}</div>
-                <div>ABONADO: ${formatearMonedaImpresion(calcularTotalAbonado())}</div>
-                <div>SALDO: ${formatearMonedaImpresion(calcularSaldoPendiente())}</div>
+                <div class="resumen-item">
+                  <div>PRODUCTOS</div>
+                  <div>${factura.productos.length}</div>
+                </div>
+                <div class="resumen-item">
+                  <div>TOTAL</div>
+                  <div>${formatearMonedaImpresion(factura.total)}</div>
+                </div>
+                <div class="resumen-item">
+                  <div>ABONADO</div>
+                  <div>${formatearMonedaImpresion(calcularTotalAbonado())}</div>
+                </div>
+                <div class="resumen-item">
+                  <div>SALDO</div>
+                  <div>${formatearMonedaImpresion(calcularSaldoPendiente())}</div>
+                </div>
               </div>
               
               <div class="estado">ESTADO: ${estaPagada() ? 'PAGADA' : 'PENDIENTE'}</div>
@@ -349,7 +414,7 @@ const FacturaDetalle = () => {
             <div class="seccion-cuenta">
               <div class="titulo-seccion">COPIA - PARA EL ARCHIVO</div>
               <div class="encabezado">
-                <div>
+                <div class="empresa-info">
                   <div><strong>DISTRIBUCIONES EBS</strong></div>
                   <div>Cuenta de Cobro</div>
                 </div>
@@ -363,7 +428,7 @@ const FacturaDetalle = () => {
                   <h4>CLIENTE:</h4>
                   <p>${factura.cliente}</p>
                   <h4>DIRECCIÓN:</h4>
-                  <p>${factura.direccion || 'SABANA NO ESPECIFICADO'}</p>
+                  <p>${factura.direccion || 'NO ESPECIFICADO'}</p>
                 </div>
                 <div class="info-item">
                   <h4>VENDEDOR:</h4>
@@ -376,19 +441,19 @@ const FacturaDetalle = () => {
               <table class="tabla-productos">
                 <thead>
                   <tr>
-                    <th>PRODUCTO</th>
-                    <th>CANT</th>
-                    <th>PRECIO UNIT.</th>
-                    <th>SUBTOTAL</th>
+                    <th class="col-producto">PRODUCTO</th>
+                    <th class="col-cantidad">CANT</th>
+                    <th class="col-precio">PRECIO UNIT.</th>
+                    <th class="col-subtotal">SUBTOTAL</th>
                   </tr>
                 </thead>
                 <tbody>
                   ${factura.productos.map(producto => `
                     <tr>
-                      <td>${producto.nombre}</td>
-                      <td>${producto.cantidad}</td>
-                      <td>${formatearMonedaImpresion(producto.precio)}</td>
-                      <td>${formatearMonedaImpresion(producto.cantidad * producto.precio)}</td>
+                      <td class="col-producto">${producto.nombre}</td>
+                      <td class="col-cantidad">${producto.cantidad}</td>
+                      <td class="col-precio">${formatearMonedaImpresion(producto.precio)}</td>
+                      <td class="col-subtotal">${formatearMonedaImpresion(producto.cantidad * producto.precio)}</td>
                     </tr>
                   `).join('')}
                 </tbody>
@@ -399,10 +464,22 @@ const FacturaDetalle = () => {
               </div>
               
               <div class="resumen-total">
-                <div>PRODUCTOS: ${factura.productos.length}</div>
-                <div>TOTAL: ${formatearMonedaImpresion(factura.total)}</div>
-                <div>ABONADO: ${formatearMonedaImpresion(calcularTotalAbonado())}</div>
-                <div>SALDO: ${formatearMonedaImpresion(calcularSaldoPendiente())}</div>
+                <div class="resumen-item">
+                  <div>PRODUCTOS</div>
+                  <div>${factura.productos.length}</div>
+                </div>
+                <div class="resumen-item">
+                  <div>TOTAL</div>
+                  <div>${formatearMonedaImpresion(factura.total)}</div>
+                </div>
+                <div class="resumen-item">
+                  <div>ABONADO</div>
+                  <div>${formatearMonedaImpresion(calcularTotalAbonado())}</div>
+                </div>
+                <div class="resumen-item">
+                  <div>SALDO</div>
+                  <div>${formatearMonedaImpresion(calcularSaldoPendiente())}</div>
+                </div>
               </div>
               
               <div class="estado">ESTADO: ${estaPagada() ? 'PAGADA' : 'PENDIENTE'}</div>
@@ -422,9 +499,11 @@ const FacturaDetalle = () => {
     
     // Esperar a que se cargue el contenido antes de imprimir
     ventanaImpresion.onload = function() {
-      ventanaImpresion.print();
-      // Cerrar la ventana después de imprimir (opcional)
-      // ventanaImpresion.close();
+      setTimeout(() => {
+        ventanaImpresion.print();
+        // Opcional: cerrar la ventana después de imprimir
+        // ventanaImpresion.close();
+      }, 500);
     };
   };
 
