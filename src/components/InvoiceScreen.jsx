@@ -450,7 +450,7 @@ const InvoiceScreen = () => {
   const total = productos.reduce((sum, p) => sum + (p.cantidad * p.precio), 0);
 
   return (
-    <div className="invoice-container">
+    <div className="invoice-container-mobile">
       {/* Vista Previa de Factura */}
       {mostrarVistaPrevia && (
         <FacturaPreview
@@ -547,24 +547,22 @@ const InvoiceScreen = () => {
       {/* Formulario Principal */}
       {!mostrarVistaPrevia && !mostrarCatalogo && !mostrarClientes && (
         <>
-          <h1>PEDIDO EBS</h1>
-
-          {/* Botón de seleccionar cliente */}
-          <div className="form-row">
-            <div className="form-group">
-              <button 
-                className="button info-button"
-                onClick={() => setMostrarClientes(true)}
-              >
-                <i className="fas fa-users"></i> Seleccionar Cliente
-              </button>
-            </div>
+          <div className="header-section">
+            <h1>PEDIDO EBS</h1>
+            
+            {/* Botón de seleccionar cliente */}
+            <button 
+              className="button info-button select-client-button"
+              onClick={() => setMostrarClientes(true)}
+            >
+              <i className="fas fa-users"></i> Seleccionar Cliente
+            </button>
           </div>
 
           {/* Información del cliente */}
-          <div className="customer-info-section">
-            <div className="form-row">
-              <div className="form-group cliente-group" style={{flex: 2}}>
+          <div className="customer-info-section-mobile">
+            <div className="form-row-mobile">
+              <div className="form-group-mobile">
                 <input
                   type="text"
                   value={cliente}
@@ -574,7 +572,7 @@ const InvoiceScreen = () => {
                   className={!cliente ? 'input-error' : ''}
                 />
               </div>
-              <div className="form-group" style={{flex: 1}}>
+              <div className="form-group-mobile">
                 <input
                   type="date"
                   value={fecha}
@@ -584,8 +582,8 @@ const InvoiceScreen = () => {
               </div>
             </div>
 
-            <div className="form-row">
-              <div className="form-group" style={{flex: 2}}>
+            <div className="form-row-mobile">
+              <div className="form-group-mobile">
                 <input
                   type="text"
                   value={direccion}
@@ -593,7 +591,7 @@ const InvoiceScreen = () => {
                   placeholder="Dirección Opcional"
                 />
               </div>
-              <div className="form-group" style={{flex: 1}}>
+              <div className="form-group-mobile">
                 <input
                   type="tel"
                   value={telefono}
@@ -603,8 +601,8 @@ const InvoiceScreen = () => {
               </div>
             </div>
 
-            <div className="form-row">
-              <div className="form-group" style={{flex: 1}}>
+            <div className="form-row-mobile">
+              <div className="form-group-mobile">
                 <input
                   type="email"
                   value={correo}
@@ -612,7 +610,7 @@ const InvoiceScreen = () => {
                   placeholder="Email Opcional"
                 />
               </div>
-              <div className="form-group" style={{flex: 1}}>
+              <div className="form-group-mobile">
                 <select
                   value={vendedorSeleccionado}
                   onChange={(e) => setVendedorSeleccionado(e.target.value)}
@@ -630,17 +628,17 @@ const InvoiceScreen = () => {
             </div>
           </div>
 
-          {/* Sección de productos - REDISEÑADA */}
-          <div className="products-main-section">
-            <div className="add-products-section">
+          {/* Sección de productos */}
+          <div className="products-main-section-mobile">
+            <div className="add-products-section-mobile">
               <h3>Agregar Producto:</h3>
-              <div className="product-form-row">
+              <div className="product-form-row-mobile">
                 <input
                   type="text"
                   value={nombreProducto}
                   onChange={(e) => setNombreProducto(e.target.value)}
                   placeholder="Nombre *"
-                  className="product-input"
+                  className="product-input-mobile"
                 />
                 <input
                   type="number"
@@ -648,7 +646,7 @@ const InvoiceScreen = () => {
                   onChange={(e) => setCantidadProducto(e.target.value)}
                   placeholder="Cantidad *"
                   min="1"
-                  className="product-input"
+                  className="product-input-mobile"
                 />
                 <input
                   type="number"
@@ -657,36 +655,38 @@ const InvoiceScreen = () => {
                   placeholder="Precio *"
                   min="0"
                   step="0.01"
-                  className="product-input"
+                  className="product-input-mobile"
                 />
-                <button className="button add-product-button" onClick={agregarProducto}>
-                  Agregar
-                </button>
-                <button 
-                  className="button primary-button catalog-button"
-                  onClick={() => setMostrarCatalogo(true)}
-                >
-                  <i className="fas fa-book"></i> Catálogo
-                </button>
+                <div className="product-buttons-mobile">
+                  <button className="button add-product-button-mobile" onClick={agregarProducto}>
+                    Agregar
+                  </button>
+                  <button 
+                    className="button primary-button catalog-button-mobile"
+                    onClick={() => setMostrarCatalogo(true)}
+                  >
+                    <i className="fas fa-book"></i> Catálogo
+                  </button>
+                </div>
               </div>
             </div>
 
-            {/* Lista de productos - AHORA MÁS VISIBLE */}
+            {/* Lista de productos */}
             {productos.length > 0 && (
-              <div className="productos-list-expanded">
-                <div className="productos-header">
+              <div className="productos-list-mobile">
+                <div className="productos-header-mobile">
                   <h3>Productos Agregados ({productos.length})</h3>
-                  <div className="total-preview">
+                  <div className="total-preview-mobile">
                     Total: <span className="total-amount">${total.toFixed(2)}</span>
                   </div>
                 </div>
-                <div className="productos-grid">
+                <div className="productos-grid-mobile">
                   {productos.map((p) => (
-                    <div key={p.id} className={`producto-item-expanded ${erroresStock[p.id] ? 'error-stock' : ''}`}>
-                      <div className="producto-main-info">
-                        <span className="producto-nombre">{p.nombre}</span>
-                        <div className="producto-precio-info">
-                          <span className="producto-detalle">
+                    <div key={p.id} className={`producto-item-mobile ${erroresStock[p.id] ? 'error-stock' : ''}`}>
+                      <div className="producto-main-info-mobile">
+                        <span className="producto-nombre-mobile">{p.nombre}</span>
+                        <div className="producto-precio-info-mobile">
+                          <span className="producto-detalle-mobile">
                             {p.cantidad} x ${p.precio.toFixed(2)} = <strong>${(p.cantidad * p.precio).toFixed(2)}</strong>
                           </span>
                           {erroresStock[p.id] && (
@@ -695,9 +695,9 @@ const InvoiceScreen = () => {
                         </div>
                       </div>
                       
-                      <div className="producto-controls-expanded">
-                        <div className="controles-rapidos-supercompactos">
-                          <div className="botones-rapidos-linea">
+                      <div className="producto-controls-mobile">
+                        <div className="controles-rapidos-mobile">
+                          <div className="botones-rapidos-grid-mobile">
                             <button 
                               className="button micro-button cantidad-rapida-btn"
                               onClick={() => actualizarCantidadRapida(p.id, -1)}
@@ -726,56 +726,51 @@ const InvoiceScreen = () => {
                             >
                               +24
                             </button>
-                            <button 
-                              className="button micro-button cantidad-rapida-btn"
-                              onClick={() => actualizarCantidadRapida(p.id, 36)}
-                              title="Agregar 3 docenas"
-                            >
-                              +36
-                            </button>
                           </div>
                           
-                          {editandoProductoId === p.id ? (
-                            <div className="editar-cantidad-container">
-                              <input
-                                type="number"
-                                value={cantidadEditada}
-                                onChange={(e) => setCantidadEditada(e.target.value)}
-                                min="1"
-                                className="editar-cantidad-input"
-                                autoFocus
-                              />
-                              <button 
-                                className="button micro-button success-button"
-                                onClick={() => guardarEdicionCantidad(p.id)}
-                              >
-                                <i className="fas fa-check"></i>
-                              </button>
-                              <button 
-                                className="button micro-button danger-button"
-                                onClick={cancelarEdicion}
-                              >
-                                <i className="fas fa-times"></i>
-                              </button>
-                            </div>
-                          ) : (
-                            <div className="acciones-principales">
-                              <button
-                                className="button micro-button info-button"
-                                onClick={() => iniciarEdicionCantidad(p)}
-                                title="Editar cantidad manualmente"
-                              >
-                                <i className="fas fa-edit"></i>
-                              </button>
-                              <button
-                                className="button micro-button danger-button"
-                                onClick={() => eliminarProducto(p.id)}
-                                title="Eliminar producto"
-                              >
-                                <i className="fas fa-trash"></i>
-                              </button>
-                            </div>
-                          )}
+                          <div className="acciones-principales-mobile">
+                            {editandoProductoId === p.id ? (
+                              <div className="editar-cantidad-container-mobile">
+                                <input
+                                  type="number"
+                                  value={cantidadEditada}
+                                  onChange={(e) => setCantidadEditada(e.target.value)}
+                                  min="1"
+                                  className="editar-cantidad-input-mobile"
+                                  autoFocus
+                                />
+                                <button 
+                                  className="button micro-button success-button"
+                                  onClick={() => guardarEdicionCantidad(p.id)}
+                                >
+                                  <i className="fas fa-check"></i>
+                                </button>
+                                <button 
+                                  className="button micro-button danger-button"
+                                  onClick={cancelarEdicion}
+                                >
+                                  <i className="fas fa-times"></i>
+                                </button>
+                              </div>
+                            ) : (
+                              <>
+                                <button
+                                  className="button micro-button info-button"
+                                  onClick={() => iniciarEdicionCantidad(p)}
+                                  title="Editar cantidad manualmente"
+                                >
+                                  <i className="fas fa-edit"></i>
+                                </button>
+                                <button
+                                  className="button micro-button danger-button"
+                                  onClick={() => eliminarProducto(p.id)}
+                                  title="Eliminar producto"
+                                >
+                                  <i className="fas fa-trash"></i>
+                                </button>
+                              </>
+                            )}
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -786,16 +781,16 @@ const InvoiceScreen = () => {
           </div>
 
           {/* Botones de acción en la parte inferior */}
-          <div className="action-buttons-bottom">
+          <div className="action-buttons-mobile">
             <button 
-              className="button preview-button main-action-button" 
+              className="button preview-button main-action-button-mobile" 
               onClick={mostrarPrevia}
               disabled={productos.length === 0 || !cliente || !vendedorSeleccionado || Object.keys(erroresStock).length > 0}
             >
               <i className="fas fa-eye"></i> Vista Previa y Guardar
             </button>
             
-            <div className="secondary-actions-grid">
+            <div className="secondary-actions-mobile">
               <button
                 className="button secondary-button"
                 onClick={() => navigate('/facturas')}
