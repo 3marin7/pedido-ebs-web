@@ -561,280 +561,272 @@ const InvoiceScreen = () => {
             </div>
           </div>
 
-          {/* Línea 1: Nombre del cliente y Fecha */}
-          <div className="form-row">
-            <div className="form-group cliente-group" style={{flex: 2}}>
-              <input
-                type="text"
-                value={cliente}
-                onChange={(e) => setCliente(e.target.value)}
-                placeholder="Nombre del cliente *"
-                required
-                className={!cliente ? 'input-error' : ''}
-              />
-            </div>
-            <div className="form-group" style={{flex: 1}}>
-              <input
-                type="date"
-                value={fecha}
-                onChange={(e) => setFecha(e.target.value)}
-                className="date-input"
-              />
-            </div>
-          </div>
-
-          {/* Línea 2: Dirección y Teléfono */}
-          <div className="form-row">
-            <div className="form-group" style={{flex: 2}}>
-              <input
-                type="text"
-                value={direccion}
-                onChange={(e) => setDireccion(e.target.value)}
-                placeholder="Dirección Opcional"
-              />
-            </div>
-            <div className="form-group" style={{flex: 1}}>
-              <input
-                type="tel"
-                value={telefono}
-                onChange={(e) => setTelefono(e.target.value)}
-                placeholder="Teléfono Opcional"
-              />
-            </div>
-          </div>
-
-          {/* Línea 3: Email and Vendor */}
-          <div className="form-row">
-            <div className="form-group" style={{flex: 1}}>
-              <input
-                type="email"
-                value={correo}
-                onChange={(e) => setCorreo(e.target.value)}
-                placeholder="Email Opcional"
-              />
-            </div>
-            <div className="form-group" style={{flex: 1}}>
-              <select
-                value={vendedorSeleccionado}
-                onChange={(e) => setVendedorSeleccionado(e.target.value)}
-                required
-                className={!vendedorSeleccionado ? 'input-error' : ''}
-              >
-                <option value="">Seleccione vendedor *</option>
-                {vendedores.map((v) => (
-                  <option key={v} value={v}>
-                    {v}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          <div className="form-section">
-            <h3>Agregar Producto:</h3>
-            <div className="product-form-row">
-              <input
-                type="text"
-                value={nombreProducto}
-                onChange={(e) => setNombreProducto(e.target.value)}
-                placeholder="Nombre *"
-                className="product-input"
-              />
-              <input
-                type="number"
-                value={cantidadProducto}
-                onChange={(e) => setCantidadProducto(e.target.value)}
-                placeholder="Cantidad *"
-                min="1"
-                className="product-input"
-              />
-              <input
-                type="number"
-                value={precioProducto}
-                onChange={(e) => setPrecioProducto(e.target.value)}
-                placeholder="Precio *"
-                min="0"
-                step="0.01"
-                className="product-input"
-              />
-              <button className="button add-product-button" onClick={agregarProducto}>
-                Agregar
-              </button>
-              <button 
-                className="button primary-button catalog-button"
-                onClick={() => setMostrarCatalogo(true)}
-              >
-                <i className="fas fa-book"></i> Catálogo
-              </button>
-            </div>
-          </div>
-
-          {productos.length > 0 && (
-            <div className="productos-list">
-              <h3>Productos Agregados:</h3>
-              {productos.map((p) => (
-                <div key={p.id} className={`producto-item ${erroresStock[p.id] ? 'error-stock' : ''}`}>
-                  <div className="producto-info">
-                    <span className="producto-nombre">{p.nombre}</span>
-                    
-                   {/* Botones de edición rápida */}
-<div className="controles-rapidos">
-  <div className="botones-rapidos">
-    <button 
-      className="button small-button cantidad-rapida-btn"
-      onClick={() => actualizarCantidadRapida(p.id, -1)}
-      title="Reducir 1"
-    >
-      -1
-    </button>
-    <button 
-      className="button small-button cantidad-rapida-btn"
-      onClick={() => actualizarCantidadRapida(p.id, 1)}
-      title="Agregar 1"
-    >
-      +1
-    </button>
-    <button 
-      className="button small-button cantidad-rapida-btn"
-      onClick={() => actualizarCantidadRapida(p.id, 12)}
-      title="Agregar docena"
-    >
-      +12
-    </button>
-    <button 
-      className="button small-button cantidad-rapida-btn"
-      onClick={() => actualizarCantidadRapida(p.id, 24)}
-      title="Agregar 2 docenas"
-    >
-      +24
-    </button>
-    <button 
-      className="button small-button cantidad-rapida-btn"
-      onClick={() => actualizarCantidadRapida(p.id, 36)}
-      title="Agregar 3 docenas"
-    >
-      +36
-    </button>
-    <button 
-      className="button small-button cantidad-rapida-btn"
-      onClick={() => establecerCantidadEspecifica(p.id, 12)}
-      title="Establecer a docena"
-    >
-      12
-    </button>
-    <button 
-      className="button small-button cantidad-rapida-btn"
-      onClick={() => establecerCantidadEspecifica(p.id, 24)}
-      title="Establecer a 2 docenas"
-    >
-      24
-    </button>
-    <button 
-      className="button small-button cantidad-rapida-btn"
-      onClick={() => establecerCantidadEspecifica(p.id, 36)}
-      title="Establecer a 3 docenas"
-    >
-      36
-    </button>
-  </div>
-  
-  {editandoProductoId === p.id ? (
-    <div className="editar-cantidad-container">
-      <input
-        type="number"
-        value={cantidadEditada}
-        onChange={(e) => setCantidadEditada(e.target.value)}
-        min="1"
-        className="editar-cantidad-input"
-        autoFocus
-      />
-      <button 
-        className="button small-button success-button"
-        onClick={() => guardarEdicionCantidad(p.id)}
-      >
-        <i className="fas fa-check"></i>
-      </button>
-      <button 
-        className="button small-button danger-button"
-        onClick={cancelarEdicion}
-      >
-        <i className="fas fa-times"></i>
-      </button>
-    </div>
-  ) : (
-    <span className="producto-detalle">
-      {p.cantidad} x ${p.precio.toFixed(2)} = ${(p.cantidad * p.precio).toFixed(2)}
-      {erroresStock[p.id] && (
-        <span className="error-message"> - {erroresStock[p.id]}</span>
-      )}
-    </span>
-  )}
-</div>
-                  </div>
-                  <div className="producto-acciones">
-                    {editandoProductoId !== p.id && (
-                      <button
-                        className="button info-button small-button"
-                        onClick={() => iniciarEdicionCantidad(p)}
-                        title="Editar cantidad manualmente"
-                      >
-                        <i className="fas fa-edit"></i>
-                      </button>
-                    )}
-                    <button
-                      className="button danger-button small-button"
-                      onClick={() => eliminarProducto(p.id)}
-                      title="Eliminar producto"
-                    >
-                      <i className="fas fa-trash"></i>
-                    </button>
-                  </div>
-                </div>
-              ))}
-              <div className="total-container">
-                <h3>Total: ${total.toFixed(2)}</h3>
+          {/* Información del cliente */}
+          <div className="customer-info-section">
+            <div className="form-row">
+              <div className="form-group cliente-group" style={{flex: 2}}>
+                <input
+                  type="text"
+                  value={cliente}
+                  onChange={(e) => setCliente(e.target.value)}
+                  placeholder="Nombre del cliente *"
+                  required
+                  className={!cliente ? 'input-error' : ''}
+                />
+              </div>
+              <div className="form-group" style={{flex: 1}}>
+                <input
+                  type="date"
+                  value={fecha}
+                  onChange={(e) => setFecha(e.target.value)}
+                  className="date-input"
+                />
               </div>
             </div>
-          )}
 
-          <div className="action-buttons">
+            <div className="form-row">
+              <div className="form-group" style={{flex: 2}}>
+                <input
+                  type="text"
+                  value={direccion}
+                  onChange={(e) => setDireccion(e.target.value)}
+                  placeholder="Dirección Opcional"
+                />
+              </div>
+              <div className="form-group" style={{flex: 1}}>
+                <input
+                  type="tel"
+                  value={telefono}
+                  onChange={(e) => setTelefono(e.target.value)}
+                  placeholder="Teléfono Opcional"
+                />
+              </div>
+            </div>
+
+            <div className="form-row">
+              <div className="form-group" style={{flex: 1}}>
+                <input
+                  type="email"
+                  value={correo}
+                  onChange={(e) => setCorreo(e.target.value)}
+                  placeholder="Email Opcional"
+                />
+              </div>
+              <div className="form-group" style={{flex: 1}}>
+                <select
+                  value={vendedorSeleccionado}
+                  onChange={(e) => setVendedorSeleccionado(e.target.value)}
+                  required
+                  className={!vendedorSeleccionado ? 'input-error' : ''}
+                >
+                  <option value="">Seleccione vendedor *</option>
+                  {vendedores.map((v) => (
+                    <option key={v} value={v}>
+                      {v}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          </div>
+
+          {/* Sección de productos - REDISEÑADA */}
+          <div className="products-main-section">
+            <div className="add-products-section">
+              <h3>Agregar Producto:</h3>
+              <div className="product-form-row">
+                <input
+                  type="text"
+                  value={nombreProducto}
+                  onChange={(e) => setNombreProducto(e.target.value)}
+                  placeholder="Nombre *"
+                  className="product-input"
+                />
+                <input
+                  type="number"
+                  value={cantidadProducto}
+                  onChange={(e) => setCantidadProducto(e.target.value)}
+                  placeholder="Cantidad *"
+                  min="1"
+                  className="product-input"
+                />
+                <input
+                  type="number"
+                  value={precioProducto}
+                  onChange={(e) => setPrecioProducto(e.target.value)}
+                  placeholder="Precio *"
+                  min="0"
+                  step="0.01"
+                  className="product-input"
+                />
+                <button className="button add-product-button" onClick={agregarProducto}>
+                  Agregar
+                </button>
+                <button 
+                  className="button primary-button catalog-button"
+                  onClick={() => setMostrarCatalogo(true)}
+                >
+                  <i className="fas fa-book"></i> Catálogo
+                </button>
+              </div>
+            </div>
+
+            {/* Lista de productos - AHORA MÁS VISIBLE */}
+            {productos.length > 0 && (
+              <div className="productos-list-expanded">
+                <div className="productos-header">
+                  <h3>Productos Agregados ({productos.length})</h3>
+                  <div className="total-preview">
+                    Total: <span className="total-amount">${total.toFixed(2)}</span>
+                  </div>
+                </div>
+                <div className="productos-grid">
+                  {productos.map((p) => (
+                    <div key={p.id} className={`producto-item-expanded ${erroresStock[p.id] ? 'error-stock' : ''}`}>
+                      <div className="producto-main-info">
+                        <span className="producto-nombre">{p.nombre}</span>
+                        <div className="producto-precio-info">
+                          <span className="producto-detalle">
+                            {p.cantidad} x ${p.precio.toFixed(2)} = <strong>${(p.cantidad * p.precio).toFixed(2)}</strong>
+                          </span>
+                          {erroresStock[p.id] && (
+                            <span className="error-message"> - {erroresStock[p.id]}</span>
+                          )}
+                        </div>
+                      </div>
+                      
+                      <div className="producto-controls-expanded">
+                        <div className="controles-rapidos-supercompactos">
+                          <div className="botones-rapidos-linea">
+                            <button 
+                              className="button micro-button cantidad-rapida-btn"
+                              onClick={() => actualizarCantidadRapida(p.id, -1)}
+                              title="Reducir 1"
+                            >
+                              -1
+                            </button>
+                            <button 
+                              className="button micro-button cantidad-rapida-btn"
+                              onClick={() => actualizarCantidadRapida(p.id, 1)}
+                              title="Agregar 1"
+                            >
+                              +1
+                            </button>
+                            <button 
+                              className="button micro-button cantidad-rapida-btn"
+                              onClick={() => actualizarCantidadRapida(p.id, 12)}
+                              title="Agregar docena"
+                            >
+                              +12
+                            </button>
+                            <button 
+                              className="button micro-button cantidad-rapida-btn"
+                              onClick={() => actualizarCantidadRapida(p.id, 24)}
+                              title="Agregar 2 docenas"
+                            >
+                              +24
+                            </button>
+                            <button 
+                              className="button micro-button cantidad-rapida-btn"
+                              onClick={() => actualizarCantidadRapida(p.id, 36)}
+                              title="Agregar 3 docenas"
+                            >
+                              +36
+                            </button>
+                          </div>
+                          
+                          {editandoProductoId === p.id ? (
+                            <div className="editar-cantidad-container">
+                              <input
+                                type="number"
+                                value={cantidadEditada}
+                                onChange={(e) => setCantidadEditada(e.target.value)}
+                                min="1"
+                                className="editar-cantidad-input"
+                                autoFocus
+                              />
+                              <button 
+                                className="button micro-button success-button"
+                                onClick={() => guardarEdicionCantidad(p.id)}
+                              >
+                                <i className="fas fa-check"></i>
+                              </button>
+                              <button 
+                                className="button micro-button danger-button"
+                                onClick={cancelarEdicion}
+                              >
+                                <i className="fas fa-times"></i>
+                              </button>
+                            </div>
+                          ) : (
+                            <div className="acciones-principales">
+                              <button
+                                className="button micro-button info-button"
+                                onClick={() => iniciarEdicionCantidad(p)}
+                                title="Editar cantidad manualmente"
+                              >
+                                <i className="fas fa-edit"></i>
+                              </button>
+                              <button
+                                className="button micro-button danger-button"
+                                onClick={() => eliminarProducto(p.id)}
+                                title="Eliminar producto"
+                              >
+                                <i className="fas fa-trash"></i>
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Botones de acción en la parte inferior */}
+          <div className="action-buttons-bottom">
             <button 
-              className="button preview-button" 
+              className="button preview-button main-action-button" 
               onClick={mostrarPrevia}
               disabled={productos.length === 0 || !cliente || !vendedorSeleccionado || Object.keys(erroresStock).length > 0}
             >
-              Vista Previa
+              <i className="fas fa-eye"></i> Vista Previa y Guardar
             </button>
-            <button
-              className="button secondary-button"
-              onClick={() => navigate('/facturas')}
-            >
-              Ver Facturas
-            </button>
-            <button
-              className="button info-button"
-              onClick={() => navigate('/catalogo')}
-            >
-              Administrar Catálogo
-            </button>
-            <button
-              className="button success-button"
-              onClick={() => navigate('/catalogo-clientes')}
-            >
-              <i className="fas fa-share"></i> Enviar Catálogo
-            </button>
-            <button
-              className="button warning-button"
-              onClick={() => navigate('/gestion-pedidos')}
-            >
-              <i className="fas fa-clipboard-list"></i> Gestión Pedidos
-            </button>
-            <button
-              className="button primary-button"
-              onClick={() => window.open('https://mercagi.com/login/', '_blank')}
-            >
-              <i className="fas fa-external-link-alt"></i> Mercagi
-            </button>
+            
+            <div className="secondary-actions-grid">
+              <button
+                className="button secondary-button"
+                onClick={() => navigate('/facturas')}
+              >
+                <i className="fas fa-file-invoice"></i> Ver Facturas
+              </button>
+              <button
+                className="button info-button"
+                onClick={() => navigate('/catalogo')}
+              >
+                <i className="fas fa-cog"></i> Administrar Catálogo
+              </button>
+              <button
+                className="button success-button"
+                onClick={() => navigate('/catalogo-clientes')}
+              >
+                <i className="fas fa-share"></i> Enviar Catálogo
+              </button>
+              <button
+                className="button warning-button"
+                onClick={() => navigate('/gestion-pedidos')}
+              >
+                <i className="fas fa-clipboard-list"></i> Gestión Pedidos
+              </button>
+              <button
+                className="button primary-button"
+                onClick={() => window.open('https://mercagi.com/login/', '_blank')}
+              >
+                <i className="fas fa-external-link-alt"></i> Mercagi
+              </button>
+            </div>
           </div>
         </>
       )}
