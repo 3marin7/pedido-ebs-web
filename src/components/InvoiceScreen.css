@@ -1,4 +1,3 @@
-/* InvoiceScreen.css - CORREGIDO */
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
 @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css');
 
@@ -360,6 +359,19 @@ select {
 
 .cantidad-rapida-btn:hover {
   background-color: #cbd5e0 !important;
+  transform: translateY(-1px) !important;
+}
+
+/* Botones de docena - NUEVOS ESTILOS */
+.cantidad-rapida-btn.suma-docena {
+  background-color: #bee3f8 !important;
+  color: #2b6cb0 !important;
+  border: 1px solid #90cdf4 !important;
+  font-weight: 700;
+}
+
+.cantidad-rapida-btn.suma-docena:hover {
+  background-color: #90cdf4 !important;
   transform: translateY(-1px) !important;
 }
 

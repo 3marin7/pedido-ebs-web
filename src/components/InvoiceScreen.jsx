@@ -239,7 +239,7 @@ const InvoiceScreen = () => {
     });
   };
 
-  // Función para actualizar cantidad rápidamente
+  // Función para actualizar cantidad rápidamente (-1 y +1)
   const actualizarCantidadRapida = (productoId, incremento) => {
     const producto = productos.find(p => p.id === productoId);
     if (!producto) return;
@@ -269,14 +269,17 @@ const InvoiceScreen = () => {
     });
   };
 
-  // Función para establecer cantidad específica
-  const establecerCantidadEspecifica = (productoId, cantidad) => {
+  // Función para sumar docenas acumulativamente (+12 y +24)
+  const sumarDocenas = (productoId, cantidadASumar) => {
     const producto = productos.find(p => p.id === productoId);
     if (!producto) return;
 
+    // Sumar la cantidad a la cantidad actual (acumulativo)
+    const nuevaCantidad = producto.cantidad + cantidadASumar;
+
     // Verificar stock si es un producto del catálogo
     if (producto.producto_id) {
-      const stockDisponible = verificarStockDisponible(producto.producto_id, cantidad);
+      const stockDisponible = verificarStockDisponible(producto.producto_id, nuevaCantidad);
       
       if (stockDisponible < 0) {
         const productoCatalogo = productosCatalogo.find(p => p.id === producto.producto_id);
@@ -286,7 +289,7 @@ const InvoiceScreen = () => {
     }
 
     const productosActualizados = productos.map(p => 
-      p.id === productoId ? { ...p, cantidad: cantidad } : p
+      p.id === productoId ? { ...p, cantidad: nuevaCantidad } : p
     );
     
     setProductos(productosActualizados);
@@ -713,18 +716,18 @@ const InvoiceScreen = () => {
                               +1
                             </button>
                             <button 
-                              className="button micro-button cantidad-rapida-btn"
-                              onClick={() => establecerCantidadEspecifica(p.id, 12)}
-                              title="Establecer a docena"
+                              className="button micro-button cantidad-rapida-btn suma-docena"
+                              onClick={() => sumarDocenas(p.id, 12)}
+                              title="Agregar docena (+12)"
                             >
-                              12
+                              +12
                             </button>
                             <button 
-                              className="button micro-button cantidad-rapida-btn"
-                              onClick={() => establecerCantidadEspecifica(p.id, 24)}
-                              title="Establecer a 2 docenas"
+                              className="button micro-button cantidad-rapida-btn suma-docena"
+                              onClick={() => sumarDocenas(p.id, 24)}
+                              title="Agregar 2 docenas (+24)"
                             >
-                              24
+                              +24
                             </button>
                           </div>
                           
