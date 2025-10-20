@@ -502,6 +502,15 @@ const FacturasGuardadas = () => {
           </button>
           {(facturas.length > 0 || abonos.length > 0) && (
             <>
+              {/* NUEVO BOTÓN: RUTAS DE COBRO */}
+              <button 
+                className="button primary-button"
+                onClick={() => navigate('/rutas-cobro')}
+                disabled={importando || cargando}
+              >
+                <i className="fas fa-route"></i> Rutas de Cobro
+              </button>
+              
               <button 
                 className="button info-button"
                 onClick={exportarDatos}

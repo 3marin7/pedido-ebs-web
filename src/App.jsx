@@ -15,6 +15,7 @@ import Navigation from './components/Navigation';
 import GestionInventario from './components/GestionInventario';
 import DashboardVentas from './components/DashboardVentas';
 import MallMap from './components/MallMap';
+import RutasCobro from './components/RutasCobro'; // NUEVO COMPONENTE
 
 // Contexto de autenticación
 const AuthContext = createContext();
@@ -171,6 +172,19 @@ function App() {
                 <>
                   <PageMeta title="Facturas Guardadas - EBS" description="Gestión de facturas del sistema EBS" />
                   <FacturasGuardadas />
+                </>
+              </ProtectedRoute>
+            } />
+            
+            {/* NUEVA RUTA: Rutas de Cobro Inteligentes */}
+            <Route path="/rutas-cobro" element={
+              <ProtectedRoute requiredRoles={['admin']}>
+                <>
+                  <PageMeta 
+                    title="Rutas de Cobro Inteligentes - EBS" 
+                    description="Sistema de priorización para visitas de cobranza optimizadas" 
+                  />
+                  <RutasCobro />
                 </>
               </ProtectedRoute>
             } />
