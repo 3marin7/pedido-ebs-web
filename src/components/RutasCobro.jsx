@@ -11,115 +11,221 @@ const RutasCobro = () => {
   const [ordenamiento, setOrdenamiento] = useState('prioridad');
   const [rutaGenerada, setRutaGenerada] = useState([]);
   const [mostrarMapa, setMostrarMapa] = useState(false);
+  const [mostrarRecordatorios, setMostrarRecordatorios] = useState(false);
+  const [reporteDiario, setReporteDiario] = useState(null);
 
   // Cargar clientes con deuda
   useEffect(() => {
-    const cargarClientesConDeuda = async () => {
-      try {
-        setCargando(true);
-        
-        // Cargar facturas
-        const { data: facturas, error: facturasError } = await supabase
-          .from('facturas')
-          .select('*');
-        
-        if (facturasError) throw facturasError;
-        
-        // Cargar abonos
-        const { data: abonos, error: abonosError } = await supabase
-          .from('abonos')
-          .select('*');
-        
-        if (abonosError) throw abonosError;
-
-        // Calcular deudas por cliente
-        const deudasPorCliente = {};
-        
-        facturas.forEach(factura => {
-          const abonosFactura = abonos.filter(abono => abono.factura_id === factura.id);
-          const totalAbonado = abonosFactura.reduce((sum, abono) => sum + (abono.monto || 0), 0);
-          const saldo = factura.total - totalAbonado;
-          
-          if (saldo > 0) {
-            if (!deudasPorCliente[factura.cliente]) {
-              deudasPorCliente[factura.cliente] = {
-                nombre: factura.cliente,
-                direccion: factura.direccion || 'Sin dirección',
-                telefono: factura.telefono || 'Sin teléfono',
-                totalDeuda: 0,
-                facturasPendientes: [],
-                facturaMasAntigua: factura.fecha,
-                ultimaFactura: factura.fecha,
-                zona: extraerZona(factura.direccion),
-                clienteId: factura.id // Usamos el ID de factura temporalmente
-              };
-            }
-            
-            deudasPorCliente[factura.cliente].totalDeuda += saldo;
-            deudasPorCliente[factura.cliente].facturasPendientes.push({
-              id: factura.id,
-              fecha: factura.fecha,
-              saldo: saldo,
-              vendedor: factura.vendedor
-            });
-            
-            // Actualizar fechas
-            if (new Date(factura.fecha) < new Date(deudasPorCliente[factura.cliente].facturaMasAntigua)) {
-              deudasPorCliente[factura.cliente].facturaMasAntigua = factura.fecha;
-            }
-            if (new Date(factura.fecha) > new Date(deudasPorCliente[factura.cliente].ultimaFactura)) {
-              deudasPorCliente[factura.cliente].ultimaFactura = factura.fecha;
-            }
-          }
-        });
-
-        // Convertir a array y calcular prioridad
-        const clientesArray = Object.values(deudasPorCliente).map(cliente => {
-          const diasDesdePrimeraFactura = Math.floor(
-            (new Date() - new Date(cliente.facturaMasAntigua)) / (1000 * 60 * 60 * 24)
-          );
-          const diasDesdeUltimaFactura = Math.floor(
-            (new Date() - new Date(cliente.ultimaFactura)) / (1000 * 60 * 60 * 24)
-          );
-
-          // Calcular puntuación de prioridad (mayor = más urgente)
-          let puntuacion = 0;
-          
-          // Factor deuda (40% del total)
-          puntuacion += (cliente.totalDeuda / 100000) * 40;
-          
-          // Factor antigüedad (30% del total)
-          if (diasDesdePrimeraFactura > 90) puntuacion += 30;
-          else if (diasDesdePrimeraFactura > 60) puntuacion += 20;
-          else if (diasDesdePrimeraFactura > 30) puntuacion += 10;
-          
-          // Factor tiempo sin pago (30% del total)
-          if (diasDesdeUltimaFactura > 60) puntuacion += 30;
-          else if (diasDesdeUltimaFactura > 30) puntuacion += 20;
-          else if (diasDesdeUltimaFactura > 15) puntuacion += 10;
-
-          return {
-            ...cliente,
-            diasDesdePrimeraFactura,
-            diasDesdeUltimaFactura,
-            puntuacionPrioridad: Math.min(100, puntuacion),
-            nivelPrioridad: calcularNivelPrioridad(puntuacion),
-            visitadoHoy: false // Inicialmente no visitado
-          };
-        });
-
-        setClientesConDeuda(clientesArray);
-        
-      } catch (error) {
-        console.error("Error cargando clientes con deuda:", error);
-        alert('Error al cargar los datos de cobranza');
-      } finally {
-        setCargando(false);
-      }
-    };
-
-    cargarClientesConDeuda();
+    cargarDatosCompletos();
   }, []);
+
+  const cargarDatosCompletos = async () => {
+    try {
+      setCargando(true);
+      await Promise.all([
+        cargarClientesConDeuda(),
+        cargarReporteDiario()
+      ]);
+    } catch (error) {
+      console.error("Error cargando datos:", error);
+    } finally {
+      setCargando(false);
+    }
+  };
+
+  const cargarClientesConDeuda = async () => {
+    try {
+      // Cargar facturas
+      const { data: facturas, error: facturasError } = await supabase
+        .from('facturas')
+        .select('*');
+      
+      if (facturasError) throw facturasError;
+      
+      // Cargar abonos
+      const { data: abonos, error: abonosError } = await supabase
+        .from('abonos')
+        .select('*');
+      
+      if (abonosError) throw abonosError;
+
+      // Cargar visitas desde Supabase
+      const { data: visitas, error: visitasError } = await supabase
+        .from('visits_cobro')
+        .select('*');
+      
+      if (visitasError) {
+        console.log('Tabla visits_cobro no encontrada, usando localStorage');
+        throw visitasError;
+      }
+
+      // Calcular deudas por cliente
+      const deudasPorCliente = {};
+      
+      facturas.forEach(factura => {
+        const abonosFactura = abonos.filter(abono => abono.factura_id === factura.id);
+        const totalAbonado = abonosFactura.reduce((sum, abono) => sum + (abono.monto || 0), 0);
+        const saldo = factura.total - totalAbonado;
+        
+        if (saldo > 0) {
+          if (!deudasPorCliente[factura.cliente]) {
+            deudasPorCliente[factura.cliente] = {
+              nombre: factura.cliente,
+              direccion: factura.direccion || 'Sin dirección',
+              telefono: factura.telefono || 'Sin teléfono',
+              totalDeuda: 0,
+              facturasPendientes: [],
+              facturaMasAntigua: factura.fecha,
+              ultimaFactura: factura.fecha,
+              zona: extraerZona(factura.direccion),
+              clienteId: factura.cliente_id || factura.id.toString()
+            };
+          }
+          
+          deudasPorCliente[factura.cliente].totalDeuda += saldo;
+          deudasPorCliente[factura.cliente].facturasPendientes.push({
+            id: factura.id,
+            fecha: factura.fecha,
+            saldo: saldo,
+            vendedor: factura.vendedor
+          });
+          
+          // Actualizar fechas
+          if (new Date(factura.fecha) < new Date(deudasPorCliente[factura.cliente].facturaMasAntigua)) {
+            deudasPorCliente[factura.cliente].facturaMasAntigua = factura.fecha;
+          }
+          if (new Date(factura.fecha) > new Date(deudasPorCliente[factura.cliente].ultimaFactura)) {
+            deudasPorCliente[factura.cliente].ultimaFactura = factura.fecha;
+          }
+        }
+      });
+
+      // Convertir a array y calcular prioridad
+      const clientesArray = Object.values(deudasPorCliente).map(cliente => {
+        const diasDesdePrimeraFactura = Math.floor(
+          (new Date() - new Date(cliente.facturaMasAntigua)) / (1000 * 60 * 60 * 24)
+        );
+        const diasDesdeUltimaFactura = Math.floor(
+          (new Date() - new Date(cliente.ultimaFactura)) / (1000 * 60 * 60 * 24)
+        );
+
+        // Verificar si el cliente fue visitado hoy (desde Supabase)
+        const visitadoHoy = visitas?.some(visita => 
+          visita.cliente_nombre === cliente.nombre && 
+          new Date(visita.fecha_visita).toDateString() === new Date().toDateString()
+        );
+
+        // Calcular puntuación de prioridad (mayor = más urgente)
+        let puntuacion = 0;
+        
+        // Factor deuda (40% del total)
+        puntuacion += (cliente.totalDeuda / 100000) * 40;
+        
+        // Factor antigüedad (30% del total)
+        if (diasDesdePrimeraFactura > 90) puntuacion += 30;
+        else if (diasDesdePrimeraFactura > 60) puntuacion += 20;
+        else if (diasDesdePrimeraFactura > 30) puntuacion += 10;
+        
+        // Factor tiempo sin pago (30% del total)
+        if (diasDesdeUltimaFactura > 60) puntuacion += 30;
+        else if (diasDesdeUltimaFactura > 30) puntuacion += 20;
+        else if (diasDesdeUltimaFactura > 15) puntuacion += 10;
+
+        return {
+          ...cliente,
+          diasDesdePrimeraFactura,
+          diasDesdeUltimaFactura,
+          puntuacionPrioridad: Math.min(100, puntuacion),
+          nivelPrioridad: calcularNivelPrioridad(puntuacion),
+          visitadoHoy: visitadoHoy || false,
+          necesitaRecordatorio: diasDesdePrimeraFactura > 60
+        };
+      });
+
+      setClientesConDeuda(clientesArray);
+      
+    } catch (error) {
+      console.error("Error cargando clientes con deuda:", error);
+      // Fallback a localStorage si hay error
+      cargarDesdeLocalStorage();
+    }
+  };
+
+  // Fallback a localStorage
+  const cargarDesdeLocalStorage = () => {
+    try {
+      const clientesBasicos = [];
+      const facturasStorage = JSON.parse(localStorage.getItem('facturas') || '[]');
+      const abonosStorage = JSON.parse(localStorage.getItem('abonos') || '[]');
+      
+      // Calcular deudas básicas desde localStorage
+      const deudasPorCliente = {};
+      
+      facturasStorage.forEach(factura => {
+        const abonosFactura = abonosStorage.filter(abono => abono.factura_id === factura.id);
+        const totalAbonado = abonosFactura.reduce((sum, abono) => sum + (abono.monto || 0), 0);
+        const saldo = factura.total - totalAbonado;
+        
+        if (saldo > 0) {
+          if (!deudasPorCliente[factura.cliente]) {
+            deudasPorCliente[factura.cliente] = {
+              nombre: factura.cliente,
+              direccion: factura.direccion || 'Sin dirección',
+              telefono: factura.telefono || 'Sin teléfono',
+              totalDeuda: 0,
+              facturasPendientes: [],
+              facturaMasAntigua: factura.fecha,
+              ultimaFactura: factura.fecha,
+              zona: extraerZona(factura.direccion),
+              clienteId: factura.id.toString()
+            };
+          }
+          
+          deudasPorCliente[factura.cliente].totalDeuda += saldo;
+          deudasPorCliente[factura.cliente].facturasPendientes.push({
+            id: factura.id,
+            fecha: factura.fecha,
+            saldo: saldo,
+            vendedor: factura.vendedor
+          });
+        }
+      });
+
+      const clientesArray = Object.values(deudasPorCliente).map(cliente => {
+        const diasDesdePrimeraFactura = Math.floor(
+          (new Date() - new Date(cliente.facturaMasAntigua)) / (1000 * 60 * 60 * 24)
+        );
+        const diasDesdeUltimaFactura = Math.floor(
+          (new Date() - new Date(cliente.ultimaFactura)) / (1000 * 60 * 60 * 24)
+        );
+
+        // Calcular puntuación de prioridad
+        let puntuacion = 0;
+        puntuacion += (cliente.totalDeuda / 100000) * 40;
+        if (diasDesdePrimeraFactura > 90) puntuacion += 30;
+        else if (diasDesdePrimeraFactura > 60) puntuacion += 20;
+        else if (diasDesdePrimeraFactura > 30) puntuacion += 10;
+        if (diasDesdeUltimaFactura > 60) puntuacion += 30;
+        else if (diasDesdeUltimaFactura > 30) puntuacion += 20;
+        else if (diasDesdeUltimaFactura > 15) puntuacion += 10;
+
+        return {
+          ...cliente,
+          diasDesdePrimeraFactura,
+          diasDesdeUltimaFactura,
+          puntuacionPrioridad: Math.min(100, puntuacion),
+          nivelPrioridad: calcularNivelPrioridad(puntuacion),
+          visitadoHoy: false,
+          necesitaRecordatorio: diasDesdePrimeraFactura > 60
+        };
+      });
+
+      setClientesConDeuda(clientesArray);
+      
+    } catch (error) {
+      console.error('Error cargando desde localStorage:', error);
+    }
+  };
 
   // Función para extraer zona de la dirección
   const extraerZona = (direccion) => {
@@ -146,10 +252,39 @@ const RutasCobro = () => {
     return 'Muy Baja';
   };
 
-  // Función para marcar cliente como visitado (SOLUCIÓN SIMPLIFICADA)
+  // Función para marcar cliente como visitado
   const marcarComoVisitado = async (cliente) => {
     try {
-      // SOLUCIÓN TEMPORAL: Guardar en localStorage hasta que tengamos la tabla
+      // Intentar con Supabase primero
+      const { error } = await supabase
+        .from('visits_cobro')
+        .insert([
+          {
+            cliente_id: cliente.clienteId,
+            cliente_nombre: cliente.nombre,
+            direccion: cliente.direccion,
+            deuda_pendiente: cliente.totalDeuda,
+            resultado: 'visitado',
+            observaciones: 'Visita de cobranza realizada'
+          }
+        ]);
+
+      if (error) throw error;
+
+      // Actualizar estado local
+      actualizarEstadoVisita(cliente.nombre, true);
+      alert(`✅ ${cliente.nombre} marcado como visitado`);
+
+    } catch (error) {
+      console.error('Error al registrar visita en Supabase:', error);
+      // Fallback a localStorage
+      marcarComoVisitadoLocalStorage(cliente);
+    }
+  };
+
+  // Fallback a localStorage
+  const marcarComoVisitadoLocalStorage = (cliente) => {
+    try {
       const visitasHoy = JSON.parse(localStorage.getItem('visitasCobro') || '[]');
       
       const nuevaVisita = {
@@ -163,62 +298,67 @@ const RutasCobro = () => {
       visitasHoy.push(nuevaVisita);
       localStorage.setItem('visitasCobro', JSON.stringify(visitasHoy));
 
-      // Actualizar estado local
-      setClientesConDeuda(prev => 
-        prev.map(c => 
-          c.nombre === cliente.nombre 
-            ? { ...c, visitadoHoy: true }
-            : c
-        )
-      );
-
-      // Actualizar ruta generada si existe
-      if (rutaGenerada.length > 0) {
-        setRutaGenerada(prev => 
-          prev.map(paso => 
-            paso.tipo === 'cliente' && paso.nombre === cliente.nombre
-              ? { ...paso, visitadoHoy: true }
-              : paso
-          )
-        );
-      }
-
+      actualizarEstadoVisita(cliente.nombre, true);
       alert(`✅ ${cliente.nombre} marcado como visitado`);
 
     } catch (error) {
-      console.error('Error al registrar visita:', error);
-      alert('Error al registrar la visita. Usando almacenamiento local.');
+      console.error('Error al registrar visita en localStorage:', error);
+      alert('Error al registrar la visita');
     }
   };
 
-  // Cargar visitas al iniciar
-  useEffect(() => {
-    const cargarVisitas = () => {
-      try {
-        const visitasHoy = JSON.parse(localStorage.getItem('visitasCobro') || '[]');
-        const hoy = new Date().toDateString();
-        
-        const clientesVisitadosHoy = visitasHoy
-          .filter(visita => new Date(visita.fecha).toDateString() === hoy)
-          .map(visita => visita.clienteNombre);
-        
-        setClientesConDeuda(prev => 
-          prev.map(cliente => ({
-            ...cliente,
-            visitadoHoy: clientesVisitadosHoy.includes(cliente.nombre)
-          }))
-        );
-      } catch (error) {
-        console.error('Error cargando visitas:', error);
-      }
-    };
+  const actualizarEstadoVisita = (nombreCliente, visitado) => {
+    setClientesConDeuda(prev => 
+      prev.map(c => 
+        c.nombre === nombreCliente 
+          ? { ...c, visitadoHoy: visitado }
+          : c
+      )
+    );
 
-    if (clientesConDeuda.length > 0) {
-      cargarVisitas();
+    if (rutaGenerada.length > 0) {
+      setRutaGenerada(prev => 
+        prev.map(paso => 
+          paso.tipo === 'cliente' && paso.nombre === nombreCliente
+            ? { ...paso, visitadoHoy: visitado }
+            : paso
+        )
+      );
     }
-  }, [clientesConDeuda.length]);
+  };
 
-  // Función mejorada para generar ruta optimizada
+  // Cargar reporte diario
+  const cargarReporteDiario = async () => {
+    try {
+      const hoy = new Date().toISOString().split('T')[0];
+      
+      const { data: visitasHoy, error } = await supabase
+        .from('visits_cobro')
+        .select('*')
+        .gte('fecha_visita', `${hoy}T00:00:00`)
+        .lte('fecha_visita', `${hoy}T23:59:59`);
+
+      if (!error && visitasHoy) {
+        setReporteDiario({
+          totalVisitas: visitasHoy.length,
+          visitas: visitasHoy
+        });
+      }
+    } catch (error) {
+      console.error('Error cargando reporte diario:', error);
+    }
+  };
+
+  // Función para generar recordatorios
+  const generarRecordatorios = () => {
+    const clientesSinVisitar = clientesConDeuda
+      .filter(cliente => !cliente.visitadoHoy && cliente.diasDesdePrimeraFactura > 30)
+      .sort((a, b) => b.diasDesdePrimeraFactura - a.diasDesdePrimeraFactura);
+
+    return clientesSinVisitar;
+  };
+
+  // Función para generar ruta optimizada
   const generarRutaOptimizada = () => {
     if (clientesFiltrados.length === 0) return;
 
@@ -283,7 +423,6 @@ const RutasCobro = () => {
 
   // Función para ver facturas del cliente
   const verFacturasCliente = (cliente) => {
-    // Navegar a facturas con filtro por cliente
     navigate('/facturas', { 
       state: { 
         filtroCliente: cliente.nombre
@@ -323,6 +462,9 @@ const RutasCobro = () => {
   // Obtener zonas únicas
   const zonasUnicas = [...new Set(clientesConDeuda.map(c => c.zona))].sort();
 
+  // Clientes que necesitan recordatorio
+  const clientesRecordatorio = generarRecordatorios();
+
   if (cargando) {
     return (
       <div className="rutas-cobro-container">
@@ -352,6 +494,55 @@ const RutasCobro = () => {
           Sistema de priorización para visitas de cobranza
         </p>
       </header>
+
+      {/* Notificaciones de deudas antiguas */}
+      {clientesRecordatorio.length > 0 && (
+        <div className="notificacion-alerta">
+          <div className="alerta-header">
+            <i className="fas fa-exclamation-triangle"></i>
+            <h4>Recordatorios Importantes</h4>
+            <button 
+              className="button micro-button"
+              onClick={() => setMostrarRecordatorios(!mostrarRecordatorios)}
+            >
+              <i className={`fas fa-chevron-${mostrarRecordatorios ? 'up' : 'down'}`}></i>
+            </button>
+          </div>
+          {mostrarRecordatorios && (
+            <div className="alerta-content">
+              <p>{clientesRecordatorio.length} clientes con deudas antiguas necesitan visita urgente:</p>
+              <div className="recordatorio-list">
+                {clientesRecordatorio.slice(0, 5).map(cliente => (
+                  <div key={cliente.nombre} className="recordatorio-item">
+                    <span>{cliente.nombre}</span>
+                    <span>{cliente.diasDesdePrimeraFactura} días de deuda</span>
+                    <span>{formatMoneda(cliente.totalDeuda)}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Reporte Diario */}
+      {reporteDiario && reporteDiario.totalVisitas > 0 && (
+        <div className="reporte-diario">
+          <h4>
+            <i className="fas fa-chart-line"></i> Reporte del Día
+          </h4>
+          <div className="reporte-stats">
+            <div className="reporte-item">
+              <span>Visitas Realizadas:</span>
+              <strong>{reporteDiario.totalVisitas}</strong>
+            </div>
+            <div className="reporte-item">
+              <span>Clientes Pendientes:</span>
+              <strong>{clientesConDeuda.filter(c => !c.visitadoHoy).length}</strong>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Estadísticas Rápidas */}
       <div className="estadisticas-rapidas">
