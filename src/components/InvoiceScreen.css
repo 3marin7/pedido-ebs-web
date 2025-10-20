@@ -17,12 +17,13 @@ body {
 }
 
 .invoice-container {
-  max-width: 1200px;
+  max-width: 100%;
   margin: 0 auto;
   padding: 15px;
   background: #ffffff;
   border-radius: 10px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  width: 100%;
 }
 
 h1 {
@@ -33,21 +34,36 @@ h1 {
   padding-bottom: 10px;
   border-bottom: 2px solid #2b6cb0;
   font-weight: 700;
+  width: 100%;
 }
 
-/* Formulario */
+/* Formulario - CORREGIDO PARA USAR 100% */
 .form-row {
   display: flex;
   gap: 12px;
   margin-bottom: 12px;
   flex-wrap: wrap;
+  width: 100%;
 }
 
 .form-group {
   flex: 1;
   display: flex;
   flex-direction: column;
-  min-width: 150px;
+  min-width: 0; /* IMPORTANTE: Permite que se reduzcan */
+}
+
+/* Grupos específicos para usar mejor el espacio */
+.cliente-group {
+  flex: 2;
+}
+
+.form-group[style*="flex: 2"] {
+  flex: 2 !important;
+}
+
+.form-group[style*="flex: 1"] {
+  flex: 1 !important;
 }
 
 .form-group label {
@@ -84,18 +100,20 @@ select {
   padding-right: 35px;
 }
 
-/* Sección de información del cliente */
+/* Sección de información del cliente - CORREGIDO */
 .customer-info-section {
   background: #f8fafc;
   padding: 15px;
   border-radius: 8px;
   border-left: 4px solid #4299e1;
   margin-bottom: 15px;
+  width: 100%;
 }
 
-/* Sección de productos */
+/* Sección de productos - CORREGIDO */
 .products-main-section {
   margin-bottom: 15px;
+  width: 100%;
 }
 
 .add-products-section {
@@ -104,6 +122,7 @@ select {
   border-radius: 8px;
   border-left: 4px solid #48bb78;
   margin-bottom: 15px;
+  width: 100%;
 }
 
 .add-products-section h3 {
@@ -111,14 +130,30 @@ select {
   margin-bottom: 12px;
   font-size: 16px;
   font-weight: 600;
+  width: 100%;
 }
 
-/* Lista de productos expandida */
+/* Formulario de productos - CORREGIDO */
+.product-form-row {
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.product-input {
+  flex: 1;
+  min-width: 120px;
+}
+
+/* Lista de productos expandida - CORREGIDO */
 .productos-list-expanded {
   background: #f8fafc;
   border-radius: 8px;
   border-left: 4px solid #ed8936;
   padding: 15px;
+  width: 100%;
 }
 
 .productos-header {
@@ -130,6 +165,7 @@ select {
   border-bottom: 2px solid #e2e8f0;
   flex-wrap: wrap;
   gap: 10px;
+  width: 100%;
 }
 
 .productos-header h3 {
@@ -150,14 +186,15 @@ select {
   font-weight: 700;
 }
 
-/* Grid de productos */
+/* Grid de productos - CORREGIDO */
 .productos-grid {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  width: 100%;
 }
 
-/* Items de producto expandidos */
+/* Items de producto expandidos - CORREGIDO */
 .producto-item-expanded {
   display: flex;
   justify-content: space-between;
@@ -170,6 +207,7 @@ select {
   transition: all 0.2s ease;
   flex-wrap: wrap;
   gap: 10px;
+  width: 100%;
 }
 
 .producto-item-expanded:hover {
@@ -182,7 +220,7 @@ select {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  min-width: 200px;
+  min-width: 0; /* IMPORTANTE */
 }
 
 .producto-nombre {
@@ -209,7 +247,7 @@ select {
   font-size: 15px;
 }
 
-/* Controles de producto */
+/* Controles de producto - CORREGIDO */
 .producto-controls-expanded {
   display: flex;
   flex-direction: column;
@@ -233,19 +271,6 @@ select {
   display: flex;
   gap: 4px;
   justify-content: flex-end;
-}
-
-/* Formulario de productos */
-.product-form-row {
-  display: flex;
-  gap: 10px;
-  align-items: flex-end;
-  flex-wrap: wrap;
-}
-
-.product-input {
-  flex: 1;
-  min-width: 120px;
 }
 
 /* Botones */
@@ -379,11 +404,12 @@ select {
   background-color: #90cdf4 !important;
 }
 
-/* Botones de acción */
+/* Botones de acción - CORREGIDO */
 .action-buttons-bottom {
   margin-top: 25px;
   padding-top: 15px;
   border-top: 2px solid #e2e8f0;
+  width: 100%;
 }
 
 .main-action-button {
@@ -398,6 +424,7 @@ select {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   gap: 8px;
+  width: 100%;
 }
 
 .secondary-actions-grid .button {
@@ -441,7 +468,7 @@ select {
   font-weight: bold;
 }
 
-/* Modales */
+/* Modales - CORREGIDOS */
 .catalogo-modal, .clientes-modal {
   position: fixed;
   top: 0;
@@ -455,6 +482,7 @@ select {
   z-index: 1000;
   backdrop-filter: blur(5px);
   padding: 10px;
+  width: 100%;
 }
 
 .catalogo-content, .clientes-content {
@@ -483,6 +511,7 @@ select {
   border-bottom: 1px solid #eee;
   flex-wrap: wrap;
   gap: 10px;
+  width: 100%;
 }
 
 .catalogo-header h2, .clientes-header h2 {
@@ -493,18 +522,20 @@ select {
 
 .catalogo-search, .clientes-search {
   margin-bottom: 15px;
+  width: 100%;
 }
 
 .catalogo-search input, .clientes-search input {
   width: 100%;
 }
 
-/* Lista de productos en catálogo */
+/* Lista de productos en catálogo - CORREGIDO */
 .productos-catalogo-list {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 12px;
   margin-top: 15px;
+  width: 100%;
 }
 
 .producto-catalogo-item {
@@ -514,6 +545,7 @@ select {
   cursor: pointer;
   transition: all 0.2s;
   background: white;
+  width: 100%;
 }
 
 .producto-catalogo-item:hover {
@@ -549,6 +581,7 @@ select {
   padding: 20px;
   grid-column: 1 / -1;
   color: #718096;
+  width: 100%;
 }
 
 .producto-details {
@@ -590,7 +623,7 @@ select {
   transform: none !important;
 }
 
-/* RESPONSIVE MEJORADO */
+/* RESPONSIVE MEJORADO - CORREGIDO PARA 100% ANCHO */
 @media (max-width: 768px) {
   body {
     padding: 8px;
@@ -599,35 +632,43 @@ select {
 
   .invoice-container {
     padding: 12px;
+    width: 100%;
+    max-width: 100%;
   }
 
   h1 {
     font-size: 22px;
     margin-bottom: 15px;
+    width: 100%;
   }
 
   .form-row {
-    flex-direction: column;
+    flex-direction: row; /* Mantenemos filas en tablet */
     gap: 10px;
+    width: 100%;
   }
 
   .form-group {
-    min-width: 100%;
+    min-width: 0;
+    flex: 1;
   }
 
   .product-form-row {
-    flex-direction: column;
+    flex-direction: row; /* Mantenemos filas en tablet */
     gap: 10px;
+    width: 100%;
   }
 
   .product-input {
-    min-width: 100%;
+    min-width: 0;
+    flex: 1;
   }
 
   .producto-item-expanded {
-    flex-direction: column;
-    align-items: stretch;
+    flex-direction: row; /* Mantenemos filas en tablet */
+    align-items: center;
     gap: 12px;
+    width: 100%;
   }
 
   .producto-controls-expanded {
@@ -635,22 +676,24 @@ select {
   }
 
   .botones-rapidos-linea {
-    justify-content: center;
+    justify-content: flex-start;
   }
 
   .acciones-principales {
-    justify-content: center;
+    justify-content: flex-start;
   }
 
   .productos-header {
-    flex-direction: column;
-    align-items: flex-start;
+    flex-direction: row; /* Mantenemos filas en tablet */
+    align-items: center;
     gap: 8px;
+    width: 100%;
   }
 
   .secondary-actions-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 6px;
+    width: 100%;
   }
 
   .button {
@@ -670,10 +713,11 @@ select {
   .catalogo-content, .clientes-content {
     padding: 15px;
     max-width: 95%;
+    width: 95%;
   }
 
   .productos-catalogo-list {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
@@ -684,16 +728,36 @@ select {
 
   .invoice-container {
     padding: 10px;
+    width: 100%;
   }
 
   h1 {
     font-size: 20px;
+    width: 100%;
   }
 
   .customer-info-section,
   .add-products-section,
   .productos-list-expanded {
     padding: 12px;
+    width: 100%;
+  }
+
+  /* EN MÓVIL PEQUEÑO CAMBIAMOS A COLUMNA */
+  .form-row {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .product-form-row {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .producto-item-expanded {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
   }
 
   .button {
@@ -701,15 +765,18 @@ select {
     padding: 8px 10px;
     height: 36px;
     min-width: 70px;
+    width: 100%;
   }
 
   .main-action-button {
     height: 44px;
     font-size: 14px;
+    width: 100%;
   }
 
   .secondary-actions-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
+    width: 100%;
   }
 
   .micro-button {
@@ -723,12 +790,18 @@ select {
     padding: 10px;
     font-size: 14px;
     height: 42px;
+    width: 100%;
+  }
+
+  .productos-catalogo-list {
+    grid-template-columns: 1fr;
   }
 }
 
 @media (max-width: 360px) {
   .botones-rapidos-linea {
     gap: 2px;
+    justify-content: center;
   }
 
   .micro-button {
@@ -739,6 +812,10 @@ select {
   .button {
     font-size: 10px;
     padding: 6px 8px;
+  }
+
+  .secondary-actions-grid {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -785,4 +862,10 @@ select {
 
 .justify-between {
   justify-content: space-between;
+}
+
+/* CLASE ESPECIAL PARA GARANTIZAR 100% ANCHO */
+.full-width {
+  width: 100% !important;
+  max-width: 100% !important;
 }
