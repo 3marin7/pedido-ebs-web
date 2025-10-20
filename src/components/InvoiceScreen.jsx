@@ -239,7 +239,7 @@ const InvoiceScreen = () => {
     });
   };
 
-  // Función para actualizar cantidad rápidamente (-1 y +1)
+  // Función para actualizar cantidad rápidamente
   const actualizarCantidadRapida = (productoId, incremento) => {
     const producto = productos.find(p => p.id === productoId);
     if (!producto) return;
@@ -633,7 +633,7 @@ const InvoiceScreen = () => {
             </div>
           </div>
 
-          {/* Sección de productos - REDISEÑADA */}
+          {/* Sección de productos */}
           <div className="products-main-section">
             <div className="add-products-section">
               <h3>Agregar Producto:</h3>
@@ -674,7 +674,7 @@ const InvoiceScreen = () => {
               </div>
             </div>
 
-            {/* Lista de productos - AHORA MÁS VISIBLE */}
+            {/* Lista de productos */}
             {productos.length > 0 && (
               <div className="productos-list-expanded">
                 <div className="productos-header">
