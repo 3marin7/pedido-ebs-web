@@ -50,7 +50,8 @@ const RutasCobro = () => {
                 facturasPendientes: [],
                 facturaMasAntigua: factura.fecha,
                 ultimaFactura: factura.fecha,
-                zona: extraerZona(factura.direccion)
+                zona: extraerZona(factura.direccion),
+                clienteId: factura.id // Usamos el ID de factura temporalmente
               };
             }
             
@@ -85,7 +86,7 @@ const RutasCobro = () => {
           let puntuacion = 0;
           
           // Factor deuda (40% del total)
-          puntuacion += (cliente.totalDeuda / 100000) * 40; // Escalado
+          puntuacion += (cliente.totalDeuda / 100000) * 40;
           
           // Factor antigüedad (30% del total)
           if (diasDesdePrimeraFactura > 90) puntuacion += 30;
@@ -101,8 +102,9 @@ const RutasCobro = () => {
             ...cliente,
             diasDesdePrimeraFactura,
             diasDesdeUltimaFactura,
-            puntuacionPrioridad: Math.min(100, puntuacion), // Máximo 100
-            nivelPrioridad: calcularNivelPrioridad(puntuacion)
+            puntuacionPrioridad: Math.min(100, puntuacion),
+            nivelPrioridad: calcularNivelPrioridad(puntuacion),
+            visitadoHoy: false // Inicialmente no visitado
           };
         });
 
@@ -144,6 +146,151 @@ const RutasCobro = () => {
     return 'Muy Baja';
   };
 
+  // Función para marcar cliente como visitado (SOLUCIÓN SIMPLIFICADA)
+  const marcarComoVisitado = async (cliente) => {
+    try {
+      // SOLUCIÓN TEMPORAL: Guardar en localStorage hasta que tengamos la tabla
+      const visitasHoy = JSON.parse(localStorage.getItem('visitasCobro') || '[]');
+      
+      const nuevaVisita = {
+        id: Date.now(),
+        clienteNombre: cliente.nombre,
+        fecha: new Date().toISOString(),
+        deuda: cliente.totalDeuda,
+        direccion: cliente.direccion
+      };
+      
+      visitasHoy.push(nuevaVisita);
+      localStorage.setItem('visitasCobro', JSON.stringify(visitasHoy));
+
+      // Actualizar estado local
+      setClientesConDeuda(prev => 
+        prev.map(c => 
+          c.nombre === cliente.nombre 
+            ? { ...c, visitadoHoy: true }
+            : c
+        )
+      );
+
+      // Actualizar ruta generada si existe
+      if (rutaGenerada.length > 0) {
+        setRutaGenerada(prev => 
+          prev.map(paso => 
+            paso.tipo === 'cliente' && paso.nombre === cliente.nombre
+              ? { ...paso, visitadoHoy: true }
+              : paso
+          )
+        );
+      }
+
+      alert(`✅ ${cliente.nombre} marcado como visitado`);
+
+    } catch (error) {
+      console.error('Error al registrar visita:', error);
+      alert('Error al registrar la visita. Usando almacenamiento local.');
+    }
+  };
+
+  // Cargar visitas al iniciar
+  useEffect(() => {
+    const cargarVisitas = () => {
+      try {
+        const visitasHoy = JSON.parse(localStorage.getItem('visitasCobro') || '[]');
+        const hoy = new Date().toDateString();
+        
+        const clientesVisitadosHoy = visitasHoy
+          .filter(visita => new Date(visita.fecha).toDateString() === hoy)
+          .map(visita => visita.clienteNombre);
+        
+        setClientesConDeuda(prev => 
+          prev.map(cliente => ({
+            ...cliente,
+            visitadoHoy: clientesVisitadosHoy.includes(cliente.nombre)
+          }))
+        );
+      } catch (error) {
+        console.error('Error cargando visitas:', error);
+      }
+    };
+
+    if (clientesConDeuda.length > 0) {
+      cargarVisitas();
+    }
+  }, [clientesConDeuda.length]);
+
+  // Función mejorada para generar ruta optimizada
+  const generarRutaOptimizada = () => {
+    if (clientesFiltrados.length === 0) return;
+
+    // Agrupar por zona
+    const clientesPorZona = {};
+    
+    clientesFiltrados.forEach(cliente => {
+      if (!clientesPorZona[cliente.zona]) {
+        clientesPorZona[cliente.zona] = [];
+      }
+      clientesPorZona[cliente.zona].push(cliente);
+    });
+
+    // Ordenar zonas por densidad de clientes y prioridad
+    const zonasOrdenadas = Object.keys(clientesPorZona).sort((a, b) => {
+      const densidadA = clientesPorZona[a].length;
+      const densidadB = clientesPorZona[b].length;
+      const prioridadA = clientesPorZona[a].reduce((sum, c) => sum + c.puntuacionPrioridad, 0);
+      const prioridadB = clientesPorZona[b].reduce((sum, c) => sum + c.puntuacionPrioridad, 0);
+      
+      // Ponderar: 60% densidad + 40% prioridad
+      const scoreA = (densidadA * 0.6) + (prioridadA * 0.4);
+      const scoreB = (densidadB * 0.6) + (prioridadB * 0.4);
+      
+      return scoreB - scoreA;
+    });
+
+    // Construir ruta optimizada
+    const ruta = [];
+    
+    zonasOrdenadas.forEach(zona => {
+      // Agregar separador de zona
+      ruta.push({ 
+        tipo: 'zona', 
+        nombre: `🚗 ZONA ${zona}`,
+        info: `${clientesPorZona[zona].length} clientes`
+      });
+      
+      // Ordenar clientes dentro de la zona por prioridad
+      const clientesEnZona = [...clientesPorZona[zona]]
+        .sort((a, b) => b.puntuacionPrioridad - a.puntuacionPrioridad);
+      
+      clientesEnZona.forEach((cliente, index) => {
+        ruta.push({ 
+          tipo: 'cliente', 
+          ...cliente,
+          ordenEnRuta: ruta.length
+        });
+      });
+    });
+
+    setRutaGenerada(ruta);
+    setMostrarMapa(true);
+    
+    // Scroll a la sección de ruta
+    setTimeout(() => {
+      document.querySelector('.ruta-generada-section')?.scrollIntoView({ 
+        behavior: 'smooth' 
+      });
+    }, 500);
+  };
+
+  // Función para ver facturas del cliente
+  const verFacturasCliente = (cliente) => {
+    // Navegar a facturas con filtro por cliente
+    navigate('/facturas', { 
+      state: { 
+        filtroCliente: cliente.nombre
+      } 
+    });
+  };
+
   // Filtrar y ordenar clientes
   const clientesFiltrados = clientesConDeuda
     .filter(cliente => 
@@ -163,38 +310,6 @@ const RutasCobro = () => {
           return b.puntuacionPrioridad - a.puntuacionPrioridad;
       }
     });
-
-  // Generar ruta optimizada
-  const generarRuta = () => {
-    // Simulación de algoritmo de ruta optimizada por zona
-    const clientesPorZona = {};
-    
-    clientesFiltrados.forEach(cliente => {
-      if (!clientesPorZona[cliente.zona]) {
-        clientesPorZona[cliente.zona] = [];
-      }
-      clientesPorZona[cliente.zona].push(cliente);
-    });
-
-    // Ordenar zonas por prioridad total
-    const zonasOrdenadas = Object.keys(clientesPorZona).sort((a, b) => {
-      const prioridadA = clientesPorZona[a].reduce((sum, c) => sum + c.puntuacionPrioridad, 0);
-      const prioridadB = clientesPorZona[b].reduce((sum, c) => sum + c.puntuacionPrioridad, 0);
-      return prioridadB - prioridadA;
-    });
-
-    // Construir ruta
-    const ruta = [];
-    zonasOrdenadas.forEach(zona => {
-      ruta.push({ tipo: 'zona', nombre: `🚗 ZONA ${zona}` });
-      clientesPorZona[zona].forEach(cliente => {
-        ruta.push({ tipo: 'cliente', ...cliente });
-      });
-    });
-
-    setRutaGenerada(ruta);
-    setMostrarMapa(true);
-  };
 
   // Formatear moneda
   const formatMoneda = (valor) => {
@@ -253,12 +368,14 @@ const RutasCobro = () => {
         </div>
         
         <div className="stat-card">
-          <div className="stat-icon total">
-            <i className="fas fa-users"></i>
+          <div className="stat-icon visitados">
+            <i className="fas fa-check-circle"></i>
           </div>
           <div className="stat-info">
-            <span>Total Clientes con Deuda</span>
-            <strong>{clientesConDeuda.length}</strong>
+            <span>Visitados Hoy</span>
+            <strong>
+              {clientesConDeuda.filter(c => c.visitadoHoy).length}
+            </strong>
           </div>
         </div>
         
@@ -323,7 +440,7 @@ const RutasCobro = () => {
         
         <button 
           className="button primary-button generar-ruta-btn"
-          onClick={generarRuta}
+          onClick={generarRutaOptimizada}
           disabled={clientesFiltrados.length === 0}
         >
           <i className="fas fa-route"></i> Generar Ruta Optimizada
@@ -347,11 +464,18 @@ const RutasCobro = () => {
         ) : (
           <div className="clientes-grid">
             {clientesFiltrados.map((cliente, index) => (
-              <div key={cliente.nombre} className={`cliente-card prioridad-${cliente.nivelPrioridad.toLowerCase()}`}>
+              <div key={cliente.nombre} className={`cliente-card prioridad-${cliente.nivelPrioridad.toLowerCase()} ${cliente.visitadoHoy ? 'visitado' : ''}`}>
                 <div className="cliente-header">
                   <div className="cliente-info">
                     <h4>{cliente.nombre}</h4>
-                    <span className="zona-badge">{cliente.zona}</span>
+                    <div className="cliente-badges">
+                      <span className="zona-badge">{cliente.zona}</span>
+                      {cliente.visitadoHoy && (
+                        <span className="visitado-badge">
+                          <i className="fas fa-check"></i> Visitado Hoy
+                        </span>
+                      )}
+                    </div>
                   </div>
                   <div className={`prioridad-badge ${cliente.nivelPrioridad.toLowerCase()}`}>
                     {cliente.nivelPrioridad}
@@ -398,19 +522,17 @@ const RutasCobro = () => {
                 <div className="cliente-actions">
                   <button 
                     className="button info-button"
-                    onClick={() => navigate('/facturas')}
+                    onClick={() => verFacturasCliente(cliente)}
                   >
                     <i className="fas fa-file-invoice"></i> Ver Facturas
                   </button>
                   <button 
-                    className="button success-button"
-                    onClick={() => {
-                      // Aquí podrías integrar con Google Maps o Waze
-                      const direccionURL = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(cliente.direccion)}`;
-                      window.open(direccionURL, '_blank');
-                    }}
+                    className={`button ${cliente.visitadoHoy ? 'secondary-button' : 'primary-button'}`}
+                    onClick={() => marcarComoVisitado(cliente)}
+                    disabled={cliente.visitadoHoy}
                   >
-                    <i className="fas fa-map-marked-alt"></i> Ver en Maps
+                    <i className={`fas ${cliente.visitadoHoy ? 'fa-check' : 'fa-user-check'}`}></i>
+                    {cliente.visitadoHoy ? 'Visitado' : 'Marcar Visitado'}
                   </button>
                 </div>
               </div>
@@ -426,53 +548,79 @@ const RutasCobro = () => {
             <h3>
               <i className="fas fa-route"></i> Ruta de Cobro Optimizada
             </h3>
-            <button 
-              className="button secondary-button"
-              onClick={() => {
-                // Función para imprimir o exportar la ruta
-                window.print();
-              }}
-            >
-              <i className="fas fa-print"></i> Imprimir Ruta
-            </button>
+            <div className="ruta-header-actions">
+              <button 
+                className="button success-button"
+                onClick={() => {
+                  // Exportar ruta como texto
+                  const rutaTexto = rutaGenerada.map((paso, index) => {
+                    if (paso.tipo === 'zona') {
+                      return `${index + 1}. ${paso.nombre} - ${paso.info}`;
+                    } else {
+                      return `${index + 1}. ${paso.nombre} - ${paso.direccion} - Deuda: ${formatMoneda(paso.totalDeuda)}`;
+                    }
+                  }).join('\n');
+                  
+                  navigator.clipboard.writeText(rutaTexto);
+                  alert('Ruta copiada al portapapeles');
+                }}
+              >
+                <i className="fas fa-copy"></i> Copiar Ruta
+              </button>
+              <button 
+                className="button secondary-button"
+                onClick={() => window.print()}
+              >
+                <i className="fas fa-print"></i> Imprimir
+              </button>
+            </div>
           </div>
           
           <div className="ruta-steps">
             {rutaGenerada.map((paso, index) => (
-              <div key={index} className={`ruta-step ${paso.tipo}`}>
+              <div key={index} className={`ruta-step ${paso.tipo} ${paso.visitadoHoy ? 'visitado' : ''}`}>
                 {paso.tipo === 'zona' ? (
                   <div className="zona-separator">
                     <i className="fas fa-car"></i>
-                    <span>{paso.nombre}</span>
+                    <div className="zona-info">
+                      <span>{paso.nombre}</span>
+                      <small>{paso.info}</small>
+                    </div>
                   </div>
                 ) : (
                   <div className="cliente-step">
                     <div className="step-number">{index}.</div>
                     <div className="step-info">
-                      <h4>{paso.nombre}</h4>
+                      <h4>
+                        {paso.nombre}
+                        {paso.visitadoHoy && (
+                          <span className="step-visitado">
+                            <i className="fas fa-check"></i> Visitado
+                          </span>
+                        )}
+                      </h4>
                       <p>{paso.direccion}</p>
                       <div className="step-details">
                         <span>Deuda: {formatMoneda(paso.totalDeuda)}</span>
                         <span className={`prioridad ${paso.nivelPrioridad.toLowerCase()}`}>
                           {paso.nivelPrioridad}
                         </span>
+                        <span>Facturas: {paso.facturasPendientes.length}</span>
                       </div>
                     </div>
                     <div className="step-actions">
                       <button 
-                        className="button micro-button success-button"
-                        onClick={() => {
-                          const direccionURL = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(paso.direccion)}`;
-                          window.open(direccionURL, '_blank');
-                        }}
-                      >
-                        <i className="fas fa-map-marker-alt"></i>
-                      </button>
-                      <button 
                         className="button micro-button info-button"
-                        onClick={() => navigate('/facturas')}
+                        onClick={() => verFacturasCliente(paso)}
                       >
                         <i className="fas fa-file-invoice"></i>
+                      </button>
+                      <button 
+                        className={`button micro-button ${paso.visitadoHoy ? 'secondary-button' : 'primary-button'}`}
+                        onClick={() => marcarComoVisitado(paso)}
+                        disabled={paso.visitadoHoy}
+                      >
+                        <i className={`fas ${paso.visitadoHoy ? 'fa-check' : 'fa-user-check'}`}></i>
                       </button>
                     </div>
                   </div>
@@ -496,6 +644,14 @@ const RutasCobro = () => {
                       .filter(p => p.tipo === 'cliente')
                       .reduce((sum, c) => sum + c.totalDeuda, 0)
                   )}
+                </strong>
+              </div>
+              <div className="resumen-item">
+                <span>Clientes Visitados:</span>
+                <strong>
+                  {rutaGenerada
+                    .filter(p => p.tipo === 'cliente' && p.visitadoHoy)
+                    .length}
                 </strong>
               </div>
               <div className="resumen-item">
