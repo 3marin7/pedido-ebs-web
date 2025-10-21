@@ -39,6 +39,110 @@ const RutasCobro = () => {
     }
   };
 
+  // Función para cargar clientes con facturas mayores a 60 días Y saldo pendiente
+  const cargarClientesMas60Dias = async () => {
+    try {
+      let facturasData = [];
+      let abonosData = [];
+      
+      // Intentar cargar desde Supabase
+      const { data: facturas, error: facturasError } = await supabase
+        .from('facturas')
+        .select('*');
+
+      const { data: abonos, error: abonosError } = await supabase
+        .from('abonos')
+        .select('*');
+
+      if (!facturasError && facturas) {
+        facturasData = facturas;
+      } else {
+        // Fallback a localStorage
+        facturasData = JSON.parse(localStorage.getItem('facturas') || '[]');
+      }
+
+      if (!abonosError && abonos) {
+        abonosData = abonos;
+      } else {
+        // Fallback a localStorage
+        abonosData = JSON.parse(localStorage.getItem('abonos') || '[]');
+      }
+
+      const hoy = new Date();
+      
+      // Filtrar facturas con más de 60 días Y que tengan saldo pendiente
+      const facturasMas60DiasConSaldo = facturasData.filter(factura => {
+        const fechaFactura = new Date(factura.fecha);
+        const diferenciaDias = Math.floor((hoy - fechaFactura) / (1000 * 60 * 60 * 24));
+        
+        // Verificar si tiene más de 60 días
+        if (diferenciaDias <= 60) return false;
+        
+        // Calcular saldo pendiente
+        const abonosFactura = abonosData.filter(abono => abono.factura_id === factura.id);
+        const totalAbonado = abonosFactura.reduce((sum, abono) => sum + (abono.monto || 0), 0);
+        const saldoPendiente = factura.total - totalAbonado;
+        
+        // Solo incluir facturas con saldo pendiente > 0
+        return saldoPendiente > 0;
+      });
+
+      if (facturasMas60DiasConSaldo.length === 0) {
+        alert('✅ No hay facturas mayores a 60 días de antigüedad con saldo pendiente');
+        return [];
+      }
+
+      // Agrupar por cliente
+      const clientesConFacturasAntiguas = {};
+      
+      facturasMas60DiasConSaldo.forEach(factura => {
+        // Calcular saldo pendiente para esta factura
+        const abonosFactura = abonosData.filter(abono => abono.factura_id === factura.id);
+        const totalAbonado = abonosFactura.reduce((sum, abono) => sum + (abono.monto || 0), 0);
+        const saldoPendiente = factura.total - totalAbonado;
+        
+        if (!clientesConFacturasAntiguas[factura.cliente]) {
+          clientesConFacturasAntiguas[factura.cliente] = {
+            nombre: factura.cliente,
+            direccion: factura.direccion || 'Sin dirección',
+            telefono: factura.telefono || 'Sin teléfono',
+            facturasAntiguas: [],
+            totalDeuda: 0,
+            diasMaximo: 0,
+            totalFacturas: 0
+          };
+        }
+        
+        const diasAntiguedad = Math.floor((hoy - new Date(factura.fecha)) / (1000 * 60 * 60 * 24));
+        clientesConFacturasAntiguas[factura.cliente].facturasAntiguas.push({
+          id: factura.id,
+          fecha: factura.fecha,
+          total: factura.total,
+          saldoPendiente: saldoPendiente,
+          abonado: totalAbonado,
+          diasAntiguedad: diasAntiguedad,
+          vendedor: factura.vendedor
+        });
+        
+        clientesConFacturasAntiguas[factura.cliente].totalDeuda += saldoPendiente;
+        clientesConFacturasAntiguas[factura.cliente].totalFacturas += 1;
+        if (diasAntiguedad > clientesConFacturasAntiguas[factura.cliente].diasMaximo) {
+          clientesConFacturasAntiguas[factura.cliente].diasMaximo = diasAntiguedad;
+        }
+      });
+
+      // Convertir a array y ordenar por días de antigüedad (mayor a menor)
+      const clientesArray = Object.values(clientesConFacturasAntiguas)
+        .sort((a, b) => b.diasMaximo - a.diasMaximo);
+
+      return clientesArray;
+
+    } catch (error) {
+      console.error('Error cargando clientes con más de 60 días:', error);
+      return [];
+    }
+  };
+
   // Función para cargar historial de visitas
   const cargarHistorialVisitas = async () => {
     try {
@@ -255,6 +359,7 @@ const RutasCobro = () => {
     }
   };
 
+  // Resto del código se mantiene igual...
   // Fallback a localStorage
   const cargarDesdeLocalStorage = () => {
     try {
@@ -623,38 +728,39 @@ const RutasCobro = () => {
           <i className="fas fa-chart-line"></i> Clientes Menos Visitados
         </button>
 
-        {/* NUEVO BOTÓN PARA CLIENTES CON MÁS DE 60 DÍAS */}
+        {/* BOTÓN CORREGIDO PARA CLIENTES CON MÁS DE 60 DÍAS Y SALDO PENDIENTE */}
         <button 
           className="button danger-button"
-          onClick={() => {
-            const clientesMas60Dias = clientesConDeuda.filter(cliente => 
-              cliente.diasDesdePrimeraFactura > 60
-            );
+          onClick={async () => {
+            const clientesMas60Dias = await cargarClientesMas60Dias();
             
             if (clientesMas60Dias.length === 0) {
-              alert('✅ No hay clientes con facturas mayores a 60 días de antigüedad');
-              return;
+              return; // Ya se mostró el alert en la función
             }
 
             // Crear mensaje con la información
-            let mensaje = `📋 CLIENTES CON FACTURAS MAYORES A 60 DÍAS\n\n`;
+            let mensaje = `📋 CLIENTES CON FACTURAS >60 DÍAS Y SALDO PENDIENTE\n\n`;
             mensaje += `Total: ${clientesMas60Dias.length} clientes\n\n`;
             
-            clientesMas60Dias.forEach((cliente, index) => {
+            clientesMas60Dias.slice(0, 25).forEach((cliente, index) => {
               mensaje += `${index + 1}. ${cliente.nombre}\n`;
               mensaje += `   📍 ${cliente.direccion}\n`;
-              mensaje += `   💰 Deuda: ${formatMoneda(cliente.totalDeuda)}\n`;
-              mensaje += `   📅 Días de deuda: ${cliente.diasDesdePrimeraFactura}\n`;
-              mensaje += `   🚨 Prioridad: ${cliente.nivelPrioridad}\n`;
-              mensaje += `   ${cliente.visitadoHoy ? '✅ Visitado hoy' : '⏳ Pendiente por visitar'}\n\n`;
+              mensaje += `   📞 ${cliente.telefono}\n`;
+              mensaje += `   💰 Deuda pendiente: ${formatMoneda(cliente.totalDeuda)}\n`;
+              mensaje += `   📅 Máxima antigüedad: ${cliente.diasMaximo} días\n`;
+              mensaje += `   📄 Facturas pendientes: ${cliente.totalFacturas}\n\n`;
             });
 
             // Calcular totales
             const deudaTotal = clientesMas60Dias.reduce((sum, c) => sum + c.totalDeuda, 0);
+            const promedioDias = Math.round(clientesMas60Dias.reduce((sum, c) => sum + c.diasMaximo, 0) / clientesMas60Dias.length);
+            const totalFacturas = clientesMas60Dias.reduce((sum, c) => sum + c.totalFacturas, 0);
+            
             mensaje += `--- RESUMEN ---\n`;
-            mensaje += `💰 Deuda total: ${formatMoneda(deudaTotal)}\n`;
-            mensaje += `📊 Promedio días: ${Math.round(clientesMas60Dias.reduce((sum, c) => sum + c.diasDesdePrimeraFactura, 0) / clientesMas60Dias.length)} días\n`;
-            mensaje += `🎯 Clientes prioridad alta: ${clientesMas60Dias.filter(c => c.nivelPrioridad === 'Alta').length}`;
+            mensaje += `💰 Deuda total pendiente: ${formatMoneda(deudaTotal)}\n`;
+            mensaje += `📊 Promedio días antigüedad: ${promedioDias} días\n`;
+            mensaje += `👥 Total clientes críticos: ${clientesMas60Dias.length}\n`;
+            mensaje += `📄 Total facturas pendientes: ${totalFacturas}`;
 
             alert(mensaje);
           }}
@@ -663,6 +769,7 @@ const RutasCobro = () => {
         </button>
       </div>
 
+      {/* Resto del código se mantiene igual... */}
       {/* PANEL DE CLIENTES MENOS VISITADOS */}
       {mostrarClientesMenosVisitados && (
         <div className="historial-visitas-panel">
