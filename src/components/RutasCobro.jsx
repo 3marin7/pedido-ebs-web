@@ -14,6 +14,12 @@ const RutasCobro = () => {
   const [mostrarRecordatorios, setMostrarRecordatorios] = useState(false);
   const [reporteDiario, setReporteDiario] = useState(null);
 
+  // Nuevos estados para historial
+  const [mostrarHistorialVisitas, setMostrarHistorialVisitas] = useState(false);
+  const [historialVisitas, setHistorialVisitas] = useState([]);
+  const [mostrarClientesMenosVisitados, setMostrarClientesMenosVisitados] = useState(false);
+  const [clientesMenosVisitados, setClientesMenosVisitados] = useState([]);
+
   // Cargar clientes con deuda
   useEffect(() => {
     cargarDatosCompletos();
@@ -31,6 +37,104 @@ const RutasCobro = () => {
     } finally {
       setCargando(false);
     }
+  };
+
+  // Función para cargar historial de visitas
+  const cargarHistorialVisitas = async () => {
+    try {
+      // Intentar cargar desde Supabase
+      const { data: visitas, error } = await supabase
+        .from('visits_cobro')
+        .select('*')
+        .order('fecha_visita', { ascending: false })
+        .limit(50);
+
+      if (!error && visitas) {
+        setHistorialVisitas(visitas);
+      } else {
+        // Fallback a localStorage
+        const visitasStorage = JSON.parse(localStorage.getItem('visitasCobro') || '[]');
+        const visitasOrdenadas = visitasStorage
+          .sort((a, b) => new Date(b.fecha) - new Date(a.fecha))
+          .slice(0, 50);
+        setHistorialVisitas(visitasOrdenadas);
+      }
+    } catch (error) {
+      console.error('Error cargando historial:', error);
+      // Fallback final
+      const visitasStorage = JSON.parse(localStorage.getItem('visitasCobro') || '[]');
+      setHistorialVisitas(visitasStorage.slice(0, 50));
+    }
+  };
+
+  // Función para cargar clientes menos visitados
+  const cargarClientesMenosVisitados = async () => {
+    try {
+      let visitas = [];
+
+      // Intentar cargar desde Supabase
+      const { data: visitasData, error } = await supabase
+        .from('visits_cobro')
+        .select('*');
+
+      if (!error && visitasData) {
+        visitas = visitasData;
+      } else {
+        // Fallback a localStorage
+        visitas = JSON.parse(localStorage.getItem('visitasCobro') || '[]');
+      }
+
+      // Contar visitas por cliente
+      const visitasPorCliente = {};
+      
+      visitas.forEach(visita => {
+        const nombreCliente = visita.cliente_nombre || visita.clienteNombre;
+        if (nombreCliente) {
+          visitasPorCliente[nombreCliente] = (visitasPorCliente[nombreCliente] || 0) + 1;
+        }
+      });
+
+      // Convertir a array y ordenar por menos visitados
+      const clientesConConteo = Object.entries(visitasPorCliente)
+        .map(([nombre, conteo]) => ({
+          nombre,
+          visitas: conteo,
+          ultimaVisita: visitas.find(v => 
+            (v.cliente_nombre || v.clienteNombre) === nombre
+          )?.fecha_visita || visitas.find(v => 
+            (v.cliente_nombre || v.clienteNombre) === nombre
+          )?.fecha
+        }))
+        .sort((a, b) => a.visitas - b.visitas)
+        .slice(0, 15);
+
+      setClientesMenosVisitados(clientesConConteo);
+      
+    } catch (error) {
+      console.error('Error cargando clientes menos visitados:', error);
+    }
+  };
+
+  // Función para calcular días desde última visita
+  const calcularDiasDesdeUltimaVisita = (fechaVisita) => {
+    if (!fechaVisita) return 'Sin visitas';
+    
+    const hoy = new Date();
+    const ultimaVisita = new Date(fechaVisita);
+    const diferenciaMs = hoy - ultimaVisita;
+    const dias = Math.floor(diferenciaMs / (1000 * 60 * 60 * 24));
+    
+    return dias === 0 ? 'Hoy' : `${dias} día${dias !== 1 ? 's' : ''}`;
+  };
+
+  // Función para formatear fecha
+  const formatFecha = (fecha) => {
+    if (!fecha) return 'Sin fecha';
+    return new Date(fecha).toLocaleDateString('es-CO', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    });
   };
 
   const cargarClientesConDeuda = async () => {
@@ -494,6 +598,175 @@ const RutasCobro = () => {
           Sistema de priorización para visitas de cobranza
         </p>
       </header>
+
+      {/* CONTROLES ADICIONALES */}
+      <div className="controles-adicionales">
+        <button 
+          className="button info-button"
+          onClick={async () => {
+            await cargarHistorialVisitas();
+            setMostrarHistorialVisitas(!mostrarHistorialVisitas);
+            setMostrarClientesMenosVisitados(false);
+          }}
+        >
+          <i className="fas fa-history"></i> Ver Historial de Visitas
+        </button>
+        
+        <button 
+          className="button warning-button"
+          onClick={async () => {
+            await cargarClientesMenosVisitados();
+            setMostrarClientesMenosVisitados(!mostrarClientesMenosVisitados);
+            setMostrarHistorialVisitas(false);
+          }}
+        >
+          <i className="fas fa-chart-line"></i> Clientes Menos Visitados
+        </button>
+      </div>
+
+      {/* PANEL DE CLIENTES MENOS VISITADOS */}
+      {mostrarClientesMenosVisitados && (
+        <div className="historial-visitas-panel">
+          <div className="panel-header">
+            <h3>
+              <i className="fas fa-chart-line"></i> Clientes Menos Visitados
+            </h3>
+            <button 
+              className="button secondary-button"
+              onClick={() => setMostrarClientesMenosVisitados(false)}
+            >
+              <i className="fas fa-times"></i> Cerrar
+            </button>
+          </div>
+
+          {clientesMenosVisitados.length === 0 ? (
+            <div className="empty-state">
+              <i className="fas fa-users"></i>
+              <p>No hay suficiente información para el análisis</p>
+              <small>Realiza algunas visitas para ver estadísticas</small>
+            </div>
+          ) : (
+            <div className="menos-visitados-list">
+              <div className="analisis-header">
+                <h4>Top {clientesMenosVisitados.length} Clientes con Menos Visitas</h4>
+                <p>Clientes que requieren más atención en cobranza</p>
+              </div>
+              
+              {clientesMenosVisitados.map((cliente, index) => (
+                <div key={cliente.nombre} className="cliente-poco-visitado">
+                  <div className="cliente-rank">
+                    <span className="rank-number">{index + 1}</span>
+                  </div>
+                  <div className="cliente-info">
+                    <div className="cliente-header">
+                      <strong>{cliente.nombre}</strong>
+                      <span className="visitas-count">
+                        {cliente.visitas} visita{cliente.visitas !== 1 ? 's' : ''}
+                      </span>
+                    </div>
+                    <div className="cliente-detalles">
+                      <span>
+                        Última visita: {calcularDiasDesdeUltimaVisita(cliente.ultimaVisita)}
+                      </span>
+                      {cliente.ultimaVisita && (
+                        <small>
+                          {formatFecha(cliente.ultimaVisita)}
+                        </small>
+                      )}
+                    </div>
+                  </div>
+                  <button 
+                    className="button micro-button primary-button"
+                    onClick={() => {
+                      // Buscar el cliente en la lista principal
+                      const clienteEnDeuda = clientesConDeuda.find(c => c.nombre === cliente.nombre);
+                      if (clienteEnDeuda) {
+                        alert(`Cliente ${cliente.nombre} seleccionado. Deuda: ${formatMoneda(clienteEnDeuda.totalDeuda)}`);
+                      } else {
+                        alert(`Cliente ${cliente.nombre} seleccionado para visita prioritaria`);
+                      }
+                    }}
+                  >
+                    <i className="fas fa-eye"></i>
+                  </button>
+                </div>
+              ))}
+              
+              <div className="resumen-analisis">
+                <h5>Resumen del Análisis</h5>
+                <div className="resumen-stats">
+                  <div className="resumen-item">
+                    <span>Total de clientes analizados:</span>
+                    <strong>{new Set(clientesMenosVisitados.map(c => c.nombre)).size}</strong>
+                  </div>
+                  <div className="resumen-item">
+                    <span>Promedio de visitas por cliente:</span>
+                    <strong>
+                      {(clientesMenosVisitados.reduce((sum, c) => sum + c.visitas, 0) / clientesMenosVisitados.length).toFixed(1)}
+                    </strong>
+                  </div>
+                  <div className="resumen-item">
+                    <span>Clientes con solo 1 visita:</span>
+                    <strong>
+                      {clientesMenosVisitados.filter(c => c.visitas === 1).length}
+                    </strong>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* PANEL DE HISTORIAL DE VISITAS */}
+      {mostrarHistorialVisitas && (
+        <div className="historial-visitas-panel">
+          <div className="panel-header">
+            <h3>
+              <i className="fas fa-history"></i> Historial de Visitas
+            </h3>
+            <button 
+              className="button secondary-button"
+              onClick={() => setMostrarHistorialVisitas(false)}
+            >
+              <i className="fas fa-times"></i> Cerrar
+            </button>
+          </div>
+
+          {historialVisitas.length === 0 ? (
+            <div className="empty-state">
+              <i className="fas fa-search"></i>
+              <p>No se encontraron visitas registradas</p>
+            </div>
+          ) : (
+            <div className="visitas-list">
+              {historialVisitas.map((visita, index) => (
+                <div key={visita.id || index} className="visita-item">
+                  <div className="visita-info">
+                    <div className="visita-cliente">
+                      <strong>{visita.cliente_nombre || visita.clienteNombre}</strong>
+                      <span className="visita-fecha">
+                        {formatFecha(visita.fecha_visita || visita.fecha)}
+                      </span>
+                    </div>
+                    <div className="visita-detalles">
+                      <span>Deuda: {formatMoneda(visita.deuda_pendiente || visita.deuda)}</span>
+                      <span className="estado visitado">
+                        {visita.resultado || 'Visitado'}
+                      </span>
+                    </div>
+                  </div>
+                  {visita.observaciones && (
+                    <div className="visita-observaciones">
+                      <small>{visita.observaciones}</small>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Notificaciones de deudas antiguas */}
       {clientesRecordatorio.length > 0 && (
