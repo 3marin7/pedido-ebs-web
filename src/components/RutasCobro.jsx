@@ -622,6 +622,45 @@ const RutasCobro = () => {
         >
           <i className="fas fa-chart-line"></i> Clientes Menos Visitados
         </button>
+
+        {/* NUEVO BOTÓN PARA CLIENTES CON MÁS DE 60 DÍAS */}
+        <button 
+          className="button danger-button"
+          onClick={() => {
+            const clientesMas60Dias = clientesConDeuda.filter(cliente => 
+              cliente.diasDesdePrimeraFactura > 60
+            );
+            
+            if (clientesMas60Dias.length === 0) {
+              alert('✅ No hay clientes con facturas mayores a 60 días de antigüedad');
+              return;
+            }
+
+            // Crear mensaje con la información
+            let mensaje = `📋 CLIENTES CON FACTURAS MAYORES A 60 DÍAS\n\n`;
+            mensaje += `Total: ${clientesMas60Dias.length} clientes\n\n`;
+            
+            clientesMas60Dias.forEach((cliente, index) => {
+              mensaje += `${index + 1}. ${cliente.nombre}\n`;
+              mensaje += `   📍 ${cliente.direccion}\n`;
+              mensaje += `   💰 Deuda: ${formatMoneda(cliente.totalDeuda)}\n`;
+              mensaje += `   📅 Días de deuda: ${cliente.diasDesdePrimeraFactura}\n`;
+              mensaje += `   🚨 Prioridad: ${cliente.nivelPrioridad}\n`;
+              mensaje += `   ${cliente.visitadoHoy ? '✅ Visitado hoy' : '⏳ Pendiente por visitar'}\n\n`;
+            });
+
+            // Calcular totales
+            const deudaTotal = clientesMas60Dias.reduce((sum, c) => sum + c.totalDeuda, 0);
+            mensaje += `--- RESUMEN ---\n`;
+            mensaje += `💰 Deuda total: ${formatMoneda(deudaTotal)}\n`;
+            mensaje += `📊 Promedio días: ${Math.round(clientesMas60Dias.reduce((sum, c) => sum + c.diasDesdePrimeraFactura, 0) / clientesMas60Dias.length)} días\n`;
+            mensaje += `🎯 Clientes prioridad alta: ${clientesMas60Dias.filter(c => c.nivelPrioridad === 'Alta').length}`;
+
+            alert(mensaje);
+          }}
+        >
+          <i className="fas fa-calendar-exclamation"></i> Clientes +60 Días
+        </button>
       </div>
 
       {/* PANEL DE CLIENTES MENOS VISITADOS */}
