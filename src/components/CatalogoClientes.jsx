@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
 import { supabase } from './supabaseClient';
+import html2pdf from 'html2pdf.js';
 import './CatalogoClientes.css';
 
 const CatalogoClientes = () => {
@@ -24,6 +25,7 @@ const CatalogoClientes = () => {
   const [imagenAmpliada, setImagenAmpliada] = useState(null);
   const [ordenamiento, setOrdenamiento] = useState('nombre-asc');
   const [cantidadesRapidas] = useState([12, 24, 36, 48, 60, 72]);
+  const [descargandoPDF, setDescargandoPDF] = useState(false);
 
   const location = useLocation();
 
@@ -329,6 +331,96 @@ const CatalogoClientes = () => {
     }
   };
 
+  // Función para descargar catálogo en PDF
+  const descargarCatalogoPDF = async () => {
+    if (descargandoPDF) return;
+    
+    setDescargandoPDF(true);
+    
+    try {
+      // Crear elemento HTML para el PDF
+      const element = document.createElement('div');
+      element.style.padding = '20px';
+      element.style.fontFamily = 'Arial, sans-serif';
+      
+      // Header del PDF
+      const header = `
+        <div style="text-align: center; margin-bottom: 20px; border-bottom: 2px solid #333; padding-bottom: 10px;">
+          <h1 style="color: #2563eb; margin: 0;">CATÁLOGO DIGITAL</h1>
+          <h2 style="color: #333; margin: 5px 0;">DISTRIBUCIONES EBS HERMANOS MARIN</h2>
+          <p style="color: #666; margin: 0;">Fecha de generación: ${new Date().toLocaleDateString('es-CO')}</p>
+          <p style="color: #666; margin: 0;">Total de productos: ${productosFiltradosLista.length}</p>
+        </div>
+      `;
+      
+      // Contenido de productos
+      let productosHTML = '<div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-top: 20px;">';
+      
+      productosFiltradosLista.forEach((producto, index) => {
+        productosHTML += `
+          <div style="border: 1px solid #ddd; border-radius: 8px; padding: 10px; break-inside: avoid;">
+            <div style="text-align: center; margin-bottom: 10px;">
+              <img 
+                src="${producto.imagen_url || 'https://via.placeholder.com/150?text=Producto'}" 
+                alt="${producto.nombre}"
+                style="max-width: 100%; height: 120px; object-fit: contain; border-radius: 4px;"
+                onerror="this.src='https://via.placeholder.com/150?text=Imagen+no+disponible'"
+              />
+            </div>
+            <h3 style="font-size: 12px; margin: 5px 0; color: #333;">${producto.nombre}</h3>
+            ${producto.codigo ? `<p style="font-size: 10px; margin: 2px 0; color: #666;">Ref: ${producto.codigo}</p>` : ''}
+            ${producto.descripcion ? `<p style="font-size: 10px; margin: 2px 0; color: #666;">${producto.descripcion}</p>` : ''}
+            <p style="font-size: 14px; font-weight: bold; margin: 5px 0; color: #2563eb;">${formatPrecio(producto.precio)}</p>
+            ${producto.categoria ? `<span style="font-size: 9px; background: #f3f4f6; padding: 2px 6px; border-radius: 10px; color: #666;">${producto.categoria}</span>` : ''}
+          </div>
+        `;
+      });
+      
+      productosHTML += '</div>';
+      
+      // Footer del PDF
+      const footer = `
+        <div style="margin-top: 30px; text-align: center; border-top: 1px solid #ddd; padding-top: 10px;">
+          <p style="color: #666; font-size: 10px;">
+            EBS Hermanos Marin - ING. Edwin Marin 3004583117<br>
+            Catálogo generado desde sistema digital
+          </p>
+        </div>
+      `;
+      
+      element.innerHTML = header + productosHTML + footer;
+      
+      // Configuración de html2pdf
+      const opt = {
+        margin: [10, 10, 10, 10],
+        filename: `catalogo-ebs-hermanos-marin-${new Date().toISOString().split('T')[0]}.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { 
+          scale: 2,
+          useCORS: true,
+          logging: false
+        },
+        jsPDF: { 
+          unit: 'mm', 
+          format: 'a4', 
+          orientation: 'portrait' 
+        },
+        pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+      };
+      
+      // Generar y descargar PDF
+      await html2pdf().set(opt).from(element).save();
+      
+      console.log('PDF generado exitosamente');
+      
+    } catch (error) {
+      console.error('Error generando PDF:', error);
+      alert('Error al generar el PDF. Por favor, intenta nuevamente.');
+    } finally {
+      setDescargandoPDF(false);
+    }
+  };
+
   // Productos filtrados
   const productosFiltradosLista = productosFiltrados();
 
@@ -338,12 +430,32 @@ const CatalogoClientes = () => {
       <header className="app-header">
         <div className="header-content">
           <h1><i className="fas fa-store"></i> CATÁLOGO DISTRIBUCIONES-EBS-HERMANOS-MARIN</h1>
-          <button className="cart-button" onClick={toggleMostrarCarrito}>
-            <i className="fas fa-shopping-cart"></i>
-            {productosSeleccionados.length > 0 && (
-              <span className="cart-badge">{productosSeleccionados.length}</span>
-            )}
-          </button>
+          <div className="header-buttons">
+            <button 
+              className="pdf-button"
+              onClick={descargarCatalogoPDF}
+              disabled={descargandoPDF || cargando || productosFiltradosLista.length === 0}
+              title="Descargar catálogo en PDF"
+            >
+              {descargandoPDF ? (
+                <>
+                  <div className="loading-spinner-small"></div>
+                  Generando...
+                </>
+              ) : (
+                <>
+                  <i className="fas fa-file-pdf"></i>
+                  PDF
+                </>
+              )}
+            </button>
+            <button className="cart-button" onClick={toggleMostrarCarrito}>
+              <i className="fas fa-shopping-cart"></i>
+              {productosSeleccionados.length > 0 && (
+                <span className="cart-badge">{productosSeleccionados.length}</span>
+              )}
+            </button>
+          </div>
         </div>
         
         {/* Filtros en barra pegajosa */}

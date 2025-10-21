@@ -1349,4 +1349,87 @@ body {
   input, select, textarea {
     font-size: 16px !important;
   }
+}/* Estilos para el botón de PDF */
+.header-buttons {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.pdf-button {
+  background: linear-gradient(135deg, #e53e3e, #c53030);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.pdf-button:hover:not(:disabled) {
+  background: linear-gradient(135deg, #c53030, #9b2c2c);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.pdf-button:disabled {
+  background: #a0aec0;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.pdf-button i {
+  font-size: 16px;
+}
+
+/* Spinner para el botón de PDF */
+.pdf-button .loading-spinner-small {
+  width: 16px;
+  height: 16px;
+  border: 2px solid transparent;
+  border-top: 2px solid white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* Ajustes responsivos */
+@media (max-width: 480px) {
+  .header-buttons {
+    gap: 8px;
+  }
+  
+  .pdf-button {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+  
+  .pdf-button i {
+    font-size: 14px;
+  }
+}
+
+/* Asegurar que el header content tenga espacio suficiente */
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.header-content h1 {
+  font-size: 16px;
+  margin: 0;
+}
+
+@media (max-width: 480px) {
+  .header-content h1 {
+    font-size: 14px;
+  }
 }
