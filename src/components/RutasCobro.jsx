@@ -8,6 +8,8 @@ const RutasCobro = () => {
   const [clientesConDeuda, setClientesConDeuda] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [filtroZona, setFiltroZona] = useState('');
+  const [filtroVendedor, setFiltroVendedor] = useState('');
+  const [busquedaCliente, setBusquedaCliente] = useState('');
   const [ordenamiento, setOrdenamiento] = useState('prioridad');
   const [rutaGenerada, setRutaGenerada] = useState([]);
   const [mostrarMapa, setMostrarMapa] = useState(false);
@@ -19,6 +21,8 @@ const RutasCobro = () => {
   const [historialVisitas, setHistorialVisitas] = useState([]);
   const [mostrarClientesMenosVisitados, setMostrarClientesMenosVisitados] = useState(false);
   const [clientesMenosVisitados, setClientesMenosVisitados] = useState([]);
+  const [mostrarClientesSinVisitar, setMostrarClientesSinVisitar] = useState(false);
+  const [clientesSinVisitar, setClientesSinVisitar] = useState([]);
 
   // Cargar clientes con deuda
   useEffect(() => {
@@ -109,7 +113,8 @@ const RutasCobro = () => {
             facturasAntiguas: [],
             totalDeuda: 0,
             diasMaximo: 0,
-            totalFacturas: 0
+            totalFacturas: 0,
+            vendedor: factura.vendedor || 'Sin vendedor'
           };
         }
         
@@ -139,6 +144,87 @@ const RutasCobro = () => {
 
     } catch (error) {
       console.error('Error cargando clientes con más de 60 días:', error);
+      return [];
+    }
+  };
+
+  // Función para cargar clientes sin visitar o con más de 30 días sin visita
+  const cargarClientesSinVisitar30Dias = async () => {
+    try {
+      let visitasData = [];
+      
+      // Intentar cargar desde Supabase
+      const { data: visitas, error } = await supabase
+        .from('visits_cobro')
+        .select('*')
+        .order('fecha_visita', { ascending: false });
+
+      if (!error && visitas) {
+        visitasData = visitas;
+      } else {
+        // Fallback a localStorage
+        visitasData = JSON.parse(localStorage.getItem('visitasCobro') || '[]');
+      }
+
+      const hoy = new Date();
+      const clientesConUltimaVisita = {};
+
+      // Procesar visitas para obtener la última visita de cada cliente
+      visitasData.forEach(visita => {
+        const nombreCliente = visita.cliente_nombre || visita.clienteNombre;
+        const fechaVisita = new Date(visita.fecha_visita || visita.fecha);
+        
+        if (!clientesConUltimaVisita[nombreCliente] || 
+            fechaVisita > new Date(clientesConUltimaVisita[nombreCliente].ultimaVisita)) {
+          clientesConUltimaVisita[nombreCliente] = {
+            nombre: nombreCliente,
+            ultimaVisita: fechaVisita,
+            diasDesdeUltimaVisita: Math.floor((hoy - fechaVisita) / (1000 * 60 * 60 * 24)),
+            direccion: visita.direccion,
+            vendedor: visita.vendedor,
+            deuda: visita.deuda_pendiente || visita.deuda
+          };
+        }
+      });
+
+      // Combinar con clientes con deuda actual
+      const clientesConInfoCompleta = clientesConDeuda.map(cliente => {
+        const infoVisita = clientesConUltimaVisita[cliente.nombre];
+        
+        if (infoVisita) {
+          return {
+            ...cliente,
+            ultimaVisita: infoVisita.ultimaVisita,
+            diasDesdeUltimaVisita: infoVisita.diasDesdeUltimaVisita,
+            necesitaVisitaUrgente: infoVisita.diasDesdeUltimaVisita > 30
+          };
+        } else {
+          // Cliente nunca visitado
+          return {
+            ...cliente,
+            ultimaVisita: null,
+            diasDesdeUltimaVisita: null,
+            necesitaVisitaUrgente: true
+          };
+        }
+      });
+
+      // Filtrar clientes que necesitan visita urgente (más de 30 días sin visita o nunca visitados)
+      const clientesUrgentes = clientesConInfoCompleta
+        .filter(cliente => cliente.necesitaVisitaUrgente)
+        .sort((a, b) => {
+          // Primero los nunca visitados, luego por días desde última visita
+          if (!a.ultimaVisita && !b.ultimaVisita) return 0;
+          if (!a.ultimaVisita) return -1;
+          if (!b.ultimaVisita) return 1;
+          return b.diasDesdeUltimaVisita - a.diasDesdeUltimaVisita;
+        });
+
+      setClientesSinVisitar(clientesUrgentes);
+      return clientesUrgentes;
+
+    } catch (error) {
+      console.error('Error cargando clientes sin visitar:', error);
       return [];
     }
   };
@@ -221,14 +307,24 @@ const RutasCobro = () => {
 
   // Función para calcular días desde última visita
   const calcularDiasDesdeUltimaVisita = (fechaVisita) => {
-    if (!fechaVisita) return 'Sin visitas';
+    if (!fechaVisita) return 'Nunca visitado';
     
     const hoy = new Date();
     const ultimaVisita = new Date(fechaVisita);
     const diferenciaMs = hoy - ultimaVisita;
     const dias = Math.floor(diferenciaMs / (1000 * 60 * 60 * 24));
     
-    return dias === 0 ? 'Hoy' : `${dias} día${dias !== 1 ? 's' : ''}`;
+    if (dias === 0) return 'Hoy';
+    if (dias === 1) return 'Ayer';
+    return `${dias} día${dias !== 1 ? 's' : ''}`;
+  };
+
+  // Función para obtener el nivel de urgencia
+  const obtenerNivelUrgencia = (diasDesdeUltimaVisita, nuncaVisitado) => {
+    if (nuncaVisitado) return 'alta';
+    if (diasDesdeUltimaVisita > 60) return 'alta';
+    if (diasDesdeUltimaVisita > 30) return 'media';
+    return 'baja';
   };
 
   // Función para formatear fecha
@@ -286,6 +382,7 @@ const RutasCobro = () => {
               facturaMasAntigua: factura.fecha,
               ultimaFactura: factura.fecha,
               zona: extraerZona(factura.direccion),
+              vendedor: factura.vendedor || 'Sin vendedor',
               clienteId: factura.cliente_id || factura.id.toString()
             };
           }
@@ -359,11 +456,9 @@ const RutasCobro = () => {
     }
   };
 
-  // Resto del código se mantiene igual...
   // Fallback a localStorage
   const cargarDesdeLocalStorage = () => {
     try {
-      const clientesBasicos = [];
       const facturasStorage = JSON.parse(localStorage.getItem('facturas') || '[]');
       const abonosStorage = JSON.parse(localStorage.getItem('abonos') || '[]');
       
@@ -386,6 +481,7 @@ const RutasCobro = () => {
               facturaMasAntigua: factura.fecha,
               ultimaFactura: factura.fecha,
               zona: extraerZona(factura.direccion),
+              vendedor: factura.vendedor || 'Sin vendedor',
               clienteId: factura.id.toString()
             };
           }
@@ -461,6 +557,26 @@ const RutasCobro = () => {
     return 'Muy Baja';
   };
 
+  // Función para buscar cliente
+  const buscarCliente = (termino) => {
+    if (!termino.trim()) return clientesConDeuda;
+    
+    const terminoLower = termino.toLowerCase().trim();
+    
+    return clientesConDeuda.filter(cliente => 
+      cliente.nombre.toLowerCase().includes(terminoLower) ||
+      cliente.direccion.toLowerCase().includes(terminoLower) ||
+      cliente.telefono.toLowerCase().includes(terminoLower) ||
+      cliente.vendedor.toLowerCase().includes(terminoLower) ||
+      cliente.zona.toLowerCase().includes(terminoLower)
+    );
+  };
+
+  // Función para limpiar búsqueda
+  const limpiarBusqueda = () => {
+    setBusquedaCliente('');
+  };
+
   // Función para marcar cliente como visitado
   const marcarComoVisitado = async (cliente) => {
     try {
@@ -473,6 +589,7 @@ const RutasCobro = () => {
             cliente_nombre: cliente.nombre,
             direccion: cliente.direccion,
             deuda_pendiente: cliente.totalDeuda,
+            vendedor: cliente.vendedor,
             resultado: 'visitado',
             observaciones: 'Visita de cobranza realizada'
           }
@@ -483,6 +600,11 @@ const RutasCobro = () => {
       // Actualizar estado local
       actualizarEstadoVisita(cliente.nombre, true);
       alert(`✅ ${cliente.nombre} marcado como visitado`);
+
+      // Recargar clientes sin visitar si el panel está abierto
+      if (mostrarClientesSinVisitar) {
+        await cargarClientesSinVisitar30Dias();
+      }
 
     } catch (error) {
       console.error('Error al registrar visita en Supabase:', error);
@@ -501,7 +623,8 @@ const RutasCobro = () => {
         clienteNombre: cliente.nombre,
         fecha: new Date().toISOString(),
         deuda: cliente.totalDeuda,
-        direccion: cliente.direccion
+        direccion: cliente.direccion,
+        vendedor: cliente.vendedor
       };
       
       visitasHoy.push(nuevaVisita);
@@ -509,6 +632,11 @@ const RutasCobro = () => {
 
       actualizarEstadoVisita(cliente.nombre, true);
       alert(`✅ ${cliente.nombre} marcado como visitado`);
+
+      // Recargar clientes sin visitar si el panel está abierto
+      if (mostrarClientesSinVisitar) {
+        cargarClientesSinVisitar30Dias();
+      }
 
     } catch (error) {
       console.error('Error al registrar visita en localStorage:', error);
@@ -640,9 +768,10 @@ const RutasCobro = () => {
   };
 
   // Filtrar y ordenar clientes
-  const clientesFiltrados = clientesConDeuda
+  const clientesFiltrados = buscarCliente(busquedaCliente)
     .filter(cliente => 
-      filtroZona === '' || cliente.zona === filtroZona
+      (filtroZona === '' || cliente.zona === filtroZona) &&
+      (filtroVendedor === '' || cliente.vendedor === filtroVendedor)
     )
     .sort((a, b) => {
       switch (ordenamiento) {
@@ -654,6 +783,8 @@ const RutasCobro = () => {
           return a.zona.localeCompare(b.zona);
         case 'cliente':
           return a.nombre.localeCompare(b.nombre);
+        case 'vendedor':
+          return a.vendedor.localeCompare(b.vendedor);
         default: // 'prioridad'
           return b.puntuacionPrioridad - a.puntuacionPrioridad;
       }
@@ -670,6 +801,9 @@ const RutasCobro = () => {
 
   // Obtener zonas únicas
   const zonasUnicas = [...new Set(clientesConDeuda.map(c => c.zona))].sort();
+
+  // Obtener vendedores únicos
+  const vendedoresUnicos = [...new Set(clientesConDeuda.map(c => c.vendedor))].sort();
 
   // Clientes que necesitan recordatorio
   const clientesRecordatorio = generarRecordatorios();
@@ -712,6 +846,7 @@ const RutasCobro = () => {
             await cargarHistorialVisitas();
             setMostrarHistorialVisitas(!mostrarHistorialVisitas);
             setMostrarClientesMenosVisitados(false);
+            setMostrarClientesSinVisitar(false);
           }}
         >
           <i className="fas fa-history"></i> Ver Historial de Visitas
@@ -723,19 +858,37 @@ const RutasCobro = () => {
             await cargarClientesMenosVisitados();
             setMostrarClientesMenosVisitados(!mostrarClientesMenosVisitados);
             setMostrarHistorialVisitas(false);
+            setMostrarClientesSinVisitar(false);
           }}
         >
           <i className="fas fa-chart-line"></i> Clientes Menos Visitados
         </button>
 
-        {/* BOTÓN CORREGIDO PARA CLIENTES CON MÁS DE 60 DÍAS Y SALDO PENDIENTE */}
+        {/* NUEVO BOTÓN PARA CLIENTES SIN VISITAR */}
+        <button 
+          className="button danger-button"
+          onClick={async () => {
+            const clientesUrgentes = await cargarClientesSinVisitar30Dias();
+            setMostrarClientesSinVisitar(!mostrarClientesSinVisitar);
+            setMostrarHistorialVisitas(false);
+            setMostrarClientesMenosVisitados(false);
+            
+            if (clientesUrgentes.length === 0) {
+              alert('✅ ¡Excelente! No hay clientes con más de 30 días sin visita.');
+            }
+          }}
+        >
+          <i className="fas fa-exclamation-triangle"></i> Clientes Sin Visitar (+30 días)
+        </button>
+
+        {/* BOTÓN PARA CLIENTES CON MÁS DE 60 DÍAS Y SALDO PENDIENTE */}
         <button 
           className="button danger-button"
           onClick={async () => {
             const clientesMas60Dias = await cargarClientesMas60Dias();
             
             if (clientesMas60Dias.length === 0) {
-              return; // Ya se mostró el alert en la función
+              return;
             }
 
             // Crear mensaje con la información
@@ -748,7 +901,8 @@ const RutasCobro = () => {
               mensaje += `   📞 ${cliente.telefono}\n`;
               mensaje += `   💰 Deuda pendiente: ${formatMoneda(cliente.totalDeuda)}\n`;
               mensaje += `   📅 Máxima antigüedad: ${cliente.diasMaximo} días\n`;
-              mensaje += `   📄 Facturas pendientes: ${cliente.totalFacturas}\n\n`;
+              mensaje += `   📄 Facturas pendientes: ${cliente.totalFacturas}\n`;
+              mensaje += `   👤 Vendedor: ${cliente.vendedor}\n\n`;
             });
 
             // Calcular totales
@@ -769,7 +923,152 @@ const RutasCobro = () => {
         </button>
       </div>
 
-      {/* Resto del código se mantiene igual... */}
+      {/* PANEL DE CLIENTES SIN VISITAR (+30 DÍAS) */}
+      {mostrarClientesSinVisitar && (
+        <div className="historial-visitas-panel clientes-sin-visitar-panel">
+          <div className="panel-header">
+            <h3>
+              <i className="fas fa-exclamation-triangle"></i> Clientes Sin Visitar (+30 días)
+            </h3>
+            <button 
+              className="button secondary-button"
+              onClick={() => setMostrarClientesSinVisitar(false)}
+            >
+              <i className="fas fa-times"></i> Cerrar
+            </button>
+          </div>
+
+          {clientesSinVisitar.length === 0 ? (
+            <div className="empty-state">
+              <i className="fas fa-check-circle"></i>
+              <p>¡Excelente! No hay clientes con más de 30 días sin visita</p>
+              <small>Todos los clientes han sido visitados recientemente</small>
+            </div>
+          ) : (
+            <div className="clientes-sin-visitar-list">
+              <div className="analisis-header">
+                <h4>Clientes que Requieren Visita Urgente</h4>
+                <p>{clientesSinVisitar.length} clientes sin visita por más de 30 días</p>
+              </div>
+
+              {/* Estadísticas rápidas */}
+              <div className="estadisticas-urgencia">
+                <div className="estadistica-urgencia">
+                  <span className="urgencia-alta"></span>
+                  <span>Nunca visitados: {clientesSinVisitar.filter(c => !c.ultimaVisita).length}</span>
+                </div>
+                <div className="estadistica-urgencia">
+                  <span className="urgencia-media"></span>
+                  <span>+60 días sin visita: {clientesSinVisitar.filter(c => c.diasDesdeUltimaVisita > 60).length}</span>
+                </div>
+                <div className="estadistica-urgencia">
+                  <span className="urgencia-baja"></span>
+                  <span>+30 días sin visita: {clientesSinVisitar.filter(c => c.diasDesdeUltimaVisita > 30 && c.diasDesdeUltimaVisita <= 60).length}</span>
+                </div>
+              </div>
+              
+              {clientesSinVisitar.map((cliente, index) => (
+                <div key={cliente.nombre} className={`cliente-sin-visitar urgencia-${obtenerNivelUrgencia(cliente.diasDesdeUltimaVisita, !cliente.ultimaVisita)}`}>
+                  <div className="cliente-urgencia-indicator">
+                    {!cliente.ultimaVisita ? (
+                      <i className="fas fa-exclamation-circle"></i>
+                    ) : cliente.diasDesdeUltimaVisita > 60 ? (
+                      <i className="fas fa-skull-crossbones"></i>
+                    ) : (
+                      <i className="fas fa-exclamation-triangle"></i>
+                    )}
+                  </div>
+                  
+                  <div className="cliente-info">
+                    <div className="cliente-header">
+                      <strong>{cliente.nombre}</strong>
+                      <span className={`estado-urgencia ${obtenerNivelUrgencia(cliente.diasDesdeUltimaVisita, !cliente.ultimaVisita)}`}>
+                        {!cliente.ultimaVisita ? 'NUNCA VISITADO' : `${cliente.diasDesdeUltimaVisita} DÍAS SIN VISITA`}
+                      </span>
+                    </div>
+                    <div className="cliente-detalles">
+                      <div className="detalle-item">
+                        <i className="fas fa-map-marker-alt"></i>
+                        <span>{cliente.direccion}</span>
+                      </div>
+                      <div className="detalle-item">
+                        <i className="fas fa-user-tie"></i>
+                        <span>Vendedor: {cliente.vendedor}</span>
+                      </div>
+                      <div className="detalle-item">
+                        <i className="fas fa-money-bill-wave"></i>
+                        <span>Deuda: {formatMoneda(cliente.totalDeuda)}</span>
+                      </div>
+                      {cliente.ultimaVisita && (
+                        <div className="detalle-item">
+                          <i className="fas fa-calendar"></i>
+                          <span>Última visita: {formatFecha(cliente.ultimaVisita)}</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  
+                  <div className="cliente-actions">
+                    <button 
+                      className="button info-button micro-button"
+                      onClick={() => verFacturasCliente(cliente)}
+                      title="Ver facturas"
+                    >
+                      <i className="fas fa-file-invoice"></i>
+                    </button>
+                    <button 
+                      className="button primary-button"
+                      onClick={() => marcarComoVisitado(cliente)}
+                    >
+                      <i className="fas fa-user-check"></i> Marcar Visitado
+                    </button>
+                  </div>
+                </div>
+              ))}
+              
+              <div className="resumen-analisis">
+                <h5>Resumen de Visitas Pendientes</h5>
+                <div className="resumen-stats">
+                  <div className="resumen-item">
+                    <span>Total clientes urgentes:</span>
+                    <strong>{clientesSinVisitar.length}</strong>
+                  </div>
+                  <div className="resumen-item">
+                    <span>Deuda total pendiente:</span>
+                    <strong>{formatMoneda(clientesSinVisitar.reduce((sum, c) => sum + c.totalDeuda, 0))}</strong>
+                  </div>
+                  <div className="resumen-item">
+                    <span>Clientes nunca visitados:</span>
+                    <strong>{clientesSinVisitar.filter(c => !c.ultimaVisita).length}</strong>
+                  </div>
+                  <div className="resumen-item">
+                    <span>Promedio días sin visita:</span>
+                    <strong>
+                      {Math.round(
+                        clientesSinVisitar
+                          .filter(c => c.ultimaVisita)
+                          .reduce((sum, c) => sum + c.diasDesdeUltimaVisita, 0) / 
+                        Math.max(clientesSinVisitar.filter(c => c.ultimaVisita).length, 1)
+                      )} días
+                    </strong>
+                  </div>
+                </div>
+                
+                <div className="recomendaciones">
+                  <h6>Recomendaciones:</h6>
+                  <ul>
+                    <li>Prioriza clientes nunca visitados primero</li>
+                    <li>Enfócate en clientes con más de 60 días sin visita</li>
+                    <li>Agrupa visitas por zona para optimizar rutas</li>
+                    <li>Actualiza el estado después de cada visita</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
       {/* PANEL DE CLIENTES MENOS VISITADOS */}
       {mostrarClientesMenosVisitados && (
         <div className="historial-visitas-panel">
@@ -824,10 +1123,9 @@ const RutasCobro = () => {
                   <button 
                     className="button micro-button primary-button"
                     onClick={() => {
-                      // Buscar el cliente en la lista principal
                       const clienteEnDeuda = clientesConDeuda.find(c => c.nombre === cliente.nombre);
                       if (clienteEnDeuda) {
-                        alert(`Cliente ${cliente.nombre} seleccionado. Deuda: ${formatMoneda(clienteEnDeuda.totalDeuda)}`);
+                        alert(`Cliente ${cliente.nombre} seleccionado. Deuda: ${formatMoneda(clienteEnDeuda.totalDeuda)} - Vendedor: ${clienteEnDeuda.vendedor}`);
                       } else {
                         alert(`Cliente ${cliente.nombre} seleccionado para visita prioritaria`);
                       }
@@ -897,6 +1195,7 @@ const RutasCobro = () => {
                     </div>
                     <div className="visita-detalles">
                       <span>Deuda: {formatMoneda(visita.deuda_pendiente || visita.deuda)}</span>
+                      {visita.vendedor && <span>Vendedor: {visita.vendedor}</span>}
                       <span className="estado visitado">
                         {visita.resultado || 'Visitado'}
                       </span>
@@ -936,6 +1235,7 @@ const RutasCobro = () => {
                     <span>{cliente.nombre}</span>
                     <span>{cliente.diasDesdePrimeraFactura} días de deuda</span>
                     <span>{formatMoneda(cliente.totalDeuda)}</span>
+                    <span>{cliente.vendedor}</span>
                   </div>
                 ))}
               </div>
@@ -1021,6 +1321,28 @@ const RutasCobro = () => {
       <div className="controles-ruta">
         <div className="filtros-group">
           <div className="filtro-item">
+            <label>Buscar Cliente:</label>
+            <div className="search-container">
+              <input
+                type="text"
+                placeholder="Buscar por nombre, dirección, teléfono..."
+                value={busquedaCliente}
+                onChange={(e) => setBusquedaCliente(e.target.value)}
+                className="search-input"
+              />
+              {busquedaCliente && (
+                <button 
+                  className="button micro-button clear-search"
+                  onClick={limpiarBusqueda}
+                  title="Limpiar búsqueda"
+                >
+                  <i className="fas fa-times"></i>
+                </button>
+              )}
+            </div>
+          </div>
+          
+          <div className="filtro-item">
             <label>Filtrar por Zona:</label>
             <select 
               value={filtroZona} 
@@ -1029,6 +1351,19 @@ const RutasCobro = () => {
               <option value="">Todas las zonas</option>
               {zonasUnicas.map(zona => (
                 <option key={zona} value={zona}>{zona}</option>
+              ))}
+            </select>
+          </div>
+          
+          <div className="filtro-item">
+            <label>Filtrar por Vendedor:</label>
+            <select 
+              value={filtroVendedor} 
+              onChange={(e) => setFiltroVendedor(e.target.value)}
+            >
+              <option value="">Todos los vendedores</option>
+              {vendedoresUnicos.map(vendedor => (
+                <option key={vendedor} value={vendedor}>{vendedor}</option>
               ))}
             </select>
           </div>
@@ -1043,6 +1378,7 @@ const RutasCobro = () => {
               <option value="deuda">Monto Deuda</option>
               <option value="antiguedad">Antigüedad</option>
               <option value="zona">Zona</option>
+              <option value="vendedor">Vendedor</option>
               <option value="cliente">Nombre Cliente</option>
             </select>
           </div>
@@ -1057,19 +1393,56 @@ const RutasCobro = () => {
         </button>
       </div>
 
+      {/* Información de búsqueda */}
+      {busquedaCliente && (
+        <div className="busqueda-info">
+          <div className="busqueda-header">
+            <i className="fas fa-search"></i>
+            <span>
+              Resultados para: <strong>"{busquedaCliente}"</strong>
+              <em> ({clientesFiltrados.length} clientes encontrados)</em>
+            </span>
+            <button 
+              className="button micro-button secondary-button"
+              onClick={limpiarBusqueda}
+            >
+              <i className="fas fa-times"></i> Limpiar búsqueda
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Lista de Clientes con Deuda */}
       <div className="clientes-deuda-section">
         <h3>
           <i className="fas fa-list"></i> 
           Clientes con Deuda Pendiente ({clientesFiltrados.length})
           {filtroZona && ` - Zona: ${filtroZona}`}
+          {filtroVendedor && ` - Vendedor: ${filtroVendedor}`}
         </h3>
         
         {clientesFiltrados.length === 0 ? (
           <div className="empty-state">
-            <i className="fas fa-check-circle"></i>
-            <h4>¡Excelente! No hay deudas pendientes</h4>
-            <p>No se encontraron clientes con deudas según los filtros aplicados</p>
+            <i className="fas fa-search"></i>
+            <h4>No se encontraron clientes</h4>
+            <p>
+              {busquedaCliente 
+                ? `No hay resultados para "${busquedaCliente}" con los filtros aplicados`
+                : 'No se encontraron clientes con deudas según los filtros aplicados'
+              }
+            </p>
+            {(busquedaCliente || filtroZona || filtroVendedor) && (
+              <button 
+                className="button primary-button"
+                onClick={() => {
+                  setBusquedaCliente('');
+                  setFiltroZona('');
+                  setFiltroVendedor('');
+                }}
+              >
+                <i className="fas fa-refresh"></i> Limpiar todos los filtros
+              </button>
+            )}
           </div>
         ) : (
           <div className="clientes-grid">
@@ -1080,6 +1453,7 @@ const RutasCobro = () => {
                     <h4>{cliente.nombre}</h4>
                     <div className="cliente-badges">
                       <span className="zona-badge">{cliente.zona}</span>
+                      <span className="vendedor-badge">{cliente.vendedor}</span>
                       {cliente.visitadoHoy && (
                         <span className="visitado-badge">
                           <i className="fas fa-check"></i> Visitado Hoy
@@ -1103,6 +1477,10 @@ const RutasCobro = () => {
                       <span>{cliente.telefono}</span>
                     </div>
                   )}
+                  <div className="detail-item">
+                    <i className="fas fa-user-tie"></i>
+                    <span>Vendedor: {cliente.vendedor}</span>
+                  </div>
                 </div>
                 
                 <div className="deuda-info">
@@ -1167,7 +1545,7 @@ const RutasCobro = () => {
                     if (paso.tipo === 'zona') {
                       return `${index + 1}. ${paso.nombre} - ${paso.info}`;
                     } else {
-                      return `${index + 1}. ${paso.nombre} - ${paso.direccion} - Deuda: ${formatMoneda(paso.totalDeuda)}`;
+                      return `${index + 1}. ${paso.nombre} - ${paso.direccion} - Deuda: ${formatMoneda(paso.totalDeuda)} - Vendedor: ${paso.vendedor}`;
                     }
                   }).join('\n');
                   
@@ -1216,6 +1594,7 @@ const RutasCobro = () => {
                           {paso.nivelPrioridad}
                         </span>
                         <span>Facturas: {paso.facturasPendientes.length}</span>
+                        <span>Vendedor: {paso.vendedor}</span>
                       </div>
                     </div>
                     <div className="step-actions">
