@@ -87,7 +87,7 @@ const FacturasGuardadas = () => {
     return password === 'edwin' || password === '777';
   };
 
-  // Procesar facturas con filtros, orden y saldos
+  // Procesar facturas con filtros, orden y saldos - CORREGIDO
   const facturasProcesadas = calcularSaldos(
     facturas.filter(factura => {
       const termino = busqueda.toLowerCase();
@@ -106,9 +106,13 @@ const FacturasGuardadas = () => {
       const saldo = factura.total - totalAbonado;
       const estaPagada = saldo <= 0;
       
-      // Mostrar siempre si hay búsqueda activa o si se eligió mostrar pagadas
-      // O si la factura no está pagada
-      return coincideBusqueda && coincideVendedor && (mostrarPagadas || !estaPagada || busqueda !== '');
+      // LÓGICA CORREGIDA: 
+      // - Si NO mostrarPagadas está activado, mostrar solo las NO pagadas
+      // - Si mostrarPagadas está activado, mostrar todas
+      // - La búsqueda se aplica independientemente del estado de pago
+      const mostrarPorEstado = mostrarPagadas ? true : !estaPagada;
+      
+      return coincideBusqueda && coincideVendedor && mostrarPorEstado;
     }).sort((a, b) => {
       switch (orden) {
         case 'antiguos': return new Date(a.fecha) - new Date(b.fecha);
