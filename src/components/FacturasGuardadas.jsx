@@ -122,6 +122,9 @@ const FacturasGuardadas = () => {
         case 'menor-saldo': return (a.saldo || 0) - (b.saldo || 0);
         case 'alfabetico-az': return a.cliente?.localeCompare(b.cliente || '');
         case 'alfabetico-za': return b.cliente?.localeCompare(a.cliente || '');
+        // NUEVAS OPCIONES DE ORDEN POR NÚMERO DE FACTURA
+        case 'mayor-numero': return b.id - a.id;
+        case 'menor-numero': return a.id - b.id;
         default: return new Date(b.fecha) - new Date(a.fecha);
       }
     }),
@@ -608,6 +611,9 @@ const FacturasGuardadas = () => {
             <option value="menor-total">Menor total</option>
             <option value="mayor-saldo">Mayor saldo</option>
             <option value="menor-saldo">Menor saldo</option>
+            {/* NUEVAS OPCIONES DE ORDEN POR NÚMERO DE FACTURA */}
+            <option value="mayor-numero">Mayor número</option>
+            <option value="menor-numero">Menor número</option>
           </select>
           
           <span className="contador">
