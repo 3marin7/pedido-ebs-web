@@ -838,90 +838,187 @@ const RutasCobro = () => {
         </p>
       </header>
 
-      {/* CONTROLES ADICIONALES */}
-      <div className="controles-adicionales">
-        <button 
-          className="button info-button"
-          onClick={async () => {
-            await cargarHistorialVisitas();
-            setMostrarHistorialVisitas(!mostrarHistorialVisitas);
-            setMostrarClientesMenosVisitados(false);
-            setMostrarClientesSinVisitar(false);
-          }}
-        >
-          <i className="fas fa-history"></i> Ver Historial de Visitas
-        </button>
+      {/* CONTROLES PRINCIPALES AGRUPADOS */}
+      <div className="controles-principales">
         
-        <button 
-          className="button warning-button"
-          onClick={async () => {
-            await cargarClientesMenosVisitados();
-            setMostrarClientesMenosVisitados(!mostrarClientesMenosVisitados);
-            setMostrarHistorialVisitas(false);
-            setMostrarClientesSinVisitar(false);
-          }}
-        >
-          <i className="fas fa-chart-line"></i> Clientes Menos Visitados
-        </button>
-
-        {/* NUEVO BOTÓN PARA CLIENTES SIN VISITAR */}
-        <button 
-          className="button danger-button"
-          onClick={async () => {
-            const clientesUrgentes = await cargarClientesSinVisitar30Dias();
-            setMostrarClientesSinVisitar(!mostrarClientesSinVisitar);
-            setMostrarHistorialVisitas(false);
-            setMostrarClientesMenosVisitados(false);
+        {/* Filtros de Búsqueda y Ordenamiento */}
+        <div className="filtros-section">
+          <div className="filtros-group">
+            <div className="filtro-item">
+              <label>Buscar Cliente:</label>
+              <div className="search-container">
+                <input
+                  type="text"
+                  placeholder="Buscar por nombre, dirección, teléfono..."
+                  value={busquedaCliente}
+                  onChange={(e) => setBusquedaCliente(e.target.value)}
+                  className="search-input"
+                />
+                {busquedaCliente && (
+                  <button 
+                    className="button micro-button clear-search"
+                    onClick={limpiarBusqueda}
+                    title="Limpiar búsqueda"
+                  >
+                    <i className="fas fa-times"></i>
+                  </button>
+                )}
+              </div>
+            </div>
             
-            if (clientesUrgentes.length === 0) {
-              alert('✅ ¡Excelente! No hay clientes con más de 30 días sin visita.');
-            }
-          }}
-        >
-          <i className="fas fa-exclamation-triangle"></i> Clientes Sin Visitar (+30 días)
-        </button>
-
-        {/* BOTÓN PARA CLIENTES CON MÁS DE 60 DÍAS Y SALDO PENDIENTE */}
-        <button 
-          className="button danger-button"
-          onClick={async () => {
-            const clientesMas60Dias = await cargarClientesMas60Dias();
+            <div className="filtro-item">
+              <label>Filtrar por Zona:</label>
+              <select 
+                value={filtroZona} 
+                onChange={(e) => setFiltroZona(e.target.value)}
+              >
+                <option value="">Todas las zonas</option>
+                {zonasUnicas.map(zona => (
+                  <option key={zona} value={zona}>{zona}</option>
+                ))}
+              </select>
+            </div>
             
-            if (clientesMas60Dias.length === 0) {
-              return;
-            }
-
-            // Crear mensaje con la información
-            let mensaje = `📋 CLIENTES CON FACTURAS >60 DÍAS Y SALDO PENDIENTE\n\n`;
-            mensaje += `Total: ${clientesMas60Dias.length} clientes\n\n`;
+            <div className="filtro-item">
+              <label>Filtrar por Vendedor:</label>
+              <select 
+                value={filtroVendedor} 
+                onChange={(e) => setFiltroVendedor(e.target.value)}
+              >
+                <option value="">Todos los vendedores</option>
+                {vendedoresUnicos.map(vendedor => (
+                  <option key={vendedor} value={vendedor}>{vendedor}</option>
+                ))}
+              </select>
+            </div>
             
-            clientesMas60Dias.slice(0, 25).forEach((cliente, index) => {
-              mensaje += `${index + 1}. ${cliente.nombre}\n`;
-              mensaje += `   📍 ${cliente.direccion}\n`;
-              mensaje += `   📞 ${cliente.telefono}\n`;
-              mensaje += `   💰 Deuda pendiente: ${formatMoneda(cliente.totalDeuda)}\n`;
-              mensaje += `   📅 Máxima antigüedad: ${cliente.diasMaximo} días\n`;
-              mensaje += `   📄 Facturas pendientes: ${cliente.totalFacturas}\n`;
-              mensaje += `   👤 Vendedor: ${cliente.vendedor}\n\n`;
-            });
+            <div className="filtro-item">
+              <label>Ordenar por:</label>
+              <select 
+                value={ordenamiento} 
+                onChange={(e) => setOrdenamiento(e.target.value)}
+              >
+                <option value="prioridad">Prioridad (Recomendado)</option>
+                <option value="deuda">Monto Deuda</option>
+                <option value="antiguedad">Antigüedad</option>
+                <option value="zona">Zona</option>
+                <option value="vendedor">Vendedor</option>
+                <option value="cliente">Nombre Cliente</option>
+              </select>
+            </div>
+          </div>
+          
+          <button 
+            className="button primary-button generar-ruta-btn"
+            onClick={generarRutaOptimizada}
+            disabled={clientesFiltrados.length === 0}
+          >
+            <i className="fas fa-route"></i> Generar Ruta Optimizada
+          </button>
+        </div>
 
-            // Calcular totales
-            const deudaTotal = clientesMas60Dias.reduce((sum, c) => sum + c.totalDeuda, 0);
-            const promedioDias = Math.round(clientesMas60Dias.reduce((sum, c) => sum + c.diasMaximo, 0) / clientesMas60Dias.length);
-            const totalFacturas = clientesMas60Dias.reduce((sum, c) => sum + c.totalFacturas, 0);
-            
-            mensaje += `--- RESUMEN ---\n`;
-            mensaje += `💰 Deuda total pendiente: ${formatMoneda(deudaTotal)}\n`;
-            mensaje += `📊 Promedio días antigüedad: ${promedioDias} días\n`;
-            mensaje += `👥 Total clientes críticos: ${clientesMas60Dias.length}\n`;
-            mensaje += `📄 Total facturas pendientes: ${totalFacturas}`;
+        {/* Botones de Análisis */}
+        <div className="analisis-section">
+          <button 
+            className="button info-button"
+            onClick={async () => {
+              await cargarHistorialVisitas();
+              setMostrarHistorialVisitas(!mostrarHistorialVisitas);
+              setMostrarClientesMenosVisitados(false);
+              setMostrarClientesSinVisitar(false);
+            }}
+          >
+            <i className="fas fa-history"></i> Ver Historial de Visitas
+          </button>
+          
+          <button 
+            className="button warning-button"
+            onClick={async () => {
+              await cargarClientesMenosVisitados();
+              setMostrarClientesMenosVisitados(!mostrarClientesMenosVisitados);
+              setMostrarHistorialVisitas(false);
+              setMostrarClientesSinVisitar(false);
+            }}
+          >
+            <i className="fas fa-chart-line"></i> Clientes Menos Visitados
+          </button>
 
-            alert(mensaje);
-          }}
-        >
-          <i className="fas fa-calendar-exclamation"></i> Clientes +60 Días
-        </button>
+          <button 
+            className="button danger-button"
+            onClick={async () => {
+              const clientesUrgentes = await cargarClientesSinVisitar30Dias();
+              setMostrarClientesSinVisitar(!mostrarClientesSinVisitar);
+              setMostrarHistorialVisitas(false);
+              setMostrarClientesMenosVisitados(false);
+              
+              if (clientesUrgentes.length === 0) {
+                alert('✅ ¡Excelente! No hay clientes con más de 30 días sin visita.');
+              }
+            }}
+          >
+            <i className="fas fa-exclamation-triangle"></i> Clientes Sin Visitar (+30 días)
+          </button>
+
+          <button 
+            className="button danger-button"
+            onClick={async () => {
+              const clientesMas60Dias = await cargarClientesMas60Dias();
+              
+              if (clientesMas60Dias.length === 0) {
+                return;
+              }
+
+              // Crear mensaje con la información
+              let mensaje = `📋 CLIENTES CON FACTURAS >60 DÍAS Y SALDO PENDIENTE\n\n`;
+              mensaje += `Total: ${clientesMas60Dias.length} clientes\n\n`;
+              
+              clientesMas60Dias.slice(0, 25).forEach((cliente, index) => {
+                mensaje += `${index + 1}. ${cliente.nombre}\n`;
+                mensaje += `   📍 ${cliente.direccion}\n`;
+                mensaje += `   📞 ${cliente.telefono}\n`;
+                mensaje += `   💰 Deuda pendiente: ${formatMoneda(cliente.totalDeuda)}\n`;
+                mensaje += `   📅 Máxima antigüedad: ${cliente.diasMaximo} días\n`;
+                mensaje += `   📄 Facturas pendientes: ${cliente.totalFacturas}\n`;
+                mensaje += `   👤 Vendedor: ${cliente.vendedor}\n\n`;
+              });
+
+              // Calcular totales
+              const deudaTotal = clientesMas60Dias.reduce((sum, c) => sum + c.totalDeuda, 0);
+              const promedioDias = Math.round(clientesMas60Dias.reduce((sum, c) => sum + c.diasMaximo, 0) / clientesMas60Dias.length);
+              const totalFacturas = clientesMas60Dias.reduce((sum, c) => sum + c.totalFacturas, 0);
+              
+              mensaje += `--- RESUMEN ---\n`;
+              mensaje += `💰 Deuda total pendiente: ${formatMoneda(deudaTotal)}\n`;
+              mensaje += `📊 Promedio días antigüedad: ${promedioDias} días\n`;
+              mensaje += `👥 Total clientes críticos: ${clientesMas60Dias.length}\n`;
+              mensaje += `📄 Total facturas pendientes: ${totalFacturas}`;
+
+              alert(mensaje);
+            }}
+          >
+            <i className="fas fa-calendar-exclamation"></i> Clientes +60 Días
+          </button>
+        </div>
       </div>
+
+      {/* Información de búsqueda */}
+      {busquedaCliente && (
+        <div className="busqueda-info">
+          <div className="busqueda-header">
+            <i className="fas fa-search"></i>
+            <span>
+              Resultados para: <strong>"{busquedaCliente}"</strong>
+              <em> ({clientesFiltrados.length} clientes encontrados)</em>
+            </span>
+            <button 
+              className="button micro-button secondary-button"
+              onClick={limpiarBusqueda}
+            >
+              <i className="fas fa-times"></i> Limpiar búsqueda
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* PANEL DE CLIENTES SIN VISITAR (+30 DÍAS) */}
       {mostrarClientesSinVisitar && (
@@ -1316,101 +1413,6 @@ const RutasCobro = () => {
           </div>
         </div>
       </div>
-
-      {/* Controles de Filtro y Ordenamiento */}
-      <div className="controles-ruta">
-        <div className="filtros-group">
-          <div className="filtro-item">
-            <label>Buscar Cliente:</label>
-            <div className="search-container">
-              <input
-                type="text"
-                placeholder="Buscar por nombre, dirección, teléfono..."
-                value={busquedaCliente}
-                onChange={(e) => setBusquedaCliente(e.target.value)}
-                className="search-input"
-              />
-              {busquedaCliente && (
-                <button 
-                  className="button micro-button clear-search"
-                  onClick={limpiarBusqueda}
-                  title="Limpiar búsqueda"
-                >
-                  <i className="fas fa-times"></i>
-                </button>
-              )}
-            </div>
-          </div>
-          
-          <div className="filtro-item">
-            <label>Filtrar por Zona:</label>
-            <select 
-              value={filtroZona} 
-              onChange={(e) => setFiltroZona(e.target.value)}
-            >
-              <option value="">Todas las zonas</option>
-              {zonasUnicas.map(zona => (
-                <option key={zona} value={zona}>{zona}</option>
-              ))}
-            </select>
-          </div>
-          
-          <div className="filtro-item">
-            <label>Filtrar por Vendedor:</label>
-            <select 
-              value={filtroVendedor} 
-              onChange={(e) => setFiltroVendedor(e.target.value)}
-            >
-              <option value="">Todos los vendedores</option>
-              {vendedoresUnicos.map(vendedor => (
-                <option key={vendedor} value={vendedor}>{vendedor}</option>
-              ))}
-            </select>
-          </div>
-          
-          <div className="filtro-item">
-            <label>Ordenar por:</label>
-            <select 
-              value={ordenamiento} 
-              onChange={(e) => setOrdenamiento(e.target.value)}
-            >
-              <option value="prioridad">Prioridad (Recomendado)</option>
-              <option value="deuda">Monto Deuda</option>
-              <option value="antiguedad">Antigüedad</option>
-              <option value="zona">Zona</option>
-              <option value="vendedor">Vendedor</option>
-              <option value="cliente">Nombre Cliente</option>
-            </select>
-          </div>
-        </div>
-        
-        <button 
-          className="button primary-button generar-ruta-btn"
-          onClick={generarRutaOptimizada}
-          disabled={clientesFiltrados.length === 0}
-        >
-          <i className="fas fa-route"></i> Generar Ruta Optimizada
-        </button>
-      </div>
-
-      {/* Información de búsqueda */}
-      {busquedaCliente && (
-        <div className="busqueda-info">
-          <div className="busqueda-header">
-            <i className="fas fa-search"></i>
-            <span>
-              Resultados para: <strong>"{busquedaCliente}"</strong>
-              <em> ({clientesFiltrados.length} clientes encontrados)</em>
-            </span>
-            <button 
-              className="button micro-button secondary-button"
-              onClick={limpiarBusqueda}
-            >
-              <i className="fas fa-times"></i> Limpiar búsqueda
-            </button>
-          </div>
-        </div>
-      )}
 
       {/* Lista de Clientes con Deuda */}
       <div className="clientes-deuda-section">

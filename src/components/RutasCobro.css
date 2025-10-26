@@ -38,6 +38,120 @@
   font-weight: 500;
 }
 
+/* CONTROLES PRINCIPALES AGRUPADOS - CORREGIDO */
+.controles-principales {
+  background: white;
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin-bottom: 25px;
+}
+
+.filtros-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 20px;
+  margin-bottom: 25px;
+  padding-bottom: 25px;
+  border-bottom: 2px solid #f0f2f5;
+}
+
+.filtros-group {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 15px;
+  flex: 1;
+}
+
+.filtro-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.filtro-item label {
+  font-weight: 600;
+  color: #4a5568;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.filtro-item select,
+.search-input {
+  padding: 10px 12px;
+  border: 1px solid #cbd5e0;
+  border-radius: 6px;
+  background: white;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.filtro-item select:focus,
+.search-input:focus {
+  outline: none;
+  border-color: #2b6cb0;
+  box-shadow: 0 0 0 3px rgba(43, 108, 176, 0.1);
+}
+
+.search-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.search-input {
+  padding-right: 40px;
+}
+
+.clear-search {
+  position: absolute;
+  right: 8px;
+  background: #e2e8f0;
+  color: #4a5568;
+  border: none;
+  padding: 6px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.clear-search:hover {
+  background: #cbd5e0;
+}
+
+.generar-ruta-btn {
+  height: 44px;
+  font-weight: 600;
+  white-space: nowrap;
+  padding: 10px 20px;
+  min-width: 200px;
+  flex-shrink: 0;
+}
+
+.analisis-section {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 12px;
+}
+
+.analisis-section .button {
+  justify-content: center;
+  text-align: center;
+  padding: 12px 15px;
+  font-size: 14px;
+  height: auto;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+}
+
 /* Notificaciones de alerta */
 .notificacion-alerta {
   background: #fffaf0;
@@ -77,8 +191,9 @@
 }
 
 .recordatorio-item {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 10px;
   align-items: center;
   padding: 8px 12px;
   background: white;
@@ -191,49 +306,38 @@
   font-weight: 700;
 }
 
-/* Controles */
-.controles-ruta {
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  margin-bottom: 25px;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  flex-wrap: wrap;
-  gap: 15px;
+/* Información de búsqueda */
+.busqueda-info {
+  background: #ebf8ff;
+  border: 1px solid #bee3f8;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 20px;
 }
 
-.filtros-group {
+.busqueda-header {
   display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  color: #2b6cb0;
 }
 
-.filtro-item {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+.busqueda-header i {
+  font-size: 16px;
 }
 
-.filtro-item label {
-  font-weight: 600;
-  color: #4a5568;
+.busqueda-header span {
+  flex: 1;
   font-size: 14px;
 }
 
-.filtro-item select {
-  padding: 10px 12px;
-  border: 1px solid #cbd5e0;
-  border-radius: 6px;
-  background: white;
-  min-width: 180px;
+.busqueda-header strong {
+  color: #1a365d;
 }
 
-.generar-ruta-btn {
-  height: 44px;
-  font-weight: 600;
+.busqueda-header em {
+  color: #718096;
+  font-style: italic;
 }
 
 /* Clientes con Deuda */
@@ -327,6 +431,15 @@
 .zona-badge {
   background: #e2e8f0;
   color: #4a5568;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.vendedor-badge {
+  background: #bee3f8;
+  color: #2b6cb0;
   padding: 4px 8px;
   border-radius: 12px;
   font-size: 11px;
@@ -571,11 +684,15 @@
 .step-details {
   display: flex;
   gap: 15px;
+  flex-wrap: wrap;
 }
 
 .step-details span {
-  font-size: 12px;
+  font-size: 11px;
   color: #718096;
+  background: #f7fafc;
+  padding: 2px 6px;
+  border-radius: 6px;
 }
 
 .step-details .prioridad {
@@ -631,187 +748,6 @@
 .resumen-item strong {
   color: #1a365d;
   font-size: 16px;
-}
-
-/* Estados vacíos */
-.empty-state {
-  text-align: center;
-  padding: 40px 20px;
-  color: #718096;
-}
-
-.empty-state i {
-  font-size: 48px;
-  margin-bottom: 15px;
-  color: #cbd5e0;
-}
-
-.empty-state h4 {
-  margin: 0 0 10px 0;
-  color: #4a5568;
-}
-
-.empty-state p {
-  margin: 0;
-  font-size: 14px;
-}
-
-/* Loading */
-.loading-overlay {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 60px 20px;
-  text-align: center;
-}
-
-.loading-spinner {
-  width: 40px;
-  height: 40px;
-  border: 4px solid #e2e8f0;
-  border-top: 4px solid #2b6cb0;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin-bottom: 20px;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-/* Botones */
-.button {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 10px 16px;
-  border: none;
-  border-radius: 6px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  text-decoration: none;
-  font-size: 14px;
-}
-
-.primary-button {
-  background: #2b6cb0;
-  color: white;
-}
-
-.primary-button:hover:not(:disabled) {
-  background: #2c5282;
-  transform: translateY(-1px);
-}
-
-.secondary-button {
-  background: #718096;
-  color: white;
-}
-
-.secondary-button:hover:not(:disabled) {
-  background: #4a5568;
-}
-
-.success-button {
-  background: #38a169;
-  color: white;
-}
-
-.success-button:hover:not(:disabled) {
-  background: #2f855a;
-}
-
-.info-button {
-  background: #4299e1;
-  color: white;
-}
-
-.info-button:hover:not(:disabled) {
-  background: #3182ce;
-}
-
-.micro-button {
-  padding: 6px 8px !important;
-  font-size: 12px !important;
-  height: 30px !important;
-  min-width: 30px !important;
-}
-
-.button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  transform: none !important;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  .rutas-cobro-container {
-    padding: 15px;
-  }
-  
-  .header-main {
-    flex-direction: column;
-    gap: 15px;
-    align-items: flex-start;
-  }
-  
-  .controles-ruta {
-    flex-direction: column;
-    align-items: stretch;
-  }
-  
-  .filtros-group {
-    flex-direction: column;
-  }
-  
-  .clientes-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .cliente-step {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  
-  .step-actions {
-    align-self: stretch;
-    justify-content: space-between;
-  }
-  
-  .resumen-stats {
-    grid-template-columns: 1fr;
-  }
-  
-  .ruta-header {
-    flex-direction: column;
-    gap: 15px;
-    align-items: stretch;
-  }
-  
-  .ruta-header-actions {
-    flex-direction: column;
-  }
-  
-  .recordatorio-item {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 4px;
-  }
-  
-  .reporte-stats {
-    grid-template-columns: 1fr;
-  }
-  
-  .cliente-actions {
-    flex-direction: column;
-  }
-}/* Controles Adicionales */
-.controles-adicionales {
-  margin: 20px 0;
-  text-align: center;
 }
 
 /* Panel de Historial */
@@ -909,182 +845,232 @@
 .empty-state {
   text-align: center;
   padding: 40px 20px;
-  color: #6c757d;
+  color: #718096;
 }
 
 .empty-state i {
-  font-size: 3em;
+  font-size: 48px;
   margin-bottom: 15px;
-  opacity: 0.5;
+  color: #cbd5e0;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-  .visita-info {
+.empty-state h4 {
+  margin: 0 0 10px 0;
+  color: #4a5568;
+}
+
+.empty-state p {
+  margin: 0;
+  font-size: 14px;
+}
+
+.empty-state small {
+  display: block;
+  margin-top: 5px;
+  font-size: 12px;
+  color: #a0aec0;
+}
+
+.empty-state .button {
+  margin-top: 15px;
+}
+
+/* Loading */
+.loading-overlay {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #e2e8f0;
+  border-top: 4px solid #2b6cb0;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Botones */
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.primary-button {
+  background: #2b6cb0;
+  color: white;
+}
+
+.primary-button:hover:not(:disabled) {
+  background: #2c5282;
+  transform: translateY(-1px);
+}
+
+.secondary-button {
+  background: #718096;
+  color: white;
+}
+
+.secondary-button:hover:not(:disabled) {
+  background: #4a5568;
+}
+
+.success-button {
+  background: #38a169;
+  color: white;
+}
+
+.success-button:hover:not(:disabled) {
+  background: #2f855a;
+}
+
+.info-button {
+  background: #4299e1;
+  color: white;
+}
+
+.info-button:hover:not(:disabled) {
+  background: #3182ce;
+}
+
+.warning-button {
+  background: #ed8936;
+  color: white;
+}
+
+.warning-button:hover:not(:disabled) {
+  background: #dd771c;
+}
+
+.danger-button {
+  background: #e53e3e;
+  color: white;
+}
+
+.danger-button:hover:not(:disabled) {
+  background: #c53030;
+}
+
+.micro-button {
+  padding: 6px 8px !important;
+  font-size: 12px !important;
+  height: 30px !important;
+  min-width: 30px !important;
+}
+
+.button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+/* Ajustes específicos para responsive */
+@media (max-width: 1200px) {
+  .filtros-section {
     flex-direction: column;
+    align-items: stretch;
+    gap: 15px;
+  }
+  
+  .generar-ruta-btn {
+    align-self: flex-start;
+    min-width: auto;
+    width: auto;
+  }
+  
+  .filtros-group {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .rutas-cobro-container {
+    padding: 15px;
+  }
+  
+  .controles-principales {
+    padding: 20px;
+  }
+  
+  .filtros-group {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  
+  .analisis-section {
+    grid-template-columns: 1fr;
     gap: 10px;
   }
   
-  .visita-detalles {
+  .analisis-section .button {
+    min-height: 40px;
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+  
+  .generar-ruta-btn {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .clientes-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .cliente-step {
+    flex-direction: column;
     align-items: flex-start;
   }
-}/* Agrega esto a tu archivo RutasCobro.css */
-
-/* Badge de vendedor */
-.vendedor-badge {
-  background: #bee3f8;
-  color: #2b6cb0;
-  padding: 4px 8px;
-  border-radius: 12px;
-  font-size: 11px;
-  font-weight: 600;
-}
-
-/* Ajustes para los badges en el header del cliente */
-.cliente-badges {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-  align-items: center;
-}
-
-/* Ajustes para los filtros en pantallas pequeñas */
-@media (max-width: 768px) {
-  .filtros-group {
+  
+  .step-actions {
+    align-self: stretch;
+    justify-content: space-between;
+  }
+  
+  .resumen-stats {
+    grid-template-columns: 1fr;
+  }
+  
+  .ruta-header {
     flex-direction: column;
-    width: 100%;
+    gap: 15px;
+    align-items: stretch;
   }
   
-  .filtro-item {
-    width: 100%;
+  .ruta-header-actions {
+    flex-direction: column;
   }
   
-  .filtro-item select {
-    min-width: 100%;
-  }
-}
-
-/* Ajustes para los detalles del paso en la ruta */
-.step-details {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.step-details span {
-  font-size: 11px;
-  color: #718096;
-  background: #f7fafc;
-  padding: 2px 6px;
-  border-radius: 6px;
-}
-
-/* Ajustes para los recordatorios */
-.recordatorio-item {
-  display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1fr;
-  gap: 10px;
-  align-items: center;
-  padding: 8px 12px;
-  background: white;
-  border-radius: 6px;
-  border-left: 4px solid #ed8936;
-}
-
-@media (max-width: 768px) {
   .recordatorio-item {
     grid-template-columns: 1fr;
     gap: 4px;
   }
-}/* Agrega esto a tu archivo RutasCobro.css */
-
-/* Contenedor de búsqueda */
-.search-container {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.search-input {
-  padding: 10px 40px 10px 12px;
-  border: 1px solid #cbd5e0;
-  border-radius: 6px;
-  background: white;
-  min-width: 280px;
-  font-size: 14px;
-  transition: all 0.3s ease;
-}
-
-.search-input:focus {
-  outline: none;
-  border-color: #2b6cb0;
-  box-shadow: 0 0 0 3px rgba(43, 108, 176, 0.1);
-}
-
-.search-input::placeholder {
-  color: #a0aec0;
-}
-
-.clear-search {
-  position: absolute;
-  right: 8px;
-  background: #e2e8f0;
-  color: #4a5568;
-  border: none;
-}
-
-.clear-search:hover {
-  background: #cbd5e0;
-}
-
-/* Información de búsqueda */
-.busqueda-info {
-  background: #ebf8ff;
-  border: 1px solid #bee3f8;
-  border-radius: 8px;
-  padding: 15px;
-  margin-bottom: 20px;
-}
-
-.busqueda-header {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  color: #2b6cb0;
-}
-
-.busqueda-header i {
-  font-size: 16px;
-}
-
-.busqueda-header span {
-  flex: 1;
-  font-size: 14px;
-}
-
-.busqueda-header strong {
-  color: #1a365d;
-}
-
-.busqueda-header em {
-  color: #718096;
-  font-style: italic;
-}
-
-/* Ajustes para los filtros en pantallas pequeñas */
-@media (max-width: 768px) {
-  .filtros-group {
+  
+  .reporte-stats {
+    grid-template-columns: 1fr;
+  }
+  
+  .cliente-actions {
     flex-direction: column;
-    width: 100%;
-  }
-  
-  .filtro-item {
-    width: 100%;
-  }
-  
-  .filtro-item select,
-  .search-input {
-    min-width: 100%;
   }
   
   .busqueda-header {
@@ -1096,61 +1082,29 @@
   .busqueda-header .button {
     align-self: flex-end;
   }
-}
-
-/* Badge de vendedor */
-.vendedor-badge {
-  background: #bee3f8;
-  color: #2b6cb0;
-  padding: 4px 8px;
-  border-radius: 12px;
-  font-size: 11px;
-  font-weight: 600;
-}
-
-/* Ajustes para los badges en el header del cliente */
-.cliente-badges {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-  align-items: center;
-}
-
-/* Ajustes para los detalles del paso en la ruta */
-.step-details {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.step-details span {
-  font-size: 11px;
-  color: #718096;
-  background: #f7fafc;
-  padding: 2px 6px;
-  border-radius: 6px;
-}
-
-/* Ajustes para los recordatorios */
-.recordatorio-item {
-  display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1fr;
-  gap: 10px;
-  align-items: center;
-  padding: 8px 12px;
-  background: white;
-  border-radius: 6px;
-  border-left: 4px solid #ed8936;
-}
-
-@media (max-width: 768px) {
-  .recordatorio-item {
-    grid-template-columns: 1fr;
-    gap: 4px;
+  
+  .visita-info {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .visita-detalles {
+    align-items: flex-start;
   }
 }
 
-/* Estados vacíos mejorados */
-.empty-state .button {
-  margin-top: 15px;
+@media (max-width: 480px) {
+  .controles-principales {
+    padding: 15px;
+  }
+  
+  .filtros-section {
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+  }
+  
+  .analisis-section .button {
+    font-size: 12px;
+    padding: 8px 10px;
+  }
 }
