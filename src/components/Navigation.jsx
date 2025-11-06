@@ -8,6 +8,7 @@ const Navigation = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [menuActivo, setMenuActivo] = useState(null);
   const menuRef = useRef(null);
   const toggleRef = useRef(null);
 
@@ -20,12 +21,17 @@ const Navigation = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
+  const toggleSubmenu = (menu) => {
+    setMenuActivo(menuActivo === menu ? null : menu);
+  };
+
   // Cerrar menú al hacer clic fuera de él
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (menuRef.current && !menuRef.current.contains(event.target) && 
           toggleRef.current && !toggleRef.current.contains(event.target)) {
         setIsMenuOpen(false);
+        setMenuActivo(null);
       }
     };
 
@@ -40,51 +46,89 @@ const Navigation = () => {
 
   // Determinar qué enlaces mostrar según el rol
   const getAvailableLinks = () => {
-    const commonLinks = [
-      { path: '/', label: 'Inicio', icon: '🏠' }
-    ];
+    const commonLinks = [];
 
     if (user.role === 'admin') {
       return [
-        ...commonLinks,
-        { path: '/facturas', label: 'Facturas', icon: '📄' },
-        { path: '/reportes-cobros', label: 'Reportes', icon: '📊' },
-        { path: '/dashboard', label: 'Dashboard', icon: '📈' },
-        { path: '/mapa-locales', label: 'Mapa de Locales', icon: '🗺️' }, // ← AÑADIDO AQUÍ
-        { path: '/catalogo', label: 'Productos', icon: '📦' },
-        { path: '/gestion-inventario', label: 'Inventario', icon: '📋' },
-        { path: '/gestion-pedidos', label: 'Pedidos', icon: '🛒' },
-        { path: '/clientes', label: 'Clientes', icon: '👥' }
+        // VENTAS E INICIO - Grupo
+        { 
+          path: '#ventas', 
+          label: 'Inicio & Ventas', 
+          icon: '🏠', 
+          tipo: 'grupo',
+          submenu: [
+            { path: '/', label: 'Inicio Principal', icon: '🏠' },
+            { path: '/facturas', label: 'Facturas', icon: '📄' },
+            { path: '/dashboard', label: 'Dashboard Ventas', icon: '📊' }
+          ]
+        },
+        // CONTABILIDAD - Grupo
+        { 
+          path: '#contabilidad', 
+          label: 'Contabilidad', 
+          icon: '💰', 
+          tipo: 'grupo',
+          submenu: [
+            { path: '/contabilidad', label: 'Estado Cartera', icon: '📋' },
+            { path: '/gastos', label: 'Gestión Gastos', icon: '📊' },
+            { path: '/reportes-cobros', label: 'Reportes', icon: '📈' }
+          ]
+        },
+        // CLIENTES - Grupo
+        { 
+          path: '#clientes', 
+          label: 'Clientes', 
+          icon: '👥', 
+          tipo: 'grupo',
+          submenu: [
+            { path: '/clientes', label: 'Gestión Clientes', icon: '👤' },
+            { path: '/mapa-locales', label: 'Mapa de Locales', icon: '🗺️' },
+            { path: '/rutas-cobro', label: 'Rutas Cobro', icon: '🚗' }
+          ]
+        },
+        // BODEGA - Grupo
+        { 
+          path: '#bodega', 
+          label: 'Bodega', 
+          icon: '📦', 
+          tipo: 'grupo',
+          submenu: [
+            { path: '/catalogo', label: 'Catálogo Productos', icon: '📚' },
+            { path: '/gestion-inventario', label: 'Gestión Inventario', icon: '📋' },
+            { path: '/gestion-pedidos', label: 'Gestión Pedidos', icon: '🛒' }
+          ]
+        }
       ];
     }
 
     if (user.role === 'vendedor') {
       return [
-        ...commonLinks,
-        { path: '/catalogo', label: 'Productos', icon: '📦' },
-        { path: '/gestion-pedidos', label: 'Pedidos', icon: '🛒' },
-        { path: '/clientes', label: 'Clientes', icon: '👥' }
+        { path: '/', label: 'Inicio', icon: '🏠', tipo: 'simple' },
+        { path: '/facturas', label: 'Facturas', icon: '📄', tipo: 'simple' },
+        { path: '/catalogo', label: 'Productos', icon: '📦', tipo: 'simple' },
+        { path: '/gestion-pedidos', label: 'Pedidos', icon: '🛒', tipo: 'simple' },
+        { path: '/clientes', label: 'Clientes', icon: '👥', tipo: 'simple' }
       ];
     }
 
     if (user.role === 'inventario') {
       return [
-        ...commonLinks,
-        { path: '/catalogo', label: 'Productos', icon: '📦' },
-        { path: '/gestion-inventario', label: 'Inventario', icon: '📋' },
-        { path: '/gestion-pedidos', label: 'Pedidos', icon: '🛒' },
-        { path: '/clientes', label: 'Clientes', icon: '👥' }
+        { path: '/', label: 'Inicio', icon: '🏠', tipo: 'simple' },
+        { path: '/catalogo', label: 'Productos', icon: '📦', tipo: 'simple' },
+        { path: '/gestion-inventario', label: 'Inventario', icon: '📋', tipo: 'simple' },
+        { path: '/gestion-pedidos', label: 'Pedidos', icon: '🛒', tipo: 'simple' },
+        { path: '/clientes', label: 'Clientes', icon: '👥', tipo: 'simple' }
       ];
     }
 
     if (user.role === 'cliente') {
       return [
-        ...commonLinks,
-        { path: '/catalogo-cliente', label: 'Catálogo', icon: '📚' }
+        { path: '/', label: 'Inicio', icon: '🏠', tipo: 'simple' },
+        { path: '/catalogo-cliente', label: 'Catálogo', icon: '📚', tipo: 'simple' }
       ];
     }
 
-    return commonLinks;
+    return [{ path: '/', label: 'Inicio', icon: '🏠', tipo: 'simple' }];
   };
 
   // Verificar si la ruta está activa
@@ -92,7 +136,62 @@ const Navigation = () => {
     if (path === '/') {
       return location.pathname === '/';
     }
-    return location.pathname.startsWith(path);
+    if (path.startsWith('#')) {
+      // Para grupos, verificar si alguna ruta del submenu está activa
+      const grupo = availableLinks.find(link => link.path === path);
+      if (grupo && grupo.submenu) {
+        return grupo.submenu.some(item => location.pathname === item.path || location.pathname.startsWith(item.path + '/'));
+      }
+      return false;
+    }
+    return location.pathname === path || location.pathname.startsWith(path + '/');
+  };
+
+  const renderLink = (link) => {
+    if (link.tipo === 'grupo') {
+      return (
+        <div key={link.path} className="nav-group">
+          <button 
+            className={`nav-link group-toggle ${isActiveLink(link.path) ? 'active' : ''}`}
+            onClick={() => toggleSubmenu(link.path)}
+          >
+            {link.icon && <span className="nav-icon">{link.icon}</span>}
+            <span className="nav-label">{link.label}</span>
+            <span className={`dropdown-arrow ${menuActivo === link.path ? 'open' : ''}`}>
+              ▼
+            </span>
+          </button>
+          <div className={`submenu ${menuActivo === link.path ? 'submenu-open' : ''}`}>
+            {link.submenu.map(subLink => (
+              <Link 
+                key={subLink.path} 
+                to={subLink.path} 
+                className={`submenu-link ${isActiveLink(subLink.path) ? 'active' : ''}`}
+                onClick={() => {
+                  setIsMenuOpen(false);
+                  setMenuActivo(null);
+                }}
+              >
+                {subLink.icon && <span className="nav-icon">{subLink.icon}</span>}
+                <span className="nav-label">{subLink.label}</span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <Link 
+        key={link.path} 
+        to={link.path} 
+        className={`nav-link ${isActiveLink(link.path) ? 'active' : ''}`}
+        onClick={() => setIsMenuOpen(false)}
+      >
+        {link.icon && <span className="nav-icon">{link.icon}</span>}
+        <span className="nav-label">{link.label}</span>
+      </Link>
+    );
   };
 
   const availableLinks = getAvailableLinks();
@@ -122,17 +221,7 @@ const Navigation = () => {
           ref={menuRef}
           className={`nav-links ${isMenuOpen ? 'nav-links-open' : ''}`}
         >
-          {availableLinks.map(link => (
-            <Link 
-              key={link.path} 
-              to={link.path} 
-              className={`nav-link ${isActiveLink(link.path) ? 'active' : ''}`}
-              onClick={() => setIsMenuOpen(false)}
-            >
-              {link.icon && <span className="nav-icon">{link.icon}</span>}
-              <span className="nav-label">{link.label}</span>
-            </Link>
-          ))}
+          {availableLinks.map(renderLink)}
         </div>
         
         <div className="nav-user">
@@ -151,7 +240,10 @@ const Navigation = () => {
       {isMenuOpen && (
         <div 
           className="mobile-overlay" 
-          onClick={() => setIsMenuOpen(false)}
+          onClick={() => {
+            setIsMenuOpen(false);
+            setMenuActivo(null);
+          }}
         ></div>
       )}
     </nav>

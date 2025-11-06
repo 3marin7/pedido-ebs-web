@@ -1,4 +1,4 @@
-/* Navigation.css - Versión Mejorada */
+/* Navigation.css - Versión Mejorada con Menús Desplegables */
 :root {
   --primary: #2563eb;
   --primary-dark: #1d4ed8;
@@ -109,6 +109,7 @@
   transition: var(--transition);
 }
 
+/* Estilos para enlaces normales */
 .nav-link {
   color: white;
   text-decoration: none;
@@ -122,6 +123,11 @@
   align-items: center;
   gap: 0.4rem;
   white-space: nowrap;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: inherit;
 }
 
 .nav-link::before {
@@ -147,6 +153,129 @@
 .nav-link.active {
   background: rgba(255, 255, 255, 0.25);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Efecto de subrayado animado para enlaces */
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: white;
+  transition: var(--transition);
+  transform: translateX(-50%);
+}
+
+.nav-link:hover::after,
+.nav-link.active::after {
+  width: 70%;
+}
+
+/* ESTILOS PARA GRUPOS Y SUBMENÚS */
+.nav-group {
+  position: relative;
+}
+
+.group-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  padding: 0.5rem 0.75rem;
+  text-decoration: none;
+  border-radius: var(--border-radius);
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.group-toggle::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: var(--transition);
+}
+
+.group-toggle:hover::before {
+  left: 100%;
+}
+
+.group-toggle:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
+}
+
+.group-toggle.active {
+  background: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.dropdown-arrow {
+  transition: transform 0.3s ease;
+  font-size: 0.7em;
+  margin-left: 0.5rem;
+  opacity: 0.8;
+}
+
+.dropdown-arrow.open {
+  transform: rotate(180deg);
+}
+
+.submenu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  min-width: 200px;
+  background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+  border-radius: var(--border-radius);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  z-index: 1000;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.submenu-open {
+  max-height: 400px;
+  opacity: 1;
+  visibility: visible;
+  margin-top: 0.25rem;
+}
+
+.submenu-link {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  text-decoration: none;
+  color: var(--text-light);
+  transition: var(--transition);
+  border-left: 3px solid transparent;
+  gap: 0.5rem;
+}
+
+.submenu-link:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border-left-color: rgba(255, 255, 255, 0.5);
+}
+
+.submenu-link.active {
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  border-left-color: white;
 }
 
 .nav-user {
@@ -181,24 +310,6 @@
   background: var(--danger-dark);
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-}
-
-/* Efecto de subrayado animado para enlaces */
-.nav-link::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  width: 0;
-  height: 2px;
-  background: white;
-  transition: var(--transition);
-  transform: translateX(-50%);
-}
-
-.nav-link:hover::after,
-.nav-link.active::after {
-  width: 70%;
 }
 
 /* RESPONSIVE - Estilos para móviles (MENÚ HAMBURGUESA) */
@@ -246,11 +357,34 @@
     visibility: visible;
   }
   
-  .nav-link {
+  .nav-link,
+  .group-toggle {
     padding: 1rem;
     border-radius: var(--border-radius);
     justify-content: flex-start;
     font-size: 1.1rem;
+    width: 100%;
+  }
+  
+  /* Submenús en móviles */
+  .submenu {
+    position: static;
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: none;
+    border: none;
+    border-radius: 0;
+    margin: 0.5rem 0 0.5rem 1rem;
+    max-height: 0;
+  }
+  
+  .submenu-open {
+    max-height: 300px;
+    margin-top: 0;
+  }
+  
+  .submenu-link {
+    padding: 0.8rem 1rem 0.8rem 2rem;
+    font-size: 1rem;
   }
   
   .nav-user {
@@ -328,31 +462,41 @@
   100% { transform: scale(1); }
 }
 
-.nav-link:active {
+.nav-link:active,
+.group-toggle:active {
   animation: pulse 0.3s ease;
 }
 
 /* Mejora el contraste para accessibility */
 @media (prefers-contrast: high) {
-  .nav-link {
+  .nav-link,
+  .group-toggle {
     border: 1px solid rgba(255, 255, 255, 0.3);
   }
   
   .logout-btn {
     border: 1px solid rgba(255, 255, 255, 0.3);
   }
+  
+  .submenu {
+    border: 2px solid rgba(255, 255, 255, 0.3);
+  }
 }
 
 /* Reduce animaciones para quienes lo prefieren */
 @media (prefers-reduced-motion: reduce) {
   .nav-link,
+  .group-toggle,
   .logout-btn,
-  .mobile-menu-toggle span {
+  .mobile-menu-toggle span,
+  .dropdown-arrow,
+  .submenu {
     transition: none;
   }
   
   .nav-link::before,
-  .nav-link::after {
+  .nav-link::after,
+  .group-toggle::before {
     display: none;
   }
   
