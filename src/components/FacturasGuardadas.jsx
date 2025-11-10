@@ -17,12 +17,11 @@ const FacturasGuardadas = () => {
   const [importando, setImportando] = useState(false);
   const [errorImportacion, setErrorImportacion] = useState(null);
   const [mostrarPagadas, setMostrarPagadas] = useState(false);
-  // Nuevos estados para la autenticación de eliminación
   const [password, setPassword] = useState('');
   const [errorPassword, setErrorPassword] = useState('');
-  // Nuevos estados para los resúmenes organizados
   const [resumenActivo, setResumenActivo] = useState('general');
   const [busquedaClienteResumen, setBusquedaClienteResumen] = useState('');
+  const [menuAbierto, setMenuAbierto] = useState(false);
 
   // Cargar facturas y abonos desde Supabase
   useEffect(() => {
@@ -30,7 +29,6 @@ const FacturasGuardadas = () => {
       try {
         setCargando(true);
         
-        // Cargar facturas
         const { data: facturasData, error: facturasError } = await supabase
           .from('facturas')
           .select('*')
@@ -38,7 +36,6 @@ const FacturasGuardadas = () => {
         
         if (facturasError) throw facturasError;
         
-        // Cargar abonos
         const { data: abonosData, error: abonosError } = await supabase
           .from('abonos')
           .select('*');
@@ -48,9 +45,8 @@ const FacturasGuardadas = () => {
         setFacturas(facturasData || []);
         setAbonos(abonosData || []);
         
-        // Extraer lista única de vendedores
         const vendedoresUnicos = [...new Set(facturasData
-          .filter(f => f.vendedor) // Filtrar vendedores no nulos
+          .filter(f => f.vendedor)
           .map(f => f.vendedor)
           .sort())];
         setVendedores(vendedoresUnicos);
@@ -87,7 +83,7 @@ const FacturasGuardadas = () => {
     return password === 'edwin' || password === '777';
   };
 
-  // Procesar facturas con filtros, orden y saldos - CORREGIDO
+  // Procesar facturas con filtros, orden y saldos
   const facturasProcesadas = calcularSaldos(
     facturas.filter(factura => {
       const termino = busqueda.toLowerCase();
@@ -97,19 +93,13 @@ const FacturasGuardadas = () => {
         factura.fecha?.includes(busqueda)
       );
       
-      // Filtrar por vendedor si se ha seleccionado uno
       const coincideVendedor = busquedaVendedor === '' || factura.vendedor === busquedaVendedor;
       
-      // Calcular estado para esta factura individualmente
       const abonosFactura = abonos.filter(abono => abono.factura_id === factura.id);
       const totalAbonado = abonosFactura.reduce((sum, abono) => sum + (abono.monto || 0), 0);
       const saldo = factura.total - totalAbonado;
       const estaPagada = saldo <= 0;
       
-      // LÓGICA CORREGIDA: 
-      // - Si NO mostrarPagadas está activado, mostrar solo las NO pagadas
-      // - Si mostrarPagadas está activado, mostrar todas
-      // - La búsqueda se aplica independientemente del estado de pago
       const mostrarPorEstado = mostrarPagadas ? true : !estaPagada;
       
       return coincideBusqueda && coincideVendedor && mostrarPorEstado;
@@ -122,7 +112,6 @@ const FacturasGuardadas = () => {
         case 'menor-saldo': return (a.saldo || 0) - (b.saldo || 0);
         case 'alfabetico-az': return a.cliente?.localeCompare(b.cliente || '');
         case 'alfabetico-za': return b.cliente?.localeCompare(a.cliente || '');
-        // NUEVAS OPCIONES DE ORDEN POR NÚMERO DE FACTURA
         case 'mayor-numero': return b.id - a.id;
         case 'menor-numero': return a.id - b.id;
         default: return new Date(b.fecha) - new Date(a.fecha);
@@ -167,7 +156,6 @@ const FacturasGuardadas = () => {
       stats.porCliente[f.cliente].abonado += f.totalAbonado || 0;
       stats.porCliente[f.cliente].saldo += (f.saldo > 0 ? f.saldo : 0) || 0;
       
-      // Estadísticas por vendedor
       if (!stats.porVendedor[f.vendedor]) {
         stats.porVendedor[f.vendedor] = {
           cantidad: 0,
@@ -210,46 +198,26 @@ const FacturasGuardadas = () => {
 
   const estadisticas = calcularEstadisticas();
 
-  // Función para obtener deuda rápida por cliente
-  const obtenerDeudaCliente = (nombreCliente) => {
-    const cliente = estadisticas.porCliente[nombreCliente];
-    if (!cliente) return null;
-    
-    return {
-      nombre: nombreCliente,
-      facturas: cliente.cantidad,
-      total: cliente.total,
-      abonado: cliente.abonado,
-      saldo: cliente.saldo
-    };
-  };
-
   // Eliminar factura (y sus abonos asociados)
   const eliminarFactura = async (id) => {
-    // Verificar contraseña primero
     if (!verificarPassword()) {
       setErrorPassword('Contraseña incorrecta');
       return;
     }
     
-    // Buscar la factura específica
     const facturaAEliminar = facturas.find(f => f.id === id);
-    
-    // Verificar si tiene saldo pendiente
     const facturasConSaldo = calcularSaldos([facturaAEliminar], abonos);
     const tieneSaldoPendiente = facturasConSaldo[0]?.saldo > 0;
     
     if (tieneSaldoPendiente) {
       if (!window.confirm('¿Estás seguro de eliminar esta factura con saldo pendiente? Esta acción no se puede deshacer.')) return;
     } else {
-      // Para facturas pagadas, pedir confirmación adicional
       if (!window.confirm('Esta factura ya está pagada. ¿Realmente deseas eliminarla? Esta acción no se puede deshacer.')) return;
     }
     
     try {
       setCargando(true);
       
-      // Eliminar abonos asociados primero
       const { error: abonosError } = await supabase
         .from('abonos')
         .delete()
@@ -257,7 +225,6 @@ const FacturasGuardadas = () => {
       
       if (abonosError) throw abonosError;
       
-      // Eliminar factura
       const { error: facturaError } = await supabase
         .from('facturas')
         .delete()
@@ -265,11 +232,9 @@ const FacturasGuardadas = () => {
       
       if (facturaError) throw facturaError;
       
-      // Actualizar estado local
       setFacturas(facturas.filter(f => f.id !== id));
       setAbonos(abonos.filter(a => a.factura_id !== id));
       
-      // Actualizar lista de vendedores si es necesario
       const vendedoresActualizados = [...new Set(facturas
         .filter(f => f.id !== id && f.vendedor)
         .map(f => f.vendedor)
@@ -292,7 +257,6 @@ const FacturasGuardadas = () => {
     try {
       setCargando(true);
       
-      // Obtener todas las facturas y abonos
       const { data: facturasData, error: facturasError } = await supabase
         .from('facturas')
         .select('*');
@@ -326,7 +290,6 @@ const FacturasGuardadas = () => {
       link.click();
       document.body.removeChild(link);
       
-      // Liberar memoria
       setTimeout(() => URL.revokeObjectURL(url), 100);
       
     } catch (error) {
@@ -380,7 +343,6 @@ const FacturasGuardadas = () => {
           throw new Error("Formato de archivo no reconocido");
         }
 
-        // Validar facturas
         const camposRequeridosFacturas = ['id', 'cliente', 'vendedor', 'fecha', 'productos', 'total'];
         facturasImportadas.forEach((factura, index) => {
           camposRequeridosFacturas.forEach(campo => {
@@ -390,7 +352,6 @@ const FacturasGuardadas = () => {
           });
         });
 
-        // Validar abonos
         const camposRequeridosAbonos = ['id', 'factura_id', 'fecha', 'monto'];
         abonosImportados.forEach((abono, index) => {
           camposRequeridosAbonos.forEach(campo => {
@@ -404,14 +365,12 @@ const FacturasGuardadas = () => {
           }
         });
 
-        // Insertar facturas en lote
         const { error: facturasError } = await supabase
           .from('facturas')
           .upsert(facturasImportadas, { onConflict: 'id' });
         
         if (facturasError) throw facturasError;
         
-        // Insertar abonos en lote
         if (abonosImportados.length > 0) {
           const { error: abonosError } = await supabase
             .from('abonos')
@@ -420,7 +379,6 @@ const FacturasGuardadas = () => {
           if (abonosError) throw abonosError;
         }
 
-        // Recargar datos
         const { data: nuevasFacturas } = await supabase
           .from('facturas')
           .select('*');
@@ -432,7 +390,6 @@ const FacturasGuardadas = () => {
         setFacturas(nuevasFacturas || []);
         setAbonos(nuevosAbonos || []);
         
-        // Actualizar lista de vendedores
         const vendedoresUnicos = [...new Set(nuevasFacturas
           .filter(f => f.vendedor)
           .map(f => f.vendedor)
@@ -495,11 +452,122 @@ const FacturasGuardadas = () => {
 
   return (
     <div className="facturas-container">
+      {/* Overlay para cerrar menú */}
+      {menuAbierto && (
+        <div 
+          className="menu-overlay"
+          onClick={() => setMenuAbierto(false)}
+        ></div>
+      )}
+
+      {/* Menú móvil */}
+      <div className={`mobile-menu ${menuAbierto ? 'active' : ''}`}>
+        <div className="menu-header">
+          <h3>Opciones</h3>
+          <button 
+            className="close-menu"
+            onClick={() => setMenuAbierto(false)}
+          >
+            <i className="fas fa-times"></i>
+          </button>
+        </div>
+        <div className="menu-actions">
+          <button 
+            className="menu-btn primary"
+            onClick={() => {
+              navigate('/');
+              setMenuAbierto(false);
+            }}
+            disabled={importando || cargando}
+          >
+            <i className="fas fa-plus"></i> Nueva Factura
+          </button>
+          <button 
+            className="menu-btn"
+            onClick={() => {
+              navigate('/rutas-cobro');
+              setMenuAbierto(false);
+            }}
+            disabled={importando || cargando}
+          >
+            <i className="fas fa-route"></i> Rutas de Cobro
+          </button>
+          <button 
+            className="menu-btn"
+            onClick={() => {
+              exportarDatos();
+              setMenuAbierto(false);
+            }}
+            disabled={importando || cargando}
+          >
+            <i className="fas fa-file-export"></i> Exportar Todo
+          </button>
+          <label 
+            htmlFor="importar-datos-mobile" 
+            className={`menu-btn ${importando || cargando ? 'disabled' : ''}`}
+          >
+            <i className="fas fa-file-import"></i> {importando ? 'Importando...' : 'Importar'}
+            <input
+              type="file"
+              id="importar-datos-mobile"
+              accept=".json,application/json"
+              style={{ display: 'none' }}
+              onChange={(e) => {
+                importarDatos(e);
+                setMenuAbierto(false);
+              }}
+              disabled={importando || cargando}
+            />
+          </label>
+          <button 
+            className={`menu-btn ${mostrarPagadas ? 'active' : ''}`}
+            onClick={() => {
+              setMostrarPagadas(!mostrarPagadas);
+              setMenuAbierto(false);
+            }}
+            disabled={importando || cargando}
+          >
+            <i className={`fas fa-${mostrarPagadas ? 'eye' : 'eye-slash'}`}></i> 
+            {mostrarPagadas ? 'Ocultar Pagadas' : 'Mostrar Pagadas'}
+          </button>
+          <button 
+            className={`menu-btn ${mostrarResumen ? 'active' : ''}`}
+            onClick={() => {
+              setMostrarResumen(!mostrarResumen);
+              setMenuAbierto(false);
+            }}
+            disabled={importando || cargando}
+          >
+            <i className={`fas fa-${mostrarResumen ? 'eye-slash' : 'eye'}`}></i> 
+            {mostrarResumen ? 'Ocultar' : 'Mostrar'} Resúmenes
+          </button>
+          <button 
+            className="menu-btn"
+            onClick={() => {
+              navigate('/reportes-cobros');
+              setMenuAbierto(false);
+            }}
+            disabled={importando || cargando}
+          >
+            <i className="fas fa-chart-bar"></i> Reportes de Cobros
+          </button>
+        </div>
+      </div>
+
       <header className="facturas-header">
-        <h1>
-          <i className="fas fa-file-invoice"></i> Historial de Facturas
-        </h1>
-        <div className="header-actions">
+        <div className="header-left">
+          <button 
+            className="menu-toggle"
+            onClick={() => setMenuAbierto(true)}
+          >
+            <i className="fas fa-bars"></i>
+          </button>
+          <h1>
+            <i className="fas fa-file-invoice"></i> Historial de Facturas
+          </h1>
+        </div>
+        
+        <div className="header-actions desktop-only">
           <button 
             className="button success-button"
             onClick={() => navigate('/')}
@@ -509,7 +577,6 @@ const FacturasGuardadas = () => {
           </button>
           {(facturas.length > 0 || abonos.length > 0) && (
             <>
-              {/* NUEVO BOTÓN: RUTAS DE COBRO */}
               <button 
                 className="button primary-button"
                 onClick={() => navigate('/rutas-cobro')}
@@ -611,7 +678,6 @@ const FacturasGuardadas = () => {
             <option value="menor-total">Menor total</option>
             <option value="mayor-saldo">Mayor saldo</option>
             <option value="menor-saldo">Menor saldo</option>
-            {/* NUEVAS OPCIONES DE ORDEN POR NÚMERO DE FACTURA */}
             <option value="mayor-numero">Mayor número</option>
             <option value="menor-numero">Menor número</option>
           </select>
@@ -889,6 +955,15 @@ const FacturasGuardadas = () => {
           ))}
         </div>
       )}
+      
+      {/* Botón flotante para nueva factura en móvil */}
+      <button 
+        className="floating-btn mobile-only"
+        onClick={() => navigate('/')}
+        disabled={importando || cargando}
+      >
+        <i className="fas fa-plus"></i>
+      </button>
       
       {mostrarConfirmacion && (
         <div className="confirmacion-overlay">
