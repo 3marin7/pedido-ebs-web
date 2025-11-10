@@ -15,15 +15,22 @@ import Navigation from './components/Navigation';
 import GestionInventario from './components/GestionInventario';
 import DashboardVentas from './components/DashboardVentas';
 import MallMap from './components/MallMap';
-import RutasCobro from './components/RutasCobro'; // NUEVO COMPONENTE
+import RutasCobro from './components/RutasCobro';
 
 // Contexto de autenticación
 const AuthContext = createContext();
 
 // Hook personalizado para usar el contexto de autenticación
-export const useAuth = () => {
-  return useContext(AuthContext);
+const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error('useAuth debe ser usado dentro de un AuthProvider');
+  }
+  return context;
 };
+
+// Exportar por separado
+export { AuthContext, useAuth };
 
 // Componente para proteger rutas según el rol
 const ProtectedRoute = ({ children, requiredRoles = [] }) => {
@@ -140,27 +147,48 @@ function App() {
           {/* Metatags globales */}
           <PageMeta />
           
-          {user && <Navigation />}
+          {/* Navigation siempre visible */}
+          <Navigation />
+          
           <Routes>
-            {/* Ruta pública */}
-            <Route path="/login" element={
+            {/* Ruta pública principal - Catálogo para todos */}
+            <Route path="/" element={
               <>
-                <PageMeta title="Iniciar Sesión - EBS" description="Inicia sesión en el sistema EBS Hermanos Marín" />
-                {user ? <Navigate to="/" replace /> : <Login />}
+                <PageMeta 
+                  title="Catálogo Digital - EBS Hermanos Marín" 
+                  description="Catálogo digital de productos EBS Hermanos Marín. Ing. Edwin Marín 3004583117"
+                />
+                <CatalogoClientes />
               </>
             } />
             
-            {/* Ruta principal según rol */}
-            <Route path="/" element={
+            {/* Ruta pública del catálogo */}
+            <Route path="/catalogo-clientes" element={
+              <>
+                <PageMeta 
+                  title="Catálogo Digital - EBS Hermanos Marín" 
+                  description="Catálogo digital de productos EBS Hermanos Marín. Ing. Edwin Marín 3004583117"
+                />
+                <CatalogoClientes />
+              </>
+            } />
+            
+            {/* Login para equipo */}
+            <Route path="/login" element={
+              <>
+                <PageMeta title="Iniciar Sesión - EBS" description="Inicia sesión en el sistema EBS Hermanos Marín" />
+                {user ? <Navigate to="/dashboard" replace /> : <Login />}
+              </>
+            } />
+            
+            {/* Ruta principal después del login según rol */}
+            <Route path="/dashboard" element={
               <ProtectedRoute>
                 <>
-                  <PageMeta 
-                    title={user?.role === 'cliente' ? "Catálogo Cliente - EBS" : "Facturación - EBS"} 
-                    description={user?.role === 'cliente' ? "Explora nuestro catálogo de productos" : "Sistema de facturación EBS"} 
-                  />
+                  <PageMeta title="Dashboard - EBS" description="Panel de control del sistema EBS" />
                   {user?.role === 'cliente' ? 
                     <CatalogoProductos mode="cliente" /> : 
-                    <InvoiceScreen />
+                    <DashboardVentas />
                   }
                 </>
               </ProtectedRoute>
@@ -172,6 +200,21 @@ function App() {
                 <>
                   <PageMeta title="Facturas Guardadas - EBS" description="Gestión de facturas del sistema EBS" />
                   <FacturasGuardadas />
+                </>
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/" element={
+              <ProtectedRoute>
+                <>
+                  <PageMeta 
+                    title={user?.role === 'cliente' ? "Catálogo Cliente - EBS" : "Facturación - EBS"} 
+                    description={user?.role === 'cliente' ? "Explora nuestro catálogo de productos" : "Sistema de facturación EBS"} 
+                  />
+                  {user?.role === 'cliente' ? 
+                    <CatalogoProductos mode="cliente" /> : 
+                    <InvoiceScreen />
+                  }
                 </>
               </ProtectedRoute>
             } />
@@ -190,7 +233,7 @@ function App() {
             } />
             
             {/* Nueva ruta para Dashboard de Ventas */}
-            <Route path="/dashboard" element={
+            <Route path="/dashboard-ventas" element={
               <ProtectedRoute requiredRoles={['admin']}>
                 <>
                   <PageMeta title="Dashboard de Ventas - EBS" description="Panel de control y análisis de ventas" />
@@ -244,17 +287,6 @@ function App() {
                   <GestionInventario />
                 </>
               </ProtectedRoute>
-            } />
-            
-            {/* Ruta pública para catálogo de clientes */}
-            <Route path="/catalogo-clientes" element={
-              <>
-                <PageMeta 
-                  title="Catálogo Digital - EBS Hermanos Marín" 
-                  description="Catálogo digital de productos EBS Hermanos Marín. Ing. Edwin Marín 3004583117"
-                />
-                <CatalogoClientes />
-              </>
             } />
             
             {/* Rutas para gestión de pedidos */}

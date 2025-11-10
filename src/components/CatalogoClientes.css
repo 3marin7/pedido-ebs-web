@@ -45,16 +45,17 @@ body {
   background: var(--light-gray);
   padding-bottom: 60px;
   -webkit-overflow-scrolling: touch;
+  padding-top: 60px; /* Espacio para la navegación fija */
 }
 
 /* ===== HEADER COMPACTO ===== */
 .app-header {
   position: fixed;
-  top: 0;
+  top: 60px; /* Debajo de la navegación */
   left: 0;
   right: 0;
   background: var(--white);
-  z-index: 1000;
+  z-index: 999;
   padding: 8px 10px;
   box-shadow: var(--shadow);
   width: 100vw;
@@ -134,10 +135,10 @@ body {
 /* ===== FILTROS COMPACTOS ===== */
 .sticky-filters {
   position: fixed;
-  top: 50px;
+  top: 110px; /* Debajo del header */
   left: 0;
   right: 0;
-  z-index: 999;
+  z-index: 998;
   background: var(--white);
   padding: 8px 10px;
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
@@ -225,8 +226,8 @@ body {
   grid-template-columns: repeat(2, 1fr);
   gap: 5px;
   padding: 5px;
-  margin-top: 120px;
-  min-height: calc(100vh - 180px);
+  margin-top: 160px; /* Ajustado para la navegación + header + filtros */
+  min-height: calc(100vh - 220px);
 }
 
 /* Tarjetas de producto ultra compactas */
@@ -470,7 +471,7 @@ body {
   bottom: 0;
   left: 0;
   background: rgba(0,0,0,0.5);
-  z-index: 1000;
+  z-index: 2000;
   display: flex;
   justify-content: flex-end;
 }
@@ -764,6 +765,13 @@ body {
   position: relative;
 }
 
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 500;
+  color: #333;
+}
+
 .form-group input {
   width: 100%;
   padding: 12px;
@@ -791,8 +799,22 @@ body {
   left: 5px;
 }
 
+.form-group small {
+  color: #666;
+  font-size: 0.75rem;
+  margin-top: 5px;
+  display: block;
+}
+
 .order-notes {
   margin: 20px 0;
+}
+
+.order-notes label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 500;
+  color: #333;
 }
 
 .order-notes textarea {
@@ -1042,7 +1064,7 @@ body {
   justify-content: center;
   padding: 60px 20px;
   text-align: center;
-  margin-top: 120px;
+  margin-top: 160px;
   min-height: 50vh;
 }
 
@@ -1198,6 +1220,7 @@ body {
   display: flex;
   align-items: center;
   gap: 10px;
+  margin-top: 160px;
 }
 
 /* Efectos de animación para cambios de cantidad */
@@ -1219,7 +1242,7 @@ body {
   }
   
   .product-grid-two-columns {
-    margin-top: 110px;
+    margin-top: 150px;
     gap: 4px;
     padding: 4px;
   }
@@ -1306,7 +1329,7 @@ body {
     grid-template-columns: repeat(3, 1fr);
     gap: 10px;
     padding: 10px;
-    margin-top: 140px;
+    margin-top: 180px;
   }
   
   .product-image-container {
@@ -1336,11 +1359,11 @@ body {
   }
   
   .product-grid-two-columns {
-    margin-top: 100px;
+    margin-top: 140px;
   }
   
   .sticky-filters {
-    top: 45px;
+    top: 90px;
   }
 }
 

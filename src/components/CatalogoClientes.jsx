@@ -337,7 +337,7 @@ const CatalogoClientes = () => {
       {/* Barra superior fija */}
       <header className="app-header">
         <div className="header-content">
-          <h1><i className="fas fa-store"></i> CATÁLOGO DISTRIBUCIONES-EBS-HERMANOS-MARIN</h1>
+          <h1><i className="fas fa-store"></i> Catálogo de Productos</h1>
           <button className="cart-button" onClick={toggleMostrarCarrito}>
             <i className="fas fa-shopping-cart"></i>
             {productosSeleccionados.length > 0 && (

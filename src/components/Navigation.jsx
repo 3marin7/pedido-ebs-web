@@ -14,7 +14,7 @@ const Navigation = () => {
 
   const handleLogout = () => {
     logout();
-    navigate('/login');
+    navigate('/');
   };
 
   const toggleMenu = () => {
@@ -46,8 +46,15 @@ const Navigation = () => {
 
   // Determinar qué enlaces mostrar según el rol
   const getAvailableLinks = () => {
-    const commonLinks = [];
+    if (!user) {
+      // Enlaces para usuarios NO logueados (público)
+      return [
+        { path: '/', label: 'Inicio', icon: '🏠', tipo: 'simple' },
+        { path: '/catalogo-clientes', label: 'Catálogo', icon: '📚', tipo: 'simple' }
+      ];
+    }
 
+    // Enlaces para usuarios logueados (según rol)
     if (user.role === 'admin') {
       return [
         // VENTAS E INICIO - Grupo
@@ -57,9 +64,9 @@ const Navigation = () => {
           icon: '🏠', 
           tipo: 'grupo',
           submenu: [
-            { path: '/', label: 'Inicio Principal', icon: '🏠' },
-            { path: '/facturas', label: 'Facturas', icon: '📄' },
-            { path: '/dashboard', label: 'Dashboard Ventas', icon: '📊' }
+            { path: '/dashboard-ventas', label: 'Dashboard Ventas', icon: '📊' },
+            { path: '/', label: 'Facturación', icon: '🧾' },
+            { path: '/facturas', label: 'Facturas Guardadas', icon: '📄' }
           ]
         },
         // CONTABILIDAD - Grupo
@@ -69,9 +76,8 @@ const Navigation = () => {
           icon: '💰', 
           tipo: 'grupo',
           submenu: [
-            { path: '/contabilidad', label: 'Estado Cartera', icon: '📋' },
-            { path: '/gastos', label: 'Gestión Gastos', icon: '📊' },
-            { path: '/reportes-cobros', label: 'Reportes', icon: '📈' }
+            { path: '/reportes-cobros', label: 'Reportes Cobros', icon: '📈' },
+            { path: '/rutas-cobro', label: 'Rutas de Cobro', icon: '🚗' }
           ]
         },
         // CLIENTES - Grupo
@@ -82,8 +88,7 @@ const Navigation = () => {
           tipo: 'grupo',
           submenu: [
             { path: '/clientes', label: 'Gestión Clientes', icon: '👤' },
-            { path: '/mapa-locales', label: 'Mapa de Locales', icon: '🗺️' },
-            { path: '/rutas-cobro', label: 'Rutas Cobro', icon: '🚗' }
+            { path: '/mapa-locales', label: 'Mapa de Locales', icon: '🗺️' }
           ]
         },
         // BODEGA - Grupo
@@ -103,7 +108,7 @@ const Navigation = () => {
 
     if (user.role === 'vendedor') {
       return [
-        { path: '/', label: 'Inicio', icon: '🏠', tipo: 'simple' },
+        { path: '/', label: 'Facturación', icon: '🧾', tipo: 'simple' },
         { path: '/facturas', label: 'Facturas', icon: '📄', tipo: 'simple' },
         { path: '/catalogo', label: 'Productos', icon: '📦', tipo: 'simple' },
         { path: '/gestion-pedidos', label: 'Pedidos', icon: '🛒', tipo: 'simple' },
@@ -113,17 +118,14 @@ const Navigation = () => {
 
     if (user.role === 'inventario') {
       return [
-        { path: '/', label: 'Inicio', icon: '🏠', tipo: 'simple' },
         { path: '/catalogo', label: 'Productos', icon: '📦', tipo: 'simple' },
         { path: '/gestion-inventario', label: 'Inventario', icon: '📋', tipo: 'simple' },
-        { path: '/gestion-pedidos', label: 'Pedidos', icon: '🛒', tipo: 'simple' },
-        { path: '/clientes', label: 'Clientes', icon: '👥', tipo: 'simple' }
+        { path: '/gestion-pedidos', label: 'Pedidos', icon: '🛒', tipo: 'simple' }
       ];
     }
 
     if (user.role === 'cliente') {
       return [
-        { path: '/', label: 'Inicio', icon: '🏠', tipo: 'simple' },
         { path: '/catalogo-cliente', label: 'Catálogo', icon: '📚', tipo: 'simple' }
       ];
     }
@@ -200,8 +202,10 @@ const Navigation = () => {
     <nav className="navigation">
       <div className="nav-container">
         <div className="nav-brand">
-          <h2>Distribuciones EBS</h2>
-          <span className="user-role">{user.role}</span>
+          <Link to="/">
+            <h2>Distribuciones EBS</h2>
+          </Link>
+          {user && <span className="user-role">{user.role}</span>}
           
           {/* Botón de menú hamburguesa para móviles */}
           <button 
@@ -225,14 +229,23 @@ const Navigation = () => {
         </div>
         
         <div className="nav-user">
-          <span className="username">Hola, {user.username}</span>
-          <button 
-            onClick={handleLogout} 
-            className="logout-btn"
-          >
-            <span className="logout-icon">🚪</span>
-            <span className="logout-text">Cerrar sesión</span>
-          </button>
+          {user ? (
+            <>
+              <span className="username">Hola, {user.username}</span>
+              <button 
+                onClick={handleLogout} 
+                className="logout-btn"
+              >
+                <span className="logout-icon">🚪</span>
+                <span className="logout-text">Cerrar sesión</span>
+              </button>
+            </>
+          ) : (
+            <Link to="/login" className="login-link">
+              <span className="login-icon">🔐</span>
+              <span className="login-text">Acceso Equipo</span>
+            </Link>
+          )}
         </div>
       </div>
       
