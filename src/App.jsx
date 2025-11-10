@@ -177,8 +177,28 @@ function App() {
             <Route path="/login" element={
               <>
                 <PageMeta title="Iniciar Sesión - EBS" description="Inicia sesión en el sistema EBS Hermanos Marín" />
-                {user ? <Navigate to="/dashboard" replace /> : <Login />}
+                {user ? <Navigate to="/facturacion" replace /> : <Login />}
               </>
+            } />
+            
+            {/* RUTA PRINCIPAL DE FACTURACIÓN - InvoiceScreen */}
+            <Route path="/facturacion" element={
+              <ProtectedRoute>
+                <>
+                  <PageMeta title="Facturación - EBS" description="Sistema de facturación EBS" />
+                  <InvoiceScreen />
+                </>
+              </ProtectedRoute>
+            } />
+
+            {/* Ruta para Nueva Factura - También lleva a InvoiceScreen */}
+            <Route path="/nueva-factura" element={
+              <ProtectedRoute>
+                <>
+                  <PageMeta title="Nueva Factura - EBS" description="Crear nueva factura" />
+                  <InvoiceScreen />
+                </>
+              </ProtectedRoute>
             } />
             
             {/* Ruta principal después del login según rol */}
@@ -200,21 +220,6 @@ function App() {
                 <>
                   <PageMeta title="Facturas Guardadas - EBS" description="Gestión de facturas del sistema EBS" />
                   <FacturasGuardadas />
-                </>
-              </ProtectedRoute>
-            } />
-            
-            <Route path="/" element={
-              <ProtectedRoute>
-                <>
-                  <PageMeta 
-                    title={user?.role === 'cliente' ? "Catálogo Cliente - EBS" : "Facturación - EBS"} 
-                    description={user?.role === 'cliente' ? "Explora nuestro catálogo de productos" : "Sistema de facturación EBS"} 
-                  />
-                  {user?.role === 'cliente' ? 
-                    <CatalogoProductos mode="cliente" /> : 
-                    <InvoiceScreen />
-                  }
                 </>
               </ProtectedRoute>
             } />

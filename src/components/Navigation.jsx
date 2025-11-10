@@ -65,7 +65,8 @@ const Navigation = () => {
           tipo: 'grupo',
           submenu: [
             { path: '/dashboard-ventas', label: 'Dashboard Ventas', icon: '📊' },
-            { path: '/', label: 'Facturación', icon: '🧾' },
+            { path: '/facturacion', label: 'Facturación', icon: '🧾' },
+            { path: '/nueva-factura', label: 'Nueva Factura', icon: '➕' },
             { path: '/facturas', label: 'Facturas Guardadas', icon: '📄' }
           ]
         },
@@ -108,7 +109,8 @@ const Navigation = () => {
 
     if (user.role === 'vendedor') {
       return [
-        { path: '/', label: 'Facturación', icon: '🧾', tipo: 'simple' },
+        { path: '/facturacion', label: 'Facturación', icon: '🧾', tipo: 'simple' },
+        { path: '/nueva-factura', label: 'Nueva Factura', icon: '➕', tipo: 'simple' },
         { path: '/facturas', label: 'Facturas', icon: '📄', tipo: 'simple' },
         { path: '/catalogo', label: 'Productos', icon: '📦', tipo: 'simple' },
         { path: '/gestion-pedidos', label: 'Pedidos', icon: '🛒', tipo: 'simple' },
@@ -130,7 +132,7 @@ const Navigation = () => {
       ];
     }
 
-    return [{ path: '/', label: 'Inicio', icon: '🏠', tipo: 'simple' }];
+    return [{ path: '/facturacion', label: 'Facturación', icon: '🧾', tipo: 'simple' }];
   };
 
   // Verificar si la ruta está activa
