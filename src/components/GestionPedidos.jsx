@@ -8,6 +8,8 @@ const GestionPedidos = () => {
   const [filtroEstado, setFiltroEstado] = useState('todos');
   const [preparaciones, setPreparaciones] = useState({});
   const [modalVerificacion, setModalVerificacion] = useState(null);
+  const [imagenesProductos, setImagenesProductos] = useState({});
+  const [modalImagen, setModalImagen] = useState(null);
 
   useEffect(() => {
     cargarPedidos();
@@ -27,10 +29,43 @@ const GestionPedidos = () => {
       
       setPedidos(data || []);
       await cargarEstadosPreparacion(data || []);
+      await cargarImagenesProductos(data || []);
     } catch (error) {
       console.error('Error cargando pedidos:', error);
     } finally {
       setCargando(false);
+    }
+  };
+
+  const cargarImagenesProductos = async (pedidosData) => {
+    if (!pedidosData?.length) return;
+
+    try {
+      const todosProductos = pedidosData.flatMap(pedido => 
+        pedido.productos?.map(producto => producto.nombre) || []
+      );
+      
+      const productosUnicos = [...new Set(todosProductos)];
+      
+      if (productosUnicos.length === 0) return;
+
+      const { data: imagenesData, error } = await supabase
+        .from('productos')
+        .select('nombre, imagen_url')
+        .in('nombre', productosUnicos);
+
+      if (error) throw error;
+
+      const imagenesMap = {};
+      imagenesData?.forEach(producto => {
+        if (producto.imagen_url) {
+          imagenesMap[producto.nombre] = producto.imagen_url;
+        }
+      });
+
+      setImagenesProductos(imagenesMap);
+    } catch (error) {
+      console.error('Error cargando imágenes de productos:', error);
     }
   };
 
@@ -92,6 +127,15 @@ const GestionPedidos = () => {
       });
       setPreparaciones(preparacionesInicial);
     }
+  };
+
+  const getImagenProducto = (nombreProducto) => {
+    const imagen = imagenesProductos[nombreProducto];
+    if (imagen) {
+      return imagen;
+    }
+    
+    return "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='35' height='35' viewBox='0 0 35 35'%3E%3Crect width='35' height='35' fill='%23f8f9fa'/%3E%3Cpath d='M12 8h8v2h-8zm0 4h8v2h-8zm0 4h8v2h-8zm-4-8h2v2H8zm0 4h2v2H8zm0 4h2v2H8z' fill='%236c757d'/%3E%3C/svg%3E";
   };
 
   const guardarEstadoPreparacion = async (pedidoId, nuevosDatos) => {
@@ -228,7 +272,6 @@ const GestionPedidos = () => {
     
     let progreso = 0;
     
-    // Base según estado del pedido
     switch (pedido.estado) {
       case 'pendiente': progreso = 25; break;
       case 'en_preparacion': progreso = 50; break;
@@ -236,9 +279,8 @@ const GestionPedidos = () => {
       default: progreso = 0;
     }
     
-    // Ajustar según preparación real
     if (pedido.estado === 'en_preparacion') {
-      progreso = 50 + (progresoPreparacion * 0.3); // 50-80% según preparación
+      progreso = 50 + (progresoPreparacion * 0.3);
       if (prep?.empaquetado) progreso = 85;
       if (prep?.verificado) progreso = 95;
     }
@@ -291,6 +333,19 @@ const GestionPedidos = () => {
       cancelado: '❌ Cancelado'
     };
     return estados[estado] || estado;
+  };
+
+  const abrirModalImagen = (producto) => {
+    setModalImagen({
+      nombre: producto.nombre,
+      imagenUrl: getImagenProducto(producto.nombre),
+      precio: producto.precio,
+      cantidad: producto.cantidad
+    });
+  };
+
+  const cerrarModalImagen = () => {
+    setModalImagen(null);
   };
 
   const ModalVerificacion = () => {
@@ -400,6 +455,43 @@ const GestionPedidos = () => {
               disabled={modalVerificacion.tieneFaltantes && observaciones.trim().length < 10}
             >
               {modalVerificacion.tieneFaltantes ? '✅ Verificar con Observaciones' : '✅ Verificar Pedido'}
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const ModalImagen = () => {
+    if (!modalImagen) return null;
+
+    return (
+      <div className="modal-overlay modal-imagen-overlay" onClick={cerrarModalImagen}>
+        <div className="modal-imagen-contenido" onClick={(e) => e.stopPropagation()}>
+          <div className="modal-imagen-header">
+            <h3>{modalImagen.nombre}</h3>
+            <button className="btn-cerrar-imagen" onClick={cerrarModalImagen}>×</button>
+          </div>
+          
+          <div className="modal-imagen-body">
+            <img 
+              src={modalImagen.imagenUrl} 
+              alt={modalImagen.nombre}
+              className="imagen-grande"
+              onError={(e) => {
+                e.target.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' fill='%23f8f9fa'/%3E%3Cpath d='M80 60h40v20h-40zm0 30h40v20h-40zm0 30h40v20h-40zm-30-60h20v20H50zm0 30h20v20H50zm0 30h20v20H50z' fill='%236c757d'/%3E%3C/svg%3E";
+              }}
+            />
+          </div>
+          
+          <div className="modal-imagen-footer">
+            <div className="info-producto-modal">
+              <p><strong>Precio unitario:</strong> {formatPrecio(modalImagen.precio)}</p>
+              <p><strong>Cantidad en pedido:</strong> {modalImagen.cantidad}x</p>
+              <p><strong>Total:</strong> {formatPrecio(modalImagen.precio * modalImagen.cantidad)}</p>
+            </div>
+            <button className="btn-cerrar-modal" onClick={cerrarModalImagen}>
+              Cerrar
             </button>
           </div>
         </div>
@@ -519,7 +611,6 @@ const GestionPedidos = () => {
                   </div>
                 </div>
 
-                {/* BARRA DE PROGRESO VISUAL MEJORADA */}
                 <div className="progreso-pedido">
                   <div className="progreso-info">
                     <span>Progreso del pedido: <strong>{Math.round(progreso)}%</strong></span>
@@ -586,7 +677,6 @@ const GestionPedidos = () => {
                   </div>
                 )}
 
-                {/* SECCIÓN DE PREPARACIÓN CON BOTONES BONITOS */}
                 {pedido.estado === 'en_preparacion' && (
                   <div className="seccion-preparacion">
                     <div className="header-preparacion">
@@ -619,6 +709,7 @@ const GestionPedidos = () => {
                         {pedido.productos?.map((producto, index) => {
                           const estaPreparado = preparaciones[pedido.id]?.productos?.[index];
                           const esFaltante = preparaciones[pedido.id]?.productos_faltantes?.[index];
+                          const imagenProducto = getImagenProducto(producto.nombre);
 
                           return (
                             <div 
@@ -627,11 +718,37 @@ const GestionPedidos = () => {
                               onClick={() => marcarProductoPreparado(pedido.id, index)}
                             >
                               <div className="producto-info">
+                                <div 
+                                  className="imagen-producto-container"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    abrirModalImagen(producto);
+                                  }}
+                                >
+                                  <img 
+                                    src={imagenProducto} 
+                                    alt={producto.nombre}
+                                    className="imagen-producto"
+                                    onError={(e) => {
+                                      e.target.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='35' height='35' viewBox='0 0 35 35'%3E%3Crect width='35' height='35' fill='%23f8f9fa'/%3E%3Cpath d='M12 8h8v2h-8zm0 4h8v2h-8zm0 4h8v2h-8zm-4-8h2v2H8zm0 4h2v2H8zm0 4h2v2H8z' fill='%236c757d'/%3E%3C/svg%3E";
+                                      e.target.style.objectFit = 'contain';
+                                      e.target.style.padding = '3px';
+                                    }}
+                                  />
+                                  <div className="overlay-imagen">
+                                    <span className="icono-zoom">🔍</span>
+                                  </div>
+                                </div>
                                 <span className="cantidad-producto">{producto.cantidad}x</span>
                                 <span className="nombre-producto">{producto.nombre}</span>
-                                <span className="precio-producto">
-                                  {formatPrecio(producto.precio * producto.cantidad)}
-                                </span>
+                                <div className="precios-producto">
+                                  <span className="precio-unitario">
+                                    {formatPrecio(producto.precio)} c/u
+                                  </span>
+                                  <span className="precio-total">
+                                    {formatPrecio(producto.precio * producto.cantidad)}
+                                  </span>
+                                </div>
                               </div>
                               
                               <div className="estado-producto">
@@ -655,7 +772,6 @@ const GestionPedidos = () => {
                       </div>
                     </div>
 
-                    {/* BOTONES BONITOS DE PREPARACIÓN */}
                     <div className="acciones-preparacion-bonitas">
                       <button 
                         className={`btn-preparacion btn-empaquetar ${empaquetado ? 'completado' : ''}`}
@@ -701,7 +817,6 @@ const GestionPedidos = () => {
                   </div>
                 )}
 
-                {/* VISTA SIMPLIFICADA PARA OTROS ESTADOS */}
                 {pedido.estado !== 'en_preparacion' && (
                   <div className="productos-pedido">
                     <div className="header-productos">
@@ -716,6 +831,7 @@ const GestionPedidos = () => {
                       {pedido.productos?.map((producto, index) => {
                         const estaPreparado = preparaciones[pedido.id]?.productos?.[index];
                         const esFaltante = preparaciones[pedido.id]?.productos_faltantes?.[index];
+                        const imagenProducto = getImagenProducto(producto.nombre);
 
                         return (
                           <div 
@@ -723,11 +839,37 @@ const GestionPedidos = () => {
                             className={`producto-item-simple ${estaPreparado ? 'preparado' : ''} ${esFaltante ? 'faltante' : ''}`}
                           >
                             <div className="producto-info">
+                              <div 
+                                className="imagen-producto-container"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  abrirModalImagen(producto);
+                                }}
+                              >
+                                <img 
+                                  src={imagenProducto} 
+                                  alt={producto.nombre}
+                                  className="imagen-producto"
+                                  onError={(e) => {
+                                    e.target.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='35' height='35' viewBox='0 0 35 35'%3E%3Crect width='35' height='35' fill='%23f8f9fa'/%3E%3Cpath d='M12 8h8v2h-8zm0 4h8v2h-8zm0 4h8v2h-8zm-4-8h2v2H8zm0 4h2v2H8zm0 4h2v2H8z' fill='%236c757d'/%3E%3C/svg%3E";
+                                    e.target.style.objectFit = 'contain';
+                                    e.target.style.padding = '3px';
+                                  }}
+                                />
+                                <div className="overlay-imagen">
+                                  <span className="icono-zoom">🔍</span>
+                                </div>
+                              </div>
                               <span className="cantidad-producto">{producto.cantidad}x</span>
                               <span className="nombre-producto">{producto.nombre}</span>
-                              <span className="precio-producto">
-                                {formatPrecio(producto.precio * producto.cantidad)}
-                              </span>
+                              <div className="precios-producto">
+                                <span className="precio-unitario">
+                                  {formatPrecio(producto.precio)} c/u
+                                </span>
+                                <span className="precio-total">
+                                  {formatPrecio(producto.precio * producto.cantidad)}
+                                </span>
+                              </div>
                             </div>
                             
                             <div className="estado-producto-simple">
@@ -802,6 +944,7 @@ const GestionPedidos = () => {
       </div>
 
       {modalVerificacion && <ModalVerificacion />}
+      {modalImagen && <ModalImagen />}
     </div>
   );
 };
