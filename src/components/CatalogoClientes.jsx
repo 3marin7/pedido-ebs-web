@@ -252,7 +252,7 @@ const CatalogoClientes = () => {
     setMostrarCarrito(false);
   };
 
-  // Generar enlace de WhatsApp
+  // Generar enlace de WhatsApp - FUNCIÓN CORREGIDA
   const enviarPedidoWhatsApp = async () => {
     if (enviandoPedido) return;
     
@@ -315,7 +315,10 @@ const CatalogoClientes = () => {
 
       const url = `https://api.whatsapp.com/send?phone=${numeroWhatsApp}&text=${mensaje}`;
       
+      // ✅ SOLUCIÓN: Cerrar el carrito automáticamente después de enviar
       setPedidoEnviado(true);
+      setMostrarCarrito(false); // ← LÍNEA CRÍTICA AGREGADA
+      
       window.open(url, '_blank');
       
       setTimeout(() => {
@@ -562,10 +565,9 @@ const CatalogoClientes = () => {
                 className="btn-secondary"
                 onClick={() => {
                   setPedidoEnviado(false);
-                  setMostrarCarrito(true);
                 }}
               >
-                Ver Detalles
+                Cerrar
               </button>
               <button 
                 className="btn-primary"
