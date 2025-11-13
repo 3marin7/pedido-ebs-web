@@ -254,6 +254,39 @@ const GestionPedidos = () => {
     }
   };
 
+  // Función para generar el mensaje del pedido completo
+  const generarMensajePedido = (pedido) => {
+    const productosTexto = pedido.productos?.map(producto => 
+      `• ${producto.cantidad}x ${producto.nombre} - ${formatPrecio(producto.precio)} c/u = ${formatPrecio(producto.precio * producto.cantidad)}`
+    ).join('\n') || 'No hay productos en el pedido';
+
+    const mensaje = `¡Hola ${pedido.cliente_nombre}! 👋
+
+📦 *DETALLE DE TU PEDIDO #${pedido.id}*
+
+${productosTexto}
+
+💰 *TOTAL: ${formatPrecio(pedido.total)}*
+
+📋 *Información del pedido:*
+• Estado: ${getTextoEstado(pedido.estado)}
+• Fecha: ${formatFecha(pedido.fecha_creacion)}
+${pedido.direccion_entrega ? `• Dirección: ${pedido.direccion_entrega}` : ''}
+${pedido.cliente_notas && pedido.cliente_notas !== 'Ninguna' ? `• Notas: ${pedido.cliente_notas}` : ''}
+
+¡Gracias por tu compra! 🎉
+*Distribuciones EBS*`;
+
+    return encodeURIComponent(mensaje);
+  };
+
+  // Función para enviar pedido por WhatsApp
+  const enviarPedidoWhatsApp = (pedido) => {
+    const mensaje = generarMensajePedido(pedido);
+    const url = `https://wa.me/${pedido.cliente_telefono}?text=${mensaje}`;
+    window.open(url, '_blank');
+  };
+
   const calcularProgreso = (pedidoId) => {
     const prep = preparaciones[pedidoId];
     if (!prep?.productos) return 0;
@@ -927,6 +960,13 @@ const GestionPedidos = () => {
                   </div>
                   
                   <div className="acciones-comunicacion">
+                    <button 
+                      onClick={() => enviarPedidoWhatsApp(pedido)}
+                      className="btn-enviar-pedido"
+                    >
+                      📋 Enviar Pedido por WhatsApp
+                    </button>
+                    
                     <a 
                       href={`https://wa.me/${pedido.cliente_telefono}?text=Hola ${encodeURIComponent(pedido.cliente_nombre)}, soy de Distribuciones EBS. Tu pedido #${pedido.id} (${formatPrecio(pedido.total)}) está: ${getTextoEstado(pedido.estado)}`}
                       target="_blank"

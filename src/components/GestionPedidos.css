@@ -1270,4 +1270,52 @@
   .precios-producto {
     min-width: 90px;
   }
+}/* Agregar estas reglas al archivo CSS existente */
+
+.acciones-comunicacion {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.btn-enviar-pedido {
+  background: linear-gradient(135deg, #FF6B35, #FF8E53);
+  color: white;
+  padding: 10px 20px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  display: inline-block;
+  text-align: center;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 14px;
+}
+
+.btn-enviar-pedido:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+}
+
+/* Ajustes responsive para los botones */
+@media (max-width: 768px) {
+  .acciones-comunicacion {
+    flex-direction: column;
+  }
+  
+  .btn-enviar-pedido,
+  .btn-whatsapp {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .btn-enviar-pedido,
+  .btn-whatsapp {
+    font-size: 13px;
+    padding: 12px 15px;
+  }
 }
