@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './InvoiceScreen.css';
+import './ClientesScreen.css';
 import { supabase } from './supabaseClient.js';
 
 const ClientesScreen = ({ 
@@ -142,75 +142,87 @@ const ClientesScreen = ({
   };
 
   const guardarCliente = async () => {
-  if (!nuevoCliente.nombre) {
-    alert('El nombre del cliente es obligatorio');
-    return;
-  }
-
-  try {
-    if (clienteEditando) {
-      // Actualizar cliente existente
-      const { error: updateError } = await supabase
-        .from('clientes')
-        .update({
-          nombre: nuevoCliente.nombre,
-          direccion: nuevoCliente.direccion,
-          telefono: nuevoCliente.telefono,
-          correo: nuevoCliente.correo,
-          clasificacion: nuevoCliente.clasificacion,
-          actualizado_en: new Date().toISOString()
-        })
-        .eq('id', clienteEditando.id);
-      
-      if (updateError) throw updateError;
-    } else {
-      // Verificar si el cliente ya existe
-      const { data: clienteExistente, error: searchError } = await supabase
-        .from('clientes')
-        .select('nombre')
-        .ilike('nombre', nuevoCliente.nombre)
-        .single();
-      
-      if (clienteExistente) {
-        alert('Ya existe un cliente con ese nombre');
-        return;
-      }
-
-      // Crear nuevo cliente
-      const clasificacion = nuevoCliente.clasificacion || 
-        await determinarClasificacionAutomatica(nuevoCliente.nombre);
-      
-      const { error: insertError } = await supabase
-        .from('clientes')
-        .insert([{
-          nombre: nuevoCliente.nombre,
-          direccion: nuevoCliente.direccion,
-          telefono: nuevoCliente.telefono,
-          correo: nuevoCliente.correo,
-          clasificacion: clasificacion
-        }]);
-      
-      if (insertError) throw insertError;
+    if (!nuevoCliente.nombre) {
+      alert('El nombre del cliente es obligatorio');
+      return;
     }
-    
-    // Actualizar la lista de clientes
-    await cargarClientes();
-    
-    setNuevoCliente({
-      nombre: '',
-      direccion: '',
-      telefono: '',
-      correo: '',
-      clasificacion: 3
-    });
-    setClienteEditando(null);
-    
-    alert('Cliente guardado exitosamente!');
-  } catch (error) {
-    console.error('Error al guardar cliente:', error);
-    alert('Error al guardar cliente: ' + error.message);
-  }
-};
+
+    // Validaciones
+    if (nuevoCliente.correo && !validarEmail(nuevoCliente.correo)) {
+      alert('Por favor ingresa un email válido');
+      return;
+    }
+
+    if (nuevoCliente.telefono && !validarTelefono(nuevoCliente.telefono)) {
+      alert('Por favor ingresa un teléfono válido');
+      return;
+    }
+
+    try {
+      if (clienteEditando) {
+        // Actualizar cliente existente
+        const { error: updateError } = await supabase
+          .from('clientes')
+          .update({
+            nombre: nuevoCliente.nombre,
+            direccion: nuevoCliente.direccion,
+            telefono: nuevoCliente.telefono,
+            correo: nuevoCliente.correo,
+            clasificacion: nuevoCliente.clasificacion,
+            actualizado_en: new Date().toISOString()
+          })
+          .eq('id', clienteEditando.id);
+        
+        if (updateError) throw updateError;
+      } else {
+        // Verificar si el cliente ya existe
+        const { data: clienteExistente, error: searchError } = await supabase
+          .from('clientes')
+          .select('nombre')
+          .ilike('nombre', nuevoCliente.nombre)
+          .single();
+        
+        if (clienteExistente) {
+          alert('Ya existe un cliente con ese nombre');
+          return;
+        }
+
+        // Crear nuevo cliente
+        const clasificacion = nuevoCliente.clasificacion || 
+          await determinarClasificacionAutomatica(nuevoCliente.nombre);
+        
+        const { error: insertError } = await supabase
+          .from('clientes')
+          .insert([{
+            nombre: nuevoCliente.nombre,
+            direccion: nuevoCliente.direccion,
+            telefono: nuevoCliente.telefono,
+            correo: nuevoCliente.correo,
+            clasificacion: clasificacion
+          }]);
+        
+        if (insertError) throw insertError;
+      }
+      
+      // Actualizar la lista de clientes
+      await cargarClientes();
+      
+      setNuevoCliente({
+        nombre: '',
+        direccion: '',
+        telefono: '',
+        correo: '',
+        clasificacion: 3
+      });
+      setClienteEditando(null);
+      
+      alert('Cliente guardado exitosamente!');
+    } catch (error) {
+      console.error('Error al guardar cliente:', error);
+      alert('Error al guardar cliente: ' + error.message);
+    }
+  };
+
   const seleccionarCliente = (cliente) => {
     onSeleccionarCliente(cliente);
   };
@@ -466,9 +478,9 @@ const ClientesScreen = ({
                         <div className={`clasificacion-badge clasificacion-${cliente.clasificacion}`}>
                           {cliente.clasificacion} {'★'.repeat(cliente.clasificacion)}
                         </div>
-                        {cliente.telefono && <p>Tel: {cliente.telefono}</p>}
-                        {cliente.correo && <p>Email: {cliente.correo}</p>}
-                        {cliente.direccion && <p>Dir: {cliente.direccion}</p>}
+                        {cliente.telefono && <p>📞 Tel: {cliente.telefono}</p>}
+                        {cliente.correo && <p>📧 Email: {cliente.correo}</p>}
+                        {cliente.direccion && <p>📍 Dir: {cliente.direccion}</p>}
                       </div>
                       <div className="cliente-acciones">
                         <button
@@ -478,7 +490,7 @@ const ClientesScreen = ({
                             iniciarEdicionCliente(cliente);
                           }}
                         >
-                          <i className="fas fa-edit"></i> Editar
+                          ✏️ Editar
                         </button>
                       </div>
                     </div>
@@ -552,6 +564,9 @@ const ClientesScreen = ({
                   </span>
                 ))}
               </div>
+              <div style={{ marginTop: '8px', fontSize: '0.9rem', color: '#666' }}>
+                Clasificación seleccionada: {nuevoCliente.clasificacion} estrellas
+              </div>
             </div>
           </div>
           
@@ -581,7 +596,7 @@ const ClientesScreen = ({
             onClick={exportarClientes}
             disabled={clientes.length === 0 || importandoClientes || cargandoClientes}
           >
-            <i className="fas fa-file-export"></i> Exportar Clientes
+            📤 Exportar Clientes
             {clientes.length > 0 && (
               <span className="badge-count">{clientes.length}</span>
             )}
@@ -591,8 +606,7 @@ const ClientesScreen = ({
             htmlFor="importar-clientes" 
             className={`button warning-button ${importandoClientes || cargandoClientes ? 'disabled' : ''}`}
           >
-            <i className="fas fa-file-import"></i> 
-            {importandoClientes ? 'Importando...' : 'Importar Clientes'}
+            📥 Importar Clientes
           </label>
           
           <input

@@ -380,6 +380,18 @@ const InvoiceScreen = () => {
     setMostrarVistaPrevia(true);
   };
 
+  // Función para limpiar el formulario
+  const limpiarFormulario = () => {
+    setCliente('');
+    setDireccion('');
+    setTelefono('');
+    setCorreo('');
+    setProductos([]);
+    setVendedorSeleccionado('');
+    setErroresStock({});
+  };
+
+  // ⭐⭐ MODIFICACIÓN - Función guardarFactura con opción de imprimir ⭐⭐
   const guardarFactura = async () => {
     try {
       setCargando(true);
@@ -411,20 +423,27 @@ const InvoiceScreen = () => {
 
       if (error) throw error;
 
+      // Obtener el ID de la factura guardada
+      const facturaGuardada = data[0];
+      const numeroFactura = facturaGuardada.id;
+
       // Actualizar inventario después de guardar la factura
       await actualizarInventario(productos);
 
-      alert('Factura guardada exitosamente! Inventario actualizado.');
+      // Mostrar diálogo de confirmación con opción de imprimir
+      const usuarioQuiereImprimir = window.confirm(
+        `✅ Factura guardada exitosamente!\n\nN° Factura: ${numeroFactura}\nCliente: ${cliente}\nTotal: $${facturaData.total.toFixed(2)}\n\n¿Deseas imprimir la factura ahora?`
+      );
+
       setMostrarVistaPrevia(false);
       
-      // Limpiar formulario
-      setCliente('');
-      setDireccion('');
-      setTelefono('');
-      setCorreo('');
-      setProductos([]);
-      setVendedorSeleccionado('');
-      setErroresStock({});
+      if (usuarioQuiereImprimir) {
+        // Navegar a la vista de detalle para imprimir
+        navigate(`/factura/${numeroFactura}`);
+      } else {
+        // Limpiar formulario si no quiere imprimir
+        limpiarFormulario();
+      }
       
     } catch (error) {
       console.error('Error guardando factura:', error);

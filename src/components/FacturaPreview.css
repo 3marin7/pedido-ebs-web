@@ -218,4 +218,46 @@
     padding: 8px 5px;
     font-size: 14px;
   }
+}/* Agrega esto al archivo FacturaPreview.css */
+.numero-factura-preview {
+  background: linear-gradient(135deg, #2c3e50, #34495e);
+  color: white;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 1.3rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 20px;
+  border: 2px solid #3498db;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.numero-factura-preview span {
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.boton-guardar {
+  background: linear-gradient(135deg, #27ae60, #229954);
+  color: white;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 6px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 200px;
+}
+
+.boton-guardar:hover:not(:disabled) {
+  background: linear-gradient(135deg, #229954, #1e8449);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(39, 174, 96, 0.4);
+}
+
+.boton-guardar:disabled {
+  background: #95a5a6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
