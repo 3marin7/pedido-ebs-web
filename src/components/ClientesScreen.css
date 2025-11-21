@@ -84,25 +84,50 @@
   font-size: 14px;
 }
 
-/* Estadísticas de clientes */
-.clientes-stats {
+/* Estadísticas de clientes - ACORDEÓN */
+.clientes-stats-collapsible {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
-  padding: 20px;
-  border-radius: 10px;
-  margin-bottom: 24px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
-.clientes-stats h4 {
-  margin: 0 0 16px 0;
-  font-size: 1.2rem;
-  text-align: center;
+.clientes-stats-collapsible:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.stats-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.stats-header h4 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.toggle-arrow {
+  transition: transform 0.3s ease;
+  font-size: 0.8rem;
+}
+
+.toggle-arrow.expanded {
+  transform: rotate(180deg);
 }
 
 .stats-grid {
+  margin-top: 12px;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 8px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .stat-item {

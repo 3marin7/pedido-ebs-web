@@ -100,6 +100,7 @@ const FacturasGuardadas = () => {
       const saldo = factura.total - totalAbonado;
       const estaPagada = saldo <= 0;
       
+      // FILTRO MEJORADO: Por defecto mostrar solo pendientes y parciales, excluir pagadas
       const mostrarPorEstado = mostrarPagadas ? true : !estaPagada;
       
       return coincideBusqueda && coincideVendedor && mostrarPorEstado;
@@ -120,27 +121,33 @@ const FacturasGuardadas = () => {
     abonos
   );
 
-  // Calcular estadísticas
+  // Calcular estadísticas - CORREGIDO: Solo sumar pendientes y parciales
   const calcularEstadisticas = () => {
     const facturasConSaldo = calcularSaldos(facturas, abonos);
+    
+    // Filtrar solo facturas pendientes y parciales para los cálculos
+    const facturasPendientesParciales = facturasConSaldo.filter(f => f.saldo > 0);
     
     const stats = {
       totalGeneral: 0,
       totalFiltrado: 0,
       cantidadGeneral: facturas.length,
       cantidadFiltrada: facturasProcesadas.length,
+      cantidadPendientesParciales: facturasPendientesParciales.length,
       porCliente: {},
       porVendedor: {},
       promedioGeneral: 0,
       promedioFiltrado: 0,
       totalAbonado: 0,
-      totalSaldoPendiente: 0
+      totalSaldoPendiente: 0,
+      totalPendientesParciales: 0 // NUEVO: Solo pendientes y parciales
     };
 
-    facturasConSaldo.forEach(f => {
-      stats.totalGeneral += f.total || 0;
+    // Calcular solo para facturas pendientes y parciales
+    facturasPendientesParciales.forEach(f => {
+      stats.totalPendientesParciales += f.total || 0;
       stats.totalAbonado += f.totalAbonado || 0;
-      stats.totalSaldoPendiente += (f.saldo > 0 ? f.saldo : 0) || 0;
+      stats.totalSaldoPendiente += f.saldo || 0;
       
       if (!stats.porCliente[f.cliente]) {
         stats.porCliente[f.cliente] = {
@@ -154,7 +161,7 @@ const FacturasGuardadas = () => {
       stats.porCliente[f.cliente].cantidad++;
       stats.porCliente[f.cliente].total += f.total || 0;
       stats.porCliente[f.cliente].abonado += f.totalAbonado || 0;
-      stats.porCliente[f.cliente].saldo += (f.saldo > 0 ? f.saldo : 0) || 0;
+      stats.porCliente[f.cliente].saldo += f.saldo || 0;
       
       if (!stats.porVendedor[f.vendedor]) {
         stats.porVendedor[f.vendedor] = {
@@ -168,9 +175,15 @@ const FacturasGuardadas = () => {
       stats.porVendedor[f.vendedor].cantidad++;
       stats.porVendedor[f.vendedor].total += f.total || 0;
       stats.porVendedor[f.vendedor].abonado += f.totalAbonado || 0;
-      stats.porVendedor[f.vendedor].saldo += (f.saldo > 0 ? f.saldo : 0) || 0;
+      stats.porVendedor[f.vendedor].saldo += f.saldo || 0;
     });
 
+    // Calcular total general (todas las facturas)
+    facturasConSaldo.forEach(f => {
+      stats.totalGeneral += f.total || 0;
+    });
+
+    // Calcular total filtrado
     facturasProcesadas.forEach(f => {
       stats.totalFiltrado += f.total || 0;
     });
@@ -197,6 +210,16 @@ const FacturasGuardadas = () => {
   };
 
   const estadisticas = calcularEstadisticas();
+
+  // Función para determinar la clase de prioridad del cliente
+  const getClientePriorityClass = (saldo, total) => {
+    const porcentajeSaldo = (saldo / total) * 100;
+    
+    if (saldo === 0) return 'saldo-cero';
+    if (saldo > 5000000 || porcentajeSaldo > 70) return 'alto-saldo';
+    if (saldo > 2000000 || porcentajeSaldo > 40) return 'medio-saldo';
+    return 'bajo-saldo';
+  };
 
   // Eliminar factura (y sus abonos asociados)
   const eliminarFactura = async (id) => {
@@ -528,7 +551,7 @@ const FacturasGuardadas = () => {
             disabled={importando || cargando}
           >
             <i className={`fas fa-${mostrarPagadas ? 'eye' : 'eye-slash'}`}></i> 
-            {mostrarPagadas ? 'Ocultar Pagadas' : 'Mostrar Pagadas'}
+            {mostrarPagadas ? 'Mostrando Todas' : 'Solo Pendientes'}
           </button>
           <button 
             className={`menu-btn ${mostrarResumen ? 'active' : ''}`}
@@ -612,7 +635,7 @@ const FacturasGuardadas = () => {
                 disabled={importando || cargando}
               >
                 <i className={`fas fa-${mostrarPagadas ? 'eye' : 'eye-slash'}`}></i> 
-                {mostrarPagadas ? 'Ocultar Pagadas' : 'Mostrar Pagadas'}
+                {mostrarPagadas ? 'Mostrando Todas' : 'Solo Pendientes'}
               </button>
               <button 
                 className="button secondary-button"
@@ -684,9 +707,19 @@ const FacturasGuardadas = () => {
           
           <span className="contador">
             {facturasProcesadas.length} de {facturas.length} facturas
-            {!mostrarPagadas && ' (ocultando pagadas)'}
+            {!mostrarPagadas && ' (pendientes y parciales)'}
+            {mostrarPagadas && ' (incluyendo pagadas)'}
             {busquedaVendedor && ` - Vendedor: ${busquedaVendedor}`}
           </span>
+
+          <button 
+            className={`button ${mostrarPagadas ? 'success-button' : 'secondary-button'}`}
+            onClick={() => setMostrarPagadas(!mostrarPagadas)}
+            disabled={importando || cargando}
+          >
+            <i className={`fas fa-${mostrarPagadas ? 'eye' : 'eye-slash'}`}></i> 
+            {mostrarPagadas ? 'Mostrando Todas' : 'Solo Pendientes'}
+          </button>
         </div>
       </div>
 
@@ -723,7 +756,7 @@ const FacturasGuardadas = () => {
                     <strong>{estadisticas.cantidadGeneral}</strong>
                   </div>
                   <div className="stat-item highlight">
-                    <span>Valor Total</span>
+                    <span>Valor Total General</span>
                     <strong>{formatMoneda(estadisticas.totalGeneral)}</strong>
                   </div>
                   <div className="stat-item highlight">
@@ -731,16 +764,16 @@ const FacturasGuardadas = () => {
                     <strong>{formatMoneda(estadisticas.promedioGeneral)}</strong>
                   </div>
                   <div className="stat-item">
-                    <span>Total Abonado</span>
-                    <strong>{formatMoneda(estadisticas.totalAbonado)}</strong>
+                    <span>Facturas Pendientes/Parciales</span>
+                    <strong>{estadisticas.cantidadPendientesParciales}</strong>
                   </div>
                   <div className="stat-item saldo">
-                    <span>Saldo Pendiente</span>
+                    <span>Saldo Pendiente Total</span>
                     <strong>{formatMoneda(estadisticas.totalSaldoPendiente)}</strong>
                   </div>
                   <div className="stat-item">
-                    <span>Total Abonos</span>
-                    <strong>{abonos.length}</strong>
+                    <span>Valor Pendientes/Parciales</span>
+                    <strong>{formatMoneda(estadisticas.totalPendientesParciales)}</strong>
                   </div>
                 </div>
               </div>
@@ -777,7 +810,7 @@ const FacturasGuardadas = () => {
                         <span className="vendedor-nombre">{vendedor}</span>
                         <div className="vendedor-stats">
                           <div className="stat">
-                            <span>{datos.cantidad} facturas</span>
+                            <span>{datos.cantidad} facturas pendientes/parciales</span>
                             <strong>{formatMoneda(datos.total)}</strong>
                           </div>
                           <div className="stat">
@@ -804,6 +837,18 @@ const FacturasGuardadas = () => {
                   className="busqueda-cliente"
                 />
               </div>
+              
+              {/* Contador de resultados */}
+              {Object.entries(estadisticas.porCliente).filter(([cliente]) => 
+                cliente.toLowerCase().includes(busquedaClienteResumen.toLowerCase())
+              ).length > 0 && (
+                <div className="resultados-count">
+                  {Object.entries(estadisticas.porCliente).filter(([cliente]) => 
+                    cliente.toLowerCase().includes(busquedaClienteResumen.toLowerCase())
+                  ).length} clientes con saldo pendiente
+                </div>
+              )}
+              
               <div className="clientes-list">
                 {Object.entries(estadisticas.porCliente)
                   .filter(([cliente]) => 
@@ -811,22 +856,44 @@ const FacturasGuardadas = () => {
                   )
                   .sort((a, b) => b[1].saldo - a[1].saldo)
                   .map(([cliente, datos]) => (
-                    <div key={cliente} className="cliente-item">
-                      <span className="cliente-nombre">{cliente}</span>
-                      <div className="cliente-stats">
-                        <div className="stat">
-                          <span>{datos.cantidad} factura(s)</span>
-                          <strong>{formatMoneda(datos.total)}</strong>
+                    <div 
+                      key={cliente} 
+                      className={`cliente-item ${
+                        datos.saldo === 0 ? 'saldo-cero' : 
+                        datos.saldo > 5000000 ? 'alto-saldo' :
+                        datos.saldo > 2000000 ? 'medio-saldo' : 'bajo-saldo'
+                      }`}
+                    >
+                      <div className="cliente-info">
+                        <span className="cliente-nombre">{cliente}</span>
+                        <span className="facturas-count">
+                          {datos.cantidad} factura{datos.cantidad !== 1 ? 's' : ''} pendiente{datos.cantidad !== 1 ? 's' : ''}
+                        </span>
+                      </div>
+                      
+                      <div className="cliente-saldo">
+                        <div className={`saldo-monto ${
+                          datos.saldo > 0 ? 'saldo-pendiente' : 'saldo-pagado'
+                        }`}>
+                          {formatMoneda(datos.saldo)}
                         </div>
-                        <div className="stat">
-                          <span>Abonado: {formatMoneda(datos.abonado)}</span>
-                          <span className={datos.saldo > 0 ? 'saldo-pendiente' : 'saldo-pagado'}>
-                            Saldo: {formatMoneda(datos.saldo)}
-                          </span>
-                        </div>
+                        <span className="saldo-label">
+                          {datos.saldo > 0 ? 'SALDO PENDIENTE' : 'AL DÍA'}
+                        </span>
                       </div>
                     </div>
                   ))}
+                
+                {/* Estado vacío */}
+                {Object.entries(estadisticas.porCliente).filter(([cliente]) => 
+                  cliente.toLowerCase().includes(busquedaClienteResumen.toLowerCase())
+                ).length === 0 && (
+                  <div className="clientes-vacio">
+                    <i className="fas fa-search"></i>
+                    <h4>No se encontraron clientes</h4>
+                    <p>Intenta con otro término de búsqueda</p>
+                  </div>
+                )}
               </div>
             </div>
           )}

@@ -22,6 +22,7 @@ const ClientesScreen = ({
   const [clienteEditando, setClienteEditando] = useState(null);
   const [cargandoClientes, setCargandoClientes] = useState(true);
   const [error, setError] = useState(null);
+  const [mostrarEstadisticas, setMostrarEstadisticas] = useState(false);
 
   // Cargar clientes al montar el componente
   useEffect(() => {
@@ -227,6 +228,17 @@ const ClientesScreen = ({
     onSeleccionarCliente(cliente);
   };
 
+  // Función para manejar el volver
+  const manejarVolver = () => {
+    // Si está editando un cliente, cancelar la edición primero
+    if (clienteEditando) {
+      cancelarEdicionCliente();
+    } else {
+      // Si no está editando, volver directamente
+      onVolver();
+    }
+  };
+
   // Función para exportar clientes
   const exportarClientes = async () => {
     setError(null);
@@ -400,10 +412,7 @@ const ClientesScreen = ({
           <h2>{clienteEditando ? 'Editar Cliente' : 'Seleccionar Cliente'}</h2>
           <button 
             className="button secondary-button"
-            onClick={() => {
-              onVolver();
-              cancelarEdicionCliente();
-            }}
+            onClick={manejarVolver}
           >
             Volver
           </button>
@@ -446,20 +455,32 @@ const ClientesScreen = ({
           </div>
         ) : (
           <>
-            <div className="clientes-stats">
-              <h4>Estadísticas de Clientes:</h4>
-              <div className="stats-grid">
-                {[5, 4, 3, 2, 1].map(star => (
-                  <div key={star} className="stat-item">
-                    <span className={`clasificacion-badge clasificacion-${star}`}>
-                      {star} {'★'.repeat(star)}
-                    </span>
-                    <span>
-                      {clientes.filter(c => c.clasificacion === star).length} clientes
-                    </span>
-                  </div>
-                ))}
+            {/* Estadísticas en Acordeón */}
+            <div className="clientes-stats-collapsible">
+              <div 
+                className="stats-header"
+                onClick={() => setMostrarEstadisticas(!mostrarEstadisticas)}
+              >
+                <h4>📊 Estadísticas de Clientes</h4>
+                <span className={`toggle-arrow ${mostrarEstadisticas ? 'expanded' : ''}`}>
+                  ▼
+                </span>
               </div>
+              
+              {mostrarEstadisticas && (
+                <div className="stats-grid">
+                  {[5, 4, 3, 2, 1].map(star => (
+                    <div key={star} className="stat-item">
+                      <span className={`clasificacion-badge clasificacion-${star}`}>
+                        {star} {'★'.repeat(star)}
+                      </span>
+                      <span>
+                        {clientes.filter(c => c.clasificacion === star).length} clientes
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
             
             {!clienteEditando && (

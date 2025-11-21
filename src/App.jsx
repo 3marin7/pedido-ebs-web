@@ -1,5 +1,5 @@
 import React, { useState, useEffect, createContext, useContext } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 import InvoiceScreen from './components/InvoiceScreen';
 import FacturasGuardadas from './components/FacturasGuardadas';
@@ -93,6 +93,33 @@ const PageMeta = ({ title, description }) => {
         <meta name="robots" content="noindex, nofollow" />
       )}
     </Helmet>
+  );
+};
+
+// Wrapper components para manejar navegación
+const ClientesScreenWrapper = () => {
+  const navigate = useNavigate();
+  
+  return (
+    <ClientesScreen 
+      onVolver={() => navigate('/facturacion')} // O la ruta que prefieras
+      onSeleccionarCliente={(cliente) => {
+        // Lógica para cuando se selecciona un cliente
+        console.log('Cliente seleccionado:', cliente);
+        // Puedes navegar a otra pantalla o mantenerte aquí
+      }}
+    />
+  );
+};
+
+const CatalogoProductosWrapper = ({ mode }) => {
+  const navigate = useNavigate();
+  
+  return (
+    <CatalogoProductos 
+      mode={mode}
+      onVolver={() => navigate(-1)}
+    />
   );
 };
 
@@ -207,7 +234,7 @@ function App() {
                 <>
                   <PageMeta title="Dashboard - EBS" description="Panel de control del sistema EBS" />
                   {user?.role === 'cliente' ? 
-                    <CatalogoProductos mode="cliente" /> : 
+                    <CatalogoProductosWrapper mode="cliente" /> : 
                     <DashboardVentas />
                   }
                 </>
@@ -279,7 +306,7 @@ function App() {
               <ProtectedRoute requiredRoles={['admin', 'inventario']}>
                 <>
                   <PageMeta title="Catálogo de Productos - EBS" description="Gestión del catálogo de productos" />
-                  <CatalogoProductos mode="admin" />
+                  <CatalogoProductosWrapper mode="admin" />
                 </>
               </ProtectedRoute>
             } />
@@ -304,12 +331,12 @@ function App() {
               </ProtectedRoute>
             } />
             
-            {/* Rutas para vendedor */}
+            {/* Rutas para vendedor - CLIENTES CORREGIDO */}
             <Route path="/clientes" element={
               <ProtectedRoute requiredRoles={['admin', 'vendedor', 'inventario']}>
                 <>
                   <PageMeta title="Gestión de Clientes - EBS" description="Administración de clientes del sistema" />
-                  <ClientesScreen />
+                  <ClientesScreenWrapper />
                 </>
               </ProtectedRoute>
             } />
@@ -319,7 +346,7 @@ function App() {
               <ProtectedRoute requiredRoles={['cliente']}>
                 <>
                   <PageMeta title="Catálogo - EBS" description="Catálogo exclusivo para clientes" />
-                  <CatalogoProductos mode="cliente" />
+                  <CatalogoProductosWrapper mode="cliente" />
                 </>
               </ProtectedRoute>
             } />

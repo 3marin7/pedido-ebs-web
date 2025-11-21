@@ -70,13 +70,15 @@ const Navigation = () => {
             { path: '/facturas', label: 'Facturas Guardadas', icon: '📄' }
           ]
         },
-        // CONTABILIDAD - Grupo
+        // CONTABILIDAD - Grupo (ACTUALIZADO)
         { 
           path: '#contabilidad', 
           label: 'Contabilidad', 
           icon: '💰', 
           tipo: 'grupo',
           submenu: [
+            { path: '/contabilidad', label: 'Dashboard Contabilidad', icon: '📊' },
+            { path: '/gastos', label: 'Gestión de Gastos', icon: '💸' },
             { path: '/reportes-cobros', label: 'Reportes Cobros', icon: '📈' },
             { path: '/rutas-cobro', label: 'Rutas de Cobro', icon: '🚗' }
           ]
@@ -114,7 +116,9 @@ const Navigation = () => {
         { path: '/facturas', label: 'Facturas', icon: '📄', tipo: 'simple' },
         { path: '/catalogo', label: 'Productos', icon: '📦', tipo: 'simple' },
         { path: '/gestion-pedidos', label: 'Pedidos', icon: '🛒', tipo: 'simple' },
-        { path: '/clientes', label: 'Clientes', icon: '👥', tipo: 'simple' }
+        { path: '/clientes', label: 'Clientes', icon: '👥', tipo: 'simple' },
+        // Agregar acceso a gastos para vendedores si es necesario
+        { path: '/gastos', label: 'Gastos', icon: '💸', tipo: 'simple' }
       ];
     }
 
@@ -132,7 +136,11 @@ const Navigation = () => {
       ];
     }
 
-    return [{ path: '/facturacion', label: 'Facturación', icon: '🧾', tipo: 'simple' }];
+    // Enlaces por defecto para otros roles
+    return [
+      { path: '/facturacion', label: 'Facturación', icon: '🧾', tipo: 'simple' },
+      { path: '/gastos', label: 'Gastos', icon: '💸', tipo: 'simple' }
+    ];
   };
 
   // Verificar si la ruta está activa
