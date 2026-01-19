@@ -16,6 +16,8 @@ import GestionInventario from './components/GestionInventario';
 import DashboardVentas from './components/DashboardVentas';
 import MallMap from './components/MallMap';
 import RutasCobro from './components/RutasCobro';
+import GastosScreen from './components/GastosScreen';
+import ContabilidadScreen from './components/ContabilidadScreen';
 
 // Contexto de autenticación
 const AuthContext = createContext();
@@ -62,8 +64,8 @@ const ProtectedRoute = ({ children, requiredRoles = [] }) => {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  // Verificar roles si se especifican
-  if (requiredRoles.length > 0 && !requiredRoles.includes(user.role)) {
+  // Verificar roles si se especifican (admin siempre tiene acceso)
+  if (requiredRoles.length > 0 && user.role !== 'admin' && !requiredRoles.includes(user.role)) {
     return <Navigate to="/unauthorized" replace />;
   }
 
@@ -210,7 +212,7 @@ function App() {
             
             {/* RUTA PRINCIPAL DE FACTURACIÓN - InvoiceScreen */}
             <Route path="/facturacion" element={
-              <ProtectedRoute>
+              <ProtectedRoute requiredRoles={['admin', 'vendedor', 'inventario']}>
                 <>
                   <PageMeta title="Facturación - EBS" description="Sistema de facturación EBS" />
                   <InvoiceScreen />
@@ -220,7 +222,7 @@ function App() {
 
             {/* Ruta para Nueva Factura - También lleva a InvoiceScreen */}
             <Route path="/nueva-factura" element={
-              <ProtectedRoute>
+              <ProtectedRoute requiredRoles={['admin', 'vendedor', 'inventario']}>
                 <>
                   <PageMeta title="Nueva Factura - EBS" description="Crear nueva factura" />
                   <InvoiceScreen />
@@ -241,9 +243,9 @@ function App() {
               </ProtectedRoute>
             } />
             
-            {/* Rutas para administrador */}
+            {/* Rutas para administrador, contabilidad, inventario y vendedor */}
             <Route path="/facturas" element={
-              <ProtectedRoute requiredRoles={['admin']}>
+              <ProtectedRoute requiredRoles={['admin', 'contabilidad', 'inventario', 'vendedor']}>
                 <>
                   <PageMeta title="Facturas Guardadas - EBS" description="Gestión de facturas del sistema EBS" />
                   <FacturasGuardadas />
@@ -253,7 +255,7 @@ function App() {
             
             {/* NUEVA RUTA: Rutas de Cobro Inteligentes */}
             <Route path="/rutas-cobro" element={
-              <ProtectedRoute requiredRoles={['admin']}>
+              <ProtectedRoute requiredRoles={['admin', 'contabilidad', 'vendedor']}>
                 <>
                   <PageMeta 
                     title="Rutas de Cobro Inteligentes - EBS" 
@@ -266,7 +268,7 @@ function App() {
             
             {/* Nueva ruta para Dashboard de Ventas */}
             <Route path="/dashboard-ventas" element={
-              <ProtectedRoute requiredRoles={['admin']}>
+              <ProtectedRoute requiredRoles={['admin', 'contabilidad']}>
                 <>
                   <PageMeta title="Dashboard de Ventas - EBS" description="Panel de control y análisis de ventas" />
                   <DashboardVentas />
@@ -285,7 +287,7 @@ function App() {
             } />
             
             <Route path="/factura/:id" element={
-              <ProtectedRoute requiredRoles={['admin']}>
+              <ProtectedRoute requiredRoles={['admin', 'inventario', 'contabilidad', 'vendedor']}>
                 <>
                   <PageMeta title="Detalle de Factura - EBS" description="Detalle completo de la factura" />
                   <FacturaDetalle />
@@ -294,19 +296,42 @@ function App() {
             } />
             
             <Route path="/reportes-cobros" element={
-              <ProtectedRoute requiredRoles={['admin']}>
+              <ProtectedRoute requiredRoles={['admin', 'contabilidad', 'vendedor']}>
                 <>
                   <PageMeta title="Reportes de Cobros - EBS" description="Reportes y análisis de cobros" />
                   <ReportesCobros />
                 </>
               </ProtectedRoute>
             } />
+
+            {/* Ruta para Gestión de Gastos */}
+            <Route path="/gastos" element={
+              <ProtectedRoute requiredRoles={['admin', 'contabilidad', 'vendedor']}>
+                <>
+                  <PageMeta title="Gestión de Gastos - EBS" description="Control y análisis de gastos" />
+                  <GastosScreen />
+                </>
+              </ProtectedRoute>
+            } />
+
+            {/* Ruta para Dashboard de Contabilidad */}
+            <Route path="/dashboard-contabilidad" element={
+              <ProtectedRoute requiredRoles={['admin', 'contabilidad', 'vendedor']}>
+                <>
+                  <PageMeta title="Dashboard de Contabilidad - EBS" description="Panel de control contable" />
+                  <ContabilidadScreen />
+                </>
+              </ProtectedRoute>
+            } />
             
             <Route path="/catalogo" element={
-              <ProtectedRoute requiredRoles={['admin', 'inventario']}>
+              <ProtectedRoute requiredRoles={['admin', 'inventario', 'contabilidad', 'vendedor']}>
                 <>
                   <PageMeta title="Catálogo de Productos - EBS" description="Gestión del catálogo de productos" />
-                  <CatalogoProductosWrapper mode="admin" />
+                  {/* Modo de catálogo según rol: contabilidad en solo lectura */}
+                  {user?.role === 'contabilidad' 
+                    ? <CatalogoProductosWrapper mode="contabilidad" /> 
+                    : <CatalogoProductosWrapper mode="admin" />}
                 </>
               </ProtectedRoute>
             } />
@@ -323,7 +348,7 @@ function App() {
             
             {/* Rutas para gestión de pedidos */}
             <Route path="/gestion-pedidos" element={
-              <ProtectedRoute requiredRoles={['admin', 'inventario', 'vendedor']}>
+              <ProtectedRoute requiredRoles={['admin', 'vendedor', 'inventario', 'contabilidad']}>
                 <>
                   <PageMeta title="Gestión de Pedidos - EBS" description="Seguimiento y gestión de pedidos" />
                   <GestionPedidos mode="vendedor" />
@@ -333,7 +358,7 @@ function App() {
             
             {/* Rutas para vendedor - CLIENTES CORREGIDO */}
             <Route path="/clientes" element={
-              <ProtectedRoute requiredRoles={['admin', 'vendedor', 'inventario']}>
+              <ProtectedRoute requiredRoles={['admin', 'vendedor', 'inventario', 'contabilidad']}>
                 <>
                   <PageMeta title="Gestión de Clientes - EBS" description="Administración de clientes del sistema" />
                   <ClientesScreenWrapper />

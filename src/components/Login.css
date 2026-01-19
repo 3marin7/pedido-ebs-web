@@ -156,6 +156,106 @@
   font-size: 14px;
 }
 
+/* Estilos para la sección de Roles */
+.roles-info {
+  margin-top: 25px;
+  padding-top: 25px;
+  border-top: 2px solid #eee;
+}
+
+.roles-info h4 {
+  margin: 0 0 15px;
+  color: #2c3e50;
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.roles-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.role-item {
+  padding: 12px 15px;
+  border-radius: 8px;
+  background: #f8f9fa;
+  border-left: 4px solid #95a5a6;
+  transition: all 0.3s ease;
+}
+
+.role-item:hover {
+  background: #ecf0f1;
+  transform: translateX(4px);
+}
+
+.role-item.role-admin {
+  border-left-color: #e74c3c;
+  background: #fdeae8;
+}
+
+.role-item.role-admin:hover {
+  background: #fadbd8;
+}
+
+.role-item.role-vendedor {
+  border-left-color: #3498db;
+  background: #ebf5fb;
+}
+
+.role-item.role-vendedor:hover {
+  background: #d6eaf8;
+}
+
+.role-item.role-contabilidad {
+  border-left-color: #2ecc71;
+  background: #eafaf1;
+}
+
+.role-item.role-contabilidad:hover {
+  background: #d5f4e6;
+}
+
+.role-item.role-inventario {
+  border-left-color: #f39c12;
+  background: #fef5e7;
+}
+
+.role-item.role-inventario:hover {
+  background: #fdebd0;
+}
+
+.role-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 5px;
+}
+
+.role-header strong {
+  font-size: 13px;
+  color: #2c3e50;
+}
+
+.role-badge {
+  display: inline-block;
+  padding: 3px 8px;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.role-item p {
+  margin: 0;
+  font-size: 12px;
+  color: #555;
+  line-height: 1.4;
+}
+
 /* Responsive */
 @media (min-width: 768px) {
   .login-content {
@@ -174,5 +274,11 @@
     flex: 1;
     order: 1;
     border-right: 1px solid #eee;
+  }
+
+  .roles-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
   }
 }

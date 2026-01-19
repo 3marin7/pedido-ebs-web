@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from './supabaseClient';
 import './GestionPedidos.css';
 
 const GestionPedidos = () => {
+  const navigate = useNavigate();
   const [pedidos, setPedidos] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [filtroEstado, setFiltroEstado] = useState('todos');
@@ -285,6 +287,27 @@ ${pedido.cliente_notas && pedido.cliente_notas !== 'Ninguna' ? `• Notas: ${ped
     const mensaje = generarMensajePedido(pedido);
     const url = `https://wa.me/${pedido.cliente_telefono}?text=${mensaje}`;
     window.open(url, '_blank');
+  };
+
+  // Función para cargar pedido como factura
+  const cargarComoFactura = (pedido) => {
+    // Navegar a InvoiceScreen con los datos del pedido
+    navigate('/facturacion', {
+      state: {
+        pedidoData: {
+          cliente: pedido.cliente_nombre,
+          telefono: pedido.cliente_telefono,
+          direccion: pedido.direccion_entrega || '',
+          productos: pedido.productos.map(p => ({
+            id: Date.now() + Math.random(),
+            nombre: p.nombre,
+            cantidad: p.cantidad,
+            precio: p.precio,
+            producto_id: null
+          }))
+        }
+      }
+    });
   };
 
   const calcularProgreso = (pedidoId) => {
@@ -960,6 +983,14 @@ ${pedido.cliente_notas && pedido.cliente_notas !== 'Ninguna' ? `• Notas: ${ped
                   </div>
                   
                   <div className="acciones-comunicacion">
+                    <button 
+                      onClick={() => cargarComoFactura(pedido)}
+                      className="btn-cargar-factura"
+                      title="Cargar este pedido en el sistema de facturación"
+                    >
+                      🧾 Cargar como Factura
+                    </button>
+                    
                     <button 
                       onClick={() => enviarPedidoWhatsApp(pedido)}
                       className="btn-enviar-pedido"

@@ -1,0 +1,375 @@
+import { useState, useEffect } from 'react';
+
+// Datos iniciales
+const initialData = [
+  { id: 1, mes: "enero", cobros: 96879000, neki: 7538000, total: 104417000 },
+  { id: 2, mes: "febrero", cobros: 41744300, neki: 4644000, total: 46388300 },
+  { id: 3, mes: "marzo", cobros: 36500000, neki: 6871000, total: 43371000 },
+  { id: 4, mes: "abril", cobros: 20614500, neki: 7236000, total: 27850500 },
+  { id: 5, mes: "mayo", cobros: 41832000, neki: 4490000, total: 46322000 },
+  { id: 6, mes: "junio", cobros: 25420000, neki: 5610000, total: 31030000 },
+  { id: 7, mes: "julio", cobros: 40488000, neki: 8227150, total: 48715150 },
+  { id: 8, mes: "agosto", cobros: 42952000, neki: 9965000, total: 52917000 },
+  { id: 9, mes: "septiembre", cobros: 35461000, neki: 11472000, total: 46933000 },
+  { id: 10, mes: "octubre", cobros: 37120000, neki: 4728000, total: 41848000 },
+  { id: 11, mes: "noviembre", cobros: 43878000, neki: 8226000, total: 52104000 }
+];
+
+const CobrosDashboard = () => {
+  const [data, setData] = useState([]);
+  const [filter, setFilter] = useState('all');
+  const [showForm, setShowForm] = useState(false);
+  const [form, setForm] = useState({ mes: 'enero', cobros: '', neki: '' });
+
+  // Cargar datos
+  useEffect(() => {
+    const stored = localStorage.getItem('cobrosData');
+    setData(stored ? JSON.parse(stored) : initialData);
+  }, []);
+
+  // Guardar datos
+  useEffect(() => {
+    localStorage.setItem('cobrosData', JSON.stringify(data));
+  }, [data]);
+
+  // Calcular totales
+  const totals = data.reduce((acc, item) => ({
+    cobros: acc.cobros + item.cobros,
+    neki: acc.neki + item.neki,
+    total: acc.total + item.total
+  }), { cobros: 0, neki: 0, total: 0 });
+
+  // Filtrar datos
+  const filteredData = filter === 'all' ? data : data.filter(item => item.mes === filter);
+
+  // Formatear moneda
+  const formatMoney = (num) => {
+    return new Intl.NumberFormat('es-ES', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(num);
+  };
+
+  // Agregar nuevo registro
+  const addRecord = (e) => {
+    e.preventDefault();
+    const cobros = parseFloat(form.cobros.replace(/\./g, '').replace(',', '.')) || 0;
+    const neki = parseFloat(form.neki.replace(/\./g, '').replace(',', '.')) || 0;
+    
+    if (cobros === 0 && neki === 0) return;
+
+    const newRecord = {
+      id: Date.now(),
+      mes: form.mes,
+      cobros,
+      neki,
+      total: cobros + neki
+    };
+
+    setData(prev => [...prev, newRecord]);
+    setForm({ mes: 'enero', cobros: '', neki: '' });
+    setShowForm(false);
+  };
+
+  return (
+    <div style={styles.container}>
+      {/* Header */}
+      <header style={styles.header}>
+        <h1 style={styles.title}>Gestión de Cobros y Comisiones</h1>
+        <p style={styles.subtitle}>Sistema de seguimiento de ingresos</p>
+      </header>
+
+      {/* Tarjetas de resumen */}
+      <div style={styles.cards}>
+        <div style={styles.card}>
+          <h3>Total General</h3>
+          <div style={styles.cardValue}>${formatMoney(totals.total)}</div>
+        </div>
+        <div style={styles.card}>
+          <h3>Total Cobros</h3>
+          <div style={styles.cardValue}>${formatMoney(totals.cobros)}</div>
+        </div>
+        <div style={styles.card}>
+          <h3>Total NEKI</h3>
+          <div style={styles.cardValue}>${formatMoney(totals.neki)}</div>
+        </div>
+        <div style={styles.card}>
+          <h3>% NEKI</h3>
+          <div style={styles.cardValue}>
+            {totals.cobros ? ((totals.neki / totals.cobros) * 100).toFixed(1) : 0}%
+          </div>
+        </div>
+      </div>
+
+      {/* Controles */}
+      <div style={styles.controls}>
+        <select 
+          value={filter} 
+          onChange={(e) => setFilter(e.target.value)}
+          style={styles.select}
+        >
+          <option value="all">Todos los meses</option>
+          {['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre'].map(mes => (
+            <option key={mes} value={mes}>{mes}</option>
+          ))}
+        </select>
+
+        <button 
+          onClick={() => setShowForm(!showForm)}
+          style={styles.addButton}
+        >
+          + Agregar Registro
+        </button>
+      </div>
+
+      {/* Formulario */}
+      {showForm && (
+        <div style={styles.form}>
+          <h3>Nuevo Registro</h3>
+          <form onSubmit={addRecord}>
+            <div style={styles.formRow}>
+              <select 
+                value={form.mes} 
+                onChange={(e) => setForm(prev => ({...prev, mes: e.target.value}))}
+                style={styles.input}
+              >
+                {['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre'].map(mes => (
+                  <option key={mes} value={mes}>{mes}</option>
+                ))}
+              </select>
+              
+              <input
+                type="text"
+                placeholder="Cobros"
+                value={form.cobros}
+                onChange={(e) => setForm(prev => ({...prev, cobros: e.target.value}))}
+                style={styles.input}
+              />
+              
+              <input
+                type="text"
+                placeholder="NEKI"
+                value={form.neki}
+                onChange={(e) => setForm(prev => ({...prev, neki: e.target.value}))}
+                style={styles.input}
+              />
+            </div>
+            
+            <div style={styles.formButtons}>
+              <button type="submit" style={styles.saveButton}>Guardar</button>
+              <button 
+                type="button" 
+                onClick={() => setShowForm(false)}
+                style={styles.cancelButton}
+              >
+                Cancelar
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
+
+      {/* Gráfico simple */}
+      <div style={styles.chart}>
+        <h3>Resumen por Mes</h3>
+        <div style={styles.bars}>
+          {filteredData.map(item => (
+            <div key={item.id} style={styles.barContainer}>
+              <div 
+                style={{
+                  ...styles.bar,
+                  height: `${(item.total / Math.max(...filteredData.map(d => d.total))) * 100}px`
+                }}
+                title={`${item.mes}: $${formatMoney(item.total)}`}
+              />
+              <span style={styles.barLabel}>{item.mes.slice(0,3)}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Tabla */}
+      <div style={styles.tableContainer}>
+        <table style={styles.table}>
+          <thead>
+            <tr>
+              <th style={styles.th}>Mes</th>
+              <th style={styles.th}>Cobros</th>
+              <th style={styles.th}>NEKI</th>
+              <th style={styles.th}>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredData.map(item => (
+              <tr key={item.id} style={styles.tr}>
+                <td style={styles.td}>{item.mes}</td>
+                <td style={styles.td}>${formatMoney(item.cobros)}</td>
+                <td style={styles.td}>${formatMoney(item.neki)}</td>
+                <td style={{...styles.td, fontWeight: 'bold'}}>${formatMoney(item.total)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+};
+
+// Estilos en línea (puedes moverlos a CSS separado si prefieres)
+const styles = {
+  container: {
+    maxWidth: 1200,
+    margin: '0 auto',
+    padding: 20,
+    fontFamily: 'Arial, sans-serif'
+  },
+  header: {
+    background: 'linear-gradient(135deg, #2c3e50, #3498db)',
+    color: 'white',
+    padding: '30px 20px',
+    borderRadius: 10,
+    textAlign: 'center',
+    marginBottom: 30
+  },
+  title: {
+    margin: 0,
+    fontSize: '2.5rem'
+  },
+  subtitle: {
+    margin: '10px 0 0 0',
+    opacity: 0.9
+  },
+  cards: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+    gap: 20,
+    marginBottom: 30
+  },
+  card: {
+    background: 'white',
+    padding: 25,
+    borderRadius: 10,
+    boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
+    textAlign: 'center'
+  },
+  cardValue: {
+    fontSize: '1.8rem',
+    fontWeight: 'bold',
+    color: '#3498db',
+    marginTop: 10
+  },
+  controls: {
+    display: 'flex',
+    gap: 15,
+    marginBottom: 20,
+    alignItems: 'center'
+  },
+  select: {
+    padding: '10px 15px',
+    border: '1px solid #ddd',
+    borderRadius: 5,
+    fontSize: '1rem'
+  },
+  addButton: {
+    background: '#2ecc71',
+    color: 'white',
+    border: 'none',
+    padding: '10px 20px',
+    borderRadius: 5,
+    cursor: 'pointer',
+    fontSize: '1rem'
+  },
+  form: {
+    background: 'white',
+    padding: 25,
+    borderRadius: 10,
+    boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
+    marginBottom: 30
+  },
+  formRow: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+    gap: 15,
+    marginBottom: 20
+  },
+  input: {
+    padding: 10,
+    border: '1px solid #ddd',
+    borderRadius: 5,
+    fontSize: '1rem'
+  },
+  formButtons: {
+    display: 'flex',
+    gap: 10
+  },
+  saveButton: {
+    background: '#2ecc71',
+    color: 'white',
+    border: 'none',
+    padding: '10px 20px',
+    borderRadius: 5,
+    cursor: 'pointer'
+  },
+  cancelButton: {
+    background: '#95a5a6',
+    color: 'white',
+    border: 'none',
+    padding: '10px 20px',
+    borderRadius: 5,
+    cursor: 'pointer'
+  },
+  chart: {
+    background: 'white',
+    padding: 25,
+    borderRadius: 10,
+    boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
+    marginBottom: 30
+  },
+  bars: {
+    display: 'flex',
+    alignItems: 'end',
+    gap: 10,
+    height: 200,
+    padding: '20px 0'
+  },
+  barContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    flex: 1
+  },
+  bar: {
+    background: '#3498db',
+    width: '100%',
+    borderRadius: '5px 5px 0 0',
+    minHeight: 10
+  },
+  barLabel: {
+    marginTop: 5,
+    fontSize: '0.8rem'
+  },
+  tableContainer: {
+    background: 'white',
+    borderRadius: 10,
+    overflow: 'hidden',
+    boxShadow: '0 4px 8px rgba(0,0,0,0.1)'
+  },
+  table: {
+    width: '100%',
+    borderCollapse: 'collapse'
+  },
+  th: {
+    background: '#2c3e50',
+    color: 'white',
+    padding: 15,
+    textAlign: 'left'
+  },
+  tr: {
+    borderBottom: '1px solid #eee'
+  },
+  td: {
+    padding: 15
+  }
+};
+
+export default CobrosDashboard;

@@ -498,7 +498,7 @@ const FacturasGuardadas = () => {
           <button 
             className="menu-btn primary"
             onClick={() => {
-              navigate('/');
+              navigate('/facturacion');
               setMenuAbierto(false);
             }}
             disabled={importando || cargando}
@@ -593,7 +593,7 @@ const FacturasGuardadas = () => {
         <div className="header-actions desktop-only">
           <button 
             className="button success-button"
-            onClick={() => navigate('/')}
+            onClick={() => navigate('/facturacion')}
             disabled={importando || cargando}
           >
             <i className="fas fa-plus"></i> Nueva Factura
@@ -1026,7 +1026,7 @@ const FacturasGuardadas = () => {
       {/* Botón flotante para nueva factura en móvil */}
       <button 
         className="floating-btn mobile-only"
-        onClick={() => navigate('/')}
+        onClick={() => navigate('/facturacion')}
         disabled={importando || cargando}
       >
         <i className="fas fa-plus"></i>

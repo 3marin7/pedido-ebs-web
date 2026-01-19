@@ -15,8 +15,14 @@ const ReportesCobros = () => {
   const [mostrarModalImportar, setMostrarModalImportar] = useState(false);
   const [archivoCSV, setArchivoCSV] = useState(null);
   const [errorImportacion, setErrorImportacion] = useState('');
-  const [vistaActual, setVistaActual] = useState('resumen'); // 'resumen', 'diario', 'mensual'
+  const [vistaActual, setVistaActual] = useState('resumen'); // 'resumen', 'diario', 'mensual', 'buscar-cliente'
   const [periodoActual, setPeriodoActual] = useState(''); // Para vista detallada
+  
+  // Estados para búsqueda de cliente
+  const [busquedaCliente, setBusquedaCliente] = useState('');
+  const [clienteSeleccionado, setClienteSeleccionado] = useState(null);
+  const [clientesSugeridos, setClientesSugeridos] = useState([]);
+  const [resumenCliente, setResumenCliente] = useState(null);
 
   // Obtener vendedores únicos de las facturas
   const obtenerVendedores = () => {
@@ -30,6 +36,57 @@ const ReportesCobros = () => {
   };
 
   const vendedores = obtenerVendedores();
+
+  // Buscar clientes que coincidan con la búsqueda
+  const buscarClientes = (termino) => {
+    if (!termino.trim()) {
+      setClientesSugeridos([]);
+      return;
+    }
+
+    const clientesUnicos = new Set();
+    facturas.forEach(factura => {
+      if (factura.cliente && factura.cliente.toLowerCase().includes(termino.toLowerCase())) {
+        clientesUnicos.add(factura.cliente);
+      }
+    });
+
+    setClientesSugeridos(Array.from(clientesUnicos).sort());
+  };
+
+  // Calcular resumen del cliente cuando se selecciona
+  const calcularResumenCliente = (nombreCliente) => {
+    setClienteSeleccionado(nombreCliente);
+    setBusquedaCliente(nombreCliente);
+    setClientesSugeridos([]);
+
+    // Obtener todas las facturas del cliente
+    const facturasCliente = facturas.filter(f => f.cliente === nombreCliente);
+    const abonosCliente = abonos.filter(a => a.cliente === nombreCliente);
+
+    // Calcular totales
+    const totalFacturas = facturasCliente.reduce((sum, f) => sum + (f.total || 0), 0);
+    const totalAbonos = abonosCliente.reduce((sum, a) => sum + (parseFloat(a.monto) || 0), 0);
+    const saldoDeuda = totalFacturas - totalAbonos;
+
+    setResumenCliente({
+      cliente: nombreCliente,
+      totalFacturas: totalFacturas,
+      cantidadFacturas: facturasCliente.length,
+      totalAbonos: totalAbonos,
+      cantidadAbonos: abonosCliente.length,
+      saldoDeuda: saldoDeuda,
+      facturasCliente: facturasCliente.sort((a, b) => new Date(b.fecha) - new Date(a.fecha)),
+      abonosCliente: abonosCliente.sort((a, b) => new Date(b.fecha) - new Date(a.fecha))
+    });
+  };
+
+  const limpiarBusqueda = () => {
+    setBusquedaCliente('');
+    setClienteSeleccionado(null);
+    setClientesSugeridos([]);
+    setResumenCliente(null);
+  };
 
   // Cargar datos desde Supabase
   useEffect(() => {
@@ -878,6 +935,13 @@ const ReportesCobros = () => {
               >
                 <i className="fas fa-arrow-left"></i> Volver a Facturas
               </button>
+
+              <button 
+                className="button info-button"
+                onClick={() => setVistaActual('buscar-cliente')}
+              >
+                <i className="fas fa-search"></i> Buscar Cliente
+              </button>
               
               {/* Menú de exportación */}
               <div className="dropdown">
@@ -918,6 +982,16 @@ const ReportesCobros = () => {
                 {mostrarGrafico ? 'Ver Tabla' : 'Ver Gráfico'}
               </button>
             </>
+          ) : vistaActual === 'buscar-cliente' ? (
+            <button 
+              className="button secondary-button"
+              onClick={() => {
+                limpiarBusqueda();
+                setVistaActual('resumen');
+              }}
+            >
+              <i className="fas fa-arrow-left"></i> Volver al resumen
+            </button>
           ) : (
             <button 
               className="button secondary-button"
@@ -1016,6 +1090,162 @@ const ReportesCobros = () => {
       {vistaActual === 'resumen' && renderResumenGeneral()}
       {vistaActual === 'diario' && renderVistaDiaria()}
       {vistaActual === 'mensual' && renderVistaMensual()}
+
+      {/* Vista de búsqueda de cliente */}
+      {vistaActual === 'buscar-cliente' && (
+        <div className="buscar-cliente-section">
+          <div className="search-container">
+            <div className="search-box">
+              <i className="fas fa-search"></i>
+              <input
+                type="text"
+                placeholder="Escribe el nombre del cliente..."
+                value={busquedaCliente}
+                onChange={(e) => {
+                  setBusquedaCliente(e.target.value);
+                  buscarClientes(e.target.value);
+                }}
+                className="search-input"
+              />
+              {busquedaCliente && (
+                <button 
+                  className="clear-btn"
+                  onClick={limpiarBusqueda}
+                >
+                  ✕
+                </button>
+              )}
+            </div>
+
+            {/* Sugerencias de clientes */}
+            {clientesSugeridos.length > 0 && (
+              <div className="clientes-sugeridos">
+                {clientesSugeridos.map((cliente, idx) => (
+                  <div 
+                    key={idx}
+                    className="cliente-item"
+                    onClick={() => calcularResumenCliente(cliente)}
+                  >
+                    <i className="fas fa-user"></i>
+                    {cliente}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Resumen del cliente cuando está seleccionado */}
+          {resumenCliente && (
+            <div className="resumen-cliente">
+              <h2>📊 Resumen de {resumenCliente.cliente}</h2>
+              
+              <div className="resumen-stats">
+                <div className="stat-card deuda">
+                  <span className="stat-label">Saldo a Deber</span>
+                  <span className="stat-value">{formatMoneda(resumenCliente.saldoDeuda)}</span>
+                  <span className="stat-subtext">
+                    {resumenCliente.saldoDeuda > 0 ? '🔴 Deuda' : '🟢 Sin deuda'}
+                  </span>
+                </div>
+
+                <div className="stat-card total-facturas">
+                  <span className="stat-label">Total Facturas</span>
+                  <span className="stat-value">{formatMoneda(resumenCliente.totalFacturas)}</span>
+                  <span className="stat-subtext">{resumenCliente.cantidadFacturas} factura(s)</span>
+                </div>
+
+                <div className="stat-card total-abonos">
+                  <span className="stat-label">Total Abonos</span>
+                  <span className="stat-value">{formatMoneda(resumenCliente.totalAbonos)}</span>
+                  <span className="stat-subtext">{resumenCliente.cantidadAbonos} abono(s)</span>
+                </div>
+
+                <div className="stat-card porcentaje">
+                  <span className="stat-label">Pagado</span>
+                  <span className="stat-value">
+                    {resumenCliente.totalFacturas > 0 
+                      ? `${((resumenCliente.totalAbonos / resumenCliente.totalFacturas) * 100).toFixed(1)}%`
+                      : '0%'
+                    }
+                  </span>
+                  <span className="stat-subtext">del total facturado</span>
+                </div>
+              </div>
+
+              {/* Facturas del cliente */}
+              {resumenCliente.facturasCliente.length > 0 && (
+                <div className="cliente-facturas">
+                  <h3>📄 Facturas</h3>
+                  <div className="tabla-scroll">
+                    <table className="tabla-cliente">
+                      <thead>
+                        <tr>
+                          <th>Factura</th>
+                          <th>Fecha</th>
+                          <th>Total</th>
+                          <th>Abonado</th>
+                          <th>Pendiente</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {resumenCliente.facturasCliente.map((factura, idx) => {
+                          const abonoFactura = resumenCliente.abonosCliente
+                            .filter(a => a.factura_id === factura.id)
+                            .reduce((sum, a) => sum + (parseFloat(a.monto) || 0), 0);
+                          const pendiente = (factura.total || 0) - abonoFactura;
+                          
+                          return (
+                            <tr key={idx} className={pendiente > 0 ? 'pendiente' : 'pagada'}>
+                              <td><strong>{factura.id}</strong></td>
+                              <td>{new Date(factura.fecha).toLocaleDateString('es-CO')}</td>
+                              <td>{formatMoneda(factura.total)}</td>
+                              <td className="abonado">{formatMoneda(abonoFactura)}</td>
+                              <td className={pendiente > 0 ? 'deuda' : 'pagado'}>
+                                {formatMoneda(pendiente)}
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+
+              {/* Abonos del cliente */}
+              {resumenCliente.abonosCliente.length > 0 && (
+                <div className="cliente-abonos">
+                  <h3>💰 Abonos Registrados</h3>
+                  <div className="tabla-scroll">
+                    <table className="tabla-cliente">
+                      <thead>
+                        <tr>
+                          <th>Fecha</th>
+                          <th>Factura</th>
+                          <th>Monto</th>
+                          <th>Vendedor</th>
+                          <th>Nota</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {resumenCliente.abonosCliente.map((abono, idx) => (
+                          <tr key={idx}>
+                            <td>{new Date(abono.fecha).toLocaleDateString('es-CO')}</td>
+                            <td><strong>{abono.factura_id}</strong></td>
+                            <td className="monto">{formatMoneda(abono.monto)}</td>
+                            <td>{abono.vendedor}</td>
+                            <td>{abono.nota || '-'}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };

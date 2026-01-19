@@ -10,12 +10,36 @@ const Login = () => {
   const [error, setError] = useState('');
   const { login } = useAuth();
 
-  // Datos de usuarios de ejemplo (actualizados con el nuevo rol)
+  // Datos de usuarios con roles y permisos específicos
   const users = [
-    { id: 1, username: 'EBS', password: 'E1', role: 'admin' },
-    { id: 2, username: 'v', password: 'v1', role: 'vendedor' },
-    { id: 3, username: 'c', password: 'c', role: 'cliente' },
-    { id: 4, username: 'Inv', password: 'inv123', role: 'inventario' }
+    { 
+      id: 1, 
+      username: 'EBS', 
+      password: 'E1', 
+      role: 'admin',
+      descripcion: 'Acceso Total - Administrador del sistema. Ver todo, gestionar usuarios, reportes completos.'
+    },
+    { 
+      id: 2, 
+      username: 'v', 
+      password: 'v1', 
+      role: 'vendedor',
+      descripcion: 'Vendedor - Crear facturas, gestionar pedidos, ver clientes, control de inventario.'
+    },
+    { 
+      id: 3, 
+      username: 'c', 
+      password: 'c', 
+      role: 'contabilidad',
+      descripcion: 'Contabilidad - Ver facturas guardadas, reportes de cobros, gestión de pedidos, análisis de ventas.'
+    },
+    { 
+      id: 4, 
+      username: 'Inv', 
+      password: 'inv123', 
+      role: 'inventario',
+      descripcion: 'Inventario - Gestionar catálogo de productos, control de inventario, gestión de pedidos.'
+    }
   ];
 
   const handleSubmit = (e) => {
@@ -70,6 +94,22 @@ const Login = () => {
                 Ingresar al sistema
               </button>
             </form>
+
+            {/* Información de Roles */}
+            <div className="roles-info">
+              <h4>Roles y Accesos:</h4>
+              <div className="roles-list">
+                {users.map((user) => (
+                  <div key={user.id} className={`role-item role-${user.role}`}>
+                    <div className="role-header">
+                      <strong>{user.username}</strong>
+                      <span className="role-badge">{user.role}</span>
+                    </div>
+                    <p>{user.descripcion}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
           
           <div className="catalog-section">

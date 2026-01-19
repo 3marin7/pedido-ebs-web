@@ -10,6 +10,24 @@ const GastosScreen = () => {
   const [datosGastos, setDatosGastos] = useState(null);
   const [cargando, setCargando] = useState(false);
 
+  // Filtros avanzados
+  const [personaFiltro, setPersonaFiltro] = useState('todos');
+  const [categoriaFiltro, setCategoriaFiltro] = useState('todos');
+  const [fechaInicio, setFechaInicio] = useState('');
+  const [fechaFin, setFechaFin] = useState('');
+  const [busquedaReferencia, setBusquedaReferencia] = useState('');
+  const [paginaActual, setPaginaActual] = useState(1);
+  const [itemsPorPagina] = useState(10);
+  const [mostrarPreview, setMostrarPreview] = useState(false);
+  const [erroresValidacion, setErroresValidacion] = useState({});
+  
+  // Estados adicionales para nóminas mejoradas
+  const [empleadoSeleccionado, setEmpleadoSeleccionado] = useState(null);
+  const [nominasEmpleado, setNominasEmpleado] = useState([]);
+  const [mostrarDetalleNomina, setMostrarDetalleNomina] = useState(false);
+  const [nominaDetalle, setNominaDetalle] = useState(null);
+  const [filtroEstado, setFiltroEstado] = useState('todos'); // todos, pagadas, pendientes
+
   // Estado para nuevo gasto
   const [nuevoGasto, setNuevoGasto] = useState({
     fecha: '',
@@ -221,6 +239,36 @@ const GastosScreen = () => {
       ...prev,
       [name]: value
     }));
+    // Limpiar error si el usuario empieza a escribir
+    if (erroresValidacion[name]) {
+      setErroresValidacion(prev => ({
+        ...prev,
+        [name]: null
+      }));
+    }
+  };
+
+  const validarGasto = () => {
+    const errores = {};
+    
+    if (!nuevoGasto.fecha) {
+      errores.fecha = 'La fecha es requerida';
+    }
+    
+    if (!nuevoGasto.cantidad || parseFloat(nuevoGasto.cantidad) <= 0) {
+      errores.cantidad = 'La cantidad debe ser mayor a 0';
+    }
+    
+    if (!nuevoGasto.tipo) {
+      errores.tipo = 'El tipo de gasto es requerido';
+    }
+    
+    if (!nuevoGasto.persona && nuevoGasto.tipo === 'nequi') {
+      errores.persona = 'La persona es requerida para gastos Nequi';
+    }
+    
+    setErroresValidacion(errores);
+    return Object.keys(errores).length === 0;
   };
 
   const calcularTotalGastos = () => {
@@ -248,8 +296,7 @@ const GastosScreen = () => {
   };
 
   const agregarGasto = () => {
-    if (!nuevoGasto.fecha || !nuevoGasto.cantidad) {
-      alert('Por favor complete la fecha y cantidad del gasto');
+    if (!validarGasto()) {
       return;
     }
 
@@ -301,6 +348,7 @@ const GastosScreen = () => {
     });
 
     limpiarFormulario();
+    setMostrarPreview(false);
     alert('Gasto agregado exitosamente!');
   };
 
@@ -380,6 +428,95 @@ const GastosScreen = () => {
       'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
     ];
     return meses[mes];
+  };
+
+  const filtrarGastos = (gastos, tipo = 'todos') => {
+    let gastosFiltrados = gastos;
+
+    // Filtrar por persona
+    if (personaFiltro !== 'todos') {
+      gastosFiltrados = gastosFiltrados.filter(g => g.persona === personaFiltro);
+    }
+
+    // Filtrar por categoría
+    if (categoriaFiltro !== 'todos') {
+      gastosFiltrados = gastosFiltrados.filter(g => g.categoria === categoriaFiltro);
+    }
+
+    // Filtrar por rango de fechas
+    if (fechaInicio) {
+      gastosFiltrados = gastosFiltrados.filter(g => new Date(g.fecha) >= new Date(fechaInicio));
+    }
+    if (fechaFin) {
+      gastosFiltrados = gastosFiltrados.filter(g => new Date(g.fecha) <= new Date(fechaFin));
+    }
+
+    // Filtrar por referencia
+    if (busquedaReferencia) {
+      gastosFiltrados = gastosFiltrados.filter(g => 
+        g.referencia && g.referencia.toLowerCase().includes(busquedaReferencia.toLowerCase())
+      );
+    }
+
+    return gastosFiltrados;
+  };
+
+  const obtenerGastosConPaginacion = (gastos) => {
+    const inicio = (paginaActual - 1) * itemsPorPagina;
+    const fin = inicio + itemsPorPagina;
+    return {
+      gastos: gastos.slice(inicio, fin),
+      total: gastos.length,
+      totalPaginas: Math.ceil(gastos.length / itemsPorPagina)
+    };
+  };
+
+  const limpiarFiltros = () => {
+    setPersonaFiltro('todos');
+    setCategoriaFiltro('todos');
+    setFechaInicio('');
+    setFechaFin('');
+    setBusquedaReferencia('');
+    setPaginaActual(1);
+  };
+
+  // Funciones para gestión mejorada de nóminas
+  const obtenerEmpleados = () => {
+    const empleadosSet = new Set();
+    datosGastos?.nominas?.forEach(nomina => {
+      if (nomina.persona) {
+        empleadosSet.add(nomina.persona);
+      }
+    });
+    return Array.from(empleadosSet).sort();
+  };
+
+  const obtenerNominasEmpleado = (empleado) => {
+    return datosGastos?.nominas?.filter(n => n.persona === empleado) || [];
+  };
+
+  const calcularResumenEmpleado = (empleado) => {
+    const nominas = obtenerNominasEmpleado(empleado);
+    const totalNominado = nominas.reduce((sum, n) => sum + (n.cantidad || 0), 0);
+    const promedioPorNomina = nominas.length > 0 ? totalNominado / nominas.length : 0;
+    
+    return {
+      empleado,
+      totalNominado,
+      cantidadNominas: nominas.length,
+      promedioPorNomina,
+      nominas: nominas.sort((a, b) => new Date(b.fecha || `2025-${b.mes}-01`) - new Date(a.fecha || `2025-${a.mes}-01`))
+    };
+  };
+
+  const verDetalleNomina = (nomina) => {
+    setNominaDetalle(nomina);
+    setMostrarDetalleNomina(true);
+  };
+
+  const cerrarDetalleNomina = () => {
+    setMostrarDetalleNomina(false);
+    setNominaDetalle(null);
   };
 
   if (!datosGastos) {
@@ -469,6 +606,91 @@ const GastosScreen = () => {
         </div>
       </div>
 
+      {/* Filtros Avanzados */}
+      <div className="filtros-avanzados">
+        <div className="filtros-header">
+          <h3>🔍 Filtros Avanzados</h3>
+          <button className="btn-filtros-toggle" onClick={limpiarFiltros}>
+            🔄 Limpiar Filtros
+          </button>
+        </div>
+        <div className="filtros-grid">
+          <div className="filtro-item">
+            <label>Persona:</label>
+            <select 
+              value={personaFiltro}
+              onChange={(e) => {
+                setPersonaFiltro(e.target.value);
+                setPaginaActual(1);
+              }}
+              className="filtro-select"
+            >
+              <option value="todos">Todas</option>
+              {personas.map(persona => (
+                <option key={persona} value={persona}>{persona}</option>
+              ))}
+            </select>
+          </div>
+
+          <div className="filtro-item">
+            <label>Categoría:</label>
+            <select 
+              value={categoriaFiltro}
+              onChange={(e) => {
+                setCategoriaFiltro(e.target.value);
+                setPaginaActual(1);
+              }}
+              className="filtro-select"
+            >
+              <option value="todos">Todas</option>
+              {categoriasGastos.map(cat => (
+                <option key={cat} value={cat}>{cat}</option>
+              ))}
+            </select>
+          </div>
+
+          <div className="filtro-item">
+            <label>Desde:</label>
+            <input 
+              type="date"
+              value={fechaInicio}
+              onChange={(e) => {
+                setFechaInicio(e.target.value);
+                setPaginaActual(1);
+              }}
+              className="filtro-input"
+            />
+          </div>
+
+          <div className="filtro-item">
+            <label>Hasta:</label>
+            <input 
+              type="date"
+              value={fechaFin}
+              onChange={(e) => {
+                setFechaFin(e.target.value);
+                setPaginaActual(1);
+              }}
+              className="filtro-input"
+            />
+          </div>
+
+          <div className="filtro-item full-width">
+            <label>Buscar Referencia:</label>
+            <input 
+              type="text"
+              value={busquedaReferencia}
+              onChange={(e) => {
+                setBusquedaReferencia(e.target.value);
+                setPaginaActual(1);
+              }}
+              placeholder="Ej: M12808105"
+              className="filtro-input"
+            />
+          </div>
+        </div>
+      </div>
+
       {/* Formulario de Gastos */}
       {mostrarFormulario && (
         <div className="formulario-gasto">
@@ -486,7 +708,9 @@ const GastosScreen = () => {
                 value={nuevoGasto.fecha}
                 onChange={handleInputChange}
                 required
+                className={erroresValidacion.fecha ? 'input-error' : ''}
               />
+              {erroresValidacion.fecha && <span className="error-message">{erroresValidacion.fecha}</span>}
             </div>
             
             <div className="form-group">
@@ -495,11 +719,13 @@ const GastosScreen = () => {
                 name="tipo"
                 value={nuevoGasto.tipo}
                 onChange={handleInputChange}
+                className={erroresValidacion.tipo ? 'input-error' : ''}
               >
                 {tiposGasto.filter(t => t.value !== 'todos').map(tipo => (
                   <option key={tipo.value} value={tipo.value}>{tipo.label}</option>
                 ))}
               </select>
+              {erroresValidacion.tipo && <span className="error-message">{erroresValidacion.tipo}</span>}
             </div>
             
             <div className="form-group">
@@ -508,11 +734,13 @@ const GastosScreen = () => {
                 name="persona"
                 value={nuevoGasto.persona}
                 onChange={handleInputChange}
+                className={erroresValidacion.persona ? 'input-error' : ''}
               >
                 {personas.map(persona => (
                   <option key={persona} value={persona}>{persona}</option>
                 ))}
               </select>
+              {erroresValidacion.persona && <span className="error-message">{erroresValidacion.persona}</span>}
             </div>
             
             <div className="form-group">
@@ -525,7 +753,9 @@ const GastosScreen = () => {
                 placeholder="0"
                 step="1000"
                 required
+                className={erroresValidacion.cantidad ? 'input-error' : ''}
               />
+              {erroresValidacion.cantidad && <span className="error-message">{erroresValidacion.cantidad}</span>}
             </div>
             
             <div className="form-group">
@@ -563,6 +793,31 @@ const GastosScreen = () => {
               />
             </div>
           </div>
+
+          {/* Vista Previa del Gasto */}
+          {nuevoGasto.fecha && nuevoGasto.cantidad && (
+            <div className="gasto-preview">
+              <h4>📋 Vista Previa del Gasto</h4>
+              <div className="preview-grid">
+                <div className="preview-item">
+                  <span className="preview-label">Fecha:</span>
+                  <span className="preview-value">{new Date(nuevoGasto.fecha).toLocaleDateString('es-CO')}</span>
+                </div>
+                <div className="preview-item">
+                  <span className="preview-label">Tipo:</span>
+                  <span className="preview-value">{tiposGasto.find(t => t.value === nuevoGasto.tipo)?.label || nuevoGasto.tipo}</span>
+                </div>
+                <div className="preview-item">
+                  <span className="preview-label">Persona:</span>
+                  <span className="preview-value">{nuevoGasto.persona}</span>
+                </div>
+                <div className="preview-item">
+                  <span className="preview-label">Cantidad:</span>
+                  <span className="preview-value amount">{formatCurrency(parseFloat(nuevoGasto.cantidad) || 0)}</span>
+                </div>
+              </div>
+            </div>
+          )}
           
           <div className="formulario-acciones">
             <button 
@@ -584,89 +839,123 @@ const GastosScreen = () => {
           <h2>💳 Gastos Nequi</h2>
           
           <div className="subseccion">
-            <h3>Edwin Marín - Total: {formatCurrency(6348000)}</h3>
-            <div className="tabla-container">
-              <table className="data-table">
-                <thead>
-                  <tr>
-                    <th>Fecha</th>
-                    <th>Cantidad</th>
-                    <th>Referencia</th>
-                    <th>Descripción</th>
-                    <th>Acciones</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {datosGastos.gastosNequi['Edwin Marín']?.map(gasto => (
-                    <tr key={gasto.id}>
-                      <td>{gasto.fecha}</td>
-                      <td className="negative">{formatCurrency(gasto.cantidad)}</td>
-                      <td className="referencia">{gasto.referencia}</td>
-                      <td>{gasto.descripcion}</td>
-                      <td>
-                        <div className="acciones-tabla">
-                          <button 
-                            className="btn-editar"
-                            onClick={() => editarGasto(gasto, 'nequi', 'Edwin Marín')}
-                          >
-                            ✏️
-                          </button>
-                          <button 
-                            className="btn-eliminar"
-                            onClick={() => eliminarGasto(gasto.id, 'nequi', 'Edwin Marín')}
-                          >
-                            🗑️
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+            <h3>Edwin Marín - Total: {formatCurrency(
+              datosGastos.gastosNequi['Edwin Marín']?.reduce((sum, g) => sum + g.cantidad, 0) || 0
+            )}</h3>
+            {datosGastos.gastosNequi['Edwin Marín']?.length > 0 ? (
+              <>
+                <div className="tabla-container">
+                  <table className="data-table">
+                    <thead>
+                      <tr>
+                        <th>Fecha</th>
+                        <th>Cantidad</th>
+                        <th>Referencia</th>
+                        <th>Descripción</th>
+                        <th>Acciones</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {datosGastos.gastosNequi['Edwin Marín']?.slice(0, itemsPorPagina).map(gasto => (
+                        <tr key={gasto.id}>
+                          <td>{new Date(gasto.fecha).toLocaleDateString('es-CO')}</td>
+                          <td className="negative">{formatCurrency(gasto.cantidad)}</td>
+                          <td className="referencia">{gasto.referencia || '-'}</td>
+                          <td>{gasto.descripcion || '-'}</td>
+                          <td>
+                            <div className="acciones-tabla">
+                              <button 
+                                className="btn-editar"
+                                onClick={() => editarGasto(gasto, 'nequi', 'Edwin Marín')}
+                                title="Editar"
+                              >
+                                ✏️
+                              </button>
+                              <button 
+                                className="btn-eliminar"
+                                onClick={() => eliminarGasto(gasto.id, 'nequi', 'Edwin Marín')}
+                                title="Eliminar"
+                              >
+                                🗑️
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                {datosGastos.gastosNequi['Edwin Marín']?.length > itemsPorPagina && (
+                  <div className="tabla-info">
+                    <span>{datosGastos.gastosNequi['Edwin Marín']?.length} registro(s) total</span>
+                  </div>
+                )}
+              </>
+            ) : (
+              <div className="tabla-vacia">
+                <p>No hay gastos registrados para Edwin Marín</p>
+              </div>
+            )}
           </div>
 
           <div className="subseccion">
-            <h3>Jhon Fredy Marín - Total: {formatCurrency(22743250)}</h3>
-            <div className="tabla-container">
-              <table className="data-table">
-                <thead>
-                  <tr>
-                    <th>Fecha</th>
-                    <th>Cantidad</th>
-                    <th>Referencia</th>
-                    <th>Descripción</th>
-                    <th>Acciones</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {datosGastos.gastosNequi['Jhon Fredy Marín']?.map(gasto => (
-                    <tr key={gasto.id}>
-                      <td>{gasto.fecha}</td>
-                      <td className="negative">{formatCurrency(gasto.cantidad)}</td>
-                      <td className="referencia">{gasto.referencia}</td>
-                      <td>{gasto.descripcion}</td>
-                      <td>
-                        <div className="acciones-tabla">
-                          <button 
-                            className="btn-editar"
-                            onClick={() => editarGasto(gasto, 'nequi', 'Jhon Fredy Marín')}
-                          >
-                            ✏️
-                          </button>
-                          <button 
-                            className="btn-eliminar"
-                            onClick={() => eliminarGasto(gasto.id, 'nequi', 'Jhon Fredy Marín')}
-                          >
-                            🗑️
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+            <h3>Jhon Fredy Marín - Total: {formatCurrency(
+              datosGastos.gastosNequi['Jhon Fredy Marín']?.reduce((sum, g) => sum + g.cantidad, 0) || 0
+            )}</h3>
+            {datosGastos.gastosNequi['Jhon Fredy Marín']?.length > 0 ? (
+              <>
+                <div className="tabla-container">
+                  <table className="data-table">
+                    <thead>
+                      <tr>
+                        <th>Fecha</th>
+                        <th>Cantidad</th>
+                        <th>Referencia</th>
+                        <th>Descripción</th>
+                        <th>Acciones</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {datosGastos.gastosNequi['Jhon Fredy Marín']?.slice(0, itemsPorPagina).map(gasto => (
+                        <tr key={gasto.id}>
+                          <td>{new Date(gasto.fecha).toLocaleDateString('es-CO')}</td>
+                          <td className="negative">{formatCurrency(gasto.cantidad)}</td>
+                          <td className="referencia">{gasto.referencia || '-'}</td>
+                          <td>{gasto.descripcion || '-'}</td>
+                          <td>
+                            <div className="acciones-tabla">
+                              <button 
+                                className="btn-editar"
+                                onClick={() => editarGasto(gasto, 'nequi', 'Jhon Fredy Marín')}
+                                title="Editar"
+                              >
+                                ✏️
+                              </button>
+                              <button 
+                                className="btn-eliminar"
+                                onClick={() => eliminarGasto(gasto.id, 'nequi', 'Jhon Fredy Marín')}
+                                title="Eliminar"
+                              >
+                                🗑️
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                {datosGastos.gastosNequi['Jhon Fredy Marín']?.length > itemsPorPagina && (
+                  <div className="tabla-info">
+                    <span>{datosGastos.gastosNequi['Jhon Fredy Marín']?.length} registro(s) total</span>
+                  </div>
+                )}
+              </>
+            ) : (
+              <div className="tabla-vacia">
+                <p>No hay gastos registrados para Jhon Fredy Marín</p>
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -675,47 +964,203 @@ const GastosScreen = () => {
       {(tipoGasto === 'todos' || tipoGasto === 'nomina') && (
         <div className="seccion-gastos">
           <h2>👥 Nóminas y Pagos Personal</h2>
-          <div className="tabla-container">
-            <table className="data-table">
-              <thead>
-                <tr>
-                  <th>Persona</th>
-                  <th>Tipo</th>
-                  <th>Cantidad</th>
-                  <th>Mes</th>
-                  <th>Descripción</th>
-                  <th>Acciones</th>
-                </tr>
-              </thead>
-              <tbody>
-                {datosGastos.nominas.map(nomina => (
-                  <tr key={nomina.id}>
-                    <td><strong>{nomina.persona}</strong></td>
-                    <td><span className="badge badge-info">{nomina.tipo}</span></td>
-                    <td className="negative">{formatCurrency(nomina.cantidad)}</td>
-                    <td>{getNombreMes(nomina.mes)} {nomina.anio}</td>
-                    <td>{nomina.descripcion}</td>
-                    <td>
-                      <div className="acciones-tabla">
-                        <button 
-                          className="btn-editar"
-                          onClick={() => editarGasto(nomina, 'nomina')}
-                        >
-                          ✏️
-                        </button>
-                        <button 
-                          className="btn-eliminar"
-                          onClick={() => eliminarGasto(nomina.id, 'nomina')}
-                        >
-                          🗑️
-                        </button>
+
+          {/* Resumen por empleado */}
+          <div className="nominas-resumen">
+            <h3>Resumen por Empleado</h3>
+            <div className="empleados-grid">
+              {obtenerEmpleados().map((empleado, idx) => {
+                const resumen = calcularResumenEmpleado(empleado);
+                return (
+                  <div key={idx} className="empleado-card">
+                    <div className="empleado-header">
+                      <h4>👤 {empleado}</h4>
+                      <span className="badge-nominas">{resumen.cantidadNominas}</span>
+                    </div>
+                    <div className="empleado-stats">
+                      <div className="stat">
+                        <span className="stat-label">Total Nominado:</span>
+                        <span className="stat-value">{formatCurrency(resumen.totalNominado)}</span>
                       </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                      <div className="stat">
+                        <span className="stat-label">Promedio:</span>
+                        <span className="stat-value">{formatCurrency(resumen.promedioPorNomina)}</span>
+                      </div>
+                    </div>
+                    <button 
+                      className="btn-ver-detalles"
+                      onClick={() => {
+                        setEmpleadoSeleccionado(empleado);
+                        setNominasEmpleado(resumen.nominas);
+                      }}
+                    >
+                      Ver detalles →
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
           </div>
+
+          {/* Detalles del empleado seleccionado */}
+          {empleadoSeleccionado && (
+            <div className="nominas-detalles">
+              <div className="detalles-header">
+                <h3>Nóminas de {empleadoSeleccionado}</h3>
+                <button 
+                  className="btn-cerrar-detalles"
+                  onClick={() => {
+                    setEmpleadoSeleccionado(null);
+                    setNominasEmpleado([]);
+                  }}
+                >
+                  ✕
+                </button>
+              </div>
+
+              {nominasEmpleado.length > 0 ? (
+                <>
+                  <div className="tabla-container">
+                    <table className="data-table">
+                      <thead>
+                        <tr>
+                          <th>Mes/Fecha</th>
+                          <th>Tipo</th>
+                          <th>Cantidad</th>
+                          <th>Descripción</th>
+                          <th>Acciones</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {nominasEmpleado.map((nomina) => (
+                          <tr key={nomina.id} className="nomina-row">
+                            <td>
+                              {nomina.fecha ? new Date(nomina.fecha).toLocaleDateString('es-CO') : `${getNombreMes(nomina.mes)} ${nomina.anio}`}
+                            </td>
+                            <td>
+                              <span className={`badge badge-${nomina.tipo === 'nómina' ? 'primary' : 'warning'}`}>
+                                {nomina.tipo}
+                              </span>
+                            </td>
+                            <td className="negative"><strong>{formatCurrency(nomina.cantidad)}</strong></td>
+                            <td>{nomina.descripcion || '-'}</td>
+                            <td>
+                              <div className="acciones-tabla">
+                                <button 
+                                  className="btn-detalles"
+                                  onClick={() => verDetalleNomina(nomina)}
+                                  title="Ver detalles"
+                                >
+                                  👁️
+                                </button>
+                                <button 
+                                  className="btn-editar"
+                                  onClick={() => editarGasto(nomina, 'nomina')}
+                                  title="Editar"
+                                >
+                                  ✏️
+                                </button>
+                                <button 
+                                  className="btn-eliminar"
+                                  onClick={() => eliminarGasto(nomina.id, 'nomina')}
+                                  title="Eliminar"
+                                >
+                                  🗑️
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <div className="nominas-estadisticas">
+                    <div className="stat-card">
+                      <span className="stat-title">Total Nominado</span>
+                      <span className="stat-amount">
+                        {formatCurrency(nominasEmpleado.reduce((sum, n) => sum + (n.cantidad || 0), 0))}
+                      </span>
+                    </div>
+                    <div className="stat-card">
+                      <span className="stat-title">Registros</span>
+                      <span className="stat-amount">{nominasEmpleado.length}</span>
+                    </div>
+                    <div className="stat-card">
+                      <span className="stat-title">Promedio</span>
+                      <span className="stat-amount">
+                        {formatCurrency(nominasEmpleado.reduce((sum, n) => sum + (n.cantidad || 0), 0) / nominasEmpleado.length)}
+                      </span>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <div className="tabla-vacia">
+                  <p>No hay nóminas para este empleado</p>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Lista general de nóminas si no hay empleado seleccionado */}
+          {!empleadoSeleccionado && datosGastos.nominas?.length > 0 && (
+            <>
+              <div className="tabla-container">
+                <table className="data-table">
+                  <thead>
+                    <tr>
+                      <th>Persona</th>
+                      <th>Tipo</th>
+                      <th>Cantidad</th>
+                      <th>Mes</th>
+                      <th>Descripción</th>
+                      <th>Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {datosGastos.nominas?.slice(0, itemsPorPagina).map(nomina => (
+                      <tr key={nomina.id}>
+                        <td><strong>{nomina.persona}</strong></td>
+                        <td><span className="badge badge-info">{nomina.tipo}</span></td>
+                        <td className="negative">{formatCurrency(nomina.cantidad)}</td>
+                        <td>{getNombreMes(nomina.mes)} {nomina.anio}</td>
+                        <td>{nomina.descripcion || '-'}</td>
+                        <td>
+                          <div className="acciones-tabla">
+                            <button 
+                              className="btn-editar"
+                              onClick={() => editarGasto(nomina, 'nomina')}
+                              title="Editar"
+                            >
+                              ✏️
+                            </button>
+                            <button 
+                              className="btn-eliminar"
+                              onClick={() => eliminarGasto(nomina.id, 'nomina')}
+                              title="Eliminar"
+                            >
+                              🗑️
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              {datosGastos.nominas?.length > itemsPorPagina && (
+                <div className="tabla-info">
+                  <span>{datosGastos.nominas?.length} registro(s) total</span>
+                </div>
+              )}
+            </>
+          )}
+
+          {!empleadoSeleccionado && datosGastos.nominas?.length === 0 && (
+            <div className="tabla-vacia">
+              <p>No hay nóminas registradas</p>
+            </div>
+          )}
         </div>
       )}
 

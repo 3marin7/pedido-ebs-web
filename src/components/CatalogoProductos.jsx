@@ -463,8 +463,9 @@ const ModalConfirmacion = ({ isOpen, onClose, onConfirm, productoNombre }) => {
 };
 
 // Componente principal del catálogo
-const CatalogoProductos = () => {
+const CatalogoProductos = ({ mode = 'admin' }) => {
   const navigate = useNavigate();
+  const isReadOnly = mode === 'contabilidad';
   const [productos, setProductos] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [nuevoProducto, setNuevoProducto] = useState({
@@ -489,6 +490,8 @@ const CatalogoProductos = () => {
     productoId: null,
     productoNombre: ''
   });
+  const [notificacionesStock, setNotificacionesStock] = useState([]);
+  const [mostrarNotificaciones, setMostrarNotificaciones] = useState(false);
 
   const categorias = ['Toallas', 'Bloqueadores y Cuidado de la Piel', 'Pañales', 'Alimentos', 'Desodorantes', 'Medicamentos', 'Cuidado del Cabello','Jabones y Geles','Otros','Producto del Dia Promocion'];
 
@@ -515,6 +518,14 @@ const CatalogoProductos = () => {
     
     cargarProductos();
   }, []);
+
+  // Verificar stock bajo y generar notificaciones
+  useEffect(() => {
+    if (productos.length > 0) {
+      const productosStockBajo = productos.filter(p => p.activo && p.stock < 25);
+      setNotificacionesStock(productosStockBajo);
+    }
+  }, [productos]);
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -693,22 +704,36 @@ const CatalogoProductos = () => {
   return (
     <div className="catalogo-container">
       <header className="catalogo-header">
-        <h1><i className="fas fa-boxes"></i> Catálogo de Productos</h1>
+        <h1>
+          <i className="fas fa-boxes"></i> 
+          {isReadOnly ? 'Catálogo de Productos (Solo Lectura)' : 'Catálogo de Productos'}
+        </h1>
         <div className="header-actions">
-          <ImportExportActions 
-            productos={productos}
-            productosFiltrados={productosFiltrados}
-            setProductos={setProductos}
-          />
+          {!isReadOnly && (
+            <ImportExportActions 
+              productos={productos}
+              productosFiltrados={productosFiltrados}
+              setProductos={setProductos}
+            />
+          )}
           <button 
-            className="button success-button"
-            onClick={() => {
-              setMostrarFormulario(true);
-              setEditandoId(null);
-            }}
+            className="button warning-button"
+            onClick={() => setMostrarNotificaciones(!mostrarNotificaciones)}
+            title={`${notificacionesStock.length} productos con stock bajo`}
           >
-            <i className="fas fa-plus"></i> Nuevo Producto
+            <i className="fas fa-exclamation-triangle"></i> Stock Bajo ({notificacionesStock.length})
           </button>
+          {!isReadOnly && (
+            <button 
+              className="button success-button"
+              onClick={() => {
+                setMostrarFormulario(true);
+                setEditandoId(null);
+              }}
+            >
+              <i className="fas fa-plus"></i> Nuevo Producto
+            </button>
+          )}
           <button 
             className={`button ${vistaActual === 'catalogo' ? 'primary-button' : 'secondary-button'}`}
             onClick={() => setVistaActual('catalogo')}
@@ -739,6 +764,48 @@ const CatalogoProductos = () => {
             <span><i className="fas fa-ban"></i> Inactivos: {productos.filter(p => !p.activo).length}</span>
             <span><i className="fas fa-boxes"></i> Total: {productos.length}</span>
           </div>
+
+          {/* Panel de Notificaciones de Stock Bajo */}
+          {mostrarNotificaciones && notificacionesStock.length > 0 && (
+            <div className="notificaciones-stock">
+              <div className="notificaciones-header">
+                <h3><i className="fas fa-bell"></i> Alertas de Stock</h3>
+                <button 
+                  className="close-btn"
+                  onClick={() => setMostrarNotificaciones(false)}
+                >
+                  <i className="fas fa-times"></i>
+                </button>
+              </div>
+              <div className="notificaciones-list">
+                {notificacionesStock.map(producto => (
+                  <div key={producto.id} className={`notificacion-item stock-${producto.stock <= 0 ? 'critico' : producto.stock <= 10 ? 'bajo' : 'alerta'}`}>
+                    <div className="notificacion-icon">
+                      <i className={`fas ${producto.stock <= 0 ? 'fa-times-circle' : producto.stock <= 10 ? 'fa-exclamation-circle' : 'fa-info-circle'}`}></i>
+                    </div>
+                    <div className="notificacion-content">
+                      <h4>{producto.nombre}</h4>
+                      <p>Stock actual: <strong>{producto.stock} unidades</strong></p>
+                      {producto.codigo && <p className="codigo">Ref: {producto.codigo}</p>}
+                    </div>
+                    <div className="notificacion-stock">
+                      <span className="stock-number">{producto.stock}</span>
+                      {producto.stock === 0 && <span className="badge-critico">AGOTADO</span>}
+                      {producto.stock > 0 && producto.stock <= 10 && <span className="badge-bajo">MUY BAJO</span>}
+                      {producto.stock > 10 && producto.stock < 25 && <span className="badge-alerta">BAJO</span>}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {mostrarNotificaciones && notificacionesStock.length === 0 && (
+            <div className="notificaciones-vacia">
+              <i className="fas fa-check-circle"></i>
+              <p>✓ Todos los productos tienen stock disponible</p>
+            </div>
+          )}
 
           <div className="filtros-container">
             <div className="search-box">
@@ -986,32 +1053,34 @@ const CatalogoProductos = () => {
                     )}
                   </div>
                   
-                  <div className="producto-actions">
-                    <button 
-                      className="action-button toggle-button"
-                      onClick={() => toggleEstadoProducto(producto.id)}
-                    >
-                      <i className={`fas ${producto.activo ? 'fa-eye-slash' : 'fa-eye'}`}></i>
-                      {producto.activo ? 'Desactivar' : 'Activar'}
-                    </button>
-                    
-                    <button 
-                      className="action-button edit-button"
-                      onClick={() => editarProducto(producto)}
-                    >
-                      <i className="fas fa-edit"></i> Editar
-                    </button>
-                    
-                    {/* Botón de eliminar solo visible para productos inactivos */}
-                    {!producto.activo && (
+                  {!isReadOnly && (
+                    <div className="producto-actions">
                       <button 
-                        className="action-button delete-button"
-                        onClick={() => abrirModalEliminar(producto.id, producto.nombre)}
+                        className="action-button toggle-button"
+                        onClick={() => toggleEstadoProducto(producto.id)}
                       >
-                        <i className="fas fa-trash"></i> Eliminar
+                        <i className={`fas ${producto.activo ? 'fa-eye-slash' : 'fa-eye'}`}></i>
+                        {producto.activo ? 'Desactivar' : 'Activar'}
                       </button>
-                    )}
-                  </div>
+                      
+                      <button 
+                        className="action-button edit-button"
+                        onClick={() => editarProducto(producto)}
+                      >
+                        <i className="fas fa-edit"></i> Editar
+                      </button>
+                      
+                      {/* Botón de eliminar solo visible para productos inactivos */}
+                      {!producto.activo && (
+                        <button 
+                          className="action-button delete-button"
+                          onClick={() => abrirModalEliminar(producto.id, producto.nombre)}
+                        >
+                          <i className="fas fa-trash"></i> Eliminar
+                        </button>
+                      )}
+                    </div>
+                  )}
                 </div>
               ))}
             </div>

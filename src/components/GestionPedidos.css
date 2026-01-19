@@ -1278,6 +1278,32 @@
   flex-wrap: wrap;
 }
 
+.btn-cargar-factura {
+  background: linear-gradient(135deg, #10b981, #34d399);
+  color: white;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-cargar-factura:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+  background: linear-gradient(135deg, #059669, #10b981);
+}
+
+.btn-cargar-factura:active {
+  transform: translateY(0);
+}
+
 .btn-enviar-pedido {
   background: linear-gradient(135deg, #FF6B35, #FF8E53);
   color: white;
@@ -1305,6 +1331,7 @@
     flex-direction: column;
   }
   
+  .btn-cargar-factura,
   .btn-enviar-pedido,
   .btn-whatsapp {
     width: 100%;
@@ -1313,6 +1340,7 @@
 }
 
 @media (max-width: 480px) {
+  .btn-cargar-factura,
   .btn-enviar-pedido,
   .btn-whatsapp {
     font-size: 13px;

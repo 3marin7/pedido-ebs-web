@@ -1,14 +1,14 @@
 [
   {
-    "id": 4,
-    "nombre": "ADRIAN",
-    "direccion": "Sábana local ",
-    "telefono": "3115793179",
+    "id": 78,
+    "nombre": "laura sanchez",
+    "direccion": "sabana",
+    "telefono": "",
     "correo": "",
     "clasificacion": 3,
-    "fecha_registro": "2025-08-19T20:18:27.77722+00:00",
-    "creado_en": "2025-08-19T20:18:27.77722+00:00",
-    "actualizado_en": "2025-08-19T20:18:27.77722+00:00"
+    "fecha_registro": "2025-12-01T16:25:34.697089+00:00",
+    "creado_en": "2025-12-01T16:25:34.697089+00:00",
+    "actualizado_en": "2025-12-01T16:25:34.697089+00:00"
   },
   {
     "id": 6,
@@ -121,17 +121,6 @@
     "actualizado_en": "2025-08-19T23:29:20.581674+00:00"
   },
   {
-    "id": 17,
-    "nombre": "ARNOL DIAZ PENAGOS",
-    "direccion": "SABANA ",
-    "telefono": "+57 3142418173",
-    "correo": "",
-    "clasificacion": 3,
-    "fecha_registro": "2025-08-20T00:58:19.107899+00:00",
-    "creado_en": "2025-08-20T00:58:19.107899+00:00",
-    "actualizado_en": "2025-08-20T00:58:19.107899+00:00"
-  },
-  {
     "id": 18,
     "nombre": "CRISTIAN SOLER",
     "direccion": "PARQUE ",
@@ -240,17 +229,6 @@
     "fecha_registro": "2025-08-20T14:53:57.15604+00:00",
     "creado_en": "2025-08-20T14:53:57.15604+00:00",
     "actualizado_en": "2025-08-20T14:53:57.15604+00:00"
-  },
-  {
-    "id": 33,
-    "nombre": "LUCHO",
-    "direccion": "Ferrocarril",
-    "telefono": "",
-    "correo": "",
-    "clasificacion": 4,
-    "fecha_registro": "2025-08-20T14:54:25.695692+00:00",
-    "creado_en": "2025-08-20T14:54:25.695692+00:00",
-    "actualizado_en": "2025-08-20T14:54:25.695692+00:00"
   },
   {
     "id": 34,
@@ -506,17 +484,6 @@
     "actualizado_en": "2025-08-23T13:19:56.303724+00:00"
   },
   {
-    "id": 57,
-    "nombre": "PEDRO MANDRIVA ",
-    "direccion": "SABANA ",
-    "telefono": "",
-    "correo": "",
-    "clasificacion": 3,
-    "fecha_registro": "2025-08-23T13:21:38.810485+00:00",
-    "creado_en": "2025-08-23T13:21:38.810485+00:00",
-    "actualizado_en": "2025-08-23T13:21:38.810485+00:00"
-  },
-  {
     "id": 58,
     "nombre": "ROSENDO",
     "direccion": "PARQUE",
@@ -671,6 +638,17 @@
     "actualizado_en": "2025-08-20T20:23:04.083007+00:00"
   },
   {
+    "id": 73,
+    "nombre": "Diego",
+    "direccion": "parque",
+    "telefono": "",
+    "correo": "",
+    "clasificacion": 3,
+    "fecha_registro": "2025-10-24T18:10:56.39314+00:00",
+    "creado_en": "2025-10-24T18:10:56.39314+00:00",
+    "actualizado_en": "2025-10-24T18:10:56.39314+00:00"
+  },
+  {
     "id": 65,
     "nombre": "magdalena",
     "direccion": "parque",
@@ -737,17 +715,6 @@
     "actualizado_en": "2025-10-02T16:39:52.147118+00:00"
   },
   {
-    "id": 69,
-    "nombre": "nando gonzalez",
-    "direccion": "parque",
-    "telefono": "",
-    "correo": "",
-    "clasificacion": 3,
-    "fecha_registro": "2025-10-02T16:44:57.076993+00:00",
-    "creado_en": "2025-10-02T16:44:57.076993+00:00",
-    "actualizado_en": "2025-10-02T16:44:57.076993+00:00"
-  },
-  {
     "id": 3,
     "nombre": "HECTOR SANABRIA HERMANO DE ADRIAN",
     "direccion": "SABANA",
@@ -790,5 +757,159 @@
     "fecha_registro": "2025-10-21T12:41:42.915244+00:00",
     "creado_en": "2025-10-21T12:41:42.915244+00:00",
     "actualizado_en": "2025-10-21T12:41:42.915244+00:00"
+  },
+  {
+    "id": 74,
+    "nombre": "NANCY  FERROCARRIL",
+    "direccion": "FERROOCARRIL",
+    "telefono": "",
+    "correo": "",
+    "clasificacion": 3,
+    "fecha_registro": "2025-11-12T16:14:07.238749+00:00",
+    "creado_en": "2025-11-12T16:14:07.238749+00:00",
+    "actualizado_en": "2025-11-12T16:14:30.889+00:00"
+  },
+  {
+    "id": 75,
+    "nombre": "ANDREA BOSA",
+    "direccion": "BOSA",
+    "telefono": "",
+    "correo": "",
+    "clasificacion": 3,
+    "fecha_registro": "2025-11-12T16:30:15.485152+00:00",
+    "creado_en": "2025-11-12T16:30:15.485152+00:00",
+    "actualizado_en": "2025-11-12T16:30:15.485152+00:00"
+  },
+  {
+    "id": 76,
+    "nombre": "gillermo carros",
+    "direccion": "",
+    "telefono": "",
+    "correo": "",
+    "clasificacion": 3,
+    "fecha_registro": "2025-11-12T17:48:18.154774+00:00",
+    "creado_en": "2025-11-12T17:48:18.154774+00:00",
+    "actualizado_en": "2025-11-12T17:48:53.896+00:00"
+  },
+  {
+    "id": 33,
+    "nombre": "LUCHO",
+    "direccion": "Ferrocarril",
+    "telefono": "",
+    "correo": "",
+    "clasificacion": 3,
+    "fecha_registro": "2025-08-20T14:54:25.695692+00:00",
+    "creado_en": "2025-08-20T14:54:25.695692+00:00",
+    "actualizado_en": "2025-11-13T15:36:44.755+00:00"
+  },
+  {
+    "id": 77,
+    "nombre": "marcos veneno",
+    "direccion": "",
+    "telefono": "",
+    "correo": "",
+    "clasificacion": 3,
+    "fecha_registro": "2025-11-14T14:01:59.718804+00:00",
+    "creado_en": "2025-11-14T14:01:59.718804+00:00",
+    "actualizado_en": "2025-11-14T14:01:59.718804+00:00"
+  },
+  {
+    "id": 17,
+    "nombre": "ARNOL DIAZ PENAGOS",
+    "direccion": "SABANA ",
+    "telefono": "+57 3142418173",
+    "correo": "",
+    "clasificacion": 2,
+    "fecha_registro": "2025-08-20T00:58:19.107899+00:00",
+    "creado_en": "2025-08-20T00:58:19.107899+00:00",
+    "actualizado_en": "2025-11-21T17:05:55.966+00:00"
+  },
+  {
+    "id": 69,
+    "nombre": "nando gonzalez",
+    "direccion": "parque",
+    "telefono": "",
+    "correo": "",
+    "clasificacion": 5,
+    "fecha_registro": "2025-10-02T16:44:57.076993+00:00",
+    "creado_en": "2025-10-02T16:44:57.076993+00:00",
+    "actualizado_en": "2025-11-21T17:06:36.164+00:00"
+  },
+  {
+    "id": 57,
+    "nombre": "PEDRO MANDRIVA ",
+    "direccion": "SABANA ",
+    "telefono": "",
+    "correo": "",
+    "clasificacion": 1,
+    "fecha_registro": "2025-08-23T13:21:38.810485+00:00",
+    "creado_en": "2025-08-23T13:21:38.810485+00:00",
+    "actualizado_en": "2025-11-21T17:07:23.348+00:00"
+  },
+  {
+    "id": 4,
+    "nombre": "ADRIAN SABANA",
+    "direccion": "Sábana local ",
+    "telefono": "3115793179",
+    "correo": "",
+    "clasificacion": 3,
+    "fecha_registro": "2025-08-19T20:18:27.77722+00:00",
+    "creado_en": "2025-08-19T20:18:27.77722+00:00",
+    "actualizado_en": "2025-08-19T20:18:27.77722+00:00"
+  },
+  {
+    "id": 79,
+    "nombre": "laura ramos",
+    "direccion": "sabanas",
+    "telefono": "",
+    "correo": "",
+    "clasificacion": 3,
+    "fecha_registro": "2025-12-01T16:35:42.619344+00:00",
+    "creado_en": "2025-12-01T16:35:42.619344+00:00",
+    "actualizado_en": "2025-12-01T16:35:42.619344+00:00"
+  },
+  {
+    "id": 80,
+    "nombre": "Gloria sabana",
+    "direccion": "",
+    "telefono": "",
+    "correo": "",
+    "clasificacion": 3,
+    "fecha_registro": "2025-12-09T20:36:32.306003+00:00",
+    "creado_en": "2025-12-09T20:36:32.306003+00:00",
+    "actualizado_en": "2025-12-09T20:36:32.306003+00:00"
+  },
+  {
+    "id": 81,
+    "nombre": "luz marina",
+    "direccion": "sabana",
+    "telefono": "",
+    "correo": "",
+    "clasificacion": 2,
+    "fecha_registro": "2025-12-22T14:26:03.208024+00:00",
+    "creado_en": "2025-12-22T14:26:03.208024+00:00",
+    "actualizado_en": "2025-12-22T14:26:03.208024+00:00"
+  },
+  {
+    "id": 82,
+    "nombre": "flor arias",
+    "direccion": "parque",
+    "telefono": "",
+    "correo": "",
+    "clasificacion": 3,
+    "fecha_registro": "2025-12-22T14:37:02.690292+00:00",
+    "creado_en": "2025-12-22T14:37:02.690292+00:00",
+    "actualizado_en": "2025-12-22T14:37:02.690292+00:00"
+  },
+  {
+    "id": 83,
+    "nombre": "marcela  daniel",
+    "direccion": "ferrocarril",
+    "telefono": "",
+    "correo": "",
+    "clasificacion": 3,
+    "fecha_registro": "2025-12-22T14:40:31.90682+00:00",
+    "creado_en": "2025-12-22T14:40:31.90682+00:00",
+    "actualizado_en": "2025-12-22T14:40:31.90682+00:00"
   }
 ]

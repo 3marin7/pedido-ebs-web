@@ -44,6 +44,7 @@ const CatalogoClientes = () => {
             categoria,
             descripcion,
             imagen_url,
+            stock,
             activo
           `)
           .eq('activo', true)
@@ -182,6 +183,13 @@ const CatalogoClientes = () => {
   };
 
   // Funciones mejoradas para manejar cantidades
+  const clampPorStock = (productoId, cantidadDeseada) => {
+    const producto = productos.find(p => p.id === productoId);
+    if (!producto) return cantidadDeseada;
+    if (producto.stock === null || producto.stock === undefined) return cantidadDeseada;
+    return Math.max(0, Math.min(cantidadDeseada, producto.stock));
+  };
+
   const actualizarCantidad = (id, cantidad, esCantidadRapida = false) => {
     let nuevaCantidad;
     
@@ -194,16 +202,17 @@ const CatalogoClientes = () => {
       nuevaCantidad = Math.max(1, Math.min(parseInt(cantidad) || 1, 999));
     }
     
-    // Limitar a 999 como máximo
-    nuevaCantidad = Math.min(nuevaCantidad, 999);
-    
+    // Limitar por stock (si existe) y 999 como máximo
+    nuevaCantidad = clampPorStock(id, Math.min(nuevaCantidad, 999));
+
     setProductosSeleccionados(prev => 
       prev.map(p => p.id === id ? { ...p, cantidad: nuevaCantidad } : p)
     );
   };
 
   const establecerCantidadExacta = (id, cantidad) => {
-    const nuevaCantidad = Math.max(1, Math.min(parseInt(cantidad) || 1, 999));
+    let nuevaCantidad = Math.max(1, Math.min(parseInt(cantidad) || 1, 999));
+    nuevaCantidad = clampPorStock(id, nuevaCantidad);
     
     setProductosSeleccionados(prev => 
       prev.map(p => p.id === id ? { ...p, cantidad: nuevaCantidad } : p)
@@ -289,7 +298,7 @@ const CatalogoClientes = () => {
       setNumeroPedido(pedido[0].id);
 
       // Preparar mensaje para WhatsApp
-      const numeroWhatsApp = '573004583117';
+      const numerosWhatsApp = ['573004583117', '573015551234']; // Dos números de WhatsApp
       
       let mensaje = `*¡NUEVO PEDIDO!*%0A%0A`;
       mensaje += `*Cliente:* ${clienteInfo.nombre}%0A`;
@@ -313,13 +322,17 @@ const CatalogoClientes = () => {
       mensaje += `*📅 FECHA:* ${new Date().toLocaleDateString('es-CO')}%0A%0A`;
       mensaje += `_Pedido generado desde Catálogo Digital_`;
 
-      const url = `https://api.whatsapp.com/send?phone=${numeroWhatsApp}&text=${mensaje}`;
+      // Enviar a los dos números de WhatsApp
+      numerosWhatsApp.forEach((numero, index) => {
+        const url = `https://api.whatsapp.com/send?phone=${numero}&text=${mensaje}`;
+        setTimeout(() => {
+          window.open(url, '_blank');
+        }, index * 500); // Desfasar apertura de ventanas
+      });
       
       // ✅ SOLUCIÓN: Cerrar el carrito automáticamente después de enviar
       setPedidoEnviado(true);
       setMostrarCarrito(false); // ← LÍNEA CRÍTICA AGREGADA
-      
-      window.open(url, '_blank');
       
       setTimeout(() => {
         setEnviandoPedido(false);
@@ -432,6 +445,13 @@ const CatalogoClientes = () => {
                       e.target.src = 'https://via.placeholder.com/300?text=Imagen+no+disponible';
                     }}
                   />
+                  
+                  {/* Badge de Stock */}
+                  <div className={`stock-badge ${producto.stock <= 0 ? 'sin-stock' : producto.stock <= 10 ? 'stock-bajo' : 'stock-disponible'}`}>
+                    <span className="stock-label">Stock</span>
+                    <span className="stock-number">{producto.stock || 0}</span>
+                  </div>
+                  
                   {estaSeleccionado && (
                     <div className="selected-badge">
                       <i className="fas fa-check"></i>

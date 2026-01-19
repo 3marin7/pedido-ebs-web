@@ -194,20 +194,21 @@ const FacturaDetalle = () => {
               font-weight: bold;
               margin-bottom: 0.2cm;
               border-bottom: 1px solid #000;
-              padding-bottom: 0.1cm;
-              font-size: 11px;
+              padding-bottom: 0.08cm;
+              font-size: 10px;
             }
             .encabezado {
               display: flex;
               justify-content: space-between;
-              margin-bottom: 0.2cm;
+              margin-bottom: 0.15cm;
               align-items: flex-start;
             }
             .numero-cuenta {
               font-weight: bold;
-              font-size: 12px;
+              font-size: 11px;
               margin-bottom: 0.2cm;
               text-align: center;
+              margin-top: -0.05cm;
             }
             .fecha {
               font-size: 9px;
@@ -215,19 +216,20 @@ const FacturaDetalle = () => {
             .info-cliente-vendedor {
               display: grid;
               grid-template-columns: 1fr 1fr;
-              gap: 0.3cm;
-              margin-bottom: 0.2cm;
+              gap: 0.15cm;
+              margin-bottom: 0.35cm;
             }
             .info-item h4 {
-              margin: 0 0 0.05cm 0;
-              font-size: 9px;
+              margin: 0 0 0.02cm 0;
+              font-size: 7px;
+              font-weight: bold;
             }
             .info-item p {
               margin: 0;
               border-bottom: 1px solid #ddd;
-              padding-bottom: 0.05cm;
-              min-height: 0.4cm;
-              font-size: 9px;
+              padding-bottom: 0.02cm;
+              min-height: 0.3cm;
+              font-size: 7px;
             }
             .tabla-productos {
               width: 100%;
@@ -235,77 +237,92 @@ const FacturaDetalle = () => {
               margin-bottom: 0.2cm;
               table-layout: fixed;
               flex-grow: 1;
+              min-height: auto;
             }
             .tabla-productos th, .tabla-productos td {
               border: 1px solid #000;
-              padding: 0.05cm;
+              padding: 0.12cm 0.1cm;
               text-align: left;
-              font-size: 8px;
+              font-size: 9px;
               word-wrap: break-word;
+              height: auto;
+              vertical-align: middle;
+              line-height: 1.2;
             }
             .tabla-productos th {
               background-color: #f0f0f0;
               font-weight: bold;
+              height: auto;
+              padding: 0.12cm 0.1cm;
+              font-size: 8px;
+            }
+            .tabla-productos tbody tr {
+              height: auto;
             }
             .tabla-productos .col-producto {
-              width: 60%;
+              width: 50%;
             }
             .tabla-productos .col-cantidad {
-              width: 10%;
+              width: 15%;
               text-align: center;
             }
             .tabla-productos .col-precio {
-              width: 15%;
+              width: 18%;
               text-align: right;
             }
             .tabla-productos .col-subtotal {
-              width: 15%;
+              width: 17%;
               text-align: right;
             }
             .total-letras {
-              margin: 0.1cm 0;
+              margin: 0.12cm 0;
               padding: 0.1cm;
               border: 1px solid #000;
               background-color: #f9f9f9;
-              font-size: 9px;
+              font-size: 8px;
               text-align: center;
               font-weight: bold;
+              line-height: 1;
             }
             .resumen-total {
               display: grid;
               grid-template-columns: 1fr 1fr 1fr 1fr;
-              gap: 0.2cm;
-              margin-top: 0.2cm;
+              gap: 0.1cm;
+              margin-top: 0.12cm;
+              margin-bottom: 0.12cm;
               font-weight: bold;
               text-align: center;
-              font-size: 9px;
+              font-size: 7px;
             }
             .resumen-item {
               border: 1px solid #000;
-              padding: 0.1cm;
+              padding: 0.06cm 0.05cm;
               background-color: #f0f0f0;
+              line-height: 1;
             }
             .estado {
               text-align: center;
               margin-top: 0.1cm;
               font-weight: bold;
-              font-size: 10px;
-              padding: 0.1cm;
+              font-size: 8px;
+              padding: 0.07cm;
               border: 1px solid #000;
               background-color: ${estaPagada() ? '#d4edda' : '#fff3cd'};
               color: ${estaPagada() ? '#155724' : '#856404'};
+              line-height: 1;
             }
             .footer {
               text-align: center;
-              margin-top: 0.2cm;
-              font-size: 8px;
+              margin-top: 0.1cm;
+              font-size: 6px;
               border-top: 1px solid #000;
-              padding-top: 0.1cm;
+              padding-top: 0.05cm;
+              line-height: 1.1;
             }
             .logo {
               font-weight: bold;
-              margin-top: 0.05cm;
-              font-size: 9px;
+              margin-top: 0.02cm;
+              font-size: 7px;
             }
             .empresa-info {
               text-align: left;
@@ -330,7 +347,7 @@ const FacturaDetalle = () => {
         </head>
         <body>
           <div class="pagina-oficio">
-            <!-- ORIGINAL - PARA EL CLIENTE -->
+              <!-- ORIGINAL - PARA EL CLIENTE -->
             <div class="seccion-cuenta">
               <div class="titulo-seccion">ORIGINAL - PARA EL CLIENTE</div>
               <div class="encabezado">
@@ -377,9 +394,7 @@ const FacturaDetalle = () => {
                     </tr>
                   `).join('')}
                 </tbody>
-              </table>
-
-              <div class="total-letras">
+              </table>              <div class="total-letras">
                 <strong>SON: ${convertirNumeroALetras(Math.round(factura.total))}</strong>
               </div>
               
@@ -410,7 +425,7 @@ const FacturaDetalle = () => {
               </div>
             </div>
             
-            <!-- COPIA - PARA EL ARCHIVO -->
+              <!-- COPIA - PARA EL ARCHIVO -->
             <div class="seccion-cuenta">
               <div class="titulo-seccion">COPIA - PARA EL ARCHIVO</div>
               <div class="encabezado">
@@ -457,9 +472,7 @@ const FacturaDetalle = () => {
                     </tr>
                   `).join('')}
                 </tbody>
-              </table>
-
-              <div class="total-letras">
+              </table>              <div class="total-letras">
                 <strong>SON: ${convertirNumeroALetras(Math.round(factura.total))}</strong>
               </div>
               

@@ -70,16 +70,16 @@ const Navigation = () => {
             { path: '/facturas', label: 'Facturas Guardadas', icon: '📄' }
           ]
         },
-        // CONTABILIDAD - Grupo (ACTUALIZADO)
+        // CONTABILIDAD - Grupo
         { 
           path: '#contabilidad', 
           label: 'Contabilidad', 
           icon: '💰', 
           tipo: 'grupo',
           submenu: [
-            { path: '/contabilidad', label: 'Dashboard Contabilidad', icon: '📊' },
-            { path: '/gastos', label: 'Gestión de Gastos', icon: '💸' },
+            { path: '/dashboard-contabilidad', label: 'Dashboard Contabilidad', icon: '📊' },
             { path: '/reportes-cobros', label: 'Reportes Cobros', icon: '📈' },
+            { path: '/gastos', label: 'Gestión de Gastos', icon: '💸' },
             { path: '/rutas-cobro', label: 'Rutas de Cobro', icon: '🚗' }
           ]
         },
@@ -109,24 +109,44 @@ const Navigation = () => {
       ];
     }
 
+    // Vendedor (v) - Acceso a todo excepto dashboard de ventas
     if (user.role === 'vendedor') {
       return [
+        { path: '/dashboard-contabilidad', label: 'Dashboard', icon: '📊', tipo: 'simple' },
         { path: '/facturacion', label: 'Facturación', icon: '🧾', tipo: 'simple' },
         { path: '/nueva-factura', label: 'Nueva Factura', icon: '➕', tipo: 'simple' },
-        { path: '/facturas', label: 'Facturas', icon: '📄', tipo: 'simple' },
-        { path: '/catalogo', label: 'Productos', icon: '📦', tipo: 'simple' },
-        { path: '/gestion-pedidos', label: 'Pedidos', icon: '🛒', tipo: 'simple' },
+        { path: '/facturas', label: 'Facturas Guardadas', icon: '📄', tipo: 'simple' },
+        { path: '/reportes-cobros', label: 'Reportes de Cobros', icon: '📈', tipo: 'simple' },
+        { path: '/gestion-pedidos', label: 'Gestión Pedidos', icon: '🛒', tipo: 'simple' },
+        { path: '/gastos', label: 'Gestión de Gastos', icon: '💰', tipo: 'simple' },
+        { path: '/rutas-cobro', label: 'Rutas de Cobro', icon: '🚗', tipo: 'simple' },
+        { path: '/gestion-inventario', label: 'Inventario', icon: '📋', tipo: 'simple' },
         { path: '/clientes', label: 'Clientes', icon: '👥', tipo: 'simple' },
-        // Agregar acceso a gastos para vendedores si es necesario
-        { path: '/gastos', label: 'Gastos', icon: '💸', tipo: 'simple' }
+        { path: '/catalogo', label: 'Productos', icon: '📦', tipo: 'simple' }
       ];
     }
 
+    // Contabilidad (c) - Ver facturas, reportes, gestión de pedidos, catálogo (lectura)
+    if (user.role === 'contabilidad') {
+      return [
+        { path: '/dashboard-contabilidad', label: 'Dashboard Contabilidad', icon: '📊', tipo: 'simple' },
+        { path: '/facturas', label: 'Facturas Guardadas', icon: '📄', tipo: 'simple' },
+        { path: '/reportes-cobros', label: 'Reportes de Cobros', icon: '📈', tipo: 'simple' },
+        { path: '/gastos', label: 'Gestión de Gastos', icon: '💰', tipo: 'simple' },
+        { path: '/rutas-cobro', label: 'Rutas de Cobro', icon: '🚗', tipo: 'simple' },
+        { path: '/gestion-pedidos', label: 'Gestión Pedidos', icon: '🛒', tipo: 'simple' },
+        { path: '/dashboard-ventas', label: 'Dashboard Ventas', icon: '📊', tipo: 'simple' },
+        { path: '/catalogo', label: 'Catálogo Productos', icon: '📚', tipo: 'simple' },
+        { path: '/clientes', label: 'Clientes', icon: '👥', tipo: 'simple' }
+      ];
+    }
+
+    // Inventario (Inv) - Gestionar catálogo, control de inventario, gestión de pedidos
     if (user.role === 'inventario') {
       return [
-        { path: '/catalogo', label: 'Productos', icon: '📦', tipo: 'simple' },
-        { path: '/gestion-inventario', label: 'Inventario', icon: '📋', tipo: 'simple' },
-        { path: '/gestion-pedidos', label: 'Pedidos', icon: '🛒', tipo: 'simple' }
+        { path: '/catalogo', label: 'Catálogo Productos', icon: '📚', tipo: 'simple' },
+        { path: '/gestion-inventario', label: 'Gestión Inventario', icon: '📋', tipo: 'simple' },
+        { path: '/gestion-pedidos', label: 'Gestión Pedidos', icon: '🛒', tipo: 'simple' }
       ];
     }
 
@@ -138,8 +158,7 @@ const Navigation = () => {
 
     // Enlaces por defecto para otros roles
     return [
-      { path: '/facturacion', label: 'Facturación', icon: '🧾', tipo: 'simple' },
-      { path: '/gastos', label: 'Gastos', icon: '💸', tipo: 'simple' }
+      { path: '/facturacion', label: 'Facturación', icon: '🧾', tipo: 'simple' }
     ];
   };
 

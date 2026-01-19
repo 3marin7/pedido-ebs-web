@@ -1,0 +1,5726 @@
+[
+  {
+    "id": 250,
+    "cliente_nombre": "Adenis",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 5,
+        "activo": true,
+        "codigo": null,
+        "nombre": "PROTECTORES NOSOTRAS NORMAL x 150 X 10 CAJAS",
+        "precio": 12000,
+        "cantidad": 20,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756217827/rr1iihl79wav1riegf6a.png",
+        "descripcion": "Caja 120000",
+        "fechaAgregado": "2025-11-19T22:20:27.470Z"
+      },
+      {
+        "id": 158,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Máquina Para Afeitar Gillette Prestobarba 3 Sensitive Blister X 10",
+        "precio": 380000,
+        "cantidad": 1,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1763052499/zbhsgqytq1oopioykcmp.png",
+        "descripcion": "caja x 120 unidades  blistre 31666 unidad 3166",
+        "fechaAgregado": "2025-11-19T22:19:57.103Z"
+      }
+    ],
+    "total": 620000,
+    "estado": "entregado",
+    "fecha_creacion": "2025-11-19T22:20:56.479+00:00",
+    "fecha_actualizacion": "2025-11-22T11:50:17.511+00:00"
+  },
+  {
+    "id": 191,
+    "cliente_nombre": "Sara",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 23,
+        "activo": true,
+        "codigo": null,
+        "nombre": "REXONA  DEO ROLON  V8 X 50G X2",
+        "precio": 14000,
+        "cantidad": 18,
+        "categoria": "Desodorantes",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756218950/dkbvm2qevcqibk1kazc3.png",
+        "descripcion": "CAJA X 12",
+        "fechaAgregado": "2025-10-08T21:27:34.186Z"
+      }
+    ],
+    "total": 252000,
+    "estado": "entregado",
+    "fecha_creacion": "2025-10-08T21:28:04.432+00:00",
+    "fecha_actualizacion": "2025-10-21T18:57:02.575+00:00"
+  },
+  {
+    "id": 198,
+    "cliente_nombre": "Carnensa",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 23,
+        "activo": true,
+        "codigo": null,
+        "nombre": "REXONA  DEO ROLON  V8 X 50G X2",
+        "precio": 14000,
+        "cantidad": 12,
+        "categoria": "Desodorantes",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756218950/dkbvm2qevcqibk1kazc3.png",
+        "descripcion": "CAJA X 12",
+        "fechaAgregado": "2025-10-17T20:28:08.391Z"
+      }
+    ],
+    "total": 168000,
+    "estado": "entregado",
+    "fecha_creacion": "2025-10-17T20:28:30.942+00:00",
+    "fecha_actualizacion": "2025-10-24T22:22:20.142+00:00"
+  },
+  {
+    "id": 205,
+    "cliente_nombre": "Javier",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 135,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Talco Rexona Eficiente Talco Pack 180g +55g",
+        "precio": 14000,
+        "cantidad": 24,
+        "categoria": "Desodorantes",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1759140813/jx43tesnze4g4rbgx91j.jpg",
+        "descripcion": null,
+        "fechaAgregado": "2025-10-27T22:48:44.433Z"
+      }
+    ],
+    "total": 336000,
+    "estado": "pendiente",
+    "fecha_creacion": "2025-10-27T22:48:58.309+00:00",
+    "fecha_actualizacion": "2025-10-27T22:48:58.642222+00:00"
+  },
+  {
+    "id": 246,
+    "cliente_nombre": "Raul",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 6,
+        "activo": true,
+        "codigo": null,
+        "nombre": "TOALLAS NOSOTRAS DIA Y NOCHE X 24",
+        "precio": 10500,
+        "cantidad": 37,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756221186/dppyfby8tqwndogketue.png",
+        "descripcion": null,
+        "fechaAgregado": "2025-11-11T21:32:11.766Z"
+      }
+    ],
+    "total": 388500,
+    "estado": "entregado",
+    "fecha_creacion": "2025-11-11T21:32:26.916+00:00",
+    "fecha_actualizacion": "2025-11-22T11:58:12.574+00:00"
+  },
+  {
+    "id": 228,
+    "cliente_nombre": "Ferney salinas",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 69,
+        "activo": true,
+        "codigo": null,
+        "nombre": "ENJUAGUE BUCAL LISTERINE COOL MINT 1L",
+        "precio": 22000,
+        "cantidad": 36,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756905042/whblrshjfjezxrwap2et.png",
+        "descripcion": "CAJA X 6 UNIDADES 132000",
+        "fechaAgregado": "2025-11-11T01:52:24.307Z"
+      }
+    ],
+    "total": 792000,
+    "estado": "entregado",
+    "fecha_creacion": "2025-11-11T01:53:08.124+00:00",
+    "fecha_actualizacion": "2025-11-22T11:58:23.249+00:00"
+  },
+  {
+    "id": 170,
+    "cliente_nombre": "glaids",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 68,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Gillette Venus Simply 3filos Blister X8",
+        "precio": 25000,
+        "cantidad": 10,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1758411965/uiezk1dpnu0nfrqpebze.png",
+        "descripcion": "X8",
+        "fechaAgregado": "2025-10-02T17:17:26.536Z"
+      }
+    ],
+    "total": 250000,
+    "estado": "entregado",
+    "fecha_creacion": "2025-10-02T17:17:36.554+00:00",
+    "fecha_actualizacion": "2025-10-02T22:53:28.709+00:00"
+  },
+  {
+    "id": 161,
+    "cliente_nombre": "kelly",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 132,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Complejo B Bedoyecta 2ml   3 Ampollas",
+        "precio": 29000,
+        "cantidad": 50,
+        "categoria": "Medicamentos",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1758820390/kzexmzudlrxx4nw5wk0o.png",
+        "descripcion": null,
+        "fechaAgregado": "2025-10-02T17:10:36.088Z"
+      }
+    ],
+    "total": 1450000,
+    "estado": "entregado",
+    "fecha_creacion": "2025-10-02T17:10:50.191+00:00",
+    "fecha_actualizacion": "2025-10-03T10:23:27.149+00:00"
+  },
+  {
+    "id": 255,
+    "cliente_nombre": "Javier Buitrago",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 163,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Crema colgate luminus white 125ml",
+        "precio": 14500,
+        "cantidad": 48,
+        "categoria": "Jabones y Geles",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1763739438/froeq2srvsuzekrgnwft.png",
+        "descripcion": null,
+        "fechaAgregado": "2025-11-22T22:38:55.004Z"
+      }
+    ],
+    "total": 696000,
+    "estado": "pendiente",
+    "fecha_creacion": "2025-11-22T22:39:28.349+00:00",
+    "fecha_actualizacion": "2025-11-22T22:39:28.807804+00:00"
+  },
+  {
+    "id": 177,
+    "cliente_nombre": "Heribwrto",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 14,
+        "activo": true,
+        "codigo": null,
+        "nombre": "PILA DURACELL AAA 10X6",
+        "precio": 195000,
+        "cantidad": 3,
+        "categoria": "Otros",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756220099/hqnefqmyeoaetdnxep1c.png",
+        "descripcion": "CAJA X 10 C/U 19500",
+        "fechaAgregado": "2025-10-07T15:42:32.962Z"
+      },
+      {
+        "id": 15,
+        "activo": true,
+        "codigo": null,
+        "nombre": "PILA DURACEL AA 10X6",
+        "precio": 195000,
+        "cantidad": 3,
+        "categoria": "Otros",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756220011/ytwm1a3bkdyybppdm4iz.png",
+        "descripcion": "CAJA X 10  C/U 19500",
+        "fechaAgregado": "2025-10-07T15:42:27.807Z"
+      }
+    ],
+    "total": 1170000,
+    "estado": "entregado",
+    "fecha_creacion": "2025-10-07T15:43:00.314+00:00",
+    "fecha_actualizacion": "2025-10-07T22:26:47.934+00:00"
+  },
+  {
+    "id": 187,
+    "cliente_nombre": "Kelli",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 137,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Nivea nutritiva Milk 1000 ml",
+        "precio": 32000,
+        "cantidad": 27,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1759870805/vqqdzyx76ft0a2g0yvml.jpg",
+        "descripcion": null,
+        "fechaAgregado": "2025-10-07T22:03:43.528Z"
+      }
+    ],
+    "total": 864000,
+    "estado": "entregado",
+    "fecha_creacion": "2025-10-07T22:04:10.039+00:00",
+    "fecha_actualizacion": "2025-10-08T20:18:54.358+00:00"
+  },
+  {
+    "id": 213,
+    "cliente_nombre": "Martha",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 68,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Gillette Venus Simply 3filos Blister X8",
+        "precio": 25000,
+        "cantidad": 50,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1758411965/uiezk1dpnu0nfrqpebze.png",
+        "descripcion": "X8",
+        "fechaAgregado": "2025-11-07T16:30:29.065Z"
+      },
+      {
+        "id": 69,
+        "activo": true,
+        "codigo": null,
+        "nombre": "ENJUAGUE BUCAL LISTERINE COOL MINT 1L",
+        "precio": 22000,
+        "cantidad": 24,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756905042/whblrshjfjezxrwap2et.png",
+        "descripcion": "CAJA X 6 UNIDADES 132000",
+        "fechaAgregado": "2025-11-07T16:16:46.857Z"
+      }
+    ],
+    "total": 1778000,
+    "estado": "entregado",
+    "fecha_creacion": "2025-11-07T16:33:48.659+00:00",
+    "fecha_actualizacion": "2025-11-28T18:33:46.731+00:00"
+  },
+  {
+    "id": 272,
+    "cliente_nombre": "Frank",
+    "cliente_telefono": "3004503117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 59,
+        "activo": true,
+        "codigo": null,
+        "nombre": "KOTEX x24 BUENAS NOCHES",
+        "precio": 12000,
+        "cantidad": 32,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756247109/mqqrxuawhbjzbsemkgwt.jpg",
+        "descripcion": "PACA X8 96000",
+        "fechaAgregado": "2025-12-04T21:46:00.575Z"
+      }
+    ],
+    "total": 384000,
+    "estado": "pendiente",
+    "fecha_creacion": "2025-12-04T21:47:11.482+00:00",
+    "fecha_actualizacion": "2025-12-04T21:47:11.992359+00:00"
+  },
+  {
+    "id": 293,
+    "cliente_nombre": "Mauricio",
+    "cliente_telefono": "3112969569",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 145,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Acondicionandor dove sobres ",
+        "precio": 7800,
+        "cantidad": 13,
+        "categoria": "Cuidado del Cabello",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1760473145/xhjhamrt9prsxft0qqyg.jpg",
+        "descripcion": null,
+        "fechaAgregado": "2026-01-09T04:41:17.599Z"
+      }
+    ],
+    "total": 101400,
+    "estado": "pendiente",
+    "fecha_creacion": "2026-01-09T04:41:28.84+00:00",
+    "fecha_actualizacion": "2026-01-09T04:41:29.036765+00:00"
+  },
+  {
+    "id": 214,
+    "cliente_nombre": "Sara",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 70,
+        "activo": true,
+        "codigo": null,
+        "nombre": "ENJUAGUE BUCAL LISTERINE COOL MINT 1.5 L",
+        "precio": 30000,
+        "cantidad": 48,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756989541/rpk58nbdagvvkmysuo1k.png",
+        "descripcion": "CAJA X 6 180000",
+        "fechaAgregado": "2025-11-08T16:43:36.606Z"
+      }
+    ],
+    "total": 1440000,
+    "estado": "entregado",
+    "fecha_creacion": "2025-11-08T16:44:11.131+00:00",
+    "fecha_actualizacion": "2025-11-22T11:58:35.037+00:00"
+  },
+  {
+    "id": 190,
+    "cliente_nombre": "Frank",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 4,
+        "activo": true,
+        "codigo": null,
+        "nombre": "PROTECTORES NOSOTRAS MULTIESTILO x 150  x 10 CAJAS",
+        "precio": 14000,
+        "cantidad": 10,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756217857/g5jpd7snqpwywzx9jaue.png",
+        "descripcion": "C/U 14000",
+        "fechaAgregado": "2025-10-07T23:03:09.735Z"
+      },
+      {
+        "id": 14,
+        "activo": true,
+        "codigo": null,
+        "nombre": "PILA DURACELL AAA 10X6",
+        "precio": 195000,
+        "cantidad": 1,
+        "categoria": "Otros",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756220099/hqnefqmyeoaetdnxep1c.png",
+        "descripcion": "CAJA X 10 C/U 19500",
+        "fechaAgregado": "2025-10-07T23:01:11.831Z"
+      },
+      {
+        "id": 15,
+        "activo": true,
+        "codigo": null,
+        "nombre": "PILA DURACEL AA 10X6",
+        "precio": 195000,
+        "cantidad": 1,
+        "categoria": "Otros",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756220011/ytwm1a3bkdyybppdm4iz.png",
+        "descripcion": "CAJA X 10  C/U 19500",
+        "fechaAgregado": "2025-10-07T23:01:07.764Z"
+      },
+      {
+        "id": 108,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Jabón Líquido Dove Baby Corporal Humectación Enriquecida x 400 ml",
+        "precio": 20000,
+        "cantidad": 1,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1758405291/aek17eqjsjzod3mm581k.png",
+        "descripcion": null,
+        "fechaAgregado": "2025-10-07T23:00:17.627Z"
+      },
+      {
+        "id": 106,
+        "activo": true,
+        "codigo": null,
+        "nombre": "ARDEN FOR MAN talco",
+        "precio": 4000,
+        "cantidad": 37,
+        "categoria": "Desodorantes",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1758403522/ankautwo7ghszuxzg5oi.png",
+        "descripcion": null,
+        "fechaAgregado": "2025-10-07T22:58:49.218Z"
+      },
+      {
+        "id": 26,
+        "activo": true,
+        "codigo": null,
+        "nombre": "CREMA DE PEINAR CON ACEITE DE ARGAN Y S6",
+        "precio": 12500,
+        "cantidad": 24,
+        "categoria": "Cuidado del Cabello",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756216677/pwvlbeboak2emcbogiif.png",
+        "descripcion": "CAJA X 24: 300000",
+        "fechaAgregado": "2025-10-07T22:56:53.609Z"
+      },
+      {
+        "id": 113,
+        "activo": true,
+        "codigo": null,
+        "nombre": "acondicionador savital complejo hialuronico y sabila caja x 20 sobres 22 ml",
+        "precio": 12500,
+        "cantidad": 25,
+        "categoria": "Cuidado del Cabello",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1758409246/xoi4l2ii6bmoudwl525t.png",
+        "descripcion": null,
+        "fechaAgregado": "2025-10-07T22:56:35.378Z"
+      },
+      {
+        "id": 135,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Talco Rexona Eficiente Talco Pack 180g +55g",
+        "precio": 14000,
+        "cantidad": 49,
+        "categoria": "Desodorantes",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1759140813/jx43tesnze4g4rbgx91j.jpg",
+        "descripcion": null,
+        "fechaAgregado": "2025-10-07T22:55:44.140Z"
+      },
+      {
+        "id": 42,
+        "activo": true,
+        "codigo": null,
+        "nombre": "REXONA CLINICAL  SPORT STREGTH POR 2",
+        "precio": 25000,
+        "cantidad": 12,
+        "categoria": "Desodorantes",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756218831/c5qu31s1blxr5xcnqpsc.png",
+        "descripcion": "CAJA X 6",
+        "fechaAgregado": "2025-10-07T22:55:28.840Z"
+      },
+      {
+        "id": 59,
+        "activo": true,
+        "codigo": null,
+        "nombre": "KOTEX x24 BUENAS NOCHES",
+        "precio": 12000,
+        "cantidad": 40,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756247109/mqqrxuawhbjzbsemkgwt.jpg",
+        "descripcion": "PACA X8 96000",
+        "fechaAgregado": "2025-10-07T22:53:36.268Z"
+      }
+    ],
+    "total": 2776500,
+    "estado": "entregado",
+    "fecha_creacion": "2025-10-07T23:05:02.178+00:00",
+    "fecha_actualizacion": "2025-10-08T21:54:43.292+00:00"
+  },
+  {
+    "id": 188,
+    "cliente_nombre": "Gladis",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 137,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Nivea nutritiva Milk 1000 ml",
+        "precio": 32000,
+        "cantidad": 27,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1759870805/vqqdzyx76ft0a2g0yvml.jpg",
+        "descripcion": null,
+        "fechaAgregado": "2025-10-07T22:05:14.641Z"
+      }
+    ],
+    "total": 864000,
+    "estado": "entregado",
+    "fecha_creacion": "2025-10-07T22:05:46.866+00:00",
+    "fecha_actualizacion": "2025-10-08T21:55:45.171+00:00"
+  },
+  {
+    "id": 258,
+    "cliente_nombre": "Marcos",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 59,
+        "activo": true,
+        "codigo": null,
+        "nombre": "KOTEX x24 BUENAS NOCHES",
+        "precio": 12000,
+        "cantidad": 16,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756247109/mqqrxuawhbjzbsemkgwt.jpg",
+        "descripcion": "PACA X8 96000",
+        "fechaAgregado": "2025-11-25T10:38:58.077Z"
+      }
+    ],
+    "total": 192000,
+    "estado": "entregado",
+    "fecha_creacion": "2025-11-25T10:39:43.794+00:00",
+    "fecha_actualizacion": "2025-11-28T18:22:36.23+00:00"
+  },
+  {
+    "id": 162,
+    "cliente_nombre": "edison",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 132,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Complejo B Bedoyecta 2ml   3 Ampollas",
+        "precio": 29000,
+        "cantidad": 24,
+        "categoria": "Medicamentos",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1758820390/kzexmzudlrxx4nw5wk0o.png",
+        "descripcion": null,
+        "fechaAgregado": "2025-10-02T17:11:17.759Z"
+      }
+    ],
+    "total": 696000,
+    "estado": "entregado",
+    "fecha_creacion": "2025-10-02T17:11:27.059+00:00",
+    "fecha_actualizacion": "2025-10-03T10:23:14.422+00:00"
+  },
+  {
+    "id": 171,
+    "cliente_nombre": "Lucero",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 15,
+        "activo": true,
+        "codigo": null,
+        "nombre": "PILA DURACEL AA 10X6",
+        "precio": 195000,
+        "cantidad": 2,
+        "categoria": "Otros",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756220011/ytwm1a3bkdyybppdm4iz.png",
+        "descripcion": "CAJA X 10  C/U 19500",
+        "fechaAgregado": "2025-10-02T21:30:06.035Z"
+      },
+      {
+        "id": 14,
+        "activo": true,
+        "codigo": null,
+        "nombre": "PILA DURACELL AAA 10X6",
+        "precio": 195000,
+        "cantidad": 2,
+        "categoria": "Otros",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756220099/hqnefqmyeoaetdnxep1c.png",
+        "descripcion": "CAJA X 10 C/U 19500",
+        "fechaAgregado": "2025-10-02T21:29:58.802Z"
+      }
+    ],
+    "total": 780000,
+    "estado": "entregado",
+    "fecha_creacion": "2025-10-02T21:30:23.2+00:00",
+    "fecha_actualizacion": "2025-10-04T23:19:13.772+00:00"
+  },
+  {
+    "id": 199,
+    "cliente_nombre": "Juan Pablo",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "2 caja de carbón",
+    "productos": [
+      {
+        "id": 6,
+        "activo": true,
+        "codigo": null,
+        "nombre": "TOALLAS NOSOTRAS DIA Y NOCHE X 24",
+        "precio": 10500,
+        "cantidad": 8,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756221186/dppyfby8tqwndogketue.png",
+        "descripcion": null,
+        "fechaAgregado": "2025-10-22T21:09:48.959Z"
+      },
+      {
+        "id": 35,
+        "activo": true,
+        "codigo": null,
+        "nombre": "NOSOTRAS BUENAS NOCHES +PROTE...",
+        "precio": 17500,
+        "cantidad": 12,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756217613/jlvvbmsdlxum6ghddd9f.png",
+        "descripcion": "CAJA X  12 175000",
+        "fechaAgregado": "2025-10-22T21:09:34.889Z"
+      }
+    ],
+    "total": 294000,
+    "estado": "entregado",
+    "fecha_creacion": "2025-10-22T21:11:20.126+00:00",
+    "fecha_actualizacion": "2025-10-24T22:22:04.504+00:00"
+  },
+  {
+    "id": 274,
+    "cliente_nombre": "Ramiro",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 158,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Máquina Para Afeitar Gillette Prestobarba 3 Sensitive Blister X 10",
+        "precio": 380000,
+        "cantidad": 2,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1763052499/zbhsgqytq1oopioykcmp.png",
+        "descripcion": "caja x 120 unidades  blistre 31666 unidad 3166",
+        "fechaAgregado": "2025-12-10T22:06:03.992Z"
+      }
+    ],
+    "total": 760000,
+    "estado": "pendiente",
+    "fecha_creacion": "2025-12-10T22:06:38.277+00:00",
+    "fecha_actualizacion": "2025-12-10T22:06:38.888677+00:00"
+  },
+  {
+    "id": 178,
+    "cliente_nombre": "Carmesna",
+    "cliente_telefono": "3004503117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 70,
+        "activo": true,
+        "codigo": null,
+        "nombre": "ENJUAGUE BUCAL LISTERINE COOL MINT 1.5 L",
+        "precio": 30000,
+        "cantidad": 6,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756989541/rpk58nbdagvvkmysuo1k.png",
+        "descripcion": "CAJA X 6 180000",
+        "fechaAgregado": "2025-10-07T16:56:49.513Z"
+      },
+      {
+        "id": 69,
+        "activo": true,
+        "codigo": null,
+        "nombre": "ENJUAGUE BUCAL LISTERINE COOL MINT 1L",
+        "precio": 22000,
+        "cantidad": 6,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756905042/whblrshjfjezxrwap2et.png",
+        "descripcion": "CAJA X 6 UNIDADES 132000",
+        "fechaAgregado": "2025-10-07T16:56:43.586Z"
+      }
+    ],
+    "total": 312000,
+    "estado": "cancelado",
+    "fecha_creacion": "2025-10-07T16:57:06.944+00:00",
+    "fecha_actualizacion": "2025-10-07T22:30:06.771+00:00"
+  },
+  {
+    "id": 290,
+    "cliente_nombre": "Edwin",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 145,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Acondicionandor dove sobres ",
+        "precio": 7800,
+        "cantidad": 1,
+        "categoria": "Cuidado del Cabello",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1760473145/xhjhamrt9prsxft0qqyg.jpg",
+        "descripcion": null,
+        "fechaAgregado": "2026-01-08T16:21:55.413Z"
+      }
+    ],
+    "total": 7800,
+    "estado": "listo_para_entrega",
+    "fecha_creacion": "2026-01-08T16:59:00.875+00:00",
+    "fecha_actualizacion": "2026-01-08T17:00:43.981+00:00"
+  },
+  {
+    "id": 299,
+    "cliente_nombre": "23423423",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 36,
+        "activo": true,
+        "codigo": null,
+        "nombre": "NOSOTRAS BUENAS NOCHES X 10",
+        "precio": 7000,
+        "cantidad": 13,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756217663/ctbf6chzgacm5chrrdio.png",
+        "descripcion": null,
+        "fechaAgregado": "2026-01-16T18:36:49.063Z"
+      }
+    ],
+    "total": 91000,
+    "estado": "pendiente",
+    "fecha_creacion": "2026-01-16T18:37:00.13+00:00",
+    "fecha_actualizacion": "2026-01-16T18:37:01.363938+00:00"
+  },
+  {
+    "id": 211,
+    "cliente_nombre": "Neudu",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 68,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Gillette Venus Simply 3filos Blister X8",
+        "precio": 25000,
+        "cantidad": 10,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1758411965/uiezk1dpnu0nfrqpebze.png",
+        "descripcion": "X8",
+        "fechaAgregado": "2025-11-05T23:09:37.239Z"
+      },
+      {
+        "id": 111,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Arruru loción ",
+        "precio": 41000,
+        "cantidad": 12,
+        "categoria": "Cuidado del Cabello",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1758403892/nkqysgpg9l3rlshhxhv6.png",
+        "descripcion": null,
+        "fechaAgregado": "2025-11-05T23:09:23.076Z"
+      },
+      {
+        "id": 3,
+        "activo": true,
+        "codigo": null,
+        "nombre": "TOALLAS NOSOTRAS RAPIGEL X 30",
+        "precio": 11000,
+        "cantidad": 40,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756219671/bh1kzufjjpk7wrzfxbxb.png",
+        "descripcion": "tallas nosotras rapigel x 30 caja x 8",
+        "fechaAgregado": "2025-11-05T23:08:52.484Z"
+      },
+      {
+        "id": 9,
+        "activo": true,
+        "codigo": null,
+        "nombre": "TOALLAS NOSOTRAS CLASICA X 30",
+        "precio": 10000,
+        "cantidad": 40,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756217702/wxoskdeordvqs15fkj8a.png",
+        "descripcion": "CAJA X 8 80000",
+        "fechaAgregado": "2025-11-05T23:06:45.958Z"
+      },
+      {
+        "id": 75,
+        "activo": true,
+        "codigo": null,
+        "nombre": "NOSOTRAS  EXTRA PROTECCION  6 LARGAS X DOCENA ",
+        "precio": 2417,
+        "cantidad": 24,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1758296543/xnxjy99vlix70dffxgev.jpg",
+        "descripcion": "DOCENA 29000",
+        "fechaAgregado": "2025-11-05T23:06:23.413Z"
+      },
+      {
+        "id": 6,
+        "activo": true,
+        "codigo": null,
+        "nombre": "TOALLAS NOSOTRAS DIA Y NOCHE X 24",
+        "precio": 10500,
+        "cantidad": 16,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756221186/dppyfby8tqwndogketue.png",
+        "descripcion": null,
+        "fechaAgregado": "2025-11-05T23:06:08.368Z"
+      }
+    ],
+    "total": 1808008,
+    "estado": "entregado",
+    "fecha_creacion": "2025-11-05T23:10:22.254+00:00",
+    "fecha_actualizacion": "2025-11-28T18:34:07.363+00:00"
+  },
+  {
+    "id": 189,
+    "cliente_nombre": "Javier Buitrago",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 142,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Nivea facial cuidado antiarrugasx 100ml",
+        "precio": 21000,
+        "cantidad": 24,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1759873184/mqqlxih7kkxxjvmizgcm.jpg",
+        "descripcion": null,
+        "fechaAgregado": "2025-10-07T22:15:03.518Z"
+      }
+    ],
+    "total": 504000,
+    "estado": "entregado",
+    "fecha_creacion": "2025-10-07T22:16:02.863+00:00",
+    "fecha_actualizacion": "2025-10-08T21:55:27.964+00:00"
+  },
+  {
+    "id": 163,
+    "cliente_nombre": "mrtha",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 136,
+        "activo": true,
+        "codigo": null,
+        "nombre": "ACID MANTLE BABY",
+        "precio": 29000,
+        "cantidad": 16,
+        "categoria": "Medicamentos",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1759422407/ankg9tkn6howwoydlfys.png",
+        "descripcion": null,
+        "fechaAgregado": "2025-10-02T17:11:51.091Z"
+      }
+    ],
+    "total": 464000,
+    "estado": "entregado",
+    "fecha_creacion": "2025-10-02T17:12:02.393+00:00",
+    "fecha_actualizacion": "2025-10-03T10:23:06.281+00:00"
+  },
+  {
+    "id": 160,
+    "cliente_nombre": "sara",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 69,
+        "activo": true,
+        "codigo": null,
+        "nombre": "ENJUAGUE BUCAL LISTERINE COOL MINT 1L",
+        "precio": 22000,
+        "cantidad": 6,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756905042/whblrshjfjezxrwap2et.png",
+        "descripcion": "CAJA X 6 UNIDADES 132000",
+        "fechaAgregado": "2025-10-02T17:09:01.870Z"
+      },
+      {
+        "id": 70,
+        "activo": true,
+        "codigo": null,
+        "nombre": "ENJUAGUE BUCAL LISTERINE COOL MINT 1.5 L",
+        "precio": 30000,
+        "cantidad": 6,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756989541/rpk58nbdagvvkmysuo1k.png",
+        "descripcion": "CAJA X 6 180000",
+        "fechaAgregado": "2025-10-02T17:08:56.837Z"
+      },
+      {
+        "id": 42,
+        "activo": true,
+        "codigo": null,
+        "nombre": "REXONA CLINICAL  SPORT STREGTH POR 2",
+        "precio": 25000,
+        "cantidad": 12,
+        "categoria": "Desodorantes",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756218831/c5qu31s1blxr5xcnqpsc.png",
+        "descripcion": "CAJA X 6",
+        "fechaAgregado": "2025-10-02T17:08:40.101Z"
+      },
+      {
+        "id": 132,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Complejo B Bedoyecta 2ml   3 Ampollas",
+        "precio": 29000,
+        "cantidad": 6,
+        "categoria": "Medicamentos",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1758820390/kzexmzudlrxx4nw5wk0o.png",
+        "descripcion": null,
+        "fechaAgregado": "2025-10-02T17:08:23.955Z"
+      },
+      {
+        "id": 136,
+        "activo": true,
+        "codigo": null,
+        "nombre": "ACID MANTLE BABY",
+        "precio": 29000,
+        "cantidad": 15,
+        "categoria": "Medicamentos",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1759422407/ankg9tkn6howwoydlfys.png",
+        "descripcion": null,
+        "fechaAgregado": "2025-10-02T17:08:07.602Z"
+      }
+    ],
+    "total": 1221000,
+    "estado": "entregado",
+    "fecha_creacion": "2025-10-02T17:09:25.355+00:00",
+    "fecha_actualizacion": "2025-10-03T10:23:38.529+00:00"
+  },
+  {
+    "id": 192,
+    "cliente_nombre": "Ramiro300",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 133,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Mieltertos mentholyptus pastillas masticables X48 X12X4",
+        "precio": 18500,
+        "cantidad": 1,
+        "categoria": "Medicamentos",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1758845411/cstw1ikd1ithofx9icez.png",
+        "descripcion": null,
+        "fechaAgregado": "2025-10-08T22:28:31.522Z"
+      },
+      {
+        "id": 73,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Mieltertos Gripa Naranja Día Sobres 24 Sobres",
+        "precio": 35500,
+        "cantidad": 1,
+        "categoria": "Medicamentos",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1758406819/lyp8qxs3be1tujvtg10i.png",
+        "descripcion": "CAJA X 24 ",
+        "fechaAgregado": "2025-10-08T22:28:25.874Z"
+      }
+    ],
+    "total": 54000,
+    "estado": "entregado",
+    "fecha_creacion": "2025-10-08T22:39:24.922+00:00",
+    "fecha_actualizacion": "2025-10-21T18:56:41.84+00:00"
+  },
+  {
+    "id": 180,
+    "cliente_nombre": "Kelly",
+    "cliente_telefono": "3001583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 137,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Nivea nutritiva Milk 1000 ml",
+        "precio": 32000,
+        "cantidad": 18,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1759870805/vqqdzyx76ft0a2g0yvml.jpg",
+        "descripcion": null,
+        "fechaAgregado": "2025-10-07T21:01:28.427Z"
+      }
+    ],
+    "total": 576000,
+    "estado": "entregado",
+    "fecha_creacion": "2025-10-07T21:01:38.811+00:00",
+    "fecha_actualizacion": "2025-10-24T22:23:15.982+00:00"
+  },
+  {
+    "id": 200,
+    "cliente_nombre": "Yanet",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 149,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Crema Dental Colgate Luminous White Carbon Activado X 75 Ml",
+        "precio": 12000,
+        "cantidad": 24,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1761167710/nfbkfc8noywgr8klosph.jpg",
+        "descripcion": "Caja x48 576000",
+        "fechaAgregado": "2025-10-22T21:22:43.845Z"
+      }
+    ],
+    "total": 288000,
+    "estado": "entregado",
+    "fecha_creacion": "2025-10-22T21:23:05.032+00:00",
+    "fecha_actualizacion": "2025-10-26T23:14:08.267+00:00"
+  },
+  {
+    "id": 181,
+    "cliente_nombre": "Yanet",
+    "cliente_telefono": "3001583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 137,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Nivea nutritiva Milk 1000 ml",
+        "precio": 32000,
+        "cantidad": 18,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1759870805/vqqdzyx76ft0a2g0yvml.jpg",
+        "descripcion": null,
+        "fechaAgregado": "2025-10-07T21:01:41.366Z"
+      }
+    ],
+    "total": 576000,
+    "estado": "entregado",
+    "fecha_creacion": "2025-10-07T21:02:00.64+00:00",
+    "fecha_actualizacion": "2025-10-26T23:14:24.171+00:00"
+  },
+  {
+    "id": 179,
+    "cliente_nombre": "Kelly",
+    "cliente_telefono": "3001583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 137,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Nivea nutritiva Milk 1000 ml",
+        "precio": 32000,
+        "cantidad": 18,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1759870805/vqqdzyx76ft0a2g0yvml.jpg",
+        "descripcion": null,
+        "fechaAgregado": "2025-10-07T21:01:00.940Z"
+      }
+    ],
+    "total": 576000,
+    "estado": "entregado",
+    "fecha_creacion": "2025-10-07T21:01:25.253+00:00",
+    "fecha_actualizacion": "2025-10-26T23:14:36.988+00:00"
+  },
+  {
+    "id": 230,
+    "cliente_nombre": "Frank",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 59,
+        "activo": true,
+        "codigo": null,
+        "nombre": "KOTEX x24 BUENAS NOCHES",
+        "precio": 12000,
+        "cantidad": 48,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756247109/mqqrxuawhbjzbsemkgwt.jpg",
+        "descripcion": "PACA X8 96000",
+        "fechaAgregado": "2025-11-11T10:12:25.311Z"
+      }
+    ],
+    "total": 576000,
+    "estado": "entregado",
+    "fecha_creacion": "2025-11-11T10:13:05.599+00:00",
+    "fecha_actualizacion": "2025-11-11T20:40:28.074+00:00"
+  },
+  {
+    "id": 182,
+    "cliente_nombre": "Kelli",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 137,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Nivea nutritiva Milk 1000 ml",
+        "precio": 32000,
+        "cantidad": 18,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1759870805/vqqdzyx76ft0a2g0yvml.jpg",
+        "descripcion": null,
+        "fechaAgregado": "2025-10-07T21:40:17.567Z"
+      }
+    ],
+    "total": 576000,
+    "estado": "entregado",
+    "fecha_creacion": "2025-10-07T21:40:37.611+00:00",
+    "fecha_actualizacion": "2025-10-08T20:32:51.006+00:00"
+  },
+  {
+    "id": 210,
+    "cliente_nombre": "Adrian",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 42,
+        "activo": true,
+        "codigo": null,
+        "nombre": "REXONA CLINICAL  SPORT STREGTH POR 2",
+        "precio": 25000,
+        "cantidad": 12,
+        "categoria": "Desodorantes",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756218831/c5qu31s1blxr5xcnqpsc.png",
+        "descripcion": "CAJA X 6",
+        "fechaAgregado": "2025-11-05T22:20:22.261Z"
+      },
+      {
+        "id": 23,
+        "activo": true,
+        "codigo": null,
+        "nombre": "REXONA  DEO ROLON  V8 X 50G X2",
+        "precio": 14000,
+        "cantidad": 60,
+        "categoria": "Desodorantes",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756218950/dkbvm2qevcqibk1kazc3.png",
+        "descripcion": "CAJA X 12",
+        "fechaAgregado": "2025-11-05T22:19:32.878Z"
+      },
+      {
+        "id": 95,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Ponds Crema  C Pepino x 50 g",
+        "precio": 8800,
+        "cantidad": 12,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1758407297/xf2gdejvesglehkfbhdw.png",
+        "descripcion": null,
+        "fechaAgregado": "2025-11-05T22:17:53.715Z"
+      },
+      {
+        "id": 14,
+        "activo": true,
+        "codigo": null,
+        "nombre": "PILA DURACELL AAA 10X6",
+        "precio": 195000,
+        "cantidad": 1,
+        "categoria": "Otros",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756220099/hqnefqmyeoaetdnxep1c.png",
+        "descripcion": "CAJA X 10 C/U 19500",
+        "fechaAgregado": "2025-11-05T22:17:15.263Z"
+      },
+      {
+        "id": 15,
+        "activo": true,
+        "codigo": null,
+        "nombre": "PILA DURACEL AA 10X6",
+        "precio": 195000,
+        "cantidad": 1,
+        "categoria": "Otros",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756220011/ytwm1a3bkdyybppdm4iz.png",
+        "descripcion": "CAJA X 10  C/U 19500",
+        "fechaAgregado": "2025-11-05T22:17:11.956Z"
+      },
+      {
+        "id": 140,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Nivea rolon tono natural ",
+        "precio": 8500,
+        "cantidad": 24,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1759873077/zklctg5cmbgeunupgxya.jpg",
+        "descripcion": null,
+        "fechaAgregado": "2025-11-05T22:15:55.215Z"
+      },
+      {
+        "id": 59,
+        "activo": true,
+        "codigo": null,
+        "nombre": "KOTEX x24 BUENAS NOCHES",
+        "precio": 12000,
+        "cantidad": 8,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756247109/mqqrxuawhbjzbsemkgwt.jpg",
+        "descripcion": "PACA X8 96000",
+        "fechaAgregado": "2025-11-05T22:14:45.681Z"
+      },
+      {
+        "id": 116,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Enjuague Bucal LISTERINE Control Cálculo 180 ml",
+        "precio": 9500,
+        "cantidad": 36,
+        "categoria": null,
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1758410790/hj9xo9qor4prgt0mcxit.png",
+        "descripcion": null,
+        "fechaAgregado": "2025-11-05T22:14:06.930Z"
+      },
+      {
+        "id": 63,
+        "activo": true,
+        "codigo": null,
+        "nombre": "EGO ATTRATION 240 ml",
+        "precio": 6500,
+        "cantidad": 60,
+        "categoria": "Jabones y Geles",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756323536/b0gtb1f38cgdhspburlt.jpg",
+        "descripcion": null,
+        "fechaAgregado": "2025-11-05T22:13:15.836Z"
+      },
+      {
+        "id": 61,
+        "activo": true,
+        "codigo": null,
+        "nombre": "BALANCE CLINICAL CREMA 70 g",
+        "precio": 5800,
+        "cantidad": 48,
+        "categoria": "Desodorantes",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756316074/gpjk0gfsktxaasvnc5fg.png",
+        "descripcion": "caja x 24  139200",
+        "fechaAgregado": "2025-11-05T22:12:21.225Z"
+      }
+    ],
+    "total": 2946000,
+    "estado": "entregado",
+    "fecha_creacion": "2025-11-05T22:25:24.518+00:00",
+    "fecha_actualizacion": "2025-11-28T18:34:27.838+00:00"
+  },
+  {
+    "id": 156,
+    "cliente_nombre": "CARMENSA FERROCARROL",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 23,
+        "activo": true,
+        "codigo": null,
+        "nombre": "REXONA  DEO ROLON  V8 X 50G X2",
+        "precio": 14000,
+        "cantidad": 6,
+        "categoria": "Desodorantes",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756218950/dkbvm2qevcqibk1kazc3.png",
+        "descripcion": "CAJA X 12",
+        "fechaAgregado": "2025-09-26T21:00:35.322Z"
+      },
+      {
+        "id": 128,
+        "activo": true,
+        "codigo": null,
+        "nombre": "REXONA DESODORANTE EN CREMA CLINICAL CLEAN 30 GR",
+        "precio": 2666,
+        "cantidad": 12,
+        "categoria": "Desodorantes",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1758416468/v3hdfctlijz9p3bmuyfn.png",
+        "descripcion": null,
+        "fechaAgregado": "2025-09-26T20:59:14.192Z"
+      },
+      {
+        "id": 3,
+        "activo": true,
+        "codigo": null,
+        "nombre": "TOALLAS NOSOTRAS RAPIGEL X 30",
+        "precio": 11000,
+        "cantidad": 8,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756219671/bh1kzufjjpk7wrzfxbxb.png",
+        "descripcion": "tallas nosotras rapigel x 30 caja x 8",
+        "fechaAgregado": "2025-09-26T20:57:12.051Z"
+      },
+      {
+        "id": 5,
+        "activo": true,
+        "codigo": null,
+        "nombre": "PROTECTORES NOSOTRAS NORMAL x 150 X 10 CAJAS",
+        "precio": 12000,
+        "cantidad": 10,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756217827/rr1iihl79wav1riegf6a.png",
+        "descripcion": "Caja 120000",
+        "fechaAgregado": "2025-09-26T20:56:30.500Z"
+      }
+    ],
+    "total": 323992,
+    "estado": "entregado",
+    "fecha_creacion": "2025-09-26T21:01:48.187+00:00",
+    "fecha_actualizacion": "2025-09-29T20:22:01.652+00:00"
+  },
+  {
+    "id": 259,
+    "cliente_nombre": "Jhon cruz",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 35,
+        "activo": true,
+        "codigo": null,
+        "nombre": "NOSOTRAS BUENAS NOCHES +PROTE...",
+        "precio": 17500,
+        "cantidad": 24,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756217613/jlvvbmsdlxum6ghddd9f.png",
+        "descripcion": "CAJA X  12 175000",
+        "fechaAgregado": "2025-11-28T22:20:14.007Z"
+      }
+    ],
+    "total": 420000,
+    "estado": "pendiente",
+    "fecha_creacion": "2025-11-28T22:20:45.905+00:00",
+    "fecha_actualizacion": "2025-11-28T22:20:46.339623+00:00"
+  },
+  {
+    "id": 164,
+    "cliente_nombre": "lorena",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 136,
+        "activo": true,
+        "codigo": null,
+        "nombre": "ACID MANTLE BABY",
+        "precio": 29000,
+        "cantidad": 8,
+        "categoria": "Medicamentos",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1759422407/ankg9tkn6howwoydlfys.png",
+        "descripcion": null,
+        "fechaAgregado": "2025-10-02T17:12:33.526Z"
+      }
+    ],
+    "total": 232000,
+    "estado": "entregado",
+    "fecha_creacion": "2025-10-02T17:12:43.228+00:00",
+    "fecha_actualizacion": "2025-10-03T10:22:59.319+00:00"
+  },
+  {
+    "id": 193,
+    "cliente_nombre": "Sara",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 23,
+        "activo": true,
+        "codigo": null,
+        "nombre": "REXONA  DEO ROLON  V8 X 50G X2",
+        "precio": 14000,
+        "cantidad": 24,
+        "categoria": "Desodorantes",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756218950/dkbvm2qevcqibk1kazc3.png",
+        "descripcion": "CAJA X 12",
+        "fechaAgregado": "2025-10-09T13:36:17.253Z"
+      },
+      {
+        "id": 141,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Nivea facial. 5 en 1 100gr",
+        "precio": 15000,
+        "cantidad": 24,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1759873130/jbwzs8xwvyn0f7ridq1a.jpg",
+        "descripcion": null,
+        "fechaAgregado": "2025-10-09T13:35:52.812Z"
+      }
+    ],
+    "total": 696000,
+    "estado": "entregado",
+    "fecha_creacion": "2025-10-09T13:36:40.229+00:00",
+    "fecha_actualizacion": "2025-10-17T17:47:27.519+00:00"
+  },
+  {
+    "id": 183,
+    "cliente_nombre": "Yanet gonzales",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 137,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Nivea nutritiva Milk 1000 ml",
+        "precio": 32000,
+        "cantidad": 18,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1759870805/vqqdzyx76ft0a2g0yvml.jpg",
+        "descripcion": null,
+        "fechaAgregado": "2025-10-07T21:41:08.129Z"
+      }
+    ],
+    "total": 576000,
+    "estado": "entregado",
+    "fecha_creacion": "2025-10-07T21:41:25.713+00:00",
+    "fecha_actualizacion": "2025-10-26T23:14:43.951+00:00"
+  },
+  {
+    "id": 172,
+    "cliente_nombre": "Neudy",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 9,
+        "activo": true,
+        "codigo": null,
+        "nombre": "TOALLAS NOSOTRAS CLASICA X 30",
+        "precio": 10000,
+        "cantidad": 16,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756217702/wxoskdeordvqs15fkj8a.png",
+        "descripcion": "CAJA X 8 80000",
+        "fechaAgregado": "2025-10-03T11:56:27.400Z"
+      }
+    ],
+    "total": 160000,
+    "estado": "entregado",
+    "fecha_creacion": "2025-10-03T11:56:53.599+00:00",
+    "fecha_actualizacion": "2025-10-26T23:15:32.786+00:00"
+  },
+  {
+    "id": 262,
+    "cliente_nombre": "Carmesa",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 69,
+        "activo": true,
+        "codigo": null,
+        "nombre": "ENJUAGUE BUCAL LISTERINE COOL MINT 1L",
+        "precio": 22000,
+        "cantidad": 12,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756905042/whblrshjfjezxrwap2et.png",
+        "descripcion": "CAJA X 6 UNIDADES 132000",
+        "fechaAgregado": "2025-11-29T22:08:37.794Z"
+      }
+    ],
+    "total": 264000,
+    "estado": "pendiente",
+    "fecha_creacion": "2025-11-29T22:08:57.704+00:00",
+    "fecha_actualizacion": "2025-11-29T22:08:58.193094+00:00"
+  },
+  {
+    "id": 276,
+    "cliente_nombre": "Adrián",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 158,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Máquina Para Afeitar Gillette Prestobarba 3 Sensitive Blister X 10",
+        "precio": 380000,
+        "cantidad": 2,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1763052499/zbhsgqytq1oopioykcmp.png",
+        "descripcion": "caja x 120 unidades  blistre 31666 unidad 3166",
+        "fechaAgregado": "2025-12-10T23:10:27.366Z"
+      }
+    ],
+    "total": 760000,
+    "estado": "pendiente",
+    "fecha_creacion": "2025-12-10T23:10:44.078+00:00",
+    "fecha_actualizacion": "2025-12-10T23:10:44.545662+00:00"
+  },
+  {
+    "id": 157,
+    "cliente_nombre": "Gladis lopez",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 68,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Gillette Venus Simply 3filos Blister X8",
+        "precio": 25000,
+        "cantidad": 10,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1758411965/uiezk1dpnu0nfrqpebze.png",
+        "descripcion": "X8",
+        "fechaAgregado": "2025-09-27T21:43:33.093Z"
+      }
+    ],
+    "total": 250000,
+    "estado": "entregado",
+    "fecha_creacion": "2025-09-27T21:43:56.073+00:00",
+    "fecha_actualizacion": "2025-09-29T20:33:30.084+00:00"
+  },
+  {
+    "id": 194,
+    "cliente_nombre": "Martha Tabares",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "5 pacas protectores",
+    "productos": [
+      {
+        "id": 22,
+        "activo": true,
+        "codigo": null,
+        "nombre": "PROTECTOR NOSOTRAS DIARIOS X 15",
+        "precio": 1375,
+        "cantidad": 180,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756221463/wshwmrf2xp5ppggcexw3.png",
+        "descripcion": "DOCENA 16500 CAJA X 3 DOCENAS",
+        "fechaAgregado": "2025-10-09T20:28:27.188Z"
+      },
+      {
+        "id": 6,
+        "activo": true,
+        "codigo": null,
+        "nombre": "TOALLAS NOSOTRAS DIA Y NOCHE X 24",
+        "precio": 10500,
+        "cantidad": 40,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756221186/dppyfby8tqwndogketue.png",
+        "descripcion": null,
+        "fechaAgregado": "2025-10-09T20:24:49.314Z"
+      },
+      {
+        "id": 137,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Nivea nutritiva Milk 1000 ml",
+        "precio": 32000,
+        "cantidad": 18,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1759870805/vqqdzyx76ft0a2g0yvml.jpg",
+        "descripcion": null,
+        "fechaAgregado": "2025-10-09T20:24:20.754Z"
+      }
+    ],
+    "total": 1243500,
+    "estado": "entregado",
+    "fecha_creacion": "2025-10-09T20:29:12.235+00:00",
+    "fecha_actualizacion": "2025-10-17T17:46:50.13+00:00"
+  },
+  {
+    "id": 166,
+    "cliente_nombre": "adrrian",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 136,
+        "activo": true,
+        "codigo": null,
+        "nombre": "ACID MANTLE BABY",
+        "precio": 29000,
+        "cantidad": 12,
+        "categoria": "Medicamentos",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1759422407/ankg9tkn6howwoydlfys.png",
+        "descripcion": null,
+        "fechaAgregado": "2025-10-02T17:13:34.663Z"
+      }
+    ],
+    "total": 348000,
+    "estado": "entregado",
+    "fecha_creacion": "2025-10-02T17:13:46.895+00:00",
+    "fecha_actualizacion": "2025-10-03T10:22:36.573+00:00"
+  },
+  {
+    "id": 165,
+    "cliente_nombre": "fredy",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 132,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Complejo B Bedoyecta 2ml   3 Ampollas",
+        "precio": 29000,
+        "cantidad": 10,
+        "categoria": "Medicamentos",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1758820390/kzexmzudlrxx4nw5wk0o.png",
+        "descripcion": null,
+        "fechaAgregado": "2025-10-02T17:13:05.327Z"
+      }
+    ],
+    "total": 290000,
+    "estado": "entregado",
+    "fecha_creacion": "2025-10-02T17:13:17.61+00:00",
+    "fecha_actualizacion": "2025-10-03T10:22:50.727+00:00"
+  },
+  {
+    "id": 173,
+    "cliente_nombre": "Lucero",
+    "cliente_telefono": "3004583170",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 29,
+        "activo": true,
+        "codigo": null,
+        "nombre": "SHAMPOO SAVITAL CON ACEITE DE ARGAN CAJA X 20 SOBRES",
+        "precio": 12500,
+        "cantidad": 24,
+        "categoria": "Cuidado del Cabello",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1758408639/ovtwjilrok87x4dcgbjh.png",
+        "descripcion": "Paca x 24 300000",
+        "fechaAgregado": "2025-10-03T20:30:31.915Z"
+      },
+      {
+        "id": 27,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Crema De Peinar Savital Multivitaminas 20 Sobres",
+        "precio": 12500,
+        "cantidad": 24,
+        "categoria": "Cuidado del Cabello",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1758405402/thttanarqqtnwobidsfu.png",
+        "descripcion": "CAJA X 24 300000",
+        "fechaAgregado": "2025-10-03T20:30:11.718Z"
+      },
+      {
+        "id": 113,
+        "activo": true,
+        "codigo": null,
+        "nombre": "acondicionador savital complejo hialuronico y sabila caja x 20 sobres 22 ml",
+        "precio": 12500,
+        "cantidad": 25,
+        "categoria": "Cuidado del Cabello",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1758409246/xoi4l2ii6bmoudwl525t.png",
+        "descripcion": null,
+        "fechaAgregado": "2025-10-03T20:29:56.435Z"
+      }
+    ],
+    "total": 912500,
+    "estado": "entregado",
+    "fecha_creacion": "2025-10-03T20:31:00.339+00:00",
+    "fecha_actualizacion": "2025-10-07T22:29:33.344+00:00"
+  },
+  {
+    "id": 202,
+    "cliente_nombre": "Raul",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 135,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Talco Rexona Eficiente Talco Pack 180g +55g",
+        "precio": 14000,
+        "cantidad": 24,
+        "categoria": "Desodorantes",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1759140813/jx43tesnze4g4rbgx91j.jpg",
+        "descripcion": null,
+        "fechaAgregado": "2025-10-22T22:19:33.847Z"
+      },
+      {
+        "id": 149,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Crema Dental Colgate Luminous White Carbon Activado X 75 Ml",
+        "precio": 12000,
+        "cantidad": 48,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1761167710/nfbkfc8noywgr8klosph.jpg",
+        "descripcion": "Caja x48 576000",
+        "fechaAgregado": "2025-10-22T22:16:04.848Z"
+      }
+    ],
+    "total": 912000,
+    "estado": "entregado",
+    "fecha_creacion": "2025-10-22T22:26:04.334+00:00",
+    "fecha_actualizacion": "2025-10-24T22:21:26.722+00:00"
+  },
+  {
+    "id": 184,
+    "cliente_nombre": "Sara",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 140,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Nivea rolon tono natural ",
+        "precio": 8500,
+        "cantidad": 36,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1759873077/zklctg5cmbgeunupgxya.jpg",
+        "descripcion": null,
+        "fechaAgregado": "2025-10-07T21:42:29.776Z"
+      },
+      {
+        "id": 139,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Nivea spray rojo natural x2",
+        "precio": 22000,
+        "cantidad": 24,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1759873019/cprhhdndjapoxgqiyl0f.jpg",
+        "descripcion": null,
+        "fechaAgregado": "2025-10-07T21:42:10.934Z"
+      },
+      {
+        "id": 137,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Nivea nutritiva Milk 1000 ml",
+        "precio": 32000,
+        "cantidad": 18,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1759870805/vqqdzyx76ft0a2g0yvml.jpg",
+        "descripcion": null,
+        "fechaAgregado": "2025-10-07T21:41:44.440Z"
+      }
+    ],
+    "total": 1410000,
+    "estado": "entregado",
+    "fecha_creacion": "2025-10-07T21:42:51.508+00:00",
+    "fecha_actualizacion": "2025-10-24T22:24:19.205+00:00"
+  },
+  {
+    "id": 232,
+    "cliente_nombre": "ERERTE",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 112,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Acondicionador Savital Multivitaminas X 25Ml  SOBRES",
+        "precio": 12500,
+        "cantidad": 1,
+        "categoria": "Cuidado del Cabello",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1758405853/mijt6wcuwzghsps0ysi8.png",
+        "descripcion": null,
+        "fechaAgregado": "2025-11-11T13:51:58.638Z"
+      }
+    ],
+    "total": 12500,
+    "estado": "cancelado",
+    "fecha_creacion": "2025-11-11T13:55:00.122+00:00",
+    "fecha_actualizacion": "2025-11-14T14:16:48.48+00:00"
+  },
+  {
+    "id": 195,
+    "cliente_nombre": "Mamdo",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 133,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Mieltertos mentholyptus pastillas masticables X48 X12X4",
+        "precio": 18500,
+        "cantidad": 96,
+        "categoria": "Medicamentos",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1758845411/cstw1ikd1ithofx9icez.png",
+        "descripcion": null,
+        "fechaAgregado": "2025-10-14T20:49:58.721Z"
+      }
+    ],
+    "total": 1776000,
+    "estado": "entregado",
+    "fecha_creacion": "2025-10-14T20:50:19.967+00:00",
+    "fecha_actualizacion": "2025-10-17T17:46:15.643+00:00"
+  },
+  {
+    "id": 158,
+    "cliente_nombre": "Edwin",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 32,
+        "activo": true,
+        "codigo": null,
+        "nombre": "HUGGIES ETAPA 5 X 50",
+        "precio": 52000,
+        "cantidad": 20,
+        "categoria": "Pañales",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1758411733/jtgzrrxfryjhoudbn2j4.png",
+        "descripcion": "PACA X 8 =  416000",
+        "fechaAgregado": "2025-09-29T21:15:44.326Z"
+      }
+    ],
+    "total": 1040000,
+    "estado": "entregado",
+    "fecha_creacion": "2025-09-29T21:16:19.827+00:00",
+    "fecha_actualizacion": "2025-10-02T16:34:28.458+00:00"
+  },
+  {
+    "id": 201,
+    "cliente_nombre": "Juan Pablo",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 149,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Crema Dental Colgate Luminous White Carbon Activado X 75 Ml",
+        "precio": 12000,
+        "cantidad": 96,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1761167710/nfbkfc8noywgr8klosph.jpg",
+        "descripcion": "Caja x48 576000",
+        "fechaAgregado": "2025-10-22T21:24:37.215Z"
+      },
+      {
+        "id": 6,
+        "activo": true,
+        "codigo": null,
+        "nombre": "TOALLAS NOSOTRAS DIA Y NOCHE X 24",
+        "precio": 10500,
+        "cantidad": 8,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756221186/dppyfby8tqwndogketue.png",
+        "descripcion": null,
+        "fechaAgregado": "2025-10-22T21:24:23.445Z"
+      },
+      {
+        "id": 35,
+        "activo": true,
+        "codigo": null,
+        "nombre": "NOSOTRAS BUENAS NOCHES +PROTE...",
+        "precio": 17500,
+        "cantidad": 12,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756217613/jlvvbmsdlxum6ghddd9f.png",
+        "descripcion": "CAJA X  12 175000",
+        "fechaAgregado": "2025-10-22T21:24:10.453Z"
+      }
+    ],
+    "total": 1446000,
+    "estado": "entregado",
+    "fecha_creacion": "2025-10-22T21:25:24.085+00:00",
+    "fecha_actualizacion": "2025-10-24T22:21:47.807+00:00"
+  },
+  {
+    "id": 167,
+    "cliente_nombre": "nndo",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 133,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Mieltertos mentholyptus pastillas masticables X48 X12X4",
+        "precio": 18500,
+        "cantidad": 48,
+        "categoria": "Medicamentos",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1758845411/cstw1ikd1ithofx9icez.png",
+        "descripcion": null,
+        "fechaAgregado": "2025-10-02T17:14:32.997Z"
+      },
+      {
+        "id": 132,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Complejo B Bedoyecta 2ml   3 Ampollas",
+        "precio": 29000,
+        "cantidad": 30,
+        "categoria": "Medicamentos",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1758820390/kzexmzudlrxx4nw5wk0o.png",
+        "descripcion": null,
+        "fechaAgregado": "2025-10-02T17:14:17.829Z"
+      }
+    ],
+    "total": 1758000,
+    "estado": "entregado",
+    "fecha_creacion": "2025-10-02T17:14:45.332+00:00",
+    "fecha_actualizacion": "2025-10-02T22:54:30.021+00:00"
+  },
+  {
+    "id": 251,
+    "cliente_nombre": "Ramiro",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 135,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Talco Rexona Eficiente Talco Pack 180g +55g",
+        "precio": 14000,
+        "cantidad": 20,
+        "categoria": "Desodorantes",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1759140813/jx43tesnze4g4rbgx91j.jpg",
+        "descripcion": null,
+        "fechaAgregado": "2025-11-20T21:33:13.761Z"
+      },
+      {
+        "id": 99,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Unesia Crema Antimicotico 20 Gr",
+        "precio": 23000,
+        "cantidad": 10,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1758408513/lhpwheoz4haf7ykjyldp.png",
+        "descripcion": null,
+        "fechaAgregado": "2025-11-20T21:32:40.575Z"
+      },
+      {
+        "id": 59,
+        "activo": true,
+        "codigo": null,
+        "nombre": "KOTEX x24 BUENAS NOCHES",
+        "precio": 12000,
+        "cantidad": 16,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756247109/mqqrxuawhbjzbsemkgwt.jpg",
+        "descripcion": "PACA X8 96000",
+        "fechaAgregado": "2025-11-20T21:30:55.381Z"
+      },
+      {
+        "id": 158,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Máquina Para Afeitar Gillette Prestobarba 3 Sensitive Blister X 10",
+        "precio": 380000,
+        "cantidad": 1,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1763052499/zbhsgqytq1oopioykcmp.png",
+        "descripcion": "caja x 120 unidades  blistre 31666 unidad 3166",
+        "fechaAgregado": "2025-11-20T21:28:13.120Z"
+      },
+      {
+        "id": 6,
+        "activo": true,
+        "codigo": null,
+        "nombre": "TOALLAS NOSOTRAS DIA Y NOCHE X 24",
+        "precio": 10500,
+        "cantidad": 16,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756221186/dppyfby8tqwndogketue.png",
+        "descripcion": null,
+        "fechaAgregado": "2025-11-20T21:27:50.752Z"
+      },
+      {
+        "id": 3,
+        "activo": true,
+        "codigo": null,
+        "nombre": "TOALLAS NOSOTRAS RAPIGEL X 30",
+        "precio": 11000,
+        "cantidad": 16,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756219671/bh1kzufjjpk7wrzfxbxb.png",
+        "descripcion": "tallas nosotras rapigel x 30 caja x 8",
+        "fechaAgregado": "2025-11-20T21:26:52.369Z"
+      }
+    ],
+    "total": 1426000,
+    "estado": "entregado",
+    "fecha_creacion": "2025-11-20T21:33:42.348+00:00",
+    "fecha_actualizacion": "2025-11-24T13:57:21.994+00:00"
+  },
+  {
+    "id": 263,
+    "cliente_nombre": "Luz",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 132,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Complejo B Bedoyecta 2ml   3 Ampollas",
+        "precio": 29000,
+        "cantidad": 30,
+        "categoria": "Medicamentos",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1758820390/kzexmzudlrxx4nw5wk0o.png",
+        "descripcion": null,
+        "fechaAgregado": "2025-12-01T21:18:28.673Z"
+      }
+    ],
+    "total": 870000,
+    "estado": "pendiente",
+    "fecha_creacion": "2025-12-01T21:18:42.238+00:00",
+    "fecha_actualizacion": "2025-12-01T21:18:42.670734+00:00"
+  },
+  {
+    "id": 185,
+    "cliente_nombre": "Héctor sabana",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 141,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Nivea facial. 5 en 1 100gr",
+        "precio": 15000,
+        "cantidad": 24,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1759873130/jbwzs8xwvyn0f7ridq1a.jpg",
+        "descripcion": null,
+        "fechaAgregado": "2025-10-07T21:45:37.587Z"
+      },
+      {
+        "id": 143,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Nivea antiarrugas x100",
+        "precio": 21000,
+        "cantidad": 24,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1759873476/e1mnxfrbtohtedzzvmiq.jpg",
+        "descripcion": null,
+        "fechaAgregado": "2025-10-07T21:45:29.607Z"
+      }
+    ],
+    "total": 864000,
+    "estado": "entregado",
+    "fecha_creacion": "2025-10-07T21:46:04.329+00:00",
+    "fecha_actualizacion": "2025-10-24T22:24:29.736+00:00"
+  },
+  {
+    "id": 174,
+    "cliente_nombre": "Yabet",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 85,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Toallas Kotex Normal 24 Und",
+        "precio": 7000,
+        "cantidad": 73,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1758408080/ohyzrby3i4sa0hkld4hd.png",
+        "descripcion": null,
+        "fechaAgregado": "2025-10-03T21:50:34.847Z"
+      }
+    ],
+    "total": 511000,
+    "estado": "entregado",
+    "fecha_creacion": "2025-10-03T21:51:17.109+00:00",
+    "fecha_actualizacion": "2025-10-26T23:15:12.242+00:00"
+  },
+  {
+    "id": 277,
+    "cliente_nombre": "Martin",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 158,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Máquina Para Afeitar Gillette Prestobarba 3 Sensitive Blister X 10",
+        "precio": 380000,
+        "cantidad": 1,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1763052499/zbhsgqytq1oopioykcmp.png",
+        "descripcion": "caja x 120 unidades  blistre 31666 unidad 3166",
+        "fechaAgregado": "2025-12-11T12:18:48.930Z"
+      }
+    ],
+    "total": 380000,
+    "estado": "pendiente",
+    "fecha_creacion": "2025-12-11T12:19:13.889+00:00",
+    "fecha_actualizacion": "2025-12-11T12:19:14.083623+00:00"
+  },
+  {
+    "id": 208,
+    "cliente_nombre": "ewrwerew",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "guytuytkuytvi6ti76rgi76",
+    "productos": [
+      {
+        "id": 65,
+        "activo": true,
+        "codigo": null,
+        "nombre": "TIO NACHO CONTROL CASPA 415 ENGROSADOR",
+        "precio": 22000,
+        "cantidad": 1,
+        "categoria": "Cuidado del Cabello",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756490216/lj2qrh6nd1f2jvcwxulo.png",
+        "descripcion": "CAJA X 12 264000",
+        "fechaAgregado": "2025-11-05T15:41:13.228Z"
+      },
+      {
+        "id": 33,
+        "activo": true,
+        "codigo": null,
+        "nombre": "TIO NACHO CONTROL CASPA 415",
+        "precio": 23000,
+        "cantidad": 184,
+        "categoria": "Cuidado del Cabello",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756219718/fpsedkkxnehrkimrwflr.png",
+        "descripcion": "CAJA X 12",
+        "fechaAgregado": "2025-11-05T15:41:08.578Z"
+      },
+      {
+        "id": 110,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Shampoo + Acondicionador DOVE Reconstrucción Completa (740 ml)",
+        "precio": 22000,
+        "cantidad": 37,
+        "categoria": "Cuidado del Cabello",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1758405710/umenzlyloocbkwimwshr.png",
+        "descripcion": null,
+        "fechaAgregado": "2025-11-05T15:40:59.211Z"
+      }
+    ],
+    "total": 5068000,
+    "estado": "cancelado",
+    "fecha_creacion": "2025-11-05T15:42:23.398+00:00",
+    "fecha_actualizacion": "2025-11-22T11:59:19.974+00:00"
+  },
+  {
+    "id": 212,
+    "cliente_nombre": "Hector",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 135,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Talco Rexona Eficiente Talco Pack 180g +55g",
+        "precio": 14000,
+        "cantidad": 24,
+        "categoria": "Desodorantes",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1759140813/jx43tesnze4g4rbgx91j.jpg",
+        "descripcion": null,
+        "fechaAgregado": "2025-11-07T14:55:25.346Z"
+      },
+      {
+        "id": 6,
+        "activo": true,
+        "codigo": null,
+        "nombre": "TOALLAS NOSOTRAS DIA Y NOCHE X 24",
+        "precio": 10500,
+        "cantidad": 8,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756221186/dppyfby8tqwndogketue.png",
+        "descripcion": null,
+        "fechaAgregado": "2025-11-07T14:55:09.245Z"
+      },
+      {
+        "id": 42,
+        "activo": true,
+        "codigo": null,
+        "nombre": "REXONA CLINICAL  SPORT STREGTH POR 2",
+        "precio": 25000,
+        "cantidad": 12,
+        "categoria": "Desodorantes",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756218831/c5qu31s1blxr5xcnqpsc.png",
+        "descripcion": "CAJA X 6",
+        "fechaAgregado": "2025-11-07T14:53:38.065Z"
+      },
+      {
+        "id": 45,
+        "activo": true,
+        "codigo": null,
+        "nombre": "PROTEX BALANCE JABON BARRA X72...",
+        "precio": 180000,
+        "cantidad": 1,
+        "categoria": "Jabones y Geles",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756218454/tcw0v8jhuzwopuroznph.png",
+        "descripcion": "PACA X72",
+        "fechaAgregado": "2025-11-07T14:53:11.612Z"
+      },
+      {
+        "id": 22,
+        "activo": true,
+        "codigo": null,
+        "nombre": "PROTECTOR NOSOTRAS DIARIOS X 15",
+        "precio": 1375,
+        "cantidad": 36,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756221463/wshwmrf2xp5ppggcexw3.png",
+        "descripcion": "DOCENA 16500 CAJA X 3 DOCENAS",
+        "fechaAgregado": "2025-11-07T14:52:49.373Z"
+      },
+      {
+        "id": 15,
+        "activo": true,
+        "codigo": null,
+        "nombre": "PILA DURACEL AA 10X6",
+        "precio": 195000,
+        "cantidad": 1,
+        "categoria": "Otros",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756220011/ytwm1a3bkdyybppdm4iz.png",
+        "descripcion": "CAJA X 10  C/U 19500",
+        "fechaAgregado": "2025-11-07T14:52:20.124Z"
+      },
+      {
+        "id": 35,
+        "activo": true,
+        "codigo": null,
+        "nombre": "NOSOTRAS BUENAS NOCHES +PROTE...",
+        "precio": 17500,
+        "cantidad": 12,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756217613/jlvvbmsdlxum6ghddd9f.png",
+        "descripcion": "CAJA X  12 175000",
+        "fechaAgregado": "2025-11-07T14:52:08.653Z"
+      },
+      {
+        "id": 139,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Nivea spray rojo natural x2",
+        "precio": 22000,
+        "cantidad": 12,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1759873019/cprhhdndjapoxgqiyl0f.jpg",
+        "descripcion": null,
+        "fechaAgregado": "2025-11-07T14:51:38.416Z"
+      },
+      {
+        "id": 140,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Nivea rolon tono natural ",
+        "precio": 8500,
+        "cantidad": 12,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1759873077/zklctg5cmbgeunupgxya.jpg",
+        "descripcion": null,
+        "fechaAgregado": "2025-11-07T14:51:26.497Z"
+      },
+      {
+        "id": 70,
+        "activo": true,
+        "codigo": null,
+        "nombre": "ENJUAGUE BUCAL LISTERINE COOL MINT 1.5 L",
+        "precio": 30000,
+        "cantidad": 13,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756989541/rpk58nbdagvvkmysuo1k.png",
+        "descripcion": "CAJA X 6 180000",
+        "fechaAgregado": "2025-11-07T14:50:17.028Z"
+      }
+    ],
+    "total": 2110500,
+    "estado": "entregado",
+    "fecha_creacion": "2025-11-07T14:55:45.367+00:00",
+    "fecha_actualizacion": "2025-11-28T18:33:54.451+00:00"
+  },
+  {
+    "id": 159,
+    "cliente_nombre": "Javier Buitrago",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 31,
+        "activo": true,
+        "codigo": null,
+        "nombre": "PONDS CR REJUVENESS 6X100G+...",
+        "precio": 23000,
+        "cantidad": 12,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1758899093/i99mozxgkrdsfr8xkpdp.jpg",
+        "descripcion": null,
+        "fechaAgregado": "2025-09-29T22:12:39.134Z"
+      },
+      {
+        "id": 80,
+        "activo": true,
+        "codigo": null,
+        "nombre": "LIPSTICK NIVEA CHERRY 4.8G",
+        "precio": 11500,
+        "cantidad": 12,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1758389331/lqzrtx43frvgnimb209g.jpg",
+        "descripcion": "CAJA X 24",
+        "fechaAgregado": "2025-09-29T22:12:18.127Z"
+      },
+      {
+        "id": 103,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Crema Para Peinar Sedal Rizos Definidos X 2und X 300ml",
+        "precio": 15000,
+        "cantidad": 8,
+        "categoria": "Cuidado del Cabello",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1758408817/zltxx5qkwo5cmphqxxkq.png",
+        "descripcion": null,
+        "fechaAgregado": "2025-09-29T22:11:41.821Z"
+      }
+    ],
+    "total": 534000,
+    "estado": "entregado",
+    "fecha_creacion": "2025-09-29T22:13:25.456+00:00",
+    "fecha_actualizacion": "2025-10-02T16:34:17.041+00:00"
+  },
+  {
+    "id": 196,
+    "cliente_nombre": "Ro",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 14,
+        "activo": true,
+        "codigo": null,
+        "nombre": "PILA DURACELL AAA 10X6",
+        "precio": 195000,
+        "cantidad": 12,
+        "categoria": "Otros",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756220099/hqnefqmyeoaetdnxep1c.png",
+        "descripcion": "CAJA X 10 C/U 19500",
+        "fechaAgregado": "2025-10-16T14:53:26.904Z"
+      },
+      {
+        "id": 15,
+        "activo": true,
+        "codigo": null,
+        "nombre": "PILA DURACEL AA 10X6",
+        "precio": 195000,
+        "cantidad": 12,
+        "categoria": "Otros",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756220011/ytwm1a3bkdyybppdm4iz.png",
+        "descripcion": "CAJA X 10  C/U 19500",
+        "fechaAgregado": "2025-10-16T14:53:23.234Z"
+      }
+    ],
+    "total": 4680000,
+    "estado": "entregado",
+    "fecha_creacion": "2025-10-16T14:53:53.556+00:00",
+    "fecha_actualizacion": "2025-10-17T17:45:36.127+00:00"
+  },
+  {
+    "id": 168,
+    "cliente_nombre": "yurany",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 32,
+        "activo": true,
+        "codigo": null,
+        "nombre": "HUGGIES ETAPA 5 X 50",
+        "precio": 52000,
+        "cantidad": 20,
+        "categoria": "Pañales",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1758411733/jtgzrrxfryjhoudbn2j4.png",
+        "descripcion": "PACA X 8 =  416000",
+        "fechaAgregado": "2025-10-02T17:15:16.613Z"
+      }
+    ],
+    "total": 1040000,
+    "estado": "entregado",
+    "fecha_creacion": "2025-10-02T17:15:34.632+00:00",
+    "fecha_actualizacion": "2025-10-02T22:53:57.834+00:00"
+  },
+  {
+    "id": 203,
+    "cliente_nombre": "Yanet",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 24,
+        "activo": true,
+        "codigo": null,
+        "nombre": "HUGGIES ACTIVE SECO ETAPA 0 X 25 PANALES",
+        "precio": 11000,
+        "cantidad": 63,
+        "categoria": "Pañales",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756216913/bsaf3mbmi4wjijo6ahic.png",
+        "descripcion": null,
+        "fechaAgregado": "2025-10-25T22:55:13.459Z"
+      }
+    ],
+    "total": 693000,
+    "estado": "entregado",
+    "fecha_creacion": "2025-10-25T22:55:48.813+00:00",
+    "fecha_actualizacion": "2025-10-26T23:13:56.615+00:00"
+  },
+  {
+    "id": 175,
+    "cliente_nombre": "CRmensa",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 69,
+        "activo": true,
+        "codigo": null,
+        "nombre": "ENJUAGUE BUCAL LISTERINE COOL MINT 1L",
+        "precio": 22000,
+        "cantidad": 6,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756905042/whblrshjfjezxrwap2et.png",
+        "descripcion": "CAJA X 6 UNIDADES 132000",
+        "fechaAgregado": "2025-10-04T20:53:30.594Z"
+      },
+      {
+        "id": 70,
+        "activo": true,
+        "codigo": null,
+        "nombre": "ENJUAGUE BUCAL LISTERINE COOL MINT 1.5 L",
+        "precio": 30000,
+        "cantidad": 6,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756989541/rpk58nbdagvvkmysuo1k.png",
+        "descripcion": "CAJA X 6 180000",
+        "fechaAgregado": "2025-10-04T20:53:22.982Z"
+      }
+    ],
+    "total": 312000,
+    "estado": "entregado",
+    "fecha_creacion": "2025-10-04T20:53:49.039+00:00",
+    "fecha_actualizacion": "2025-10-26T23:14:57.657+00:00"
+  },
+  {
+    "id": 197,
+    "cliente_nombre": "Edwin",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 32,
+        "activo": true,
+        "codigo": null,
+        "nombre": "HUGGIES ETAPA 5 X 50",
+        "precio": 52000,
+        "cantidad": 8,
+        "categoria": "Pañales",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1758411733/jtgzrrxfryjhoudbn2j4.png",
+        "descripcion": "PACA X 8 =  416000",
+        "fechaAgregado": "2025-10-16T21:25:05.865Z"
+      }
+    ],
+    "total": 416000,
+    "estado": "entregado",
+    "fecha_creacion": "2025-10-16T21:25:41.942+00:00",
+    "fecha_actualizacion": "2025-10-21T18:55:57.264+00:00"
+  },
+  {
+    "id": 186,
+    "cliente_nombre": "Héctor plaza",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 70,
+        "activo": true,
+        "codigo": null,
+        "nombre": "ENJUAGUE BUCAL LISTERINE COOL MINT 1.5 L",
+        "precio": 30000,
+        "cantidad": 12,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756989541/rpk58nbdagvvkmysuo1k.png",
+        "descripcion": "CAJA X 6 180000",
+        "fechaAgregado": "2025-10-07T21:47:12.940Z"
+      },
+      {
+        "id": 142,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Nivea facial cuidado antiarrugasx 100ml",
+        "precio": 21000,
+        "cantidad": 23,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1759873184/mqqlxih7kkxxjvmizgcm.jpg",
+        "descripcion": null,
+        "fechaAgregado": "2025-10-07T21:47:01.152Z"
+      },
+      {
+        "id": 137,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Nivea nutritiva Milk 1000 ml",
+        "precio": 32000,
+        "cantidad": 27,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1759870805/vqqdzyx76ft0a2g0yvml.jpg",
+        "descripcion": null,
+        "fechaAgregado": "2025-10-07T21:46:30.245Z"
+      }
+    ],
+    "total": 1707000,
+    "estado": "entregado",
+    "fecha_creacion": "2025-10-07T21:47:30.642+00:00",
+    "fecha_actualizacion": "2025-10-24T22:22:34.048+00:00"
+  },
+  {
+    "id": 152,
+    "cliente_nombre": "Martha tabares",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 68,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Gillette Venus Simply 3filos Blister X8",
+        "precio": 25000,
+        "cantidad": 25,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1758411965/uiezk1dpnu0nfrqpebze.png",
+        "descripcion": "X8",
+        "fechaAgregado": "2025-09-25T23:30:44.974Z"
+      },
+      {
+        "id": 83,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Huggies Active Sec Etapa 5/XXG x 25",
+        "precio": 26000,
+        "cantidad": 25,
+        "categoria": "Pañales",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1758406210/ucqmxl9zah0xz5t2j2r1.png",
+        "descripcion": "Pacax8",
+        "fechaAgregado": "2025-09-25T23:30:41.134Z"
+      }
+    ],
+    "total": 1275000,
+    "estado": "entregado",
+    "fecha_creacion": "2025-09-25T23:30:53.675+00:00",
+    "fecha_actualizacion": "2025-09-25T23:31:54.657+00:00"
+  },
+  {
+    "id": 204,
+    "cliente_nombre": "gillrrmo",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 15,
+        "activo": true,
+        "codigo": null,
+        "nombre": "PILA DURACEL AA 10X6",
+        "precio": 195000,
+        "cantidad": 1,
+        "categoria": "Otros",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756220011/ytwm1a3bkdyybppdm4iz.png",
+        "descripcion": "CAJA X 10  C/U 19500",
+        "fechaAgregado": "2025-10-27T16:43:25.001Z"
+      },
+      {
+        "id": 14,
+        "activo": true,
+        "codigo": null,
+        "nombre": "PILA DURACELL AAA 10X6",
+        "precio": 195000,
+        "cantidad": 1,
+        "categoria": "Otros",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756220099/hqnefqmyeoaetdnxep1c.png",
+        "descripcion": "CAJA X 10 C/U 19500",
+        "fechaAgregado": "2025-10-27T16:43:20.357Z"
+      },
+      {
+        "id": 12,
+        "activo": true,
+        "codigo": null,
+        "nombre": "TAMPON KOTEX DIGITAL RISTRA 6...",
+        "precio": 11500,
+        "cantidad": 18,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756219565/grrvgwouwgupyymwvlcq.png",
+        "descripcion": "CAJA X 6 X 6 ",
+        "fechaAgregado": "2025-10-27T16:42:23.271Z"
+      },
+      {
+        "id": 59,
+        "activo": true,
+        "codigo": null,
+        "nombre": "KOTEX x24 BUENAS NOCHES",
+        "precio": 12000,
+        "cantidad": 8,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756247109/mqqrxuawhbjzbsemkgwt.jpg",
+        "descripcion": "PACA X8 96000",
+        "fechaAgregado": "2025-10-27T16:41:36.518Z"
+      },
+      {
+        "id": 35,
+        "activo": true,
+        "codigo": null,
+        "nombre": "NOSOTRAS BUENAS NOCHES +PROTE...",
+        "precio": 17500,
+        "cantidad": 12,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756217613/jlvvbmsdlxum6ghddd9f.png",
+        "descripcion": "CAJA X  12 175000",
+        "fechaAgregado": "2025-10-27T16:41:19.914Z"
+      },
+      {
+        "id": 4,
+        "activo": true,
+        "codigo": null,
+        "nombre": "PROTECTORES NOSOTRAS MULTIESTILO x 150  x 10 CAJAS",
+        "precio": 14000,
+        "cantidad": 10,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756217857/g5jpd7snqpwywzx9jaue.png",
+        "descripcion": "C/U 14000",
+        "fechaAgregado": "2025-10-27T16:39:37.176Z"
+      },
+      {
+        "id": 5,
+        "activo": true,
+        "codigo": null,
+        "nombre": "PROTECTORES NOSOTRAS NORMAL x 150 X 10 CAJAS",
+        "precio": 12000,
+        "cantidad": 20,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756217827/rr1iihl79wav1riegf6a.png",
+        "descripcion": "Caja 120000",
+        "fechaAgregado": "2025-10-27T16:39:28.343Z"
+      },
+      {
+        "id": 9,
+        "activo": true,
+        "codigo": null,
+        "nombre": "TOALLAS NOSOTRAS CLASICA X 30",
+        "precio": 10000,
+        "cantidad": 16,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756217702/wxoskdeordvqs15fkj8a.png",
+        "descripcion": "CAJA X 8 80000",
+        "fechaAgregado": "2025-10-27T16:38:18.624Z"
+      },
+      {
+        "id": 3,
+        "activo": true,
+        "codigo": null,
+        "nombre": "TOALLAS NOSOTRAS RAPIGEL X 30",
+        "precio": 11000,
+        "cantidad": 32,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756219671/bh1kzufjjpk7wrzfxbxb.png",
+        "descripcion": "tallas nosotras rapigel x 30 caja x 8",
+        "fechaAgregado": "2025-10-27T16:37:49.859Z"
+      },
+      {
+        "id": 7,
+        "activo": true,
+        "codigo": null,
+        "nombre": "REXONA POWER BRY",
+        "precio": 8000,
+        "cantidad": 18,
+        "categoria": "Desodorantes",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756218911/iwtiyuwvvpq4yce6fudt.png",
+        "descripcion": null,
+        "fechaAgregado": "2025-10-27T16:35:52.266Z"
+      },
+      {
+        "id": 23,
+        "activo": true,
+        "codigo": null,
+        "nombre": "REXONA  DEO ROLON  V8 X 50G X2",
+        "precio": 14000,
+        "cantidad": 18,
+        "categoria": "Desodorantes",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756218950/dkbvm2qevcqibk1kazc3.png",
+        "descripcion": "CAJA X 12",
+        "fechaAgregado": "2025-10-27T16:34:37.350Z"
+      },
+      {
+        "id": 16,
+        "activo": true,
+        "codigo": null,
+        "nombre": "JOHNSONS BABY 200 ML",
+        "precio": 10000,
+        "cantidad": 12,
+        "categoria": "Cuidado del Cabello",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756217345/it8wdfqj70pbaqosdcjn.png",
+        "descripcion": "CAJA  X 12",
+        "fechaAgregado": "2025-10-27T16:32:36.280Z"
+      }
+    ],
+    "total": 2311000,
+    "estado": "entregado",
+    "fecha_creacion": "2025-10-27T16:45:22.325+00:00",
+    "fecha_actualizacion": "2025-10-28T17:08:09.041+00:00"
+  },
+  {
+    "id": 209,
+    "cliente_nombre": "frgerte",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 113,
+        "activo": true,
+        "codigo": null,
+        "nombre": "acondicionador savital complejo hialuronico y sabila caja x 20 sobres 22 ml",
+        "precio": 12500,
+        "cantidad": 1,
+        "categoria": "Cuidado del Cabello",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1758409246/xoi4l2ii6bmoudwl525t.png",
+        "descripcion": null,
+        "fechaAgregado": "2025-11-05T15:42:45.441Z"
+      }
+    ],
+    "total": 12500,
+    "estado": "cancelado",
+    "fecha_creacion": "2025-11-05T15:42:55.19+00:00",
+    "fecha_actualizacion": "2025-11-22T11:58:55.497+00:00"
+  },
+  {
+    "id": 169,
+    "cliente_nombre": "javier",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 80,
+        "activo": true,
+        "codigo": null,
+        "nombre": "LIPSTICK NIVEA CHERRY 4.8G",
+        "precio": 11500,
+        "cantidad": 12,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1758389331/lqzrtx43frvgnimb209g.jpg",
+        "descripcion": "CAJA X 24",
+        "fechaAgregado": "2025-10-02T17:16:32.016Z"
+      },
+      {
+        "id": 103,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Crema Para Peinar Sedal Rizos Definidos X 2und X 300ml",
+        "precio": 15000,
+        "cantidad": 8,
+        "categoria": "Cuidado del Cabello",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1758408817/zltxx5qkwo5cmphqxxkq.png",
+        "descripcion": null,
+        "fechaAgregado": "2025-10-02T17:16:06.682Z"
+      },
+      {
+        "id": 136,
+        "activo": true,
+        "codigo": null,
+        "nombre": "ACID MANTLE BABY",
+        "precio": 29000,
+        "cantidad": 20,
+        "categoria": "Medicamentos",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1759422407/ankg9tkn6howwoydlfys.png",
+        "descripcion": null,
+        "fechaAgregado": "2025-10-02T17:15:52.619Z"
+      }
+    ],
+    "total": 838000,
+    "estado": "entregado",
+    "fecha_creacion": "2025-10-02T17:16:46.45+00:00",
+    "fecha_actualizacion": "2025-10-02T22:53:42.317+00:00"
+  },
+  {
+    "id": 227,
+    "cliente_nombre": "Guillermo",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 3,
+        "activo": true,
+        "codigo": null,
+        "nombre": "TOALLAS NOSOTRAS RAPIGEL X 30",
+        "precio": 11000,
+        "cantidad": 30,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756219671/bh1kzufjjpk7wrzfxbxb.png",
+        "descripcion": "tallas nosotras rapigel x 30 caja x 8",
+        "fechaAgregado": "2025-11-10T23:29:49.984Z"
+      },
+      {
+        "id": 6,
+        "activo": true,
+        "codigo": null,
+        "nombre": "TOALLAS NOSOTRAS DIA Y NOCHE X 24",
+        "precio": 10500,
+        "cantidad": 8,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756221186/dppyfby8tqwndogketue.png",
+        "descripcion": null,
+        "fechaAgregado": "2025-11-10T23:29:36.749Z"
+      },
+      {
+        "id": 9,
+        "activo": true,
+        "codigo": null,
+        "nombre": "TOALLAS NOSOTRAS CLASICA X 30",
+        "precio": 10000,
+        "cantidad": 24,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756217702/wxoskdeordvqs15fkj8a.png",
+        "descripcion": "CAJA X 8 80000",
+        "fechaAgregado": "2025-11-10T23:28:46.712Z"
+      },
+      {
+        "id": 12,
+        "activo": true,
+        "codigo": null,
+        "nombre": "TAMPON KOTEX DIGITAL RISTRA 6...",
+        "precio": 11500,
+        "cantidad": 6,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756219565/grrvgwouwgupyymwvlcq.png",
+        "descripcion": "CAJA X 6 X 6 ",
+        "fechaAgregado": "2025-11-10T23:28:06.357Z"
+      },
+      {
+        "id": 135,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Talco Rexona Eficiente Talco Pack 180g +55g",
+        "precio": 14000,
+        "cantidad": 24,
+        "categoria": "Desodorantes",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1759140813/jx43tesnze4g4rbgx91j.jpg",
+        "descripcion": null,
+        "fechaAgregado": "2025-11-10T23:27:35.451Z"
+      },
+      {
+        "id": 128,
+        "activo": true,
+        "codigo": null,
+        "nombre": "REXONA DESODORANTE EN CREMA CLINICAL CLEAN 30 GR",
+        "precio": 2666,
+        "cantidad": 36,
+        "categoria": "Desodorantes",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1758416468/v3hdfctlijz9p3bmuyfn.png",
+        "descripcion": null,
+        "fechaAgregado": "2025-11-10T23:26:54.173Z"
+      },
+      {
+        "id": 22,
+        "activo": true,
+        "codigo": null,
+        "nombre": "PROTECTOR NOSOTRAS DIARIOS X 15",
+        "precio": 1375,
+        "cantidad": 36,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756221463/wshwmrf2xp5ppggcexw3.png",
+        "descripcion": "DOCENA 16500 CAJA X 3 DOCENAS",
+        "fechaAgregado": "2025-11-10T23:26:04.605Z"
+      },
+      {
+        "id": 5,
+        "activo": true,
+        "codigo": null,
+        "nombre": "PROTECTORES NOSOTRAS NORMAL x 150 X 10 CAJAS",
+        "precio": 12000,
+        "cantidad": 12,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756217827/rr1iihl79wav1riegf6a.png",
+        "descripcion": "Caja 120000",
+        "fechaAgregado": "2025-11-10T23:24:30.631Z"
+      },
+      {
+        "id": 36,
+        "activo": true,
+        "codigo": null,
+        "nombre": "NOSOTRAS BUENAS NOCHES X 10",
+        "precio": 7000,
+        "cantidad": 24,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756217663/ctbf6chzgacm5chrrdio.png",
+        "descripcion": null,
+        "fechaAgregado": "2025-11-10T23:23:52.782Z"
+      },
+      {
+        "id": 140,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Nivea rolon tono natural ",
+        "precio": 8500,
+        "cantidad": 12,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1759873077/zklctg5cmbgeunupgxya.jpg",
+        "descripcion": null,
+        "fechaAgregado": "2025-11-10T23:21:42.874Z"
+      },
+      {
+        "id": 80,
+        "activo": true,
+        "codigo": null,
+        "nombre": "LIPSTICK NIVEA CHERRY 4.8G",
+        "precio": 11500,
+        "cantidad": 12,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1758389331/lqzrtx43frvgnimb209g.jpg",
+        "descripcion": "CAJA X 24",
+        "fechaAgregado": "2025-11-10T23:20:46.921Z"
+      },
+      {
+        "id": 59,
+        "activo": true,
+        "codigo": null,
+        "nombre": "KOTEX x24 BUENAS NOCHES",
+        "precio": 12000,
+        "cantidad": 16,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756247109/mqqrxuawhbjzbsemkgwt.jpg",
+        "descripcion": "PACA X8 96000",
+        "fechaAgregado": "2025-11-10T23:20:16.861Z"
+      },
+      {
+        "id": 114,
+        "activo": true,
+        "codigo": null,
+        "nombre": "DESODORANTE REXONA MEN V8 ROLLON 30 ML",
+        "precio": 2667,
+        "cantidad": 24,
+        "categoria": "Desodorantes",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1758409174/odwgkmlr2yhhaccwacqi.png",
+        "descripcion": "DOCENA 32000",
+        "fechaAgregado": "2025-11-10T23:19:30.500Z"
+      },
+      {
+        "id": 115,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Desodorante Mini Roll On 30ml Rexona Bamboo",
+        "precio": 2667,
+        "cantidad": 24,
+        "categoria": "Desodorantes",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1758407666/ggrbdwrhet2ufwoipbuh.png",
+        "descripcion": "DOCENA 32000",
+        "fechaAgregado": "2025-11-10T23:19:20.481Z"
+      },
+      {
+        "id": 74,
+        "activo": true,
+        "codigo": null,
+        "nombre": "CHAMPU ELVIVE HIDRA HIALURONICO",
+        "precio": 13000,
+        "cantidad": 12,
+        "categoria": "Cuidado del Cabello",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1758405980/vldbi1azqalqthsrd2ze.png",
+        "descripcion": "CAJA X 12 ",
+        "fechaAgregado": "2025-11-10T23:18:11.573Z"
+      },
+      {
+        "id": 112,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Acondicionador Savital Multivitaminas X 25Ml  SOBRES",
+        "precio": 12500,
+        "cantidad": 24,
+        "categoria": "Cuidado del Cabello",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1758405853/mijt6wcuwzghsps0ysi8.png",
+        "descripcion": null,
+        "fechaAgregado": "2025-11-10T23:17:40.329Z"
+      }
+    ],
+    "total": 2532492,
+    "estado": "entregado",
+    "fecha_creacion": "2025-11-10T23:46:01.76+00:00",
+    "fecha_actualizacion": "2025-11-24T13:57:54.944+00:00"
+  },
+  {
+    "id": 176,
+    "cliente_nombre": "Leidy",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 136,
+        "activo": true,
+        "codigo": null,
+        "nombre": "ACID MANTLE BABY",
+        "precio": 29000,
+        "cantidad": 48,
+        "categoria": "Medicamentos",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1759422407/ankg9tkn6howwoydlfys.png",
+        "descripcion": null,
+        "fechaAgregado": "2025-10-06T10:46:37.674Z"
+      }
+    ],
+    "total": 1392000,
+    "estado": "entregado",
+    "fecha_creacion": "2025-10-06T10:47:10.678+00:00",
+    "fecha_actualizacion": "2025-10-07T22:28:08.821+00:00"
+  },
+  {
+    "id": 254,
+    "cliente_nombre": "Martaj. Blanco",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 6,
+        "activo": true,
+        "codigo": null,
+        "nombre": "TOALLAS NOSOTRAS DIA Y NOCHE X 24",
+        "precio": 10500,
+        "cantidad": 40,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756221186/dppyfby8tqwndogketue.png",
+        "descripcion": null,
+        "fechaAgregado": "2025-11-22T21:04:55.122Z"
+      }
+    ],
+    "total": 420000,
+    "estado": "entregado",
+    "fecha_creacion": "2025-11-22T21:05:58.269+00:00",
+    "fecha_actualizacion": "2025-11-28T18:23:54.268+00:00"
+  },
+  {
+    "id": 264,
+    "cliente_nombre": "Carmesa",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 117,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Enjuague Bucal LISTERINE Control Cálculo 500 ml",
+        "precio": 19000,
+        "cantidad": 13,
+        "categoria": null,
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1758411061/nqzid106mit0c2srdk5j.png",
+        "descripcion": null,
+        "fechaAgregado": "2025-12-01T21:34:26.880Z"
+      }
+    ],
+    "total": 247000,
+    "estado": "entregado",
+    "fecha_creacion": "2025-12-01T21:34:38.502+00:00",
+    "fecha_actualizacion": "2025-12-02T21:29:32.218+00:00"
+  },
+  {
+    "id": 278,
+    "cliente_nombre": "Fernando piebda",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 35,
+        "activo": true,
+        "codigo": null,
+        "nombre": "NOSOTRAS BUENAS NOCHES +PROTE...",
+        "precio": 17500,
+        "cantidad": 24,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756217613/jlvvbmsdlxum6ghddd9f.png",
+        "descripcion": "CAJA X  12 175000",
+        "fechaAgregado": "2025-12-11T12:20:03.783Z"
+      }
+    ],
+    "total": 420000,
+    "estado": "pendiente",
+    "fecha_creacion": "2025-12-11T12:20:19.888+00:00",
+    "fecha_actualizacion": "2025-12-11T12:20:20.016048+00:00"
+  },
+  {
+    "id": 249,
+    "cliente_nombre": "Mary",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 110,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Shampoo + Acondicionador DOVE Reconstrucción Completa (740 ml)",
+        "precio": 22000,
+        "cantidad": 24,
+        "categoria": "Cuidado del Cabello",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1758405710/umenzlyloocbkwimwshr.png",
+        "descripcion": null,
+        "fechaAgregado": "2025-11-18T20:13:41.042Z"
+      },
+      {
+        "id": 158,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Máquina Para Afeitar Gillette Prestobarba 3 Sensitive Blister X 10",
+        "precio": 380000,
+        "cantidad": 1,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1763052499/zbhsgqytq1oopioykcmp.png",
+        "descripcion": "caja x 120 unidades  blistre 31666 unidad 3166",
+        "fechaAgregado": "2025-11-18T20:13:07.395Z"
+      },
+      {
+        "id": 140,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Nivea rolon tono natural ",
+        "precio": 8500,
+        "cantidad": 24,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1759873077/zklctg5cmbgeunupgxya.jpg",
+        "descripcion": null,
+        "fechaAgregado": "2025-11-18T20:12:51.843Z"
+      },
+      {
+        "id": 132,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Complejo B Bedoyecta 2ml   3 Ampollas",
+        "precio": 29000,
+        "cantidad": 12,
+        "categoria": "Medicamentos",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1758820390/kzexmzudlrxx4nw5wk0o.png",
+        "descripcion": null,
+        "fechaAgregado": "2025-11-18T20:12:34.190Z"
+      }
+    ],
+    "total": 1460000,
+    "estado": "entregado",
+    "fecha_creacion": "2025-11-18T20:14:05.212+00:00",
+    "fecha_actualizacion": "2025-11-22T11:57:51.073+00:00"
+  },
+  {
+    "id": 248,
+    "cliente_nombre": "Laura sancjez",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 5,
+        "activo": true,
+        "codigo": null,
+        "nombre": "PROTECTORES NOSOTRAS NORMAL x 150 X 10 CAJAS",
+        "precio": 12000,
+        "cantidad": 10,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756217827/rr1iihl79wav1riegf6a.png",
+        "descripcion": "Caja 120000",
+        "fechaAgregado": "2025-11-12T22:25:10.954Z"
+      },
+      {
+        "id": 3,
+        "activo": true,
+        "codigo": null,
+        "nombre": "TOALLAS NOSOTRAS RAPIGEL X 30",
+        "precio": 11000,
+        "cantidad": 8,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756219671/bh1kzufjjpk7wrzfxbxb.png",
+        "descripcion": "tallas nosotras rapigel x 30 caja x 8",
+        "fechaAgregado": "2025-11-12T22:22:27.396Z"
+      },
+      {
+        "id": 9,
+        "activo": true,
+        "codigo": null,
+        "nombre": "TOALLAS NOSOTRAS CLASICA X 30",
+        "precio": 10000,
+        "cantidad": 8,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756217702/wxoskdeordvqs15fkj8a.png",
+        "descripcion": "CAJA X 8 80000",
+        "fechaAgregado": "2025-11-12T22:20:38.769Z"
+      }
+    ],
+    "total": 288000,
+    "estado": "entregado",
+    "fecha_creacion": "2025-11-12T22:25:50.098+00:00",
+    "fecha_actualizacion": "2025-11-22T11:51:34.429+00:00"
+  },
+  {
+    "id": 247,
+    "cliente_nombre": "Nando",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 9,
+        "activo": true,
+        "codigo": null,
+        "nombre": "TOALLAS NOSOTRAS CLASICA X 30",
+        "precio": 10000,
+        "cantidad": 40,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756217702/wxoskdeordvqs15fkj8a.png",
+        "descripcion": "CAJA X 8 80000",
+        "fechaAgregado": "2025-11-12T20:43:19.761Z"
+      },
+      {
+        "id": 3,
+        "activo": true,
+        "codigo": null,
+        "nombre": "TOALLAS NOSOTRAS RAPIGEL X 30",
+        "precio": 11000,
+        "cantidad": 40,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756219671/bh1kzufjjpk7wrzfxbxb.png",
+        "descripcion": "tallas nosotras rapigel x 30 caja x 8",
+        "fechaAgregado": "2025-11-12T20:43:02.469Z"
+      },
+      {
+        "id": 6,
+        "activo": true,
+        "codigo": null,
+        "nombre": "TOALLAS NOSOTRAS DIA Y NOCHE X 24",
+        "precio": 10500,
+        "cantidad": 16,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756221186/dppyfby8tqwndogketue.png",
+        "descripcion": null,
+        "fechaAgregado": "2025-11-12T20:42:15.104Z"
+      },
+      {
+        "id": 4,
+        "activo": true,
+        "codigo": null,
+        "nombre": "PROTECTORES NOSOTRAS MULTIESTILO x 150  x 10 CAJAS",
+        "precio": 14000,
+        "cantidad": 20,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756217857/g5jpd7snqpwywzx9jaue.png",
+        "descripcion": "C/U 14000",
+        "fechaAgregado": "2025-11-12T20:39:41.908Z"
+      },
+      {
+        "id": 76,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Protector Diario Nosotras Multiestilo 15 U",
+        "precio": 1459,
+        "cantidad": 1,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1758409979/wuchj5aceuo3dffpgfag.png",
+        "descripcion": "DOCENA 17500",
+        "fechaAgregado": "2025-11-12T20:39:33.901Z"
+      },
+      {
+        "id": 5,
+        "activo": true,
+        "codigo": null,
+        "nombre": "PROTECTORES NOSOTRAS NORMAL x 150 X 10 CAJAS",
+        "precio": 12000,
+        "cantidad": 20,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756217827/rr1iihl79wav1riegf6a.png",
+        "descripcion": "Caja 120000",
+        "fechaAgregado": "2025-11-12T20:39:18.538Z"
+      },
+      {
+        "id": 59,
+        "activo": true,
+        "codigo": null,
+        "nombre": "KOTEX x24 BUENAS NOCHES",
+        "precio": 12000,
+        "cantidad": 24,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756247109/mqqrxuawhbjzbsemkgwt.jpg",
+        "descripcion": "PACA X8 96000",
+        "fechaAgregado": "2025-11-12T20:38:28.410Z"
+      },
+      {
+        "id": 157,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Mexsana 150 + 85",
+        "precio": 12500,
+        "cantidad": 30,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1762617493/gkgivm0ty5h7qpsbwhxx.jpg",
+        "descripcion": null,
+        "fechaAgregado": "2025-11-12T20:36:25.645Z"
+      }
+    ],
+    "total": 2192459,
+    "estado": "entregado",
+    "fecha_creacion": "2025-11-12T20:44:04.244+00:00",
+    "fecha_actualizacion": "2025-11-22T11:51:55.907+00:00"
+  },
+  {
+    "id": 206,
+    "cliente_nombre": "Lorena casrañeda",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ez",
+    "productos": [
+      {
+        "id": 67,
+        "activo": true,
+        "codigo": null,
+        "nombre": "TEATRICAL ACLADORA",
+        "precio": 18000,
+        "cantidad": 6,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756908770/drbwic1oikcb8lnv5a87.png",
+        "descripcion": "Caja x 12",
+        "fechaAgregado": "2025-11-04T22:12:30.796Z"
+      },
+      {
+        "id": 9,
+        "activo": true,
+        "codigo": null,
+        "nombre": "TOALLAS NOSOTRAS CLASICA X 30",
+        "precio": 10000,
+        "cantidad": 40,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756217702/wxoskdeordvqs15fkj8a.png",
+        "descripcion": "CAJA X 8 80000",
+        "fechaAgregado": "2025-11-04T22:11:35.089Z"
+      },
+      {
+        "id": 6,
+        "activo": true,
+        "codigo": null,
+        "nombre": "TOALLAS NOSOTRAS DIA Y NOCHE X 24",
+        "precio": 10500,
+        "cantidad": 16,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756221186/dppyfby8tqwndogketue.png",
+        "descripcion": null,
+        "fechaAgregado": "2025-11-04T22:11:07.801Z"
+      },
+      {
+        "id": 75,
+        "activo": true,
+        "codigo": null,
+        "nombre": "NOSOTRAS  EXTRA PROTECCION  6 LARGAS X DOCENA ",
+        "precio": 2417,
+        "cantidad": 1,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1758296543/xnxjy99vlix70dffxgev.jpg",
+        "descripcion": "DOCENA 29000",
+        "fechaAgregado": "2025-11-04T22:09:15.501Z"
+      },
+      {
+        "id": 140,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Nivea rolon tono natural ",
+        "precio": 8500,
+        "cantidad": 13,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1759873077/zklctg5cmbgeunupgxya.jpg",
+        "descripcion": null,
+        "fechaAgregado": "2025-11-04T22:09:05.641Z"
+      },
+      {
+        "id": 59,
+        "activo": true,
+        "codigo": null,
+        "nombre": "KOTEX x24 BUENAS NOCHES",
+        "precio": 12000,
+        "cantidad": 8,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756247109/mqqrxuawhbjzbsemkgwt.jpg",
+        "descripcion": "PACA X8 96000",
+        "fechaAgregado": "2025-11-04T22:07:09.780Z"
+      },
+      {
+        "id": 68,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Gillette Venus Simply 3filos Blister X8",
+        "precio": 25000,
+        "cantidad": 10,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1758411965/uiezk1dpnu0nfrqpebze.png",
+        "descripcion": "X8",
+        "fechaAgregado": "2025-11-04T22:06:17.816Z"
+      },
+      {
+        "id": 97,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Desodorante Balance 40u C Invisible Hombre 2 X 50ml",
+        "precio": 13000,
+        "cantidad": 12,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1758404443/ihfllgbkmukjkgvgx5uh.png",
+        "descripcion": null,
+        "fechaAgregado": "2025-11-04T22:05:44.243Z"
+      },
+      {
+        "id": 111,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Arruru loción ",
+        "precio": 41000,
+        "cantidad": 13,
+        "categoria": "Cuidado del Cabello",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1758403892/nkqysgpg9l3rlshhxhv6.png",
+        "descripcion": null,
+        "fechaAgregado": "2025-11-04T21:52:16.062Z"
+      }
+    ],
+    "total": 1823917,
+    "estado": "entregado",
+    "fecha_creacion": "2025-11-04T22:13:06.538+00:00",
+    "fecha_actualizacion": "2025-11-22T11:59:46.898+00:00"
+  },
+  {
+    "id": 253,
+    "cliente_nombre": "Ferrixaril",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 163,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Crema colgate luminus white 125ml",
+        "precio": 14500,
+        "cantidad": 12,
+        "categoria": "Jabones y Geles",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1763739438/froeq2srvsuzekrgnwft.png",
+        "descripcion": null,
+        "fechaAgregado": "2025-11-22T16:57:43.341Z"
+      },
+      {
+        "id": 148,
+        "activo": true,
+        "codigo": null,
+        "nombre": "SHA. SAVITAL MULTIVITAMINAS 510 m",
+        "precio": 10500,
+        "cantidad": 12,
+        "categoria": "Cuidado del Cabello",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1760722750/rmlfacyuvb7jcdxmobiu.jpg",
+        "descripcion": null,
+        "fechaAgregado": "2025-11-22T16:57:23.478Z"
+      },
+      {
+        "id": 6,
+        "activo": true,
+        "codigo": null,
+        "nombre": "TOALLAS NOSOTRAS DIA Y NOCHE X 24",
+        "precio": 10500,
+        "cantidad": 8,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756221186/dppyfby8tqwndogketue.png",
+        "descripcion": null,
+        "fechaAgregado": "2025-11-22T16:56:42.455Z"
+      },
+      {
+        "id": 131,
+        "activo": true,
+        "codigo": null,
+        "nombre": "SHA. SAVITAL MULTIOLEOS 510 m",
+        "precio": 10500,
+        "cantidad": 12,
+        "categoria": "Cuidado del Cabello",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1760722323/b0naj2zrnyzhqz5ytvcl.jpg",
+        "descripcion": "Caja x12",
+        "fechaAgregado": "2025-11-22T16:55:34.482Z"
+      },
+      {
+        "id": 51,
+        "activo": true,
+        "codigo": null,
+        "nombre": "PONDS CREMA S X 200 G",
+        "precio": 20000,
+        "cantidad": 6,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756218346/mu7zbvg5znw0f1cjl5lr.png",
+        "descripcion": "CAJA X 12",
+        "fechaAgregado": "2025-11-22T16:54:37.748Z"
+      }
+    ],
+    "total": 630000,
+    "estado": "entregado",
+    "fecha_creacion": "2025-11-22T16:58:28.551+00:00",
+    "fecha_actualizacion": "2025-11-28T18:24:13.499+00:00"
+  },
+  {
+    "id": 266,
+    "cliente_nombre": "Jhon cruz",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 5,
+        "activo": true,
+        "codigo": null,
+        "nombre": "PROTECTORES NOSOTRAS NORMAL x 150 X 10 CAJAS",
+        "precio": 12000,
+        "cantidad": 50,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756217827/rr1iihl79wav1riegf6a.png",
+        "descripcion": "Caja 120000",
+        "fechaAgregado": "2025-12-02T21:46:20.385Z"
+      }
+    ],
+    "total": 600000,
+    "estado": "pendiente",
+    "fecha_creacion": "2025-12-02T21:46:45.096+00:00",
+    "fecha_actualizacion": "2025-12-02T21:46:45.577558+00:00"
+  },
+  {
+    "id": 279,
+    "cliente_nombre": "jhon marin",
+    "cliente_telefono": "3024528329",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 162,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Arrurru 60 loción niño",
+        "precio": 10000,
+        "cantidad": 1,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1763739371/h7dzexvd6rgdn5yfzdog.png",
+        "descripcion": null,
+        "fechaAgregado": "2025-12-12T16:58:09.862Z"
+      }
+    ],
+    "total": 10000,
+    "estado": "pendiente",
+    "fecha_creacion": "2025-12-12T16:58:40.911+00:00",
+    "fecha_actualizacion": "2025-12-12T16:58:41.141886+00:00"
+  },
+  {
+    "id": 252,
+    "cliente_nombre": "Sábado",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 61,
+        "activo": true,
+        "codigo": null,
+        "nombre": "BALANCE CLINICAL CREMA 70 g",
+        "precio": 5800,
+        "cantidad": 36,
+        "categoria": "Desodorantes",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756316074/gpjk0gfsktxaasvnc5fg.png",
+        "descripcion": "caja x 24  139200",
+        "fechaAgregado": "2025-11-22T14:10:16.833Z"
+      },
+      {
+        "id": 62,
+        "activo": true,
+        "codigo": null,
+        "nombre": "BALANCE WOMEN CLINICAL 70 g",
+        "precio": 5800,
+        "cantidad": 36,
+        "categoria": "Desodorantes",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756316094/hmsm3xgtnasngzindb3g.png",
+        "descripcion": "Caja x 24 139200",
+        "fechaAgregado": "2025-11-22T14:10:12.068Z"
+      },
+      {
+        "id": 128,
+        "activo": true,
+        "codigo": null,
+        "nombre": "REXONA DESODORANTE EN CREMA CLINICAL CLEAN 30 GR",
+        "precio": 2666,
+        "cantidad": 48,
+        "categoria": "Desodorantes",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1758416468/v3hdfctlijz9p3bmuyfn.png",
+        "descripcion": null,
+        "fechaAgregado": "2025-11-22T14:09:48.556Z"
+      },
+      {
+        "id": 116,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Enjuague Bucal LISTERINE Control Cálculo 180 ml",
+        "precio": 9500,
+        "cantidad": 72,
+        "categoria": null,
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1758410790/hj9xo9qor4prgt0mcxit.png",
+        "descripcion": null,
+        "fechaAgregado": "2025-11-22T14:09:14.550Z"
+      },
+      {
+        "id": 6,
+        "activo": true,
+        "codigo": null,
+        "nombre": "TOALLAS NOSOTRAS DIA Y NOCHE X 24",
+        "precio": 10500,
+        "cantidad": 16,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756221186/dppyfby8tqwndogketue.png",
+        "descripcion": null,
+        "fechaAgregado": "2025-11-22T14:03:51.985Z"
+      },
+      {
+        "id": 163,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Crema colgate luminus white 125ml",
+        "precio": 14500,
+        "cantidad": 72,
+        "categoria": "Jabones y Geles",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1763739438/froeq2srvsuzekrgnwft.png",
+        "descripcion": null,
+        "fechaAgregado": "2025-11-22T14:01:58.992Z"
+      },
+      {
+        "id": 59,
+        "activo": true,
+        "codigo": null,
+        "nombre": "KOTEX x24 BUENAS NOCHES",
+        "precio": 12000,
+        "cantidad": 24,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756247109/mqqrxuawhbjzbsemkgwt.jpg",
+        "descripcion": "PACA X8 96000",
+        "fechaAgregado": "2025-11-22T14:01:23.588Z"
+      },
+      {
+        "id": 135,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Talco Rexona Eficiente Talco Pack 180g +55g",
+        "precio": 14000,
+        "cantidad": 80,
+        "categoria": "Desodorantes",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1759140813/jx43tesnze4g4rbgx91j.jpg",
+        "descripcion": null,
+        "fechaAgregado": "2025-11-22T14:00:58.715Z"
+      },
+      {
+        "id": 3,
+        "activo": true,
+        "codigo": null,
+        "nombre": "TOALLAS NOSOTRAS RAPIGEL X 30",
+        "precio": 11000,
+        "cantidad": 48,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756219671/bh1kzufjjpk7wrzfxbxb.png",
+        "descripcion": "tallas nosotras rapigel x 30 caja x 8",
+        "fechaAgregado": "2025-11-22T14:00:18.967Z"
+      },
+      {
+        "id": 169,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Arrurru colonia  800 rosada loción",
+        "precio": 42000,
+        "cantidad": 24,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1763739833/sepz9njjiyqgiiscb0tv.png",
+        "descripcion": null,
+        "fechaAgregado": "2025-11-22T13:59:44.506Z"
+      }
+    ],
+    "total": 5385568,
+    "estado": "entregado",
+    "fecha_creacion": "2025-11-22T14:10:47.327+00:00",
+    "fecha_actualizacion": "2025-11-24T13:56:49.202+00:00"
+  },
+  {
+    "id": 257,
+    "cliente_nombre": "Juan Pablo",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 147,
+        "activo": true,
+        "codigo": null,
+        "nombre": "SHA. SAVITAL ANTICASPA 510 m",
+        "precio": 10500,
+        "cantidad": 12,
+        "categoria": "Cuidado del Cabello",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1760722732/gpvlzexvzrn3sfibmn9e.jpg",
+        "descripcion": null,
+        "fechaAgregado": "2025-11-24T22:40:55.795Z"
+      },
+      {
+        "id": 6,
+        "activo": true,
+        "codigo": null,
+        "nombre": "TOALLAS NOSOTRAS DIA Y NOCHE X 24",
+        "precio": 10500,
+        "cantidad": 8,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756221186/dppyfby8tqwndogketue.png",
+        "descripcion": null,
+        "fechaAgregado": "2025-11-24T22:40:37.820Z"
+      },
+      {
+        "id": 51,
+        "activo": true,
+        "codigo": null,
+        "nombre": "PONDS CREMA S X 200 G",
+        "precio": 20000,
+        "cantidad": 12,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756218346/mu7zbvg5znw0f1cjl5lr.png",
+        "descripcion": "CAJA X 12",
+        "fechaAgregado": "2025-11-24T22:40:19.002Z"
+      }
+    ],
+    "total": 450000,
+    "estado": "entregado",
+    "fecha_creacion": "2025-11-24T22:44:28.522+00:00",
+    "fecha_actualizacion": "2025-11-24T22:47:59.149+00:00"
+  },
+  {
+    "id": 256,
+    "cliente_nombre": "Laura ramos feriocarril",
+    "cliente_telefono": "3001373355",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 51,
+        "activo": true,
+        "codigo": null,
+        "nombre": "PONDS CREMA S X 200 G",
+        "precio": 20000,
+        "cantidad": 6,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756218346/mu7zbvg5znw0f1cjl5lr.png",
+        "descripcion": "CAJA X 12",
+        "fechaAgregado": "2025-11-24T22:33:07.219Z"
+      },
+      {
+        "id": 135,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Talco Rexona Eficiente Talco Pack 180g +55g",
+        "precio": 14000,
+        "cantidad": 10,
+        "categoria": "Desodorantes",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1759140813/jx43tesnze4g4rbgx91j.jpg",
+        "descripcion": null,
+        "fechaAgregado": "2025-11-24T22:31:31.618Z"
+      },
+      {
+        "id": 167,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Teatrical roja 100ml",
+        "precio": 18000,
+        "cantidad": 6,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1763739672/xwzj2rtbn00gcdcubulm.png",
+        "descripcion": null,
+        "fechaAgregado": "2025-11-24T22:31:18.084Z"
+      },
+      {
+        "id": 67,
+        "activo": true,
+        "codigo": null,
+        "nombre": "TEATRICAL ACLADORA",
+        "precio": 18000,
+        "cantidad": 6,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756908770/drbwic1oikcb8lnv5a87.png",
+        "descripcion": "Caja x 12",
+        "fechaAgregado": "2025-11-24T22:31:15.819Z"
+      },
+      {
+        "id": 170,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Speek stick clinical 100ml",
+        "precio": 7800,
+        "cantidad": 12,
+        "categoria": "Desodorantes",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1763739892/owjr7cmgtxffnjtgqotr.png",
+        "descripcion": null,
+        "fechaAgregado": "2025-11-24T22:30:55.187Z"
+      },
+      {
+        "id": 6,
+        "activo": true,
+        "codigo": null,
+        "nombre": "TOALLAS NOSOTRAS DIA Y NOCHE X 24",
+        "precio": 10500,
+        "cantidad": 8,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756221186/dppyfby8tqwndogketue.png",
+        "descripcion": null,
+        "fechaAgregado": "2025-11-24T22:30:24.756Z"
+      },
+      {
+        "id": 3,
+        "activo": true,
+        "codigo": null,
+        "nombre": "TOALLAS NOSOTRAS RAPIGEL X 30",
+        "precio": 11000,
+        "cantidad": 8,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756219671/bh1kzufjjpk7wrzfxbxb.png",
+        "descripcion": "tallas nosotras rapigel x 30 caja x 8",
+        "fechaAgregado": "2025-11-24T22:30:22.457Z"
+      },
+      {
+        "id": 9,
+        "activo": true,
+        "codigo": null,
+        "nombre": "TOALLAS NOSOTRAS CLASICA X 30",
+        "precio": 10000,
+        "cantidad": 8,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756217702/wxoskdeordvqs15fkj8a.png",
+        "descripcion": "CAJA X 8 80000",
+        "fechaAgregado": "2025-11-24T22:30:18.756Z"
+      },
+      {
+        "id": 5,
+        "activo": true,
+        "codigo": null,
+        "nombre": "PROTECTORES NOSOTRAS NORMAL x 150 X 10 CAJAS",
+        "precio": 12000,
+        "cantidad": 10,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756217827/rr1iihl79wav1riegf6a.png",
+        "descripcion": "Caja 120000",
+        "fechaAgregado": "2025-11-24T22:30:09.524Z"
+      },
+      {
+        "id": 4,
+        "activo": true,
+        "codigo": null,
+        "nombre": "PROTECTORES NOSOTRAS MULTIESTILO x 150  x 10 CAJAS",
+        "precio": 14000,
+        "cantidad": 10,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756217857/g5jpd7snqpwywzx9jaue.png",
+        "descripcion": "C/U 14000",
+        "fechaAgregado": "2025-11-24T22:30:02.928Z"
+      }
+    ],
+    "total": 1081600,
+    "estado": "entregado",
+    "fecha_creacion": "2025-11-24T22:35:08.582+00:00",
+    "fecha_actualizacion": "2025-11-28T18:23:09.867+00:00"
+  },
+  {
+    "id": 207,
+    "cliente_nombre": "ewrwerew",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "guytuytkuytvi6ti76rgi76",
+    "productos": [
+      {
+        "id": 65,
+        "activo": true,
+        "codigo": null,
+        "nombre": "TIO NACHO CONTROL CASPA 415 ENGROSADOR",
+        "precio": 22000,
+        "cantidad": 1,
+        "categoria": "Cuidado del Cabello",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756490216/lj2qrh6nd1f2jvcwxulo.png",
+        "descripcion": "CAJA X 12 264000",
+        "fechaAgregado": "2025-11-05T15:41:13.228Z"
+      },
+      {
+        "id": 33,
+        "activo": true,
+        "codigo": null,
+        "nombre": "TIO NACHO CONTROL CASPA 415",
+        "precio": 23000,
+        "cantidad": 184,
+        "categoria": "Cuidado del Cabello",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756219718/fpsedkkxnehrkimrwflr.png",
+        "descripcion": "CAJA X 12",
+        "fechaAgregado": "2025-11-05T15:41:08.578Z"
+      },
+      {
+        "id": 110,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Shampoo + Acondicionador DOVE Reconstrucción Completa (740 ml)",
+        "precio": 22000,
+        "cantidad": 37,
+        "categoria": "Cuidado del Cabello",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1758405710/umenzlyloocbkwimwshr.png",
+        "descripcion": null,
+        "fechaAgregado": "2025-11-05T15:40:59.211Z"
+      }
+    ],
+    "total": 5068000,
+    "estado": "cancelado",
+    "fecha_creacion": "2025-11-05T15:41:54.732+00:00",
+    "fecha_actualizacion": "2025-11-28T18:24:28.134+00:00"
+  },
+  {
+    "id": 260,
+    "cliente_nombre": "Edwin",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 59,
+        "activo": true,
+        "codigo": null,
+        "nombre": "KOTEX x24 BUENAS NOCHES",
+        "precio": 12000,
+        "cantidad": 29,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756247109/mqqrxuawhbjzbsemkgwt.jpg",
+        "descripcion": "PACA X8 96000",
+        "fechaAgregado": "2025-11-29T15:32:58.261Z"
+      },
+      {
+        "id": 3,
+        "activo": true,
+        "codigo": null,
+        "nombre": "TOALLAS NOSOTRAS RAPIGEL X 30",
+        "precio": 11000,
+        "cantidad": 56,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756219671/bh1kzufjjpk7wrzfxbxb.png",
+        "descripcion": "tallas nosotras rapigel x 30 caja x 8",
+        "fechaAgregado": "2025-11-29T15:26:31.039Z"
+      },
+      {
+        "id": 6,
+        "activo": true,
+        "codigo": null,
+        "nombre": "TOALLAS NOSOTRAS DIA Y NOCHE X 24",
+        "precio": 10500,
+        "cantidad": 40,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756221186/dppyfby8tqwndogketue.png",
+        "descripcion": null,
+        "fechaAgregado": "2025-11-29T15:26:16.165Z"
+      },
+      {
+        "id": 5,
+        "activo": true,
+        "codigo": null,
+        "nombre": "PROTECTORES NOSOTRAS NORMAL x 150 X 10 CAJAS",
+        "precio": 12000,
+        "cantidad": 20,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756217827/rr1iihl79wav1riegf6a.png",
+        "descripcion": "Caja 120000",
+        "fechaAgregado": "2025-11-29T15:25:55.574Z"
+      },
+      {
+        "id": 4,
+        "activo": true,
+        "codigo": null,
+        "nombre": "PROTECTORES NOSOTRAS MULTIESTILO x 150  x 10 CAJAS",
+        "precio": 14000,
+        "cantidad": 20,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756217857/g5jpd7snqpwywzx9jaue.png",
+        "descripcion": "C/U 14000",
+        "fechaAgregado": "2025-11-29T15:25:38.289Z"
+      },
+      {
+        "id": 35,
+        "activo": true,
+        "codigo": null,
+        "nombre": "NOSOTRAS BUENAS NOCHES +PROTE...",
+        "precio": 17500,
+        "cantidad": 24,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756217613/jlvvbmsdlxum6ghddd9f.png",
+        "descripcion": "CAJA X  12 175000",
+        "fechaAgregado": "2025-11-29T15:25:18.578Z"
+      },
+      {
+        "id": 9,
+        "activo": true,
+        "codigo": null,
+        "nombre": "TOALLAS NOSOTRAS CLASICA X 30",
+        "precio": 10000,
+        "cantidad": 40,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756217702/wxoskdeordvqs15fkj8a.png",
+        "descripcion": "CAJA X 8 80000",
+        "fechaAgregado": "2025-11-29T15:24:55.779Z"
+      }
+    ],
+    "total": 2724000,
+    "estado": "pendiente",
+    "fecha_creacion": "2025-11-29T15:33:24.296+00:00",
+    "fecha_actualizacion": "2025-11-29T15:33:25.767449+00:00"
+  },
+  {
+    "id": 268,
+    "cliente_nombre": "Sara",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 135,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Talco Rexona Eficiente Talco Pack 180g +55g",
+        "precio": 14000,
+        "cantidad": 96,
+        "categoria": "Desodorantes",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1759140813/jx43tesnze4g4rbgx91j.jpg",
+        "descripcion": null,
+        "fechaAgregado": "2025-12-03T21:52:30.766Z"
+      }
+    ],
+    "total": 1344000,
+    "estado": "pendiente",
+    "fecha_creacion": "2025-12-03T21:52:54.27+00:00",
+    "fecha_actualizacion": "2025-12-03T21:52:54.680022+00:00"
+  },
+  {
+    "id": 280,
+    "cliente_nombre": "Neidy",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 9,
+        "activo": true,
+        "codigo": null,
+        "nombre": "TOALLAS NOSOTRAS CLASICA X 30",
+        "precio": 10000,
+        "cantidad": 24,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756217702/wxoskdeordvqs15fkj8a.png",
+        "descripcion": "CAJA X 8 80000",
+        "fechaAgregado": "2025-12-15T10:44:48.293Z"
+      }
+    ],
+    "total": 240000,
+    "estado": "pendiente",
+    "fecha_creacion": "2025-12-15T10:45:11.836+00:00",
+    "fecha_actualizacion": "2025-12-15T10:45:12.341565+00:00"
+  },
+  {
+    "id": 261,
+    "cliente_nombre": "Edwin",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 5,
+        "activo": true,
+        "codigo": null,
+        "nombre": "PROTECTORES NOSOTRAS NORMAL x 150 X 10 CAJAS",
+        "precio": 12000,
+        "cantidad": 13,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756217827/rr1iihl79wav1riegf6a.png",
+        "descripcion": "Caja 120000",
+        "fechaAgregado": "2025-11-29T18:53:15.454Z"
+      },
+      {
+        "id": 9,
+        "activo": true,
+        "codigo": null,
+        "nombre": "TOALLAS NOSOTRAS CLASICA X 30",
+        "precio": 10000,
+        "cantidad": 30,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756217702/wxoskdeordvqs15fkj8a.png",
+        "descripcion": "CAJA X 8 80000",
+        "fechaAgregado": "2025-11-29T18:52:53.154Z"
+      },
+      {
+        "id": 35,
+        "activo": true,
+        "codigo": null,
+        "nombre": "NOSOTRAS BUENAS NOCHES +PROTE...",
+        "precio": 17500,
+        "cantidad": 13,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756217613/jlvvbmsdlxum6ghddd9f.png",
+        "descripcion": "CAJA X  12 175000",
+        "fechaAgregado": "2025-11-29T18:52:43.906Z"
+      },
+      {
+        "id": 4,
+        "activo": true,
+        "codigo": null,
+        "nombre": "PROTECTORES NOSOTRAS MULTIESTILO x 150  x 10 CAJAS",
+        "precio": 14000,
+        "cantidad": 10,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756217857/g5jpd7snqpwywzx9jaue.png",
+        "descripcion": "C/U 14000",
+        "fechaAgregado": "2025-11-29T18:52:29.095Z"
+      },
+      {
+        "id": 59,
+        "activo": true,
+        "codigo": null,
+        "nombre": "KOTEX x24 BUENAS NOCHES",
+        "precio": 12000,
+        "cantidad": 31,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756247109/mqqrxuawhbjzbsemkgwt.jpg",
+        "descripcion": "PACA X8 96000",
+        "fechaAgregado": "2025-11-29T18:52:01.870Z"
+      }
+    ],
+    "total": 1195500,
+    "estado": "en_preparacion",
+    "fecha_creacion": "2025-11-29T18:53:40.79+00:00",
+    "fecha_actualizacion": "2025-11-29T19:38:10.945+00:00"
+  },
+  {
+    "id": 265,
+    "cliente_nombre": "Gladis",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 69,
+        "activo": true,
+        "codigo": null,
+        "nombre": "ENJUAGUE BUCAL LISTERINE COOL MINT 1L",
+        "precio": 22000,
+        "cantidad": 12,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756905042/whblrshjfjezxrwap2et.png",
+        "descripcion": "CAJA X 6 UNIDADES 132000",
+        "fechaAgregado": "2025-12-02T20:05:49.100Z"
+      },
+      {
+        "id": 135,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Talco Rexona Eficiente Talco Pack 180g +55g",
+        "precio": 14000,
+        "cantidad": 48,
+        "categoria": "Desodorantes",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1759140813/jx43tesnze4g4rbgx91j.jpg",
+        "descripcion": null,
+        "fechaAgregado": "2025-12-02T20:05:14.033Z"
+      },
+      {
+        "id": 9,
+        "activo": true,
+        "codigo": null,
+        "nombre": "TOALLAS NOSOTRAS CLASICA X 30",
+        "precio": 10000,
+        "cantidad": 32,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756217702/wxoskdeordvqs15fkj8a.png",
+        "descripcion": "CAJA X 8 80000",
+        "fechaAgregado": "2025-12-02T20:04:43.309Z"
+      },
+      {
+        "id": 3,
+        "activo": true,
+        "codigo": null,
+        "nombre": "TOALLAS NOSOTRAS RAPIGEL X 30",
+        "precio": 11000,
+        "cantidad": 25,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756219671/bh1kzufjjpk7wrzfxbxb.png",
+        "descripcion": "tallas nosotras rapigel x 30 caja x 8",
+        "fechaAgregado": "2025-12-02T20:04:30.229Z"
+      }
+    ],
+    "total": 1531000,
+    "estado": "pendiente",
+    "fecha_creacion": "2025-12-02T20:06:19.449+00:00",
+    "fecha_actualizacion": "2025-12-02T20:06:20.013953+00:00"
+  },
+  {
+    "id": 267,
+    "cliente_nombre": "Yanet",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 3,
+        "activo": true,
+        "codigo": null,
+        "nombre": "TOALLAS NOSOTRAS RAPIGEL X 30",
+        "precio": 11000,
+        "cantidad": 40,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756219671/bh1kzufjjpk7wrzfxbxb.png",
+        "descripcion": "tallas nosotras rapigel x 30 caja x 8",
+        "fechaAgregado": "2025-12-03T20:55:29.486Z"
+      },
+      {
+        "id": 165,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Axe ice chill",
+        "precio": 10500,
+        "cantidad": 48,
+        "categoria": "Desodorantes",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1763739537/i322uuvrxzwbjoc0yvty.png",
+        "descripcion": null,
+        "fechaAgregado": "2025-12-03T20:54:25.934Z"
+      },
+      {
+        "id": 141,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Nivea facial. 5 en 1 100gr",
+        "precio": 15000,
+        "cantidad": 12,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1759873130/jbwzs8xwvyn0f7ridq1a.jpg",
+        "descripcion": null,
+        "fechaAgregado": "2025-12-03T20:53:47.657Z"
+      },
+      {
+        "id": 42,
+        "activo": true,
+        "codigo": null,
+        "nombre": "REXONA CLINICAL  SPORT STREGTH POR 2",
+        "precio": 25000,
+        "cantidad": 24,
+        "categoria": "Desodorantes",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756218831/c5qu31s1blxr5xcnqpsc.png",
+        "descripcion": "CAJA X 6",
+        "fechaAgregado": "2025-12-03T20:52:45.685Z"
+      },
+      {
+        "id": 29,
+        "activo": true,
+        "codigo": null,
+        "nombre": "SHAMPOO SAVITAL CON ACEITE DE ARGAN CAJA X 20 SOBRES",
+        "precio": 12500,
+        "cantidad": 24,
+        "categoria": "Cuidado del Cabello",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1758408639/ovtwjilrok87x4dcgbjh.png",
+        "descripcion": "Paca x 24 300000",
+        "fechaAgregado": "2025-12-03T20:52:10.798Z"
+      },
+      {
+        "id": 15,
+        "activo": true,
+        "codigo": null,
+        "nombre": "PILA DURACEL AA 10X6",
+        "precio": 195000,
+        "cantidad": 1,
+        "categoria": "Otros",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756220011/ytwm1a3bkdyybppdm4iz.png",
+        "descripcion": "CAJA X 10  C/U 19500",
+        "fechaAgregado": "2025-12-03T20:51:38.884Z"
+      },
+      {
+        "id": 25,
+        "activo": true,
+        "codigo": null,
+        "nombre": "GILLETTE MAX 3 X 2 HOJAS",
+        "precio": 16000,
+        "cantidad": 24,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756221377/ln3tywuzkuvwcbofypzv.png",
+        "descripcion": null,
+        "fechaAgregado": "2025-12-03T20:51:11.529Z"
+      }
+    ],
+    "total": 2603000,
+    "estado": "pendiente",
+    "fecha_creacion": "2025-12-03T20:56:21.438+00:00",
+    "fecha_actualizacion": "2025-12-03T20:56:22.732467+00:00"
+  },
+  {
+    "id": 271,
+    "cliente_nombre": "Yanet",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 9,
+        "activo": true,
+        "codigo": null,
+        "nombre": "TOALLAS NOSOTRAS CLASICA X 30",
+        "precio": 10000,
+        "cantidad": 40,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756217702/wxoskdeordvqs15fkj8a.png",
+        "descripcion": "CAJA X 8 80000",
+        "fechaAgregado": "2025-12-04T11:25:38.500Z"
+      }
+    ],
+    "total": 400000,
+    "estado": "pendiente",
+    "fecha_creacion": "2025-12-04T11:25:56.221+00:00",
+    "fecha_actualizacion": "2025-12-04T11:25:56.676218+00:00"
+  },
+  {
+    "id": 282,
+    "cliente_nombre": "Juan",
+    "cliente_telefono": "3112969569",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 183,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Poni malta ",
+        "precio": 20000,
+        "cantidad": 1,
+        "categoria": "Alimentos",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1766072585/vr1iwcc6m4nojnrnwc1v.jpg",
+        "descripcion": null,
+        "fechaAgregado": "2025-12-18T15:46:53.191Z"
+      }
+    ],
+    "total": 20000,
+    "estado": "pendiente",
+    "fecha_creacion": "2025-12-18T15:47:12.327+00:00",
+    "fecha_actualizacion": "2025-12-18T15:47:13.43755+00:00"
+  },
+  {
+    "id": 283,
+    "cliente_nombre": "Mauricio",
+    "cliente_telefono": "3112969569",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 183,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Poni malta ",
+        "precio": 20000,
+        "cantidad": 1,
+        "categoria": "Alimentos",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1766072585/vr1iwcc6m4nojnrnwc1v.jpg",
+        "descripcion": null,
+        "fechaAgregado": "2025-12-18T15:47:28.571Z"
+      }
+    ],
+    "total": 20000,
+    "estado": "pendiente",
+    "fecha_creacion": "2025-12-18T15:47:47.158+00:00",
+    "fecha_actualizacion": "2025-12-18T15:47:47.463952+00:00"
+  },
+  {
+    "id": 289,
+    "cliente_nombre": "Guillermo carro",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 93,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Tratamiento SAVITAL hidratacion intensa x425 ml",
+        "precio": 11000,
+        "cantidad": 12,
+        "categoria": "Cuidado del Cabello",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1758408700/o5yo8gbqudtqi7eduzuh.png",
+        "descripcion": null,
+        "fechaAgregado": "2026-01-08T13:01:54.544Z"
+      },
+      {
+        "id": 177,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Menticol x250ml",
+        "precio": 11000,
+        "cantidad": 12,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1765643645/bxhe8qtrgqtuvje7qko4.jpg",
+        "descripcion": null,
+        "fechaAgregado": "2026-01-08T13:00:53.436Z"
+      },
+      {
+        "id": 21,
+        "activo": true,
+        "codigo": null,
+        "nombre": "TANGA SPF100 24X12",
+        "precio": 28000,
+        "cantidad": 36,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756221244/fqeizfjs1mbzrubxpscb.png",
+        "descripcion": "paca x 12",
+        "fechaAgregado": "2026-01-08T13:00:15.471Z"
+      },
+      {
+        "id": 135,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Talco Rexona Eficiente Talco Pack 180g +55g",
+        "precio": 14000,
+        "cantidad": 36,
+        "categoria": "Desodorantes",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1759140813/jx43tesnze4g4rbgx91j.jpg",
+        "descripcion": null,
+        "fechaAgregado": "2026-01-08T12:57:51.818Z"
+      },
+      {
+        "id": 170,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Speek stick clinical 100ml dama",
+        "precio": 7800,
+        "cantidad": 48,
+        "categoria": "Desodorantes",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1765643036/npxicgmvmdrtnq8k9set.jpg",
+        "descripcion": null,
+        "fechaAgregado": "2026-01-08T12:57:12.806Z"
+      },
+      {
+        "id": 55,
+        "activo": true,
+        "codigo": null,
+        "nombre": "REXONA CLINICAL COLACILBLE 30G",
+        "precio": 32000,
+        "cantidad": 6,
+        "categoria": "Desodorantes",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756218750/n5ctj0evesmky3n8lldd.png",
+        "descripcion": null,
+        "fechaAgregado": "2026-01-08T12:55:54.224Z"
+      },
+      {
+        "id": 168,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Nude barra 50 ftp 50 ml",
+        "precio": 32000,
+        "cantidad": 6,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1763739710/atsuvpmb8b8kbpi2w09j.png",
+        "descripcion": null,
+        "fechaAgregado": "2026-01-08T12:55:02.827Z"
+      },
+      {
+        "id": 36,
+        "activo": true,
+        "codigo": null,
+        "nombre": "NOSOTRAS BUENAS NOCHES X 10",
+        "precio": 7000,
+        "cantidad": 72,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756217663/ctbf6chzgacm5chrrdio.png",
+        "descripcion": null,
+        "fechaAgregado": "2026-01-08T12:53:58.615Z"
+      },
+      {
+        "id": 119,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Asepxia Jabon Facial Antiacne Carbon 100G",
+        "precio": 11000,
+        "cantidad": 12,
+        "categoria": "Jabones y Geles",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1758414178/bahmaxewy6izmqsnhx6h.png",
+        "descripcion": null,
+        "fechaAgregado": "2026-01-08T12:53:03.233Z"
+      }
+    ],
+    "total": 3170400,
+    "estado": "en_preparacion",
+    "fecha_creacion": "2026-01-08T13:07:39.621+00:00",
+    "fecha_actualizacion": "2026-01-08T18:42:06.573+00:00"
+  },
+  {
+    "id": 270,
+    "cliente_nombre": "Gillermo",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 35,
+        "activo": true,
+        "codigo": null,
+        "nombre": "NOSOTRAS BUENAS NOCHES +PROTE...",
+        "precio": 17500,
+        "cantidad": 12,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756217613/jlvvbmsdlxum6ghddd9f.png",
+        "descripcion": "CAJA X  12 175000",
+        "fechaAgregado": "2025-12-03T23:41:48.473Z"
+      },
+      {
+        "id": 75,
+        "activo": true,
+        "codigo": null,
+        "nombre": "NOSOTRAS  EXTRA PROTECCION  6 LARGAS X DOCENA ",
+        "precio": 2417,
+        "cantidad": 24,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1758296543/xnxjy99vlix70dffxgev.jpg",
+        "descripcion": "DOCENA 29000",
+        "fechaAgregado": "2025-12-03T23:40:31.853Z"
+      },
+      {
+        "id": 36,
+        "activo": true,
+        "codigo": null,
+        "nombre": "NOSOTRAS BUENAS NOCHES X 10",
+        "precio": 7000,
+        "cantidad": 24,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756217663/ctbf6chzgacm5chrrdio.png",
+        "descripcion": null,
+        "fechaAgregado": "2025-12-03T23:39:29.997Z"
+      }
+    ],
+    "total": 436008,
+    "estado": "en_preparacion",
+    "fecha_creacion": "2025-12-03T23:42:11.212+00:00",
+    "fecha_actualizacion": "2025-12-04T19:30:58.809+00:00"
+  },
+  {
+    "id": 269,
+    "cliente_nombre": "Gillermo",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 3,
+        "activo": true,
+        "codigo": null,
+        "nombre": "TOALLAS NOSOTRAS RAPIGEL X 30",
+        "precio": 11000,
+        "cantidad": 30,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756219671/bh1kzufjjpk7wrzfxbxb.png",
+        "descripcion": "tallas nosotras rapigel x 30 caja x 8",
+        "fechaAgregado": "2025-12-03T23:06:35.887Z"
+      },
+      {
+        "id": 9,
+        "activo": true,
+        "codigo": null,
+        "nombre": "TOALLAS NOSOTRAS CLASICA X 30",
+        "precio": 10000,
+        "cantidad": 30,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756217702/wxoskdeordvqs15fkj8a.png",
+        "descripcion": "CAJA X 8 80000",
+        "fechaAgregado": "2025-12-03T23:06:33.937Z"
+      },
+      {
+        "id": 6,
+        "activo": true,
+        "codigo": null,
+        "nombre": "TOALLAS NOSOTRAS DIA Y NOCHE X 24",
+        "precio": 10500,
+        "cantidad": 24,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756221186/dppyfby8tqwndogketue.png",
+        "descripcion": null,
+        "fechaAgregado": "2025-12-03T23:05:56.408Z"
+      },
+      {
+        "id": 4,
+        "activo": true,
+        "codigo": null,
+        "nombre": "PROTECTORES NOSOTRAS MULTIESTILO x 150  x 10 CAJAS",
+        "precio": 14000,
+        "cantidad": 10,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756217857/g5jpd7snqpwywzx9jaue.png",
+        "descripcion": "C/U 14000",
+        "fechaAgregado": "2025-12-03T23:05:04.597Z"
+      },
+      {
+        "id": 15,
+        "activo": true,
+        "codigo": null,
+        "nombre": "PILA DURACEL AA 10X6",
+        "precio": 195000,
+        "cantidad": 1,
+        "categoria": "Otros",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756220011/ytwm1a3bkdyybppdm4iz.png",
+        "descripcion": "CAJA X 10  C/U 19500",
+        "fechaAgregado": "2025-12-03T23:04:43.713Z"
+      },
+      {
+        "id": 14,
+        "activo": true,
+        "codigo": null,
+        "nombre": "PILA DURACELL AAA 10X6",
+        "precio": 195000,
+        "cantidad": 1,
+        "categoria": "Otros",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756220099/hqnefqmyeoaetdnxep1c.png",
+        "descripcion": "CAJA X 10 C/U 19500",
+        "fechaAgregado": "2025-12-03T23:04:30.265Z"
+      },
+      {
+        "id": 87,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Mieltertos Antigripal Gripa Día Panela y Naranja X 6 sobres",
+        "precio": 9200,
+        "cantidad": 48,
+        "categoria": "Medicamentos",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1758406862/dayzsw5ceubnp84wh1m9.png",
+        "descripcion": "Cajas 25",
+        "fechaAgregado": "2025-12-03T23:02:49.792Z"
+      },
+      {
+        "id": 133,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Mieltertos mentholyptus pastillas masticables X48 X12X4",
+        "precio": 18500,
+        "cantidad": 24,
+        "categoria": "Medicamentos",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1758845411/cstw1ikd1ithofx9icez.png",
+        "descripcion": null,
+        "fechaAgregado": "2025-12-03T23:01:29.332Z"
+      },
+      {
+        "id": 126,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Jabon Johnsons Avena hum. 110g x 3",
+        "precio": 9999,
+        "cantidad": 48,
+        "categoria": "Jabones y Geles",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1758415399/nw2csixn1jedglqdjgk9.png",
+        "descripcion": "docena 40000",
+        "fechaAgregado": "2025-12-03T22:59:49.654Z"
+      },
+      {
+        "id": 127,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Jabon Johnsons Baby hum. 110G X 3Und",
+        "precio": 9999,
+        "cantidad": 48,
+        "categoria": "Jabones y Geles",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1758415498/r48va2rtbz3rydadeueb.png",
+        "descripcion": "docena  40000",
+        "fechaAgregado": "2025-12-03T22:59:42.093Z"
+      },
+      {
+        "id": 156,
+        "activo": true,
+        "codigo": null,
+        "nombre": "DEPILEX 200 GR 3 EN 1",
+        "precio": 18000,
+        "cantidad": 6,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1762455971/rymw1expsgxeltdhckta.jpg",
+        "descripcion": null,
+        "fechaAgregado": "2025-12-03T22:57:13.421Z"
+      },
+      {
+        "id": 78,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Crema Dental Sensodyne 8 Beneficios En 1 x 50 gr",
+        "precio": 6000,
+        "cantidad": 12,
+        "categoria": "Desodorantes",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1758408941/yziuvhtd3zm2rimivfvg.png",
+        "descripcion": null,
+        "fechaAgregado": "2025-12-03T22:56:05.009Z"
+      },
+      {
+        "id": 132,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Complejo B Bedoyecta 2ml   3 Ampollas",
+        "precio": 29000,
+        "cantidad": 18,
+        "categoria": "Medicamentos",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1758820390/kzexmzudlrxx4nw5wk0o.png",
+        "descripcion": null,
+        "fechaAgregado": "2025-12-03T22:55:24.629Z"
+      },
+      {
+        "id": 119,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Asepxia Jabon Facial Antiacne Carbon 100G",
+        "precio": 11000,
+        "cantidad": 12,
+        "categoria": "Jabones y Geles",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1758414178/bahmaxewy6izmqsnhx6h.png",
+        "descripcion": null,
+        "fechaAgregado": "2025-12-03T22:51:37.028Z"
+      }
+    ],
+    "total": 4091504,
+    "estado": "en_preparacion",
+    "fecha_creacion": "2025-12-03T23:07:47.588+00:00",
+    "fecha_actualizacion": "2025-12-04T19:35:30.434+00:00"
+  },
+  {
+    "id": 273,
+    "cliente_nombre": "Arnol",
+    "cliente_telefono": "3004503117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 135,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Talco Rexona Eficiente Talco Pack 180g +55g",
+        "precio": 14000,
+        "cantidad": 24,
+        "categoria": "Desodorantes",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1759140813/jx43tesnze4g4rbgx91j.jpg",
+        "descripcion": null,
+        "fechaAgregado": "2025-12-05T20:59:09.576Z"
+      },
+      {
+        "id": 158,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Máquina Para Afeitar Gillette Prestobarba 3 Sensitive Blister X 10",
+        "precio": 380000,
+        "cantidad": 1,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1763052499/zbhsgqytq1oopioykcmp.png",
+        "descripcion": "caja x 120 unidades  blistre 31666 unidad 3166",
+        "fechaAgregado": "2025-12-05T20:58:58.867Z"
+      },
+      {
+        "id": 74,
+        "activo": true,
+        "codigo": null,
+        "nombre": "CHAMPU ELVIVE HIDRA HIALURONICO",
+        "precio": 13000,
+        "cantidad": 12,
+        "categoria": "Cuidado del Cabello",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1758405980/vldbi1azqalqthsrd2ze.png",
+        "descripcion": "CAJA X 12 ",
+        "fechaAgregado": "2025-12-05T20:58:22.781Z"
+      }
+    ],
+    "total": 872000,
+    "estado": "pendiente",
+    "fecha_creacion": "2025-12-05T20:59:17.589+00:00",
+    "fecha_actualizacion": "2025-12-05T20:59:19.270747+00:00"
+  },
+  {
+    "id": 284,
+    "cliente_nombre": "alia",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 32,
+        "activo": true,
+        "codigo": null,
+        "nombre": "HUGGIES ETAPA 5 X 50",
+        "precio": 52000,
+        "cantidad": 16,
+        "categoria": "Pañales",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1758411733/jtgzrrxfryjhoudbn2j4.png",
+        "descripcion": "PACA X 8 =  416000",
+        "fechaAgregado": "2025-12-18T16:18:35.605Z"
+      }
+    ],
+    "total": 832000,
+    "estado": "pendiente",
+    "fecha_creacion": "2025-12-18T16:20:28.081+00:00",
+    "fecha_actualizacion": "2025-12-18T16:20:28.807003+00:00"
+  },
+  {
+    "id": 288,
+    "cliente_nombre": "juna",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 155,
+        "activo": true,
+        "codigo": null,
+        "nombre": "CONDON DUO  caja x 50 unidades",
+        "precio": 80000,
+        "cantidad": 13,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1762455876/hgf1iga42uzjigkot6ex.jpg",
+        "descripcion": null,
+        "fechaAgregado": "2026-01-07T18:26:11.908Z"
+      },
+      {
+        "id": 174,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Intibon jabon íntimo x210 ml x 2",
+        "precio": 20000,
+        "cantidad": 24,
+        "categoria": null,
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1765637818/hys89whum3pzfc66tbvk.jpg",
+        "descripcion": null,
+        "fechaAgregado": "2026-01-07T18:25:43.424Z"
+      },
+      {
+        "id": 119,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Asepxia Jabon Facial Antiacne Carbon 100G",
+        "precio": 11000,
+        "cantidad": 12,
+        "categoria": "Jabones y Geles",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1758414178/bahmaxewy6izmqsnhx6h.png",
+        "descripcion": null,
+        "fechaAgregado": "2026-01-07T18:24:59.972Z"
+      }
+    ],
+    "total": 1652000,
+    "estado": "en_preparacion",
+    "fecha_creacion": "2026-01-07T18:27:00.925+00:00",
+    "fecha_actualizacion": "2026-01-08T17:16:01.89+00:00"
+  },
+  {
+    "id": 291,
+    "cliente_nombre": "Nando",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 133,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Mieltertos mentholyptus pastillas masticables X48 X12X4",
+        "precio": 18500,
+        "cantidad": 144,
+        "categoria": "Medicamentos",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1758845411/cstw1ikd1ithofx9icez.png",
+        "descripcion": null,
+        "fechaAgregado": "2026-01-08T21:17:53.568Z"
+      }
+    ],
+    "total": 2664000,
+    "estado": "pendiente",
+    "fecha_creacion": "2026-01-08T21:18:19.529+00:00",
+    "fecha_actualizacion": "2026-01-08T21:18:20.623809+00:00"
+  },
+  {
+    "id": 275,
+    "cliente_nombre": "Marcela",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 5,
+        "activo": true,
+        "codigo": null,
+        "nombre": "PROTECTORES NOSOTRAS NORMAL x 150 X 10 CAJAS",
+        "precio": 12000,
+        "cantidad": 12,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756217827/rr1iihl79wav1riegf6a.png",
+        "descripcion": "Caja 120000",
+        "fechaAgregado": "2025-12-10T22:26:27.217Z"
+      },
+      {
+        "id": 35,
+        "activo": true,
+        "codigo": null,
+        "nombre": "NOSOTRAS BUENAS NOCHES +PROTE...",
+        "precio": 17500,
+        "cantidad": 24,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756217613/jlvvbmsdlxum6ghddd9f.png",
+        "descripcion": "CAJA X  12 175000",
+        "fechaAgregado": "2025-12-10T22:25:51.486Z"
+      },
+      {
+        "id": 59,
+        "activo": true,
+        "codigo": null,
+        "nombre": "KOTEX x24 BUENAS NOCHES",
+        "precio": 12000,
+        "cantidad": 16,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756247109/mqqrxuawhbjzbsemkgwt.jpg",
+        "descripcion": "PACA X8 96000",
+        "fechaAgregado": "2025-12-10T22:25:34.013Z"
+      },
+      {
+        "id": 32,
+        "activo": true,
+        "codigo": null,
+        "nombre": "HUGGIES ETAPA 5 X 50",
+        "precio": 52000,
+        "cantidad": 32,
+        "categoria": "Pañales",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1758411733/jtgzrrxfryjhoudbn2j4.png",
+        "descripcion": "PACA X 8 =  416000",
+        "fechaAgregado": "2025-12-10T22:25:14.332Z"
+      },
+      {
+        "id": 171,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Dove clinical ",
+        "precio": 8000,
+        "cantidad": 25,
+        "categoria": "Desodorantes",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1763740102/en3cxdfypkcd4jimdncf.png",
+        "descripcion": null,
+        "fechaAgregado": "2025-12-10T22:24:56.489Z"
+      }
+    ],
+    "total": 2620000,
+    "estado": "entregado",
+    "fecha_creacion": "2025-12-10T22:27:29.649+00:00",
+    "fecha_actualizacion": "2025-12-11T19:26:30.998+00:00"
+  },
+  {
+    "id": 281,
+    "cliente_nombre": "Nancy lopez",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 170,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Speek stick clinical 100ml dama",
+        "precio": 7800,
+        "cantidad": 18,
+        "categoria": "Desodorantes",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1765643036/npxicgmvmdrtnq8k9set.jpg",
+        "descripcion": null,
+        "fechaAgregado": "2025-12-15T20:42:27.632Z"
+      },
+      {
+        "id": 42,
+        "activo": true,
+        "codigo": null,
+        "nombre": "REXONA CLINICAL  SPORT STREGTH POR 2",
+        "precio": 25000,
+        "cantidad": 12,
+        "categoria": "Desodorantes",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756218831/c5qu31s1blxr5xcnqpsc.png",
+        "descripcion": "CAJA X 6",
+        "fechaAgregado": "2025-12-15T20:39:44.662Z"
+      },
+      {
+        "id": 160,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Ponds 100 gramos pote Clant b3",
+        "precio": 16500,
+        "cantidad": 12,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1763739280/omnp7qtj4xytu0i3jg5l.png",
+        "descripcion": null,
+        "fechaAgregado": "2025-12-15T20:33:28.046Z"
+      }
+    ],
+    "total": 638400,
+    "estado": "pendiente",
+    "fecha_creacion": "2025-12-15T20:42:46.613+00:00",
+    "fecha_actualizacion": "2025-12-15T20:42:51.927867+00:00"
+  },
+  {
+    "id": 285,
+    "cliente_nombre": "Edw",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 3,
+        "activo": true,
+        "codigo": null,
+        "nombre": "TOALLAS NOSOTRAS RAPIGEL X 30",
+        "precio": 11000,
+        "cantidad": 32,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756219671/bh1kzufjjpk7wrzfxbxb.png",
+        "descripcion": "tallas nosotras rapigel x 30 caja x 8",
+        "fechaAgregado": "2025-12-18T16:45:52.866Z"
+      },
+      {
+        "id": 36,
+        "activo": true,
+        "codigo": null,
+        "nombre": "NOSOTRAS BUENAS NOCHES X 10",
+        "precio": 7000,
+        "cantidad": 16,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756217663/ctbf6chzgacm5chrrdio.png",
+        "descripcion": null,
+        "fechaAgregado": "2025-12-18T16:45:27.336Z"
+      },
+      {
+        "id": 75,
+        "activo": true,
+        "codigo": null,
+        "nombre": "NOSOTRAS  EXTRA PROTECCION  6 LARGAS X DOCENA ",
+        "precio": 2417,
+        "cantidad": 25,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1758296543/xnxjy99vlix70dffxgev.jpg",
+        "descripcion": "DOCENA 29000",
+        "fechaAgregado": "2025-12-18T16:45:20.360Z"
+      }
+    ],
+    "total": 524425,
+    "estado": "pendiente",
+    "fecha_creacion": "2025-12-18T16:50:06.162+00:00",
+    "fecha_actualizacion": "2025-12-18T16:50:07.218345+00:00"
+  },
+  {
+    "id": 286,
+    "cliente_nombre": "Rosendo",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 180,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Colgate x 12 premier",
+        "precio": 22000,
+        "cantidad": 49,
+        "categoria": null,
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1765644973/equ6e5iddqftdshl6cw7.jpg",
+        "descripcion": null,
+        "fechaAgregado": "2025-12-18T20:32:40.980Z"
+      },
+      {
+        "id": 21,
+        "activo": true,
+        "codigo": null,
+        "nombre": "TANGA SPF100 24X12",
+        "precio": 28000,
+        "cantidad": 25,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756221244/fqeizfjs1mbzrubxpscb.png",
+        "descripcion": "paca x 12",
+        "fechaAgregado": "2025-12-18T20:32:21.056Z"
+      },
+      {
+        "id": 165,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Axe ice chill",
+        "precio": 10500,
+        "cantidad": 25,
+        "categoria": "Desodorantes",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1763739537/i322uuvrxzwbjoc0yvty.png",
+        "descripcion": null,
+        "fechaAgregado": "2025-12-18T20:31:55.639Z"
+      }
+    ],
+    "total": 2040500,
+    "estado": "pendiente",
+    "fecha_creacion": "2025-12-18T20:33:06.867+00:00",
+    "fecha_actualizacion": "2025-12-18T20:33:07.714792+00:00"
+  },
+  {
+    "id": 287,
+    "cliente_nombre": "Diego saba",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 3,
+        "activo": true,
+        "codigo": null,
+        "nombre": "TOALLAS NOSOTRAS RAPIGEL X 30",
+        "precio": 11000,
+        "cantidad": 24,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756219671/bh1kzufjjpk7wrzfxbxb.png",
+        "descripcion": "tallas nosotras rapigel x 30 caja x 8",
+        "fechaAgregado": "2025-12-18T22:39:32.541Z"
+      },
+      {
+        "id": 114,
+        "activo": true,
+        "codigo": null,
+        "nombre": "DESODORANTE REXONA MEN V8 ROLLON 30 ML",
+        "precio": 2667,
+        "cantidad": 12,
+        "categoria": "Desodorantes",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1758409174/odwgkmlr2yhhaccwacqi.png",
+        "descripcion": "DOCENA 32000",
+        "fechaAgregado": "2025-12-18T22:38:29.024Z"
+      },
+      {
+        "id": 115,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Desodorante Mini Roll On 30ml Rexona Bamboo",
+        "precio": 2667,
+        "cantidad": 12,
+        "categoria": "Desodorantes",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1758407666/ggrbdwrhet2ufwoipbuh.png",
+        "descripcion": "DOCENA 32000",
+        "fechaAgregado": "2025-12-18T22:38:21.707Z"
+      },
+      {
+        "id": 35,
+        "activo": true,
+        "codigo": null,
+        "nombre": "NOSOTRAS BUENAS NOCHES +PROTE...",
+        "precio": 17500,
+        "cantidad": 12,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756217613/jlvvbmsdlxum6ghddd9f.png",
+        "descripcion": "CAJA X  12 175000",
+        "fechaAgregado": "2025-12-18T22:35:29.420Z"
+      },
+      {
+        "id": 85,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Toallas Kotex Normal 24 Und",
+        "precio": 7000,
+        "cantidad": 24,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1758408080/ohyzrby3i4sa0hkld4hd.png",
+        "descripcion": null,
+        "fechaAgregado": "2025-12-18T22:34:58.132Z"
+      },
+      {
+        "id": 59,
+        "activo": true,
+        "codigo": null,
+        "nombre": "KOTEX x24 BUENAS NOCHES",
+        "precio": 12000,
+        "cantidad": 16,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756247109/mqqrxuawhbjzbsemkgwt.jpg",
+        "descripcion": "PACA X8 96000",
+        "fechaAgregado": "2025-12-18T22:34:19.303Z"
+      }
+    ],
+    "total": 898008,
+    "estado": "pendiente",
+    "fecha_creacion": "2025-12-18T22:40:06.852+00:00",
+    "fecha_actualizacion": "2025-12-18T22:40:07.585891+00:00"
+  },
+  {
+    "id": 298,
+    "cliente_nombre": "Marcos",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 174,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Intibon jabon íntimo x210 ml x 2",
+        "precio": 21000,
+        "cantidad": 12,
+        "categoria": null,
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1765637818/hys89whum3pzfc66tbvk.jpg",
+        "descripcion": null,
+        "fechaAgregado": "2026-01-15T22:54:51.647Z"
+      }
+    ],
+    "total": 252000,
+    "estado": "en_preparacion",
+    "fecha_creacion": "2026-01-15T22:55:55.283+00:00",
+    "fecha_actualizacion": "2026-01-16T12:47:05.073+00:00"
+  },
+  {
+    "id": 294,
+    "cliente_nombre": "Juan pablo",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 41,
+        "activo": true,
+        "codigo": null,
+        "nombre": "PONDS REGUBENETS",
+        "precio": 21000,
+        "cantidad": 12,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756218397/gpilem8xt82qrjusf0aw.png",
+        "descripcion": null,
+        "fechaAgregado": "2026-01-09T15:30:04.795Z"
+      },
+      {
+        "id": 65,
+        "activo": true,
+        "codigo": null,
+        "nombre": "TIO NACHO CONTROL CASPA 415 ENGROSADOR",
+        "precio": 22000,
+        "cantidad": 6,
+        "categoria": "Cuidado del Cabello",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756490216/lj2qrh6nd1f2jvcwxulo.png",
+        "descripcion": "CAJA X 12 264000",
+        "fechaAgregado": "2026-01-09T15:28:04.517Z"
+      },
+      {
+        "id": 178,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Speed stick gel  70 gr",
+        "precio": 7000,
+        "cantidad": 18,
+        "categoria": null,
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1765644345/lelsisav2ovqneg0ic3q.jpg",
+        "descripcion": null,
+        "fechaAgregado": "2026-01-09T15:26:50.051Z"
+      },
+      {
+        "id": 42,
+        "activo": true,
+        "codigo": null,
+        "nombre": "REXONA CLINICAL  SPORT STREGTH POR 2",
+        "precio": 25000,
+        "cantidad": 6,
+        "categoria": "Desodorantes",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756218831/c5qu31s1blxr5xcnqpsc.png",
+        "descripcion": "CAJA X 6",
+        "fechaAgregado": "2026-01-09T15:26:33.766Z"
+      },
+      {
+        "id": 4,
+        "activo": true,
+        "codigo": null,
+        "nombre": "PROTECTORES NOSOTRAS MULTIESTILO x 150  x 10 CAJAS",
+        "precio": 14000,
+        "cantidad": 10,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756217857/g5jpd7snqpwywzx9jaue.png",
+        "descripcion": "C/U 14000",
+        "fechaAgregado": "2026-01-09T15:25:28.065Z"
+      },
+      {
+        "id": 160,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Ponds 100 gramos pote Clant b3",
+        "precio": 16500,
+        "cantidad": 6,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1763739280/omnp7qtj4xytu0i3jg5l.png",
+        "descripcion": null,
+        "fechaAgregado": "2026-01-09T15:25:05.566Z"
+      },
+      {
+        "id": 35,
+        "activo": true,
+        "codigo": null,
+        "nombre": "NOSOTRAS BUENAS NOCHES +PROTE...",
+        "precio": 17500,
+        "cantidad": 12,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756217613/jlvvbmsdlxum6ghddd9f.png",
+        "descripcion": "CAJA X  12 175000",
+        "fechaAgregado": "2026-01-09T15:24:53.078Z"
+      },
+      {
+        "id": 158,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Máquina Para Afeitar Gillette Prestobarba 3 Sensitive Blister X 10",
+        "precio": 380000,
+        "cantidad": 1,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1763052499/zbhsgqytq1oopioykcmp.png",
+        "descripcion": "caja x 120 unidades  blistre 31666 unidad 3166",
+        "fechaAgregado": "2026-01-09T15:21:47.161Z"
+      },
+      {
+        "id": 80,
+        "activo": true,
+        "codigo": null,
+        "nombre": "LIPSTICK NIVEA CHERRY 4.8G",
+        "precio": 11500,
+        "cantidad": 24,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1758389331/lqzrtx43frvgnimb209g.jpg",
+        "descripcion": "CAJA X 24",
+        "fechaAgregado": "2026-01-09T15:21:27.669Z"
+      },
+      {
+        "id": 174,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Intibon jabon íntimo x210 ml x 2",
+        "precio": 21000,
+        "cantidad": 6,
+        "categoria": null,
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1765637818/hys89whum3pzfc66tbvk.jpg",
+        "descripcion": null,
+        "fechaAgregado": "2026-01-09T15:21:01.894Z"
+      },
+      {
+        "id": 70,
+        "activo": true,
+        "codigo": null,
+        "nombre": "ENJUAGUE BUCAL LISTERINE COOL MINT 1.5 L",
+        "precio": 30000,
+        "cantidad": 12,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756989541/rpk58nbdagvvkmysuo1k.png",
+        "descripcion": "CAJA X 6 180000",
+        "fechaAgregado": "2026-01-09T15:19:32.488Z"
+      },
+      {
+        "id": 156,
+        "activo": true,
+        "codigo": null,
+        "nombre": "DEPILEX 200 GR 3 EN 1",
+        "precio": 18000,
+        "cantidad": 6,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1762455971/rymw1expsgxeltdhckta.jpg",
+        "descripcion": null,
+        "fechaAgregado": "2026-01-09T15:19:14.241Z"
+      }
+    ],
+    "total": 2359000,
+    "estado": "en_preparacion",
+    "fecha_creacion": "2026-01-09T15:32:04.417+00:00",
+    "fecha_actualizacion": "2026-01-09T17:03:56.879+00:00"
+  },
+  {
+    "id": 292,
+    "cliente_nombre": "Neidu",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 35,
+        "activo": true,
+        "codigo": null,
+        "nombre": "NOSOTRAS BUENAS NOCHES +PROTE...",
+        "precio": 17500,
+        "cantidad": 12,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756217613/jlvvbmsdlxum6ghddd9f.png",
+        "descripcion": "CAJA X  12 175000",
+        "fechaAgregado": "2026-01-08T21:38:56.932Z"
+      },
+      {
+        "id": 85,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Toallas Kotex Normal 24 Und",
+        "precio": 7500,
+        "cantidad": 8,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1758408080/ohyzrby3i4sa0hkld4hd.png",
+        "descripcion": null,
+        "fechaAgregado": "2026-01-08T21:38:44.078Z"
+      },
+      {
+        "id": 59,
+        "activo": true,
+        "codigo": null,
+        "nombre": "KOTEX x24 BUENAS NOCHES",
+        "precio": 12000,
+        "cantidad": 8,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756247109/mqqrxuawhbjzbsemkgwt.jpg",
+        "descripcion": "PACA X8 96000",
+        "fechaAgregado": "2026-01-08T21:38:09.026Z"
+      }
+    ],
+    "total": 366000,
+    "estado": "en_preparacion",
+    "fecha_creacion": "2026-01-08T21:39:28.537+00:00",
+    "fecha_actualizacion": "2026-01-10T02:17:00.042+00:00"
+  },
+  {
+    "id": 295,
+    "cliente_nombre": "Mary",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 80,
+        "activo": true,
+        "codigo": null,
+        "nombre": "LIPSTICK NIVEA CHERRY 4.8G",
+        "precio": 11500,
+        "cantidad": 12,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1758389331/lqzrtx43frvgnimb209g.jpg",
+        "descripcion": "CAJA X 24",
+        "fechaAgregado": "2026-01-09T21:17:31.075Z"
+      },
+      {
+        "id": 54,
+        "activo": true,
+        "codigo": null,
+        "nombre": "PONDS CREMA S 100 G",
+        "precio": 18000,
+        "cantidad": 1,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756218284/w8gra8jtb4j0htf16vrm.png",
+        "descripcion": "CAJA X 12",
+        "fechaAgregado": "2026-01-09T21:16:22.162Z"
+      },
+      {
+        "id": 41,
+        "activo": true,
+        "codigo": null,
+        "nombre": "PONDS REGUBENETS",
+        "precio": 21000,
+        "cantidad": 24,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756218397/gpilem8xt82qrjusf0aw.png",
+        "descripcion": null,
+        "fechaAgregado": "2026-01-09T21:16:02.181Z"
+      },
+      {
+        "id": 96,
+        "activo": true,
+        "codigo": null,
+        "nombre": "PONDS Clarant B3 Antimanchas con FPS 30 100g",
+        "precio": 20000,
+        "cantidad": 24,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1758407146/yloa05kkwrfmqyhvyerd.png",
+        "descripcion": null,
+        "fechaAgregado": "2026-01-09T21:15:53.117Z"
+      },
+      {
+        "id": 35,
+        "activo": true,
+        "codigo": null,
+        "nombre": "NOSOTRAS BUENAS NOCHES +PROTE...",
+        "precio": 17500,
+        "cantidad": 12,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756217613/jlvvbmsdlxum6ghddd9f.png",
+        "descripcion": "CAJA X  12 175000",
+        "fechaAgregado": "2026-01-09T21:15:35.618Z"
+      },
+      {
+        "id": 174,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Intibon jabon íntimo x210 ml x 2",
+        "precio": 21000,
+        "cantidad": 20,
+        "categoria": null,
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1765637818/hys89whum3pzfc66tbvk.jpg",
+        "descripcion": null,
+        "fechaAgregado": "2026-01-09T21:14:55.392Z"
+      }
+    ],
+    "total": 1770000,
+    "estado": "en_preparacion",
+    "fecha_creacion": "2026-01-09T21:20:33.78+00:00",
+    "fecha_actualizacion": "2026-01-10T03:03:12.9+00:00"
+  },
+  {
+    "id": 297,
+    "cliente_nombre": "Jhon",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 166,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Desodorante Dove spray 2 precio especial",
+        "precio": 24000,
+        "cantidad": 12,
+        "categoria": "Desodorantes",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1763739624/uqfwcd4lofrshvbh7wna.png",
+        "descripcion": null,
+        "fechaAgregado": "2026-01-15T21:59:54.377Z"
+      },
+      {
+        "id": 12,
+        "activo": true,
+        "codigo": null,
+        "nombre": "TAMPON KOTEX DIGITAL RISTRA 6...",
+        "precio": 11500,
+        "cantidad": 18,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756219565/grrvgwouwgupyymwvlcq.png",
+        "descripcion": "CAJA X 6 X 6 ",
+        "fechaAgregado": "2026-01-15T21:58:47.466Z"
+      },
+      {
+        "id": 174,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Intibon jabon íntimo x210 ml x 2",
+        "precio": 21000,
+        "cantidad": 12,
+        "categoria": null,
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1765637818/hys89whum3pzfc66tbvk.jpg",
+        "descripcion": null,
+        "fechaAgregado": "2026-01-15T21:57:58.754Z"
+      },
+      {
+        "id": 134,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Gel Capilar Ego Attraction X 110 Ml",
+        "precio": 4250,
+        "cantidad": 96,
+        "categoria": "Cuidado del Cabello",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1759015224/vrdmsjl2bmpxxk4pfczi.jpg",
+        "descripcion": "Docena 51000",
+        "fechaAgregado": "2026-01-15T21:57:23.580Z"
+      },
+      {
+        "id": 69,
+        "activo": true,
+        "codigo": null,
+        "nombre": "ENJUAGUE BUCAL LISTERINE COOL MINT 1L",
+        "precio": 22000,
+        "cantidad": 12,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756905042/whblrshjfjezxrwap2et.png",
+        "descripcion": "CAJA X 6 UNIDADES 132000",
+        "fechaAgregado": "2026-01-15T21:56:35.460Z"
+      }
+    ],
+    "total": 1419000,
+    "estado": "en_preparacion",
+    "fecha_creacion": "2026-01-15T22:00:11.367+00:00",
+    "fecha_actualizacion": "2026-01-16T12:46:50.648+00:00"
+  },
+  {
+    "id": 296,
+    "cliente_nombre": "Kelli",
+    "cliente_telefono": "3004583117",
+    "cliente_notas": "Ninguna",
+    "productos": [
+      {
+        "id": 12,
+        "activo": true,
+        "codigo": null,
+        "nombre": "TAMPON KOTEX DIGITAL RISTRA 6...",
+        "precio": 11500,
+        "cantidad": 12,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756219565/grrvgwouwgupyymwvlcq.png",
+        "descripcion": "CAJA X 6 X 6 ",
+        "fechaAgregado": "2026-01-15T20:55:46.697Z"
+      },
+      {
+        "id": 167,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Teatrical roja 100ml",
+        "precio": 18000,
+        "cantidad": 24,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1763739672/xwzj2rtbn00gcdcubulm.png",
+        "descripcion": null,
+        "fechaAgregado": "2026-01-15T20:55:26.183Z"
+      },
+      {
+        "id": 152,
+        "activo": true,
+        "codigo": null,
+        "nombre": "TARRITO ROJO X 380 G",
+        "precio": 18500,
+        "cantidad": 24,
+        "categoria": "Medicamentos",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1762455462/ctblb1sln1e4vkvl2osi.jpg",
+        "descripcion": null,
+        "fechaAgregado": "2026-01-15T20:54:57.150Z"
+      },
+      {
+        "id": 29,
+        "activo": true,
+        "codigo": null,
+        "nombre": "SHAMPOO SAVITAL CON ACEITE DE ARGAN CAJA X 20 SOBRES",
+        "precio": 12500,
+        "cantidad": 12,
+        "categoria": "Cuidado del Cabello",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1758408639/ovtwjilrok87x4dcgbjh.png",
+        "descripcion": "Paca x 24 300000",
+        "fechaAgregado": "2026-01-15T20:54:28.589Z"
+      },
+      {
+        "id": 168,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Nude Protec 50SPF x 50 ml",
+        "precio": 32000,
+        "cantidad": 12,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1763739710/atsuvpmb8b8kbpi2w09j.png",
+        "descripcion": null,
+        "fechaAgregado": "2026-01-15T20:53:35.228Z"
+      },
+      {
+        "id": 36,
+        "activo": true,
+        "codigo": null,
+        "nombre": "NOSOTRAS BUENAS NOCHES X 10",
+        "precio": 7000,
+        "cantidad": 36,
+        "categoria": "Toallas",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756217663/ctbf6chzgacm5chrrdio.png",
+        "descripcion": null,
+        "fechaAgregado": "2026-01-15T20:53:20.060Z"
+      },
+      {
+        "id": 186,
+        "activo": true,
+        "codigo": null,
+        "nombre": "nopikex",
+        "precio": 13500,
+        "cantidad": 24,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1768493790/bd79wsrk2i2xeq6ohoat.jpg",
+        "descripcion": null,
+        "fechaAgregado": "2026-01-15T20:53:11.044Z"
+      },
+      {
+        "id": 141,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Nivea facial. 5 en 1 100gr",
+        "precio": 14500,
+        "cantidad": 24,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1759873130/jbwzs8xwvyn0f7ridq1a.jpg",
+        "descripcion": null,
+        "fechaAgregado": "2026-01-15T20:53:04.228Z"
+      },
+      {
+        "id": 166,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Desodorante Dove spray 2 precio especial",
+        "precio": 24000,
+        "cantidad": 12,
+        "categoria": "Desodorantes",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1763739624/uqfwcd4lofrshvbh7wna.png",
+        "descripcion": null,
+        "fechaAgregado": "2026-01-15T20:51:43.217Z"
+      },
+      {
+        "id": 78,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Crema Dental Sensodyne 8 Beneficios En 1 x 50 gr",
+        "precio": 6000,
+        "cantidad": 36,
+        "categoria": "Desodorantes",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1758408941/yziuvhtd3zm2rimivfvg.png",
+        "descripcion": null,
+        "fechaAgregado": "2026-01-15T20:51:19.170Z"
+      },
+      {
+        "id": 102,
+        "activo": true,
+        "codigo": null,
+        "nombre": "CALADER LOCIÓN ",
+        "precio": 9000,
+        "cantidad": 12,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1758404297/uls958pb1bzlnh50pzpv.png",
+        "descripcion": null,
+        "fechaAgregado": "2026-01-15T20:51:06.856Z"
+      },
+      {
+        "id": 184,
+        "activo": true,
+        "codigo": null,
+        "nombre": "Aceite johnsons",
+        "precio": 5700,
+        "cantidad": 144,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1768493883/wygc0vduas9tfeen8inx.jpg",
+        "descripcion": null,
+        "fechaAgregado": "2026-01-15T20:49:18.299Z"
+      },
+      {
+        "id": 21,
+        "activo": true,
+        "codigo": null,
+        "nombre": "TANGA SPF100 24X12",
+        "precio": 28000,
+        "cantidad": 24,
+        "categoria": "Bloqueadores y Cuidado de la Piel",
+        "imagen_url": "https://res.cloudinary.com/dstnroimw/image/upload/v1756221244/fqeizfjs1mbzrubxpscb.png",
+        "descripcion": "paca x 12",
+        "fechaAgregado": "2026-01-15T20:48:22.222Z"
+      }
+    ],
+    "total": 4576800,
+    "estado": "en_preparacion",
+    "fecha_creacion": "2026-01-15T20:56:44.666+00:00",
+    "fecha_actualizacion": "2026-01-16T12:53:18.805+00:00"
+  }
+]

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import FacturaPreview from './FacturaPreview';
 import ClientesScreen from './ClientesScreen';
 import { supabase } from './supabaseClient';
@@ -7,6 +7,7 @@ import './InvoiceScreen.css';
 
 const InvoiceScreen = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   
   // Estados principales
   const [cliente, setCliente] = useState('');
@@ -39,6 +40,26 @@ const InvoiceScreen = () => {
   const [erroresStock, setErroresStock] = useState({});
 
   const vendedores = ['Edwin Marin', 'Fredy Marin', 'Fabian Marin'];
+
+  // Cargar datos del pedido si vienen desde GestionPedidos
+  useEffect(() => {
+    if (location.state?.pedidoData) {
+      const { pedidoData } = location.state;
+      setCliente(pedidoData.cliente || '');
+      setTelefono(pedidoData.telefono || '');
+      setDireccion(pedidoData.direccion || '');
+      setCorreo(pedidoData.correo || '');
+      setProductos(pedidoData.productos || []);
+      
+      // Limpiar el state para que no se recargue al volver
+      window.history.replaceState({}, document.title);
+      
+      // Mostrar mensaje de confirmación
+      setTimeout(() => {
+        alert('✅ Pedido cargado exitosamente\n\nPuedes modificar los datos antes de guardar la factura.');
+      }, 100);
+    }
+  }, [location.state]);
 
   // Cargar datos iniciales
   useEffect(() => {
@@ -75,6 +96,35 @@ const InvoiceScreen = () => {
     cargarDatosIniciales();
   }, []);
 
+  // Sincronizar productos cargados (desde pedido) con catálogo para obtener producto_id
+  useEffect(() => {
+    if (!productosCatalogo.length) return;
+    const haySinId = productos.some(p => !p.producto_id);
+    if (!haySinId) return;
+
+    let huboCambios = false;
+    const productosActualizados = productos.map(p => {
+      if (p.producto_id) return p;
+
+      const coincidencia = productosCatalogo.find(pc =>
+        (pc.nombre || '').trim().toLowerCase() === (p.nombre || '').trim().toLowerCase()
+      );
+
+      if (!coincidencia) return p;
+      huboCambios = true;
+      return {
+        ...p,
+        producto_id: coincidencia.id,
+        codigo: p.codigo || coincidencia.codigo || '',
+        precio: p.precio ?? coincidencia.precio ?? 0
+      };
+    });
+
+    if (huboCambios) {
+      setProductos(productosActualizados);
+    }
+  }, [productosCatalogo, productos]);
+
   // Función para verificar stock disponible
   const verificarStockDisponible = (productoId, cantidadRequerida) => {
     const producto = productosCatalogo.find(p => p.id === productoId);
@@ -85,7 +135,8 @@ const InvoiceScreen = () => {
       ? producto.stock 
       : Infinity;
     
-    return Math.max(0, stockActual - cantidadRequerida);
+    // Retornar la diferencia real; si es < 0 no hay suficiente stock
+    return stockActual - cantidadRequerida;
   };
 
   // Función para agregar producto manualmente
@@ -202,7 +253,7 @@ const InvoiceScreen = () => {
           // Obtener el producto actual de la base de datos
           const { data: productoActual, error } = await supabase
             .from('productos')
-            .select('stock')
+            .select('stock, activo')
             .eq('id', producto.producto_id)
             .single();
           
@@ -212,15 +263,22 @@ const InvoiceScreen = () => {
           const stockActual = productoActual.stock !== null ? productoActual.stock : 0;
           const nuevoStock = Math.max(0, stockActual - producto.cantidad);
           
-          // Actualizar el stock en la base de datos
+          // Determinar si debe desactivarse (cuando stock llega a 0)
+          const estaraActivo = nuevoStock > 0 ? productoActual.activo : false;
+          
+          // Actualizar el stock y estado activo en la base de datos
           const { error: updateError } = await supabase
             .from('productos')
-            .update({ stock: nuevoStock })
+            .update({ 
+              stock: nuevoStock,
+              activo: estaraActivo
+            })
             .eq('id', producto.producto_id);
           
           if (updateError) throw updateError;
           
-          console.log(`Stock actualizado para ${producto.nombre}: ${stockActual} -> ${nuevoStock}`);
+          const desactivado = nuevoStock === 0 ? ' (DESACTIVADO)' : '';
+          console.log(`Stock actualizado para ${producto.nombre}: ${stockActual} -> ${nuevoStock}${desactivado}`);
         }
       }
     } catch (error) {

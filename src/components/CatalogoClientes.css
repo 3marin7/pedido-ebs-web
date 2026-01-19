@@ -258,6 +258,48 @@ body {
   background: var(--light-gray);
 }
 
+/* ===== BREAKPOINTS PARA WEB/ESCRITORIO ===== */
+@media (min-width: 768px) {
+  .product-grid-two-columns {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-top: 150px;
+  }
+
+  .product-image-container {
+    height: 140px;
+  }
+
+  .app-header h1 {
+    max-width: 70%;
+    font-size: 1.2rem;
+  }
+
+  .sticky-filters {
+    top: 108px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .product-grid-two-columns {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-top: 145px;
+  }
+
+  .product-image-container {
+    height: 160px;
+  }
+
+  .app-header {
+    padding: 10px 14px;
+  }
+
+  .sticky-filters {
+    padding: 10px 14px;
+  }
+}
+
 .product-image {
   width: 100%;
   height: 100%;
@@ -280,6 +322,48 @@ body {
   justify-content: center;
   font-size: 0.7rem;
   z-index: 2;
+}
+
+.stock-badge {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.65rem;
+  font-weight: bold;
+  z-index: 2;
+  min-width: 35px;
+  text-align: center;
+}
+
+.stock-badge.stock-disponible {
+  background: #10b981;
+  color: white;
+}
+
+.stock-badge.stock-bajo {
+  background: #f59e0b;
+  color: white;
+}
+
+.stock-badge.sin-stock {
+  background: #ef4444;
+  color: white;
+}
+
+.stock-label {
+  font-size: 0.55rem;
+  opacity: 0.9;
+}
+
+.stock-number {
+  font-size: 0.75rem;
+  font-weight: 900;
 }
 
 .expand-image-btn {
