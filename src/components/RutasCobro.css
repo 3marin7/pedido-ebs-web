@@ -1108,3 +1108,415 @@
     padding: 8px 10px;
   }
 }
+
+/* MODAL DE DETALLES DE DEUDA */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+  backdrop-filter: blur(4px);
+}
+
+.modal-detalles-deuda {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  max-width: 900px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 25px;
+  border-bottom: 2px solid #f0f2f5;
+  background: linear-gradient(135deg, #2b6cb0 0%, #1e4d7b 100%);
+}
+
+.modal-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: white;
+}
+
+.modal-title h2 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.modal-title i {
+  font-size: 28px;
+}
+
+.button-close {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.button-close:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1);
+}
+
+.modal-content {
+  padding: 25px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.seccion-detalles {
+  border-bottom: 1px solid #f0f2f5;
+  padding-bottom: 20px;
+}
+
+.seccion-detalles:last-child {
+  border-bottom: none;
+}
+
+.seccion-detalles h3 {
+  margin: 0 0 20px 0;
+  color: #1a365d;
+  font-size: 18px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.cliente-info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.info-item .label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #718096;
+  text-transform: uppercase;
+}
+
+.info-item .value {
+  font-size: 15px;
+  color: #2d3748;
+  font-weight: 500;
+}
+
+.badge-zona {
+  display: inline-block;
+  background: #bee3f8;
+  color: #2c5282;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 13px;
+  width: fit-content;
+}
+
+.deuda-resumen-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 15px;
+}
+
+.stat-deuda {
+  background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+  padding: 20px;
+  border-radius: 12px;
+  border-left: 4px solid #2b6cb0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-align: center;
+}
+
+.stat-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #718096;
+  text-transform: uppercase;
+}
+
+.stat-value {
+  font-size: 20px;
+  font-weight: 700;
+  color: #2d3748;
+}
+
+.stat-value.total {
+  color: #dc2626;
+  font-size: 24px;
+}
+
+.stat-value.prioridad-alta {
+  color: #dc2626;
+}
+
+.stat-value.prioridad-media {
+  color: #f59e0b;
+}
+
+.stat-value.prioridad-baja {
+  color: #10b981;
+}
+
+.facturas-table {
+  overflow-x: auto;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+}
+
+.facturas-table table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.facturas-table thead {
+  background: #f7fafc;
+  border-bottom: 2px solid #cbd5e0;
+}
+
+.facturas-table th {
+  padding: 12px;
+  text-align: left;
+  font-weight: 600;
+  color: #4a5568;
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.facturas-table td {
+  padding: 12px;
+  border-bottom: 1px solid #e2e8f0;
+  color: #2d3748;
+}
+
+.facturas-table tbody tr.vencida {
+  background: #fef2f2;
+}
+
+.facturas-table tbody tr.en-riesgo {
+  background: #fffbeb;
+}
+
+.facturas-table tbody tr:hover {
+  background: #f0f7ff;
+}
+
+.factura-id {
+  font-family: 'Courier New', monospace;
+  font-weight: 600;
+  color: #718096;
+}
+
+.monto-pendiente {
+  font-weight: 600;
+  color: #dc2626;
+}
+
+.dias-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.dias-badge.critico {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.dias-badge.alerta {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.dias-badge.normal {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.total-row {
+  background: #f7fafc;
+  border-top: 2px solid #cbd5e0;
+  font-weight: 600;
+  color: #2d3748;
+}
+
+.total-saldo {
+  color: #dc2626;
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.cobranza-info {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  background: #f7fafc;
+  border-radius: 8px;
+  border-left: 4px solid #2b6cb0;
+}
+
+.info-row .label {
+  font-weight: 600;
+  color: #4a5568;
+  font-size: 13px;
+  min-width: 200px;
+}
+
+.info-row .value {
+  color: #2d3748;
+  font-weight: 500;
+}
+
+.modal-footer {
+  padding: 20px 25px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  background: #f7fafc;
+  border-top: 1px solid #e2e8f0;
+  border-radius: 0 0 16px 16px;
+}
+
+.modal-footer .button {
+  min-width: 140px;
+}
+
+/* Responsive Modal */
+@media (max-width: 768px) {
+  .modal-detalles-deuda {
+    max-height: 95vh;
+  }
+
+  .modal-header {
+    padding: 20px;
+  }
+
+  .modal-title h2 {
+    font-size: 18px;
+  }
+
+  .modal-content {
+    padding: 20px;
+    gap: 20px;
+  }
+
+  .cliente-info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .deuda-resumen-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .facturas-table table {
+    font-size: 12px;
+  }
+
+  .facturas-table th,
+  .facturas-table td {
+    padding: 8px;
+  }
+
+  .info-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .modal-footer {
+    flex-direction: column;
+  }
+
+  .modal-footer .button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .modal-overlay {
+    padding: 10px;
+  }
+
+  .modal-header {
+    padding: 15px;
+  }
+
+  .modal-title h2 {
+    font-size: 16px;
+  }
+
+  .modal-content {
+    padding: 15px;
+    gap: 15px;
+  }
+
+  .deuda-resumen-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .facturas-table table {
+    font-size: 11px;
+  }
+
+  .button-close {
+    width: 35px;
+    height: 35px;
+    font-size: 20px;
+  }
+}

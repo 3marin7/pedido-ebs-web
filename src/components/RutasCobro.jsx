@@ -24,6 +24,10 @@ const RutasCobro = () => {
   const [mostrarClientesSinVisitar, setMostrarClientesSinVisitar] = useState(false);
   const [clientesSinVisitar, setClientesSinVisitar] = useState([]);
 
+  // Nuevo estado para el modal de detalles de deuda
+  const [clienteSeleccionado, setClienteSeleccionado] = useState(null);
+  const [mostrarDetallesDeuda, setMostrarDetallesDeuda] = useState(false);
+
   // Cargar clientes con deuda
   useEffect(() => {
     cargarDatosCompletos();
@@ -767,6 +771,24 @@ const RutasCobro = () => {
     });
   };
 
+  // Función para ver detalles completos de la deuda
+  const verDetallesDeuda = (cliente) => {
+    setClienteSeleccionado(cliente);
+    setMostrarDetallesDeuda(true);
+  };
+
+  // Función para cerrar modal de detalles
+  const cerrarDetallesDeuda = () => {
+    setMostrarDetallesDeuda(false);
+    setClienteSeleccionado(null);
+  };
+
+  // Función para ir a facturas desde detalles
+  const irAFacturasDesdeDetalles = () => {
+    cerrarDetallesDeuda();
+    verFacturasCliente(clienteSeleccionado);
+  };
+
   // Filtrar y ordenar clientes
   const clientesFiltrados = buscarCliente(busquedaCliente)
     .filter(cliente => 
@@ -1108,8 +1130,8 @@ const RutasCobro = () => {
                   <div className="cliente-actions">
                     <button 
                       className="button info-button micro-button"
-                      onClick={() => verFacturasCliente(cliente)}
-                      title="Ver facturas"
+                      onClick={() => verDetallesDeuda(cliente)}
+                      title="Ver detalles de deuda"
                     >
                       <i className="fas fa-file-invoice"></i>
                     </button>
@@ -1512,9 +1534,9 @@ const RutasCobro = () => {
                 <div className="cliente-actions">
                   <button 
                     className="button info-button"
-                    onClick={() => verFacturasCliente(cliente)}
+                    onClick={() => verDetallesDeuda(cliente)}
                   >
-                    <i className="fas fa-file-invoice"></i> Ver Facturas
+                    <i className="fas fa-file-invoice"></i> Ver Deuda
                   </button>
                   <button 
                     className={`button ${cliente.visitadoHoy ? 'secondary-button' : 'primary-button'}`}
@@ -1602,7 +1624,7 @@ const RutasCobro = () => {
                     <div className="step-actions">
                       <button 
                         className="button micro-button info-button"
-                        onClick={() => verFacturasCliente(paso)}
+                        onClick={() => verDetallesDeuda(paso)}
                       >
                         <i className="fas fa-file-invoice"></i>
                       </button>
@@ -1651,6 +1673,173 @@ const RutasCobro = () => {
                   {new Set(rutaGenerada.filter(p => p.tipo === 'zona').map(z => z.nombre)).size}
                 </strong>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL DE DETALLES DE DEUDA */}
+      {mostrarDetallesDeuda && clienteSeleccionado && (
+        <div className="modal-overlay" onClick={cerrarDetallesDeuda}>
+          <div className="modal-detalles-deuda" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <div className="modal-title">
+                <i className="fas fa-money-bill-wave"></i>
+                <h2>Detalles de Deuda - {clienteSeleccionado.nombre}</h2>
+              </div>
+              <button 
+                className="button-close"
+                onClick={cerrarDetallesDeuda}
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="modal-content">
+              {/* Información del Cliente */}
+              <div className="seccion-detalles">
+                <h3>Información del Cliente</h3>
+                <div className="cliente-info-grid">
+                  <div className="info-item">
+                    <span className="label">Nombre:</span>
+                    <span className="value">{clienteSeleccionado.nombre}</span>
+                  </div>
+                  <div className="info-item">
+                    <span className="label">Dirección:</span>
+                    <span className="value">{clienteSeleccionado.direccion}</span>
+                  </div>
+                  <div className="info-item">
+                    <span className="label">Teléfono:</span>
+                    <span className="value">{clienteSeleccionado.telefono}</span>
+                  </div>
+                  <div className="info-item">
+                    <span className="label">Zona:</span>
+                    <span className="value badge-zona">{clienteSeleccionado.zona}</span>
+                  </div>
+                  <div className="info-item">
+                    <span className="label">Vendedor:</span>
+                    <span className="value">{clienteSeleccionado.vendedor}</span>
+                  </div>
+                  <div className="info-item">
+                    <span className="label">Última Visita:</span>
+                    <span className="value">{clienteSeleccionado.ultimaVisita ? formatFecha(clienteSeleccionado.ultimaVisita) : 'Nunca visitado'}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Resumen de Deuda */}
+              <div className="seccion-detalles">
+                <h3>Resumen de Deuda</h3>
+                <div className="deuda-resumen-grid">
+                  <div className="stat-deuda">
+                    <span className="stat-label">Total Deuda</span>
+                    <span className="stat-value total">{formatMoneda(clienteSeleccionado.totalDeuda)}</span>
+                  </div>
+                  <div className="stat-deuda">
+                    <span className="stat-label">Facturas Pendientes</span>
+                    <span className="stat-value">{clienteSeleccionado.facturasPendientes.length}</span>
+                  </div>
+                  <div className="stat-deuda">
+                    <span className="stat-label">Desde hace</span>
+                    <span className="stat-value">{clienteSeleccionado.diasDesdePrimeraFactura} días</span>
+                  </div>
+                  <div className="stat-deuda">
+                    <span className="stat-label">Prioridad</span>
+                    <span className={`stat-value prioridad-${clienteSeleccionado.nivelPrioridad?.toLowerCase() || 'media'}`}>
+                      {clienteSeleccionado.nivelPrioridad || 'Media'}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Detalle de Facturas Pendientes */}
+              <div className="seccion-detalles">
+                <h3>Facturas Pendientes ({clienteSeleccionado.facturasPendientes.length})</h3>
+                <div className="facturas-table">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Fecha</th>
+                        <th>ID Factura</th>
+                        <th>Total</th>
+                        <th>Saldo Pendiente</th>
+                        <th>Antigüedad</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {clienteSeleccionado.facturasPendientes.map((factura, idx) => {
+                        const hoy = new Date();
+                        const fechaFactura = new Date(factura.fecha);
+                        const dias = Math.floor((hoy - fechaFactura) / (1000 * 60 * 60 * 24));
+                        
+                        return (
+                          <tr key={idx} className={dias > 60 ? 'vencida' : dias > 30 ? 'en-riesgo' : ''}>
+                            <td>{formatFecha(factura.fecha)}</td>
+                            <td className="factura-id">#{factura.id}</td>
+                            <td>{formatMoneda(factura.total)}</td>
+                            <td className="monto-pendiente">{formatMoneda(factura.saldo)}</td>
+                            <td>
+                              <span className={`dias-badge ${dias > 60 ? 'critico' : dias > 30 ? 'alerta' : 'normal'}`}>
+                                {dias} días
+                              </span>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                    <tfoot>
+                      <tr className="total-row">
+                        <td colSpan="2">TOTAL</td>
+                        <td>{formatMoneda(clienteSeleccionado.facturasPendientes.reduce((sum, f) => sum + f.total, 0))}</td>
+                        <td className="total-saldo">{formatMoneda(clienteSeleccionado.totalDeuda)}</td>
+                        <td></td>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
+              </div>
+
+              {/* Información de Cobranza */}
+              <div className="seccion-detalles">
+                <h3>Información de Cobranza</h3>
+                <div className="cobranza-info">
+                  <div className="info-row">
+                    <span className="label">Deuda desde:</span>
+                    <span className="value">{clienteSeleccionado.diasDesdePrimeraFactura} días ({formatFecha(clienteSeleccionado.facturaMasAntigua)})</span>
+                  </div>
+                  <div className="info-row">
+                    <span className="label">Última factura:</span>
+                    <span className="value">{clienteSeleccionado.diasDesdeUltimaFactura} días ({formatFecha(clienteSeleccionado.ultimaFactura)})</span>
+                  </div>
+                  <div className="info-row">
+                    <span className="label">Número de facturas pendientes:</span>
+                    <span className="value">{clienteSeleccionado.facturasPendientes.length}</span>
+                  </div>
+                  <div className="info-row">
+                    <span className="label">Monto promedio por factura:</span>
+                    <span className="value">
+                      {formatMoneda(
+                        clienteSeleccionado.totalDeuda / Math.max(clienteSeleccionado.facturasPendientes.length, 1)
+                      )}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="modal-footer">
+              <button 
+                className="button secondary-button"
+                onClick={cerrarDetallesDeuda}
+              >
+                Cerrar
+              </button>
+              <button 
+                className="button primary-button"
+                onClick={irAFacturasDesdeDetalles}
+              >
+                <i className="fas fa-arrow-right"></i> Ver en Facturas
+              </button>
             </div>
           </div>
         </div>
