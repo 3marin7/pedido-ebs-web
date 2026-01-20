@@ -738,9 +738,21 @@ const RutasCobro = () => {
         info: `${clientesPorZona[zona].length} clientes`
       });
       
-      // Ordenar clientes dentro de la zona por prioridad
+      // Ordenar clientes dentro de la zona por antigüedad de factura (más antigua primero)
+      // Luego por prioridad como segundo criterio
       const clientesEnZona = [...clientesPorZona[zona]]
-        .sort((a, b) => b.puntuacionPrioridad - a.puntuacionPrioridad);
+        .sort((a, b) => {
+          // Primero ordenar por antigüedad (mayor a menor días = más antigua primero)
+          const diferenciaDias = b.diasDesdePrimeraFactura - a.diasDesdePrimeraFactura;
+          
+          // Si la diferencia de días es significativa (>10 días), priorizar por antigüedad
+          if (Math.abs(diferenciaDias) > 10) {
+            return diferenciaDias;
+          }
+          
+          // Si las facturas son similares en antigüedad, ordenar por prioridad
+          return b.puntuacionPrioridad - a.puntuacionPrioridad;
+        });
       
       clientesEnZona.forEach((cliente, index) => {
         ruta.push({ 
