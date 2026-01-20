@@ -1029,11 +1029,94 @@
   font-weight: 700;
 }
 
-/* Responsive para nóminas */
-@media (max-width: 768px) {
-  .empleados-grid {
-    grid-template-columns: 1fr;
-  }
+/* Secciones Colapsables Mejoradas */
+.seccion-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.2s ease;
+  padding: 15px 0;
+  margin: 0 -25px 0 -25px;
+  padding-left: 25px;
+  padding-right: 25px;
+}
+
+.seccion-header:hover {
+  background-color: #f8f9fa;
+  border-radius: 10px;
+}
+
+.seccion-header h2 {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #2c3e50;
+  font-size: 1.6rem;
+  font-weight: 600;
+}
+
+.toggle-icon {
+  font-size: 0.8em;
+  transition: transform 0.3s ease;
+  display: inline-block;
+}
+
+/* Animación del icono de colapso */
+.seccion-header:hover .toggle-icon {
+  transform: scale(1.3);
+}
+
+/* Botón scroll to top */
+.footer-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+  margin-bottom: 20px;
+  gap: 10px;
+}
+
+.btn-scroll-top {
+  background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+  color: white;
+  padding: 12px 30px;
+  border-radius: 25px;
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+  transition: all 0.3s ease;
+}
+
+.btn-scroll-top:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(52, 152, 219, 0.4);
+}
+
+/* Tabla optimizada para nóminas */
+.tabla-nominas-container {
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+.tabla-nominas-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.tabla-nominas-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.tabla-nominas-container::-webkit-scrollbar-thumb {
+  background: #3498db;
+  border-radius: 10px;
+}
+
+.tabla-nominas-container::-webkit-scrollbar-thumb:hover {
+  background: #2980b9;
+}
 
   .nominas-estadisticas {
     grid-template-columns: 1fr;

@@ -213,6 +213,19 @@ const FacturaDetalle = () => {
             .fecha {
               font-size: 9px;
             }
+            .fecha-wrapper {
+              text-align: right;
+              display: flex;
+              flex-direction: column;
+              gap: 0.05cm;
+              align-items: flex-end;
+            }
+            .plazo {
+              font-size: 8px;
+              font-weight: bold;
+              text-transform: uppercase;
+              line-height: 1.2;
+            }
             .info-cliente-vendedor {
               display: grid;
               grid-template-columns: 1fr 1fr;
@@ -319,6 +332,12 @@ const FacturaDetalle = () => {
               padding-top: 0.05cm;
               line-height: 1.1;
             }
+            .footer-payment {
+              margin-top: 0.05cm;
+              font-size: 7px;
+              font-weight: 600;
+              text-transform: uppercase;
+            }
             .logo {
               font-weight: bold;
               margin-top: 0.02cm;
@@ -352,10 +371,13 @@ const FacturaDetalle = () => {
               <div class="titulo-seccion">ORIGINAL - PARA EL CLIENTE</div>
               <div class="encabezado">
                 <div class="empresa-info">
-                  <div><strong>DISTRIBUCIONES EBS</strong></div>
+                  <div><strong>SAMARITANO EBS</strong></div>
                   <div>Cuenta de Cobro</div>
                 </div>
-                <div class="fecha">${formatearFecha(factura.fecha)}</div>
+                <div class="fecha-wrapper">
+                  <div class="fecha">${formatearFecha(factura.fecha)}</div>
+                  <div class="plazo">Plazo a 30 dias</div>
+                </div>
               </div>
               
               <div class="numero-cuenta">CUENTA DE COBRO #${factura.id.toString().padStart(6, '0')}</div>
@@ -421,6 +443,7 @@ const FacturaDetalle = () => {
               
               <div class="footer">
                 <div>Gracias por su preferencia. Para cualquier aclaración, presentar esta cuenta de cobro.</div>
+                <div class="footer-payment">NEQUI, TU LLAVE 3209105993, CUENTA DAVIVIENDA # 474970011893</div>
                 <div class="logo">EBS - Sistema de Ebs-Hermanos Marin</div>
               </div>
             </div>
@@ -430,10 +453,13 @@ const FacturaDetalle = () => {
               <div class="titulo-seccion">COPIA - PARA EL ARCHIVO</div>
               <div class="encabezado">
                 <div class="empresa-info">
-                  <div><strong>DISTRIBUCIONES EBS</strong></div>
+                  <div><strong>SAMARITANO EBS</strong></div>
                   <div>Cuenta de Cobro</div>
                 </div>
-                <div class="fecha">${formatearFecha(factura.fecha)}</div>
+                <div class="fecha-wrapper">
+                  <div class="fecha">${formatearFecha(factura.fecha)}</div>
+                  <div class="plazo">Plazo a 30 dias</div>
+                </div>
               </div>
               
               <div class="numero-cuenta">CUENTA DE COBRO #${factura.id.toString().padStart(6, '0')}</div>
@@ -499,6 +525,7 @@ const FacturaDetalle = () => {
               
               <div class="footer">
                 <div>Gracias por su preferencia. Para cualquier aclaración, presentar esta cuenta de cobro.</div>
+                <div class="footer-payment">NEQUI, TU LLAVE 3209105993, CUENTA DAVIVIENDA # 474970011893</div>
                 <div class="logo">EBS - Sistema de Ebs-Hermanos Marin</div>
               </div>
             </div>
