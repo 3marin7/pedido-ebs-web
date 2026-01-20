@@ -1118,6 +1118,12 @@
   background: #2980b9;
 }
 
+/* Responsive para nóminas */
+@media (max-width: 768px) {
+  .empleados-grid {
+    grid-template-columns: 1fr;
+  }
+
   .nominas-estadisticas {
     grid-template-columns: 1fr;
   }
