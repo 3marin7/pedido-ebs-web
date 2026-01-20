@@ -12,6 +12,10 @@ const GestionPedidos = () => {
   const [modalVerificacion, setModalVerificacion] = useState(null);
   const [imagenesProductos, setImagenesProductos] = useState({});
   const [modalImagen, setModalImagen] = useState(null);
+  
+  // Estados para búsqueda
+  const [busqueda, setBusqueda] = useState('');
+  const [tipoBusqueda, setTipoBusqueda] = useState('cliente'); // 'cliente' o 'pedido'
 
   useEffect(() => {
     cargarPedidos();
@@ -391,6 +395,30 @@ ${pedido.cliente_notas && pedido.cliente_notas !== 'Ninguna' ? `• Notas: ${ped
     return estados[estado] || estado;
   };
 
+  // Función para filtrar pedidos por búsqueda
+  const filtrarPedidos = (pedidosData) => {
+    if (!busqueda.trim()) return pedidosData;
+
+    const terminoBusqueda = busqueda.toLowerCase().trim();
+
+    return pedidosData.filter(pedido => {
+      if (tipoBusqueda === 'cliente') {
+        // Buscar por nombre de cliente
+        const nombreCliente = (pedido.cliente_nombre || '').toLowerCase();
+        return nombreCliente.includes(terminoBusqueda);
+      } else {
+        // Buscar por ID de pedido
+        const idPedido = String(pedido.id || '');
+        return idPedido.includes(terminoBusqueda);
+      }
+    });
+  };
+
+  // Función para limpiar búsqueda
+  const limpiarBusqueda = () => {
+    setBusqueda('');
+  };
+
   const abrirModalImagen = (producto) => {
     setModalImagen({
       nombre: producto.nombre,
@@ -572,6 +600,36 @@ ${pedido.cliente_notas && pedido.cliente_notas !== 'Ninguna' ? `• Notas: ${ped
       </header>
 
       <div className="controles-superiores">
+        {/* Barra de Búsqueda */}
+        <div className="busqueda-section">
+          <div className="busqueda-tipo">
+            <label>Buscar por:</label>
+            <select 
+              value={tipoBusqueda} 
+              onChange={(e) => setTipoBusqueda(e.target.value)}
+              className="select-tipo-busqueda"
+            >
+              <option value="cliente">👤 Cliente</option>
+              <option value="pedido">🔢 ID Pedido</option>
+            </select>
+          </div>
+          
+          <div className="busqueda-input-container">
+            <input
+              type="text"
+              placeholder={tipoBusqueda === 'cliente' ? 'Buscar por nombre de cliente...' : 'Buscar por ID de pedido...'}
+              value={busqueda}
+              onChange={(e) => setBusqueda(e.target.value)}
+              className="busqueda-input"
+            />
+            {busqueda && (
+              <button onClick={limpiarBusqueda} className="btn-limpiar-busqueda" title="Limpiar búsqueda">
+                ✕
+              </button>
+            )}
+          </div>
+        </div>
+
         <div className="filtros">
           <label>Filtrar por estado:</label>
           <select 
@@ -594,43 +652,62 @@ ${pedido.cliente_notas && pedido.cliente_notas !== 'Ninguna' ? `• Notas: ${ped
 
       <div className="estadisticas-rapidas">
         <div className="estadistica">
-          <span className="numero">{pedidos.length}</span>
+          <span className="numero">{filtrarPedidos(pedidos).length}</span>
           <span className="label">Total Pedidos</span>
         </div>
         <div className="estadistica">
           <span className="numero">
-            {pedidos.filter(p => p.estado === 'en_preparacion').length}
+            {filtrarPedidos(pedidos).filter(p => p.estado === 'en_preparacion').length}
           </span>
           <span className="label">En Preparación</span>
         </div>
         <div className="estadistica">
           <span className="numero">
-            {pedidos.filter(p => p.estado === 'pendiente').length}
+            {filtrarPedidos(pedidos).filter(p => p.estado === 'pendiente').length}
           </span>
           <span className="label">Pendientes</span>
         </div>
         <div className="estadistica">
           <span className="numero">
-            {pedidos.filter(p => cantidadFaltantes(p.id) > 0).length}
+            {filtrarPedidos(pedidos).filter(p => cantidadFaltantes(p.id) > 0).length}
           </span>
           <span className="label">Con Faltantes</span>
         </div>
       </div>
 
+      {/* Indicador de búsqueda activa */}
+      {busqueda && (
+        <div className="busqueda-activa-info">
+          <span>
+            🔍 Mostrando resultados para: <strong>"{busqueda}"</strong>
+          </span>
+          <span className="resultados-count">
+            {filtrarPedidos(pedidos).length} pedido(s) encontrado(s)
+          </span>
+        </div>
+      )}
+
       <div className="lista-pedidos">
-        {pedidos.length === 0 ? (
+        {filtrarPedidos(pedidos).length === 0 ? (
           <div className="no-pedidos">
             <div className="icono-vacio">📭</div>
-            <h3>No hay pedidos</h3>
+            <h3>{busqueda ? 'No se encontraron resultados' : 'No hay pedidos'}</h3>
             <p>
-              {filtroEstado !== 'todos' 
-                ? `No se encontraron pedidos con estado "${getTextoEstado(filtroEstado)}"`
-                : 'No hay pedidos registrados en el sistema'
+              {busqueda 
+                ? `No se encontraron pedidos que coincidan con "${busqueda}"`
+                : filtroEstado !== 'todos' 
+                  ? `No se encontraron pedidos con estado "${getTextoEstado(filtroEstado)}"`
+                  : 'No hay pedidos registrados en el sistema'
               }
             </p>
+            {busqueda && (
+              <button onClick={limpiarBusqueda} className="btn-limpiar-busqueda-inline">
+                Limpiar búsqueda
+              </button>
+            )}
           </div>
         ) : (
-          pedidos.map(pedido => {
+          filtrarPedidos(pedidos).map(pedido => {
             const progreso = calcularProgresoGlobal(pedido);
             const colorProgreso = getColorProgreso(pedido);
             const progresoPreparacion = calcularProgreso(pedido.id);
