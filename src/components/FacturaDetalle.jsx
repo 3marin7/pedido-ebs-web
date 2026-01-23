@@ -225,6 +225,16 @@ const FacturaDetalle = () => {
               font-weight: bold;
               text-transform: uppercase;
               line-height: 1.2;
+              display: flex;
+              align-items: center;
+            }
+            .plazo-contado {
+              font-size: 8px;
+              font-weight: bold;
+              text-transform: uppercase;
+              line-height: 1.1;
+              display: flex;
+              align-items: center;
             }
             .info-cliente-vendedor {
               display: grid;
@@ -243,6 +253,12 @@ const FacturaDetalle = () => {
               padding-bottom: 0.02cm;
               min-height: 0.3cm;
               font-size: 7px;
+            }
+            .cliente-nombre {
+              font-size: 11px;
+              font-weight: 900;
+              text-transform: uppercase;
+              line-height: 1.2;
             }
             .tabla-productos {
               width: 100%;
@@ -313,6 +329,14 @@ const FacturaDetalle = () => {
               background-color: #f0f0f0;
               line-height: 1;
             }
+            .resumen-item.resumen-saldo {
+              background-color: #ffecec;
+              border: 1px solid #000;
+            }
+            .saldo-valor {
+              font-size: 10px;
+              font-weight: 900;
+            }
             .estado {
               text-align: center;
               margin-top: 0.1cm;
@@ -323,6 +347,34 @@ const FacturaDetalle = () => {
               background-color: ${estaPagada() ? '#d4edda' : '#fff3cd'};
               color: ${estaPagada() ? '#155724' : '#856404'};
               line-height: 1;
+            }
+            .estado-firma {
+              display: flex;
+              justify-content: space-between;
+              align-items: flex-end;
+              gap: 0.2cm;
+              margin-top: 0.1cm;
+            }
+            .firma {
+              flex: 1;
+              display: flex;
+              justify-content: flex-start;
+            }
+            .firma-linea {
+              width: 100%;
+              max-width: 12cm;
+              border-top: 1px solid #000;
+              text-align: center;
+              padding-top: 0.7cm;
+              font-size: 7px;
+            }
+            .check-box {
+              width: 0.35cm;
+              height: 0.35cm;
+              border: 1px solid #000;
+              display: inline-block;
+              margin-left: 0.12cm;
+              box-sizing: border-box;
             }
             .footer {
               text-align: center;
@@ -366,26 +418,27 @@ const FacturaDetalle = () => {
         </head>
         <body>
           <div class="pagina-oficio">
-              <!-- ORIGINAL - PARA EL CLIENTE -->
+              <!-- ORIGINAL - PARA EL ARCHIVO -->
             <div class="seccion-cuenta">
-              <div class="titulo-seccion">ORIGINAL - PARA EL CLIENTE</div>
+              <div class="titulo-seccion">ORIGINAL - PARA EL ARCHIVO</div>
               <div class="encabezado">
                 <div class="empresa-info">
                   <div><strong>SAMARITANO EBS</strong></div>
-                  <div>Cuenta de Cobro</div>
+                  <div>REMISIÓN</div>
                 </div>
                 <div class="fecha-wrapper">
                   <div class="fecha">${formatearFecha(factura.fecha)}</div>
-                  <div class="plazo">Plazo a 30 dias</div>
+                  <div class="plazo">Plazo a 30 dias<span class="check-box"></span></div>
+                  <div class="plazo-contado">De contado<span class="check-box"></span></div>
                 </div>
               </div>
               
-              <div class="numero-cuenta">CUENTA DE COBRO #${factura.id.toString().padStart(6, '0')}</div>
+              <div class="numero-cuenta">REMISIÓN #${factura.id.toString().padStart(6, '0')}</div>
               
               <div class="info-cliente-vendedor">
                 <div class="info-item">
                   <h4>CLIENTE:</h4>
-                  <p>${factura.cliente}</p>
+                  <p class="cliente-nombre">${factura.cliente}</p>
                   <h4>DIRECCIÓN:</h4>
                   <p>${factura.direccion || 'NO ESPECIFICADO'}</p>
                 </div>
@@ -433,41 +486,47 @@ const FacturaDetalle = () => {
                   <div>ABONADO</div>
                   <div>${formatearMonedaImpresion(calcularTotalAbonado())}</div>
                 </div>
-                <div class="resumen-item">
+                <div class="resumen-item resumen-saldo">
                   <div>SALDO</div>
-                  <div>${formatearMonedaImpresion(calcularSaldoPendiente())}</div>
+                  <div class="saldo-valor">${formatearMonedaImpresion(calcularSaldoPendiente())}</div>
                 </div>
               </div>
               
-              <div class="estado">ESTADO: ${estaPagada() ? 'PAGADA' : 'PENDIENTE'}</div>
+              <div class="estado-firma">
+                <div class="firma">
+                  <div class="firma-linea">Firma del cliente</div>
+                </div>
+                <div class="estado">ESTADO: ${estaPagada() ? 'PAGADA' : 'PENDIENTE'}</div>
+              </div>
               
               <div class="footer">
-                <div>Gracias por su preferencia. Para cualquier aclaración, presentar esta cuenta de cobro.</div>
+                <div>Gracias por su preferencia.</div>
                 <div class="footer-payment">NEQUI, TU LLAVE 3209105993, CUENTA DAVIVIENDA # 474970011893</div>
                 <div class="logo">EBS - Sistema de Ebs-Hermanos Marin</div>
               </div>
             </div>
             
-              <!-- COPIA - PARA EL ARCHIVO -->
+              <!-- COPIA - PARA EL CLIENTE -->
             <div class="seccion-cuenta">
-              <div class="titulo-seccion">COPIA - PARA EL ARCHIVO</div>
+              <div class="titulo-seccion">COPIA - PARA EL CLIENTE</div>
               <div class="encabezado">
                 <div class="empresa-info">
                   <div><strong>SAMARITANO EBS</strong></div>
-                  <div>Cuenta de Cobro</div>
+                  <div>REMISIÓN</div>
                 </div>
                 <div class="fecha-wrapper">
                   <div class="fecha">${formatearFecha(factura.fecha)}</div>
-                  <div class="plazo">Plazo a 30 dias</div>
+                  <div class="plazo">Plazo a 30 dias<span class="check-box"></span></div>
+                  <div class="plazo-contado">De contado<span class="check-box"></span></div>
                 </div>
               </div>
               
-              <div class="numero-cuenta">CUENTA DE COBRO #${factura.id.toString().padStart(6, '0')}</div>
+              <div class="numero-cuenta">REMISIÓN #${factura.id.toString().padStart(6, '0')}</div>
               
               <div class="info-cliente-vendedor">
                 <div class="info-item">
                   <h4>CLIENTE:</h4>
-                  <p>${factura.cliente}</p>
+                  <p class="cliente-nombre">${factura.cliente}</p>
                   <h4>DIRECCIÓN:</h4>
                   <p>${factura.direccion || 'NO ESPECIFICADO'}</p>
                 </div>
@@ -515,16 +574,21 @@ const FacturaDetalle = () => {
                   <div>ABONADO</div>
                   <div>${formatearMonedaImpresion(calcularTotalAbonado())}</div>
                 </div>
-                <div class="resumen-item">
+                <div class="resumen-item resumen-saldo">
                   <div>SALDO</div>
-                  <div>${formatearMonedaImpresion(calcularSaldoPendiente())}</div>
+                  <div class="saldo-valor">${formatearMonedaImpresion(calcularSaldoPendiente())}</div>
                 </div>
               </div>
               
-              <div class="estado">ESTADO: ${estaPagada() ? 'PAGADA' : 'PENDIENTE'}</div>
+              <div class="estado-firma">
+                <div class="firma">
+                  <div class="firma-linea">Firma del cliente</div>
+                </div>
+                <div class="estado">ESTADO: ${estaPagada() ? 'PAGADA' : 'PENDIENTE'}</div>
+              </div>
               
               <div class="footer">
-                <div>Gracias por su preferencia. Para cualquier aclaración, presentar esta cuenta de cobro.</div>
+                <div>Gracias por su preferencia.</div>
                 <div class="footer-payment">NEQUI, TU LLAVE 3209105993, CUENTA DAVIVIENDA # 474970011893</div>
                 <div class="logo">EBS - Sistema de Ebs-Hermanos Marin</div>
               </div>

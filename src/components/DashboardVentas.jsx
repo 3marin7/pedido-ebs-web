@@ -18,6 +18,28 @@ const DashboardVentas = () => {
   const [cobrosDiariosVendedor, setCobrosDiariosVendedor] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('general');
+  // Estados para Reportes
+  const [fechaInicio, setFechaInicio] = useState(() => {
+    const d = new Date();
+    d.setDate(d.getDate() - 30);
+    return d.toISOString().split('T')[0];
+  });
+  const [fechaFin, setFechaFin] = useState(() => new Date().toISOString().split('T')[0]);
+  const [vendedorSeleccionado, setVendedorSeleccionado] = useState('todos');
+  const [vendedoresLista, setVendedoresLista] = useState([]);
+  const [reporteVentas, setReporteVentas] = useState([]);
+  const [resumenReporte, setResumenReporte] = useState({ total: 0, facturas: 0, promedio: 0 });
+  const [reporteLoading, setReporteLoading] = useState(false);
+  // Estados para Productos
+  const [productosMasVendidos, setProductosMasVendidos] = useState([]);
+  const [productosLoading, setProductosLoading] = useState(false);
+  const [fechaInicioProductos, setFechaInicioProductos] = useState(() => {
+    const d = new Date();
+    d.setDate(d.getDate() - 30);
+    return d.toISOString().split('T')[0];
+  });
+  const [fechaFinProductos, setFechaFinProductos] = useState(() => new Date().toISOString().split('T')[0]);
+  const [busquedaProducto, setBusquedaProducto] = useState('');
 
   useEffect(() => {
     fetchDashboardData();
@@ -71,11 +93,404 @@ const DashboardVentas = () => {
       await loadVendedorData();
       await loadCobrosData();
 
+      // Lista inicial de vendedores para reportes
+      await fetchVendedoresLista();
+
     } catch (error) {
       console.error('Error:', error);
     } finally {
       setLoading(false);
     }
+  };
+
+  const fetchVendedoresLista = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('facturas')
+        .select('vendedor')
+        .not('vendedor', 'is', null);
+      if (error) throw error;
+      const unicos = Array.from(new Set((data || []).map(f => f.vendedor))).sort();
+      setVendedoresLista(unicos);
+    } catch (e) {
+      console.error('Error cargando vendedores:', e);
+    }
+  };
+
+  const generarReporteVentas = async () => {
+    try {
+      setReporteLoading(true);
+      const query = supabase
+        .from('facturas')
+        .select('id, fecha, total, cliente, vendedor')
+        .gte('fecha', fechaInicio)
+        .lte('fecha', fechaFin)
+        .order('fecha');
+      if (vendedorSeleccionado && vendedorSeleccionado !== 'todos') {
+        query.eq('vendedor', vendedorSeleccionado);
+      }
+      const { data, error } = await query;
+      if (error) throw error;
+      const ventas = (data || []).map(f => ({
+        id: f.id,
+        fecha: f.fecha,
+        cliente: f.cliente || '—',
+        vendedor: f.vendedor || '—',
+        total: parseFloat(f.total) || 0,
+      }));
+      setReporteVentas(ventas);
+      const total = ventas.reduce((s, v) => s + v.total, 0);
+      const facturas = ventas.length;
+      const promedio = facturas ? total / facturas : 0;
+      setResumenReporte({ total, facturas, promedio });
+    } catch (e) {
+      console.error('Error generando reporte:', e);
+      setReporteVentas([]);
+      setResumenReporte({ total: 0, facturas: 0, promedio: 0 });
+    } finally {
+      setReporteLoading(false);
+    }
+  };
+
+  // Autogenerar reporte al abrir pestaña o cambiar filtros
+  useEffect(() => {
+    if (activeTab === 'reportes') {
+      if (!vendedoresLista.length) {
+        fetchVendedoresLista();
+      }
+      generarReporteVentas();
+    }
+    if (activeTab === 'productos') {
+      cargarProductosMasVendidos();
+    }
+  }, [activeTab]);
+
+  useEffect(() => {
+    if (activeTab === 'reportes') {
+      generarReporteVentas();
+    }
+  }, [fechaInicio, fechaFin, vendedorSeleccionado]);
+
+  useEffect(() => {
+    if (activeTab === 'productos') {
+      cargarProductosMasVendidos();
+    }
+  }, [fechaInicioProductos, fechaFinProductos]);
+
+  const cargarProductosMasVendidos = async () => {
+    try {
+      setProductosLoading(true);
+      
+      // Obtener todas las facturas con sus productos filtradas por fecha
+      const { data: facturasData, error } = await supabase
+        .from('facturas')
+        .select('id, cliente, productos, fecha')
+        .gte('fecha', fechaInicioProductos)
+        .lte('fecha', fechaFinProductos)
+        .order('fecha');
+      
+      if (error) throw error;
+
+      // Procesar productos: calcular cantidades vendidas y clientes compradores
+      const productosMap = {};
+      
+      facturasData.forEach(factura => {
+        if (!factura.productos || !Array.isArray(factura.productos)) return;
+        
+        factura.productos.forEach(producto => {
+          const nombre = producto.nombre || 'Sin nombre';
+          const cantidad = parseInt(producto.cantidad) || 0;
+          const precio = parseFloat(producto.precio) || 0;
+          const subtotal = cantidad * precio;
+          const cliente = factura.cliente || 'Sin cliente';
+          
+          if (!productosMap[nombre]) {
+            productosMap[nombre] = {
+              nombre,
+              cantidadTotal: 0,
+              montoTotal: 0,
+              clientes: {}
+            };
+          }
+          
+          productosMap[nombre].cantidadTotal += cantidad;
+          productosMap[nombre].montoTotal += subtotal;
+          
+          // Agregar o actualizar cliente
+          if (!productosMap[nombre].clientes[cliente]) {
+            productosMap[nombre].clientes[cliente] = {
+              nombre: cliente,
+              cantidad: 0,
+              monto: 0
+            };
+          }
+          
+          productosMap[nombre].clientes[cliente].cantidad += cantidad;
+          productosMap[nombre].clientes[cliente].monto += subtotal;
+        });
+      });
+
+      // Convertir a array y ordenar por cantidad total
+      const productosArray = Object.values(productosMap).map(producto => {
+        // Ordenar clientes por cantidad comprada
+        const clientesArray = Object.values(producto.clientes)
+          .sort((a, b) => b.cantidad - a.cantidad);
+        
+        return {
+          nombre: producto.nombre,
+          cantidadTotal: producto.cantidadTotal,
+          montoTotal: producto.montoTotal,
+          clientesTop: clientesArray
+        };
+      }).sort((a, b) => b.cantidadTotal - a.cantidadTotal);
+
+      setProductosMasVendidos(productosArray);
+      
+    } catch (error) {
+      console.error('Error cargando productos:', error);
+      setProductosMasVendidos([]);
+    } finally {
+      setProductosLoading(false);
+    }
+  };
+
+  const exportarCSV = () => {
+    const encabezados = ['ID', 'Fecha', 'Cliente', 'Vendedor', 'Total'];
+    const filas = reporteVentas.map(r => [r.id, r.fecha, r.cliente, r.vendedor, r.total]);
+    const csv = [encabezados, ...filas]
+      .map(row => row.map(val => `"${String(val).replace(/"/g, '"')}"`).join(','))
+      .join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `reporte-ventas-${fechaInicio}_a_${fechaFin}${vendedorSeleccionado!=='todos' ? `-${vendedorSeleccionado}` : ''}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const imprimirReporteFormato = () => {
+    const ventanaImpresion = window.open('', '_blank', 'width=900,height=700');
+    const hoy = new Date().toLocaleDateString('es-CO');
+    const fechaDesde = new Date(fechaInicio).toLocaleDateString('es-CO');
+    const fechaHasta = new Date(fechaFin).toLocaleDateString('es-CO');
+    const vendedorFiltro = vendedorSeleccionado === 'todos' ? 'Todos los vendedores' : vendedorSeleccionado;
+    const totalFilas = reporteVentas.length;
+    const totalMonto = reporteVentas.reduce((s, r) => s + r.total, 0);
+    const promedio = totalFilas > 0 ? totalMonto / totalFilas : 0;
+
+    const filasHTML = reporteVentas.map(r => {
+      return `
+        <tr>
+          <td class="col-id">#${String(r.id).padStart(6, '0')}</td>
+          <td>${new Date(r.fecha).toLocaleDateString('es-CO')}</td>
+          <td>${r.cliente}</td>
+          <td>${r.vendedor}</td>
+          <td class="col-total">${formatCurrency(r.total)}</td>
+        </tr>
+      `;
+    }).join('');
+
+    const contenidoHTML = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="UTF-8">
+        <title>Reporte de Ventas</title>
+        <style>
+          * { margin: 0; padding: 0; box-sizing: border-box; }
+          body { 
+            font-family: Arial, sans-serif; 
+            color: #333; 
+            padding: 20px;
+            background: #fff;
+          }
+          .reporte-container {
+            max-width: 900px;
+            margin: 0 auto;
+          }
+          .header {
+            text-align: center;
+            border-bottom: 3px solid #000;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+          }
+          .header h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+            color: #1a1a1a;
+          }
+          .header p {
+            font-size: 11px;
+            color: #666;
+          }
+          .info-general {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+          }
+          .info-item {
+            font-size: 10px;
+          }
+          .info-item label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 3px;
+            color: #333;
+          }
+          .info-item span {
+            display: block;
+            color: #666;
+          }
+          .resumen {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+          }
+          .resumen-card {
+            background: #f0f0f0;
+            border-left: 4px solid #2196F3;
+            padding: 12px;
+            border-radius: 3px;
+          }
+          .resumen-card label {
+            font-size: 11px;
+            color: #666;
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+          }
+          .resumen-card .valor {
+            font-size: 16px;
+            font-weight: bold;
+            color: #1a1a1a;
+          }
+          table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            background: #fff;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+          }
+          thead {
+            background: #2196F3;
+            color: white;
+          }
+          th {
+            padding: 12px;
+            text-align: left;
+            font-size: 11px;
+            font-weight: bold;
+            border-bottom: 2px solid #1976D2;
+          }
+          td {
+            padding: 10px 12px;
+            font-size: 10px;
+            border-bottom: 1px solid #eee;
+          }
+          tbody tr:nth-child(even) {
+            background: #f5f5f5;
+          }
+          .col-id {
+            text-align: center;
+            font-weight: bold;
+            width: 60px;
+          }
+          .col-total {
+            text-align: right;
+            font-weight: bold;
+            width: 100px;
+          }
+          .footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #ccc;
+            text-align: center;
+            font-size: 9px;
+            color: #999;
+          }
+          @media print {
+            body { padding: 0; background: white; }
+            .reporte-container { max-width: 100%; }
+            table { page-break-inside: avoid; }
+          }
+        </style>
+      </head>
+      <body>
+        <div class="reporte-container">
+          <div class="header">
+            <h1>REPORTE DE VENTAS</h1>
+            <p>SAMARITANO EBS - Sistema de Gestión</p>
+          </div>
+
+          <div class="info-general">
+            <div class="info-item">
+              <label>Período:</label>
+              <span>${fechaDesde} a ${fechaHasta}</span>
+            </div>
+            <div class="info-item">
+              <label>Vendedor:</label>
+              <span>${vendedorFiltro}</span>
+            </div>
+            <div class="info-item">
+              <label>Total Facturas:</label>
+              <span>${totalFilas}</span>
+            </div>
+            <div class="info-item">
+              <label>Generado:</label>
+              <span>${hoy}</span>
+            </div>
+          </div>
+
+          <div class="resumen">
+            <div class="resumen-card">
+              <label>Total Facturado</label>
+              <div class="valor">${formatCurrency(totalMonto)}</div>
+            </div>
+            <div class="resumen-card">
+              <label>Número de Facturas</label>
+              <div class="valor">${totalFilas}</div>
+            </div>
+            <div class="resumen-card">
+              <label>Ticket Promedio</label>
+              <div class="valor">${formatCurrency(promedio)}</div>
+            </div>
+          </div>
+
+          <table>
+            <thead>
+              <tr>
+                <th class="col-id">ID</th>
+                <th>Fecha</th>
+                <th>Cliente</th>
+                <th>Vendedor</th>
+                <th class="col-total">Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${filasHTML}
+            </tbody>
+          </table>
+
+          <div class="footer">
+            <p>Este reporte es confidencial y para uso interno únicamente.</p>
+            <p>Impreso: ${hoy} a las ${new Date().toLocaleTimeString('es-CO')}</p>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+
+    ventanaImpresion.document.write(contenidoHTML);
+    ventanaImpresion.document.close();
+    setTimeout(() => {
+      ventanaImpresion.print();
+    }, 250);
   };
 
   const loadChartData = async () => {
@@ -416,6 +831,18 @@ const DashboardVentas = () => {
           👥 Por Vendedor
         </button>
         <button 
+          className={`tab ${activeTab === 'reportes' ? 'active' : ''}`}
+          onClick={() => setActiveTab('reportes')}
+        >
+          📄 Reportes
+        </button>
+        <button 
+          className={`tab ${activeTab === 'productos' ? 'active' : ''}`}
+          onClick={() => setActiveTab('productos')}
+        >
+          📦 Productos
+        </button>
+        <button 
           className={`tab ${activeTab === 'cobros' ? 'active' : ''}`}
           onClick={() => setActiveTab('cobros')}
         >
@@ -489,6 +916,84 @@ const DashboardVentas = () => {
             ) : (
               <p>No hay datos para mostrar el gráfico</p>
             )}
+          </div>
+        </>
+      )}
+
+      {activeTab === 'reportes' && (
+        <>
+          <div className="dashboard-card full-width">
+            <h2>📄 Reporte de Ventas por Fecha y Vendedor</h2>
+            <div className="filtros-reporte">
+              <div className="filtro">
+                <label>Fecha Inicio</label>
+                <input type="date" value={fechaInicio} onChange={e => setFechaInicio(e.target.value)} />
+              </div>
+              <div className="filtro">
+                <label>Fecha Fin</label>
+                <input type="date" value={fechaFin} onChange={e => setFechaFin(e.target.value)} />
+              </div>
+              <div className="filtro">
+                <label>Vendedor</label>
+                <select value={vendedorSeleccionado} onChange={e => setVendedorSeleccionado(e.target.value)}>
+                  <option value="todos">Todos</option>
+                  {vendedoresLista.map(v => (
+                    <option key={v} value={v}>{v}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="acciones">
+                <button className="btn" onClick={generarReporteVentas}>Generar Reporte</button>
+                <button className="btn" onClick={exportarCSV} disabled={reporteVentas.length===0}>Exportar CSV</button>
+                <button className="btn" onClick={imprimirReporteFormato} disabled={reporteVentas.length===0}>Imprimir Formal</button>
+              </div>
+            </div>
+
+            <div className="resumen-reporte">
+              <div className="resumen-item">
+                <span>Total Facturado</span>
+                <strong>{formatCurrency(resumenReporte.total)}</strong>
+              </div>
+              <div className="resumen-item">
+                <span>Facturas</span>
+                <strong>{resumenReporte.facturas}</strong>
+              </div>
+              <div className="resumen-item">
+                <span>Ticket Promedio</span>
+                <strong>{formatCurrency(resumenReporte.promedio)}</strong>
+              </div>
+            </div>
+
+            <div className="tabla-reporte-wrapper">
+              {reporteLoading ? (
+                <p>Cargando reporte...</p>
+              ) : reporteVentas.length === 0 ? (
+                <p>No hay resultados para los filtros seleccionados.</p>
+              ) : (
+                <table className="tabla-reporte">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Fecha</th>
+                      <th>Cliente</th>
+                      <th>Vendedor</th>
+                      <th>Total</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {reporteVentas.map(r => (
+                      <tr key={r.id}>
+                        <td>{String(r.id).padStart(6, '0')}</td>
+                        <td>{new Date(r.fecha).toLocaleDateString()}</td>
+                        <td>{r.cliente}</td>
+                        <td>{r.vendedor}</td>
+                        <td className="col-total">{formatCurrency(r.total)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
           </div>
         </>
       )}
@@ -573,6 +1078,172 @@ const DashboardVentas = () => {
               <p>No hay datos de vendedores</p>
             )}
           </div>
+        </>
+      )}
+
+      {activeTab === 'productos' && (
+        <>
+          <div className="dashboard-card full-width">
+            <h2>📦 Productos Más Vendidos y Sus Principales Clientes</h2>
+            
+            <div className="filtros-reporte">
+              <div className="filtro">
+                <label>Fecha Inicio</label>
+                <input 
+                  type="date" 
+                  value={fechaInicioProductos} 
+                  onChange={e => setFechaInicioProductos(e.target.value)} 
+                />
+              </div>
+              <div className="filtro">
+                <label>Fecha Fin</label>
+                <input 
+                  type="date" 
+                  value={fechaFinProductos} 
+                  onChange={e => setFechaFinProductos(e.target.value)} 
+                />
+              </div>
+              <div className="filtro">
+                <label>Buscar Producto</label>
+                <input 
+                  type="text" 
+                  placeholder="Nombre del producto..." 
+                  value={busquedaProducto} 
+                  onChange={e => setBusquedaProducto(e.target.value)}
+                  className="busqueda-input"
+                />
+                {busquedaProducto && (
+                  <button 
+                    className="btn-limpiar-busqueda"
+                    onClick={() => setBusquedaProducto('')}
+                    title="Limpiar búsqueda"
+                  >
+                    ×
+                  </button>
+                )}
+              </div>
+              <div className="acciones">
+                <button className="btn" onClick={cargarProductosMasVendidos}>
+                  🔄 Actualizar Análisis
+                </button>
+              </div>
+            </div>
+            
+            {productosLoading ? (
+              <p>Cargando análisis de productos...</p>
+            ) : productosMasVendidos.length === 0 ? (
+              <p>No hay datos de productos para el período seleccionado.</p>
+            ) : (
+              <>
+                {busquedaProducto && (
+                  <div className="busqueda-activa-info">
+                    📦 Mostrando resultados para: <strong>"{busquedaProducto}"</strong>
+                    <span className="resultados-count">
+                      ({productosMasVendidos.filter(p => 
+                        p.nombre.toLowerCase().includes(busquedaProducto.toLowerCase())
+                      ).length} producto(s) encontrado(s))
+                    </span>
+                  </div>
+                )}
+                
+                <div className="resumen-productos">
+                  <div className="resumen-item">
+                    <span>Total Productos</span>
+                    <strong>{busquedaProducto 
+                      ? productosMasVendidos.filter(p => p.nombre.toLowerCase().includes(busquedaProducto.toLowerCase())).length
+                      : productosMasVendidos.length
+                    }</strong>
+                  </div>
+                  <div className="resumen-item">
+                    <span>Unidades Vendidas</span>
+                    <strong>{busquedaProducto
+                      ? productosMasVendidos.filter(p => p.nombre.toLowerCase().includes(busquedaProducto.toLowerCase())).reduce((s, p) => s + p.cantidadTotal, 0)
+                      : productosMasVendidos.reduce((s, p) => s + p.cantidadTotal, 0)
+                    }</strong>
+                  </div>
+                  <div className="resumen-item">
+                    <span>Ventas Totales</span>
+                    <strong>{formatCurrency(busquedaProducto
+                      ? productosMasVendidos.filter(p => p.nombre.toLowerCase().includes(busquedaProducto.toLowerCase())).reduce((s, p) => s + p.montoTotal, 0)
+                      : productosMasVendidos.reduce((s, p) => s + p.montoTotal, 0)
+                    )}</strong>
+                  </div>
+                </div>
+                
+                <div className="productos-analisis">
+                {(busquedaProducto 
+                  ? productosMasVendidos.filter(p => p.nombre.toLowerCase().includes(busquedaProducto.toLowerCase()))
+                  : productosMasVendidos.slice(0, 20)
+                ).map((producto, index) => (
+                  <div key={index} className="producto-card">
+                    <div className="producto-header">
+                      <div className="ranking">#{index + 1}</div>
+                      <div className="producto-info">
+                        <h3>{producto.nombre}</h3>
+                        <div className="producto-stats">
+                          <span className="stat">
+                            <strong>{producto.cantidadTotal}</strong> unidades vendidas
+                          </span>
+                          <span className="stat">
+                            <strong>{formatCurrency(producto.montoTotal)}</strong> en ventas
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="clientes-top">
+                      <h4>Top Clientes Compradores:</h4>
+                      <table className="tabla-clientes-compra">
+                        <thead>
+                          <tr>
+                            <th>Cliente</th>
+                            <th>Unidades</th>
+                            <th>Monto Total</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {producto.clientesTop.slice(0, 5).map((cliente, idx) => (
+                            <tr key={idx}>
+                              <td>{cliente.nombre}</td>
+                              <td className="col-cantidad">{cliente.cantidad}</td>
+                              <td className="col-monto">{formatCurrency(cliente.monto)}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              </>
+            )}
+          </div>
+
+          {/* Gráfico de Top 10 Productos */}
+          {productosMasVendidos.length > 0 && (
+            <div className="dashboard-card full-width">
+              <h2>Top 10 Productos Más Vendidos</h2>
+              <ResponsiveContainer width="100%" height={400}>
+                <BarChart data={
+                  busquedaProducto 
+                    ? productosMasVendidos.filter(p => p.nombre.toLowerCase().includes(busquedaProducto.toLowerCase())).slice(0, 10)
+                    : productosMasVendidos.slice(0, 10)
+                }>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="nombre" angle={-45} textAnchor="end" height={100} />
+                  <YAxis />
+                  <Tooltip 
+                    formatter={(value, name) => {
+                      if (name === 'cantidadTotal') return [value, 'Unidades'];
+                      return [formatCurrency(value), 'Ventas'];
+                    }}
+                  />
+                  <Legend />
+                  <Bar dataKey="cantidadTotal" fill="#4CAF50" name="Unidades Vendidas" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          )}
         </>
       )}
 
