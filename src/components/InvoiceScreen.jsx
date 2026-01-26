@@ -245,8 +245,34 @@ const InvoiceScreen = () => {
     setMostrarCatalogo(false);
   };
 
+  // Función para registrar movimiento de inventario (auditoría)
+  const registrarMovimientoInventario = async (productoId, tipoMovimiento, cantidadMovida, stockAnterior, stockNuevo, facturaId = null, descripcion = null, usuario = 'Sistema') => {
+    try {
+      const { error } = await supabase
+        .from('movimientos_inventario')
+        .insert([{
+          producto_id: productoId,
+          tipo_movimiento: tipoMovimiento,
+          cantidad: cantidadMovida,
+          stock_anterior: stockAnterior,
+          stock_nuevo: stockNuevo,
+          factura_id: facturaId,
+          descripcion: descripcion,
+          usuario: usuario,
+          fecha_movimiento: new Date().toISOString()
+        }]);
+
+      if (error) {
+        console.error('Error registrando movimiento de inventario:', error);
+        // No lanzar error para que no afecte el proceso de venta
+      }
+    } catch (error) {
+      console.error('Error en registrarMovimientoInventario:', error);
+    }
+  };
+
   // Función para actualizar inventario después de una venta
-  const actualizarInventario = async (productosVendidos) => {
+  const actualizarInventario = async (productosVendidos, facturaId = null) => {
     try {
       for (const producto of productosVendidos) {
         if (producto.producto_id) {
@@ -276,6 +302,18 @@ const InvoiceScreen = () => {
             .eq('id', producto.producto_id);
           
           if (updateError) throw updateError;
+
+          // Registrar el movimiento en la auditoría
+          await registrarMovimientoInventario(
+            producto.producto_id,
+            'venta',
+            producto.cantidad,
+            stockActual,
+            nuevoStock,
+            facturaId,
+            `Venta de ${producto.cantidad} unidades de ${producto.nombre}`,
+            vendedorSeleccionado
+          );
           
           const desactivado = nuevoStock === 0 ? ' (DESACTIVADO)' : '';
           console.log(`Stock actualizado para ${producto.nombre}: ${stockActual} -> ${nuevoStock}${desactivado}`);
@@ -485,8 +523,8 @@ const InvoiceScreen = () => {
       const facturaGuardada = data[0];
       const numeroFactura = facturaGuardada.id;
 
-      // Actualizar inventario después de guardar la factura
-      await actualizarInventario(productos);
+      // Actualizar inventario después de guardar la factura (pasando el facturaId)
+      await actualizarInventario(productos, numeroFactura);
 
       // Mostrar diálogo de confirmación con opción de imprimir
       const usuarioQuiereImprimir = window.confirm(

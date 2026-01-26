@@ -24,6 +24,7 @@ const CatalogoClientes = () => {
   const [imagenAmpliada, setImagenAmpliada] = useState(null);
   const [ordenamiento, setOrdenamiento] = useState('nombre-asc');
   const [cantidadesRapidas] = useState([12, 24, 36, 48, 60, 72]);
+  const [vistaActual, setVistaActual] = useState('grid'); // 'grid' o 'lista'
 
   const location = useLocation();
 
@@ -96,6 +97,10 @@ const CatalogoClientes = () => {
 
   const handleOrdenamientoChange = (e) => {
     setOrdenamiento(e.target.value);
+  };
+
+  const cambiarVista = (vista) => {
+    setVistaActual(vista);
   };
 
   const toggleMostrarCarrito = () => {
@@ -403,6 +408,23 @@ const CatalogoClientes = () => {
               <option value="precio-asc">Precio: Menor a Mayor</option>
               <option value="precio-desc">Precio: Mayor a Menor</option>
             </select>
+            
+            <div className="view-toggle">
+              <button 
+                className={`view-btn ${vistaActual === 'grid' ? 'active' : ''}`}
+                onClick={() => cambiarVista('grid')}
+                title="Vista Cuadrícula"
+              >
+                <i className="fas fa-th"></i>
+              </button>
+              <button 
+                className={`view-btn ${vistaActual === 'lista' ? 'active' : ''}`}
+                onClick={() => cambiarVista('lista')}
+                title="Vista Lista"
+              >
+                <i className="fas fa-list"></i>
+              </button>
+            </div>
           </div>
         </div>
       </header>
@@ -427,13 +449,13 @@ const CatalogoClientes = () => {
           <p>Prueba con otros términos de búsqueda o selecciona otra categoría</p>
         </div>
       ) : (
-        <div className="product-grid-two-columns">
+        <div className={vistaActual === 'grid' ? 'product-grid-two-columns' : 'product-list-view'}>
           {productosFiltradosLista.map(producto => {
             const estaSeleccionado = productosSeleccionados.some(p => p.id === producto.id);
             return (
               <div 
                 key={producto.id} 
-                className={`product-card ${estaSeleccionado ? 'selected' : ''}`}
+                className={`product-card ${estaSeleccionado ? 'selected' : ''} ${vistaActual === 'lista' ? 'list-card' : ''}`}
               >
                 <div className="product-image-container">
                   <img 

@@ -103,6 +103,7 @@ const Navigation = () => {
           submenu: [
             { path: '/catalogo', label: 'Catálogo Productos', icon: '📚' },
             { path: '/gestion-inventario', label: 'Gestión Inventario', icon: '📋' },
+            { path: '/movimientos', label: 'Historial Movimientos', icon: '📊' },
             { path: '/gestion-pedidos', label: 'Gestión Pedidos', icon: '🛒' }
           ]
         }
@@ -146,6 +147,7 @@ const Navigation = () => {
       return [
         { path: '/catalogo', label: 'Catálogo Productos', icon: '📚', tipo: 'simple' },
         { path: '/gestion-inventario', label: 'Gestión Inventario', icon: '📋', tipo: 'simple' },
+        { path: '/movimientos', label: 'Historial Movimientos', icon: '📊', tipo: 'simple' },
         { path: '/gestion-pedidos', label: 'Gestión Pedidos', icon: '🛒', tipo: 'simple' }
       ];
     }
