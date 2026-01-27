@@ -18,6 +18,8 @@ import MallMap from './components/MallMap';
 import RutasCobro from './components/RutasCobro';
 import GastosScreen from './components/GastosScreen';
 import ContabilidadScreen from './components/ContabilidadScreen';
+import HistorialMovimientos from './components/HistorialMovimientos';
+import AuditoriaProductos from './components/AuditoriaProductos';
 
 // Contexto de autenticación
 const AuthContext = createContext();
@@ -337,6 +339,24 @@ function App() {
             } />
             
             {/* Rutas para gestión de inventario */}
+            <Route path="/movimientos" element={
+              <ProtectedRoute requiredRoles={['admin', 'inventario']}>
+                <>
+                  <PageMeta title="Historial de Movimientos - EBS" description="Auditoría de cambios de inventario" />
+                  <HistorialMovimientos />
+                </>
+              </ProtectedRoute>
+            } />
+
+            <Route path="/auditoria-productos" element={
+              <ProtectedRoute requiredRoles={['admin', 'inventario']}>
+                <>
+                  <PageMeta title="Auditoría de Productos - EBS" description="Seguimiento de cambios en catálogo" />
+                  <AuditoriaProductos />
+                </>
+              </ProtectedRoute>
+            } />
+
             <Route path="/gestion-inventario" element={
               <ProtectedRoute requiredRoles={['admin', 'inventario']}>
                 <>

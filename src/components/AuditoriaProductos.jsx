@@ -1,26 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from './supabaseClient';
-import './HistorialMovimientos.css';
+import './AuditoriaProductos.css';
 
-const HistorialMovimientos = () => {
-  const [movimientos, setMovimientos] = useState([]);
+const AuditoriaProductos = () => {
+  const [auditorias, setAuditorias] = useState([]);
   const [productos, setProductos] = useState([]);
+  const [cargando, setCargando] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Filtros
   const [filtroProducto, setFiltroProducto] = useState('');
   const [filtroTipo, setFiltroTipo] = useState('');
   const [filtroRol, setFiltroRol] = useState('');
   const [filtroFechaInicio, setFiltroFechaInicio] = useState('');
   const [filtroFechaFin, setFiltroFechaFin] = useState('');
-  const [cargando, setCargando] = useState(true);
-  const [error, setError] = useState(null);
 
   // Cargar datos iniciales
   useEffect(() => {
     cargarDatos();
   }, []);
 
-  // Recargar cuando cambien los filtros
+  // Recargar cuando cambien filtros
   useEffect(() => {
-    cargarMovimientos();
+    cargarAuditorias();
   }, [filtroProducto, filtroTipo, filtroRol, filtroFechaInicio, filtroFechaFin]);
 
   const cargarDatos = async () => {
@@ -28,7 +30,7 @@ const HistorialMovimientos = () => {
       setCargando(true);
       setError(null);
 
-      // Cargar lista de productos
+      // Cargar productos
       const { data: productosData, error: productosError } = await supabase
         .from('productos')
         .select('id, nombre')
@@ -37,32 +39,31 @@ const HistorialMovimientos = () => {
       if (productosError) throw productosError;
       setProductos(productosData || []);
 
-      await cargarMovimientos();
+      await cargarAuditorias();
     } catch (err) {
       console.error('Error cargando datos:', err);
-      setError(`Error al cargar los datos: ${err.message || err}`);
+      setError(`Error al cargar: ${err.message || err}`);
     } finally {
       setCargando(false);
     }
   };
 
-  const cargarMovimientos = async () => {
+  const cargarAuditorias = async () => {
     try {
       let query = supabase
-        .from('movimientos_inventario')
+        .from('auditoria_productos')
         .select(`
           *,
           productos:producto_id (id, nombre)
         `)
         .order('created_at', { ascending: false });
 
-      // Aplicar filtros
       if (filtroProducto) {
         query = query.eq('producto_id', parseInt(filtroProducto));
       }
 
       if (filtroTipo) {
-        query = query.eq('tipo_movimiento', filtroTipo);
+        query = query.eq('tipo_accion', filtroTipo);
       }
 
       if (filtroRol) {
@@ -82,10 +83,10 @@ const HistorialMovimientos = () => {
       const { data, error: err } = await query.limit(500);
 
       if (err) throw err;
-      setMovimientos(data || []);
+      setAuditorias(data || []);
     } catch (err) {
-      console.error('Error cargando movimientos:', err);
-      setError(`Error al cargar los movimientos: ${err.message || err}`);
+      console.error('Error cargando auditorías:', err);
+      setError(`Error: ${err.message || err}`);
     }
   };
 
@@ -100,45 +101,33 @@ const HistorialMovimientos = () => {
     });
   };
 
-  const obtenerFechaMovimiento = (m) => m.fecha_movimiento || m.created_at;
-
   const obtenerColorTipo = (tipo) => {
     const colores = {
-      venta: '#e74c3c',
-      entrada: '#27ae60',
-      ajuste: '#f39c12',
-      devolución: '#3498db',
       creacion: '#8e44ad',
-      edicion: '#2c3e50'
+      edicion: '#2c3e50',
+      eliminacion: '#c0392b'
     };
     return colores[tipo] || '#95a5a6';
   };
 
   const obtenerIconoTipo = (tipo) => {
     const iconos = {
-      venta: '📦',
-      entrada: '📥',
-      ajuste: '🔧',
-      devolución: '↩️',
       creacion: '🆕',
-      edicion: '✏️'
+      edicion: '✏️',
+      eliminacion: '🗑️'
     };
     return iconos[tipo] || '•';
   };
 
   const exportarCSV = () => {
-    const headers = ['Fecha', 'Producto', 'Tipo', 'Cantidad', 'Stock Anterior', 'Stock Nuevo', 'Usuario', 'Rol', 'Factura', 'Descripción'];
-    const rows = movimientos.map(m => [
-      formatearFecha(obtenerFechaMovimiento(m)),
-      m.productos?.nombre || 'N/A',
-      m.tipo_movimiento,
-      m.cantidad,
-      m.stock_anterior,
-      m.stock_nuevo,
-      m.usuario,
-      m.rol_usuario || 'N/A',
-      m.factura_id || '-',
-      m.descripcion || '-'
+    const headers = ['Fecha', 'Producto', 'Tipo', 'Usuario', 'Rol', 'Cambios'];
+    const rows = auditorias.map(a => [
+      formatearFecha(a.created_at),
+      a.productos?.nombre || 'N/A',
+      a.tipo_accion,
+      a.usuario || 'N/A',
+      a.rol_usuario || 'N/A',
+      a.cambios_resumen || '-'
     ]);
 
     const csv = [headers, ...rows].map(row => 
@@ -149,15 +138,15 @@ const HistorialMovimientos = () => {
     const link = document.createElement('a');
     const url = URL.createObjectURL(blob);
     link.setAttribute('href', url);
-    link.setAttribute('download', `movimientos_inventario_${new Date().toISOString().split('T')[0]}.csv`);
+    link.setAttribute('download', `auditoria_productos_${new Date().toISOString().split('T')[0]}.csv`);
     link.click();
   };
 
   return (
-    <div className="historial-container">
-      <div className="header-historial">
-        <h1>📊 Historial de Movimientos de Inventario</h1>
-        <p>Registro completo de todos los cambios en el stock</p>
+    <div className="auditoria-container">
+      <div className="header-auditoria">
+        <h1>📋 Auditoría de Cambios en Catálogo</h1>
+        <p>Seguimiento de creaciones y modificaciones de productos</p>
       </div>
 
       {error && (
@@ -167,7 +156,7 @@ const HistorialMovimientos = () => {
       )}
 
       {/* Filtros */}
-      <div className="filtros-historial">
+      <div className="filtros-auditoria">
         <div className="filtro-grupo">
           <label>Producto:</label>
           <select 
@@ -183,19 +172,16 @@ const HistorialMovimientos = () => {
         </div>
 
         <div className="filtro-grupo">
-          <label>Tipo de Movimiento:</label>
+          <label>Tipo de Acción:</label>
           <select 
             value={filtroTipo}
             onChange={(e) => setFiltroTipo(e.target.value)}
             className="filtro-select"
           >
-            <option value="">Todos los tipos</option>
-            <option value="venta">Venta</option>
-            <option value="entrada">Entrada</option>
-            <option value="ajuste">Ajuste</option>
-            <option value="devolución">Devolución</option>
+            <option value="">Todas las acciones</option>
             <option value="creacion">Creación</option>
             <option value="edicion">Edición</option>
+            <option value="eliminacion">Eliminación</option>
           </select>
         </div>
 
@@ -208,9 +194,9 @@ const HistorialMovimientos = () => {
           >
             <option value="">Todos los roles</option>
             <option value="admin">Admin</option>
-            <option value="vendedor">Vendedor</option>
             <option value="inventario">Inventario</option>
             <option value="contabilidad">Contabilidad</option>
+            <option value="vendedor">Vendedor</option>
             <option value="N/A">N/A</option>
           </select>
         </div>
@@ -251,90 +237,68 @@ const HistorialMovimientos = () => {
         <button 
           onClick={exportarCSV}
           className="btn-exportar"
-          disabled={movimientos.length === 0}
+          disabled={auditorias.length === 0}
         >
           📥 Exportar CSV
         </button>
       </div>
 
-      {/* Tabla de movimientos */}
+      {/* Tabla de auditorías */}
       {cargando ? (
         <div className="loading">
           <div className="spinner"></div>
-          <p>Cargando movimientos...</p>
+          <p>Cargando auditorías...</p>
         </div>
-      ) : movimientos.length === 0 ? (
+      ) : auditorias.length === 0 ? (
         <div className="empty-state">
-          <p>No hay movimientos que coincidan con los filtros seleccionados</p>
+          <p>No hay auditorías que coincidan con los filtros seleccionados</p>
         </div>
       ) : (
-        <div className="movimientos-wrapper">
-          <div className="resumen-movimientos">
+        <div className="auditoria-wrapper">
+          <div className="resumen-auditoria">
             <div className="resumen-card">
-              <span className="label">Total de Movimientos</span>
-              <span className="valor">{movimientos.length}</span>
+              <span className="label">Total de Cambios</span>
+              <span className="valor">{auditorias.length}</span>
             </div>
             <div className="resumen-card">
-              <span className="label">Ventas</span>
-              <span className="valor" style={{ color: '#e74c3c' }}>
-                {movimientos.filter(m => m.tipo_movimiento === 'venta').length}
+              <span className="label">Creaciones</span>
+              <span className="valor" style={{ color: '#8e44ad' }}>
+                {auditorias.filter(a => a.tipo_accion === 'creacion').length}
               </span>
             </div>
             <div className="resumen-card">
-              <span className="label">Entradas</span>
-              <span className="valor" style={{ color: '#27ae60' }}>
-                {movimientos.filter(m => m.tipo_movimiento === 'entrada').length}
-              </span>
-            </div>
-            <div className="resumen-card">
-              <span className="label">Ajustes</span>
-              <span className="valor" style={{ color: '#f39c12' }}>
-                {movimientos.filter(m => m.tipo_movimiento === 'ajuste').length}
+              <span className="label">Ediciones</span>
+              <span className="valor" style={{ color: '#2c3e50' }}>
+                {auditorias.filter(a => a.tipo_accion === 'edicion').length}
               </span>
             </div>
           </div>
 
           <div className="tabla-wrapper">
-            <table className="tabla-movimientos">
+            <table className="tabla-auditoria">
               <thead>
                 <tr>
                   <th>Fecha</th>
                   <th>Producto</th>
                   <th>Tipo</th>
-                  <th>Cantidad</th>
-                  <th>Stock Anterior</th>
-                  <th>Stock Nuevo</th>
+                  <th>Cambios</th>
                   <th>Usuario</th>
                   <th>Rol</th>
-                  <th>Factura</th>
-                  <th>Descripción</th>
                 </tr>
               </thead>
               <tbody>
-                {movimientos.map((movimiento) => (
-                  <tr key={movimiento.id} className={`tipo-${movimiento.tipo_movimiento}`}>
-                    <td className="fecha">{formatearFecha(obtenerFechaMovimiento(movimiento))}</td>
-                    <td className="producto">{movimiento.productos?.nombre || 'N/A'}</td>
+                {auditorias.map((auditoria) => (
+                  <tr key={auditoria.id} className={`tipo-${auditoria.tipo_accion}`}>
+                    <td className="fecha">{formatearFecha(auditoria.created_at)}</td>
+                    <td className="producto">{auditoria.productos?.nombre || 'N/A'}</td>
                     <td className="tipo">
-                      <span className="badge-tipo" style={{ backgroundColor: obtenerColorTipo(movimiento.tipo_movimiento) }}>
-                        {obtenerIconoTipo(movimiento.tipo_movimiento)} {movimiento.tipo_movimiento}
+                      <span className="badge-tipo" style={{ backgroundColor: obtenerColorTipo(auditoria.tipo_accion) }}>
+                        {obtenerIconoTipo(auditoria.tipo_accion)} {auditoria.tipo_accion}
                       </span>
                     </td>
-                    <td className="cantidad">{movimiento.cantidad}</td>
-                    <td className="stock-anterior">{movimiento.stock_anterior}</td>
-                    <td className="stock-nuevo">{movimiento.stock_nuevo}</td>
-                    <td className="usuario">{movimiento.usuario || 'Sistema'}</td>
-                    <td className="rol">{movimiento.rol_usuario || 'N/A'}</td>
-                    <td className="factura">
-                      {movimiento.factura_id ? (
-                        <a href={`/factura/${movimiento.factura_id}`} className="link-factura">
-                          #{movimiento.factura_id}
-                        </a>
-                      ) : (
-                        '-'
-                      )}
-                    </td>
-                    <td className="descripcion">{movimiento.descripcion || '-'}</td>
+                    <td className="cambios">{auditoria.cambios_resumen || '-'}</td>
+                    <td className="usuario">{auditoria.usuario || 'Sistema'}</td>
+                    <td className="rol">{auditoria.rol_usuario || 'N/A'}</td>
                   </tr>
                 ))}
               </tbody>
@@ -346,4 +310,4 @@ const HistorialMovimientos = () => {
   );
 };
 
-export default HistorialMovimientos;
+export default AuditoriaProductos;

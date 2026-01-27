@@ -4,10 +4,12 @@ import FacturaPreview from './FacturaPreview';
 import ClientesScreen from './ClientesScreen';
 import { supabase } from './supabaseClient';
 import './InvoiceScreen.css';
+import { useAuth } from '../App';
 
 const InvoiceScreen = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { user } = useAuth();
   
   // Estados principales
   const [cliente, setCliente] = useState('');
@@ -246,7 +248,17 @@ const InvoiceScreen = () => {
   };
 
   // Función para registrar movimiento de inventario (auditoría)
-  const registrarMovimientoInventario = async (productoId, tipoMovimiento, cantidadMovida, stockAnterior, stockNuevo, facturaId = null, descripcion = null, usuario = 'Sistema') => {
+  const registrarMovimientoInventario = async (
+    productoId,
+    tipoMovimiento,
+    cantidadMovida,
+    stockAnterior,
+    stockNuevo,
+    facturaId = null,
+    descripcion = null,
+    usuario = 'Sistema',
+    rolUsuario = 'N/A'
+  ) => {
     try {
       const { error } = await supabase
         .from('movimientos_inventario')
@@ -259,6 +271,7 @@ const InvoiceScreen = () => {
           factura_id: facturaId,
           descripcion: descripcion,
           usuario: usuario,
+          rol_usuario: rolUsuario,
           fecha_movimiento: new Date().toISOString()
         }]);
 
@@ -312,7 +325,8 @@ const InvoiceScreen = () => {
             nuevoStock,
             facturaId,
             `Venta de ${producto.cantidad} unidades de ${producto.nombre}`,
-            vendedorSeleccionado
+            vendedorSeleccionado || user?.username || 'Sistema',
+            user?.role || 'N/A'
           );
           
           const desactivado = nuevoStock === 0 ? ' (DESACTIVADO)' : '';

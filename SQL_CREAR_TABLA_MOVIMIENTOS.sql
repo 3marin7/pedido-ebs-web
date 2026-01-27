@@ -11,6 +11,7 @@ CREATE TABLE movimientos_inventario (
   factura_id BIGINT REFERENCES facturas(id) ON DELETE SET NULL,
   descripcion TEXT,
   usuario VARCHAR(255),
+  rol_usuario VARCHAR(50),
   fecha_movimiento TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -28,3 +29,7 @@ ALTER TABLE movimientos_inventario ENABLE ROW LEVEL SECURITY;
 -- Política para que todos puedan leer (opcional)
 CREATE POLICY "Allow read access to all" ON movimientos_inventario
   FOR SELECT USING (true);
+
+-- Política para permitir inserts desde el front (opcional, ajustar según rol si se requiere)
+CREATE POLICY "Allow insert access to all" ON movimientos_inventario
+  FOR INSERT WITH CHECK (true);

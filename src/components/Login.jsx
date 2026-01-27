@@ -14,31 +14,31 @@ const Login = () => {
   const users = [
     { 
       id: 1, 
-      username: 'EBS', 
-      password: 'E1', 
+      username: 'e11', 
+      password: 'emc', 
       role: 'admin',
-      descripcion: 'Acceso Total - Administrador del sistema. Ver todo, gestionar usuarios, reportes completos.'
+      descripcion: 'Admin - Acceso Total. Administrador del sistema. Ver todo, gestionar usuarios, reportes completos.'
     },
     { 
       id: 2, 
-      username: 'v', 
-      password: 'v1', 
-      role: 'vendedor',
-      descripcion: 'Vendedor - Crear facturas, gestionar pedidos, ver clientes, control de inventario.'
+      username: 'EBS', 
+      password: 'E1', 
+      role: 'admin',
+      descripcion: 'Admin - Acceso Total. Administrador del sistema. Ver todo, gestionar usuarios, reportes completos.'
     },
     { 
       id: 3, 
-      username: 'c', 
-      password: 'c', 
-      role: 'contabilidad',
-      descripcion: 'Contabilidad - Ver facturas guardadas, reportes de cobros, gestión de pedidos, análisis de ventas.'
+      username: 'inv', 
+      password: '1v3nt', 
+      role: 'inventario',
+      descripcion: 'Bodega (Inventario) - Crear facturas, catálogo, gestión de inventario, gestión de pedidos.'
     },
     { 
       id: 4, 
-      username: 'Inv', 
-      password: 'inv123', 
-      role: 'inventario',
-      descripcion: 'Inventario - Gestionar catálogo de productos, control de inventario, gestión de pedidos.'
+      username: 'caro', 
+      password: 'caro123', 
+      role: 'contabilidad',
+      descripcion: 'Contabilidad - Ver facturas guardadas, reportes de cobros, análisis de contabilidad.'
     }
   ];
 

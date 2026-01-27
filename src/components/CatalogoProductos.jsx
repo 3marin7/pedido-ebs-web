@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from './supabaseClient';
 import './CatalogoProductos.css';
+import { useAuth } from '../App';
 
 // Componente para subir imágenes a Cloudinary
 const CloudinaryUpload = ({ onImageUpload }) => {
@@ -465,6 +466,7 @@ const ModalConfirmacion = ({ isOpen, onClose, onConfirm, productoNombre }) => {
 // Componente principal del catálogo
 const CatalogoProductos = ({ mode = 'admin' }) => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const isReadOnly = mode === 'contabilidad';
   const [productos, setProductos] = useState([]);
   const [cargando, setCargando] = useState(true);
@@ -543,6 +545,28 @@ const CatalogoProductos = ({ mode = 'admin' }) => {
     return true;
   };
 
+  // Registrar auditoría de cambios de producto en catálogo
+  const registrarAuditoria = async ({ tipoAccion, productoId, camposModificados, cambiosResumen }) => {
+    try {
+      const { error } = await supabase
+        .from('auditoria_productos')
+        .insert([{
+          producto_id: productoId,
+          tipo_accion: tipoAccion,
+          campos_modificados: camposModificados || {},
+          cambios_resumen: cambiosResumen,
+          usuario: user?.username || 'Sistema',
+          rol_usuario: user?.role || 'N/A'
+        }]);
+
+      if (error) {
+        console.error('Error registrando auditoría:', error);
+      }
+    } catch (error) {
+      console.error('Error registrando auditoría:', error);
+    }
+  };
+
   const guardarProducto = async () => {
     if (!validarProducto()) return;
 
@@ -560,6 +584,10 @@ const CatalogoProductos = ({ mode = 'admin' }) => {
       };
 
       if (editandoId) {
+        const productoPrevio = productos.find(p => p.id === editandoId);
+        const stockAnterior = productoPrevio?.stock ?? null;
+        const stockNuevoValor = parseInt(nuevoProducto.stock) || 0;
+
         // Actualizar producto existente
         const { data, error } = await supabase
           .from('productos')
@@ -569,9 +597,56 @@ const CatalogoProductos = ({ mode = 'admin' }) => {
 
         if (error) throw error;
 
+        const productoActualizado = data[0];
         setProductos(productos.map(p => 
-          p.id === editandoId ? data[0] : p
+          p.id === editandoId ? productoActualizado : p
         ));
+
+        // Registrar ajuste de stock si hubo cambio
+        if (stockAnterior !== null && stockAnterior !== stockNuevoValor) {
+          const cambios = {
+            stock: {
+              antes: stockAnterior,
+              despues: stockNuevoValor
+            }
+          };
+          await registrarAuditoria({
+            tipoAccion: 'edicion',
+            productoId: editandoId,
+            camposModificados: cambios,
+            cambiosResumen: `Stock: ${stockAnterior} → ${stockNuevoValor}`
+          });
+        }
+
+        // Registrar cambios de otros campos
+        const cambios = {};
+        const compareCampo = (campo, label = campo) => {
+          const antes = productoPrevio?.[campo];
+          const despues = productoActualizado?.[campo];
+          if (antes !== despues) {
+            cambios[campo] = { antes, despues };
+          }
+        };
+
+        compareCampo('nombre', 'Nombre');
+        compareCampo('precio', 'Precio');
+        compareCampo('categoria', 'Categoría');
+        compareCampo('descripcion', 'Descripción');
+        compareCampo('activo', 'Estado');
+        compareCampo('codigo', 'Código');
+
+        if (Object.keys(cambios).length > 0) {
+          const cambiosTexto = Object.entries(cambios)
+            .map(([campo, valores]) => `${campo}: "${valores.antes ?? 'N/A'}" → "${valores.despues ?? 'N/A'}"`)
+            .join('; ');
+          
+          await registrarAuditoria({
+            tipoAccion: 'edicion',
+            productoId: editandoId,
+            camposModificados: cambios,
+            cambiosResumen: cambiosTexto
+          });
+        }
       } else {
         // Crear nuevo producto
         const { data, error } = await supabase
@@ -581,7 +656,21 @@ const CatalogoProductos = ({ mode = 'admin' }) => {
 
         if (error) throw error;
 
-        setProductos([...productos, data[0]]);
+        const nuevo = data[0];
+        setProductos([...productos, nuevo]);
+
+        // Registrar creación
+        await registrarAuditoria({
+          tipoAccion: 'creacion',
+          productoId: nuevo.id,
+          camposModificados: {
+            nombre: nuevo.nombre,
+            stock: nuevo.stock || 0,
+            precio: nuevo.precio,
+            categoria: nuevo.categoria
+          },
+          cambiosResumen: `Producto creado: "${nuevo.nombre}" con stock inicial de ${nuevo.stock || 0}`
+        });
       }
 
       // Resetear formulario
@@ -740,12 +829,14 @@ const CatalogoProductos = ({ mode = 'admin' }) => {
           >
             <i className="fas fa-boxes"></i> Catálogo
           </button>
-          <button 
-            className={`button ${vistaActual === 'reporte' ? 'primary-button' : 'secondary-button'}`}
-            onClick={() => setVistaActual('reporte')}
-          >
-            <i className="fas fa-file-alt"></i> Reporte
-          </button>
+          {user?.role !== 'inventario' && (
+            <button 
+              className={`button ${vistaActual === 'reporte' ? 'primary-button' : 'secondary-button'}`}
+              onClick={() => setVistaActual('reporte')}
+            >
+              <i className="fas fa-file-alt"></i> Reporte
+            </button>
+          )}
           <button 
             className="button secondary-button"
             onClick={() => navigate('/')}

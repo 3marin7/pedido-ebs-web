@@ -104,30 +104,14 @@ const Navigation = () => {
             { path: '/catalogo', label: 'Catálogo Productos', icon: '📚' },
             { path: '/gestion-inventario', label: 'Gestión Inventario', icon: '📋' },
             { path: '/movimientos', label: 'Historial Movimientos', icon: '📊' },
+            { path: '/auditoria-productos', label: 'Auditoría de Productos', icon: '📋' },
             { path: '/gestion-pedidos', label: 'Gestión Pedidos', icon: '🛒' }
           ]
         }
       ];
     }
 
-    // Vendedor (v) - Acceso a todo excepto dashboard de ventas
-    if (user.role === 'vendedor') {
-      return [
-        { path: '/dashboard-contabilidad', label: 'Dashboard', icon: '📊', tipo: 'simple' },
-        { path: '/facturacion', label: 'Facturación', icon: '🧾', tipo: 'simple' },
-        { path: '/nueva-factura', label: 'Nueva Factura', icon: '➕', tipo: 'simple' },
-        { path: '/facturas', label: 'Facturas Guardadas', icon: '📄', tipo: 'simple' },
-        { path: '/reportes-cobros', label: 'Reportes de Cobros', icon: '📈', tipo: 'simple' },
-        { path: '/gestion-pedidos', label: 'Gestión Pedidos', icon: '🛒', tipo: 'simple' },
-        { path: '/gastos', label: 'Gestión de Gastos', icon: '💰', tipo: 'simple' },
-        { path: '/rutas-cobro', label: 'Rutas de Cobro', icon: '🚗', tipo: 'simple' },
-        { path: '/gestion-inventario', label: 'Inventario', icon: '📋', tipo: 'simple' },
-        { path: '/clientes', label: 'Clientes', icon: '👥', tipo: 'simple' },
-        { path: '/catalogo', label: 'Productos', icon: '📦', tipo: 'simple' }
-      ];
-    }
-
-    // Contabilidad (c) - Ver facturas, reportes, gestión de pedidos, catálogo (lectura)
+    // Contabilidad (caro) - Ver facturas, reportes, gestión de pedidos, catálogo (lectura)
     if (user.role === 'contabilidad') {
       return [
         { path: '/dashboard-contabilidad', label: 'Dashboard Contabilidad', icon: '📊', tipo: 'simple' },
@@ -142,7 +126,7 @@ const Navigation = () => {
       ];
     }
 
-    // Inventario (Inv) - Gestionar catálogo, control de inventario, gestión de pedidos
+    // Inventario (inv) - Gestionar catálogo, control de inventario, gestión de pedidos - SIN reporte de catálogo
     if (user.role === 'inventario') {
       return [
         { path: '/catalogo', label: 'Catálogo Productos', icon: '📚', tipo: 'simple' },
