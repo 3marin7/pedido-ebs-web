@@ -22,7 +22,7 @@ const Login = () => {
     { 
       id: 2, 
       username: 'EBS', 
-      password: 'E1', 
+      password: '801551', 
       role: 'admin',
       descripcion: 'Admin - Acceso Total. Administrador del sistema. Ver todo, gestionar usuarios, reportes completos.'
     },

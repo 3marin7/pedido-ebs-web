@@ -303,7 +303,7 @@ const CatalogoClientes = () => {
       setNumeroPedido(pedido[0].id);
 
       // Preparar mensaje para WhatsApp
-      const numerosWhatsApp = ['573004583117', '573015551234']; // Dos números de WhatsApp
+      const numerosWhatsApp = ['573002945085', '573004583117']; // Dos números de WhatsApp
       
       let mensaje = `*¡NUEVO PEDIDO!*%0A%0A`;
       mensaje += `*Cliente:* ${clienteInfo.nombre}%0A`;

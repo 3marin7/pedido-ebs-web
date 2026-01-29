@@ -15,6 +15,7 @@ const RutasCobro = () => {
   const [mostrarMapa, setMostrarMapa] = useState(false);
   const [mostrarRecordatorios, setMostrarRecordatorios] = useState(false);
   const [reporteDiario, setReporteDiario] = useState(null);
+  const [mostrarListaClientes, setMostrarListaClientes] = useState(true);
 
   // Nuevos estados para historial
   const [mostrarHistorialVisitas, setMostrarHistorialVisitas] = useState(false);
@@ -27,6 +28,7 @@ const RutasCobro = () => {
   // Nuevo estado para el modal de detalles de deuda
   const [clienteSeleccionado, setClienteSeleccionado] = useState(null);
   const [mostrarDetallesDeuda, setMostrarDetallesDeuda] = useState(false);
+  const [mostrarMapaDeuda, setMostrarMapaDeuda] = useState(false);
 
   // Cargar clientes con deuda
   useEffect(() => {
@@ -341,6 +343,10 @@ const RutasCobro = () => {
     });
   };
 
+  const obtenerFechaAbono = (abono) => {
+    return abono?.fecha || abono?.fecha_abono || abono?.created_at || abono?.createdAt || null;
+  };
+
   const cargarClientesConDeuda = async () => {
     try {
       // Cargar facturas
@@ -383,6 +389,8 @@ const RutasCobro = () => {
               telefono: factura.telefono || 'Sin teléfono',
               totalDeuda: 0,
               facturasPendientes: [],
+              abonosPendientes: [],
+              ultimaFechaAbono: null,
               facturaMasAntigua: factura.fecha,
               ultimaFactura: factura.fecha,
               zona: extraerZona(factura.direccion),
@@ -395,8 +403,29 @@ const RutasCobro = () => {
           deudasPorCliente[factura.cliente].facturasPendientes.push({
             id: factura.id,
             fecha: factura.fecha,
+            total: factura.total,
             saldo: saldo,
             vendedor: factura.vendedor
+          });
+
+          abonosFactura.forEach(abono => {
+            const fechaAbono = obtenerFechaAbono(abono);
+            deudasPorCliente[factura.cliente].abonosPendientes.push({
+              facturaId: factura.id,
+              fecha: fechaAbono,
+              monto: abono.monto || 0
+            });
+
+            if (fechaAbono) {
+              const fechaActual = new Date(fechaAbono);
+              const fechaRegistrada = deudasPorCliente[factura.cliente].ultimaFechaAbono
+                ? new Date(deudasPorCliente[factura.cliente].ultimaFechaAbono)
+                : null;
+
+              if (!fechaRegistrada || fechaActual > fechaRegistrada) {
+                deudasPorCliente[factura.cliente].ultimaFechaAbono = fechaAbono;
+              }
+            }
           });
           
           // Actualizar fechas
@@ -426,19 +455,22 @@ const RutasCobro = () => {
 
         // Calcular puntuación de prioridad (mayor = más urgente)
         let puntuacion = 0;
-        
-        // Factor deuda (40% del total)
-        puntuacion += (cliente.totalDeuda / 100000) * 40;
-        
-        // Factor antigüedad (30% del total)
+        const cantidadFacturas = cliente.facturasPendientes.length;
+        const maxFactura = Math.max(
+          ...cliente.facturasPendientes.map(f => f.total || f.saldo || 0),
+          0
+        );
+
+        // Factor cantidad de facturas (35%)
+        puntuacion += Math.min(35, cantidadFacturas * 3.5);
+
+        // Factor valor alto (35%)
+        puntuacion += Math.min(35, (maxFactura / 100000) * 35);
+
+        // Factor antigüedad (30%)
         if (diasDesdePrimeraFactura > 90) puntuacion += 30;
         else if (diasDesdePrimeraFactura > 60) puntuacion += 20;
         else if (diasDesdePrimeraFactura > 30) puntuacion += 10;
-        
-        // Factor tiempo sin pago (30% del total)
-        if (diasDesdeUltimaFactura > 60) puntuacion += 30;
-        else if (diasDesdeUltimaFactura > 30) puntuacion += 20;
-        else if (diasDesdeUltimaFactura > 15) puntuacion += 10;
 
         return {
           ...cliente,
@@ -482,6 +514,8 @@ const RutasCobro = () => {
               telefono: factura.telefono || 'Sin teléfono',
               totalDeuda: 0,
               facturasPendientes: [],
+              abonosPendientes: [],
+              ultimaFechaAbono: null,
               facturaMasAntigua: factura.fecha,
               ultimaFactura: factura.fecha,
               zona: extraerZona(factura.direccion),
@@ -494,8 +528,29 @@ const RutasCobro = () => {
           deudasPorCliente[factura.cliente].facturasPendientes.push({
             id: factura.id,
             fecha: factura.fecha,
+            total: factura.total,
             saldo: saldo,
             vendedor: factura.vendedor
+          });
+
+          abonosFactura.forEach(abono => {
+            const fechaAbono = obtenerFechaAbono(abono);
+            deudasPorCliente[factura.cliente].abonosPendientes.push({
+              facturaId: factura.id,
+              fecha: fechaAbono,
+              monto: abono.monto || 0
+            });
+
+            if (fechaAbono) {
+              const fechaActual = new Date(fechaAbono);
+              const fechaRegistrada = deudasPorCliente[factura.cliente].ultimaFechaAbono
+                ? new Date(deudasPorCliente[factura.cliente].ultimaFechaAbono)
+                : null;
+
+              if (!fechaRegistrada || fechaActual > fechaRegistrada) {
+                deudasPorCliente[factura.cliente].ultimaFechaAbono = fechaAbono;
+              }
+            }
           });
         }
       });
@@ -510,13 +565,17 @@ const RutasCobro = () => {
 
         // Calcular puntuación de prioridad
         let puntuacion = 0;
-        puntuacion += (cliente.totalDeuda / 100000) * 40;
+        const cantidadFacturas = cliente.facturasPendientes.length;
+        const maxFactura = Math.max(
+          ...cliente.facturasPendientes.map(f => f.total || f.saldo || 0),
+          0
+        );
+
+        puntuacion += Math.min(35, cantidadFacturas * 3.5);
+        puntuacion += Math.min(35, (maxFactura / 100000) * 35);
         if (diasDesdePrimeraFactura > 90) puntuacion += 30;
         else if (diasDesdePrimeraFactura > 60) puntuacion += 20;
         else if (diasDesdePrimeraFactura > 30) puntuacion += 10;
-        if (diasDesdeUltimaFactura > 60) puntuacion += 30;
-        else if (diasDesdeUltimaFactura > 30) puntuacion += 20;
-        else if (diasDesdeUltimaFactura > 15) puntuacion += 10;
 
         return {
           ...cliente,
@@ -699,9 +758,49 @@ const RutasCobro = () => {
     return clientesSinVisitar;
   };
 
+  const obtenerMaxFacturaTotal = (cliente) => {
+    if (!cliente?.facturasPendientes?.length) return 0;
+    return Math.max(
+      ...cliente.facturasPendientes.map(f => f.total || f.saldo || 0),
+      0
+    );
+  };
+
+  const compararClientesRuta = (a, b) => {
+    const aSinAbonos = !(a.abonosPendientes?.length);
+    const bSinAbonos = !(b.abonosPendientes?.length);
+
+    if (aSinAbonos !== bSinAbonos) return aSinAbonos ? -1 : 1;
+
+    if (b.diasDesdeUltimaFactura !== a.diasDesdeUltimaFactura) {
+      return b.diasDesdeUltimaFactura - a.diasDesdeUltimaFactura;
+    }
+
+    const maxA = obtenerMaxFacturaTotal(a);
+    const maxB = obtenerMaxFacturaTotal(b);
+    if (maxB !== maxA) return maxB - maxA;
+
+    return b.totalDeuda - a.totalDeuda;
+  };
+
+  const calcularScoreClienteRuta = (cliente) => {
+    const sinAbonos = !(cliente.abonosPendientes?.length) ? 1 : 0;
+    const maxFactura = obtenerMaxFacturaTotal(cliente);
+    return (sinAbonos * 1000000) + (cliente.diasDesdeUltimaFactura * 1000) + maxFactura;
+  };
+
+  const obtenerTopClientesPorDeuda = (cantidad = 10) => {
+    return [...clientesConDeuda]
+      .sort((a, b) => b.totalDeuda - a.totalDeuda)
+      .slice(0, cantidad);
+  };
+
   // Función para generar ruta optimizada
   const generarRutaOptimizada = () => {
-    if (clientesFiltrados.length === 0) return;
+    if (clientesFiltrados.length === 0) {
+      alert('No hay clientes con los filtros actuales. Limpia filtros o ajusta la búsqueda.');
+      return;
+    }
 
     // Agrupar por zona
     const clientesPorZona = {};
@@ -713,17 +812,10 @@ const RutasCobro = () => {
       clientesPorZona[cliente.zona].push(cliente);
     });
 
-    // Ordenar zonas por densidad de clientes y prioridad
+    // Ordenar zonas por prioridad basada en antigüedad, facturas altas y falta de abonos
     const zonasOrdenadas = Object.keys(clientesPorZona).sort((a, b) => {
-      const densidadA = clientesPorZona[a].length;
-      const densidadB = clientesPorZona[b].length;
-      const prioridadA = clientesPorZona[a].reduce((sum, c) => sum + c.puntuacionPrioridad, 0);
-      const prioridadB = clientesPorZona[b].reduce((sum, c) => sum + c.puntuacionPrioridad, 0);
-      
-      // Ponderar: 60% densidad + 40% prioridad
-      const scoreA = (densidadA * 0.6) + (prioridadA * 0.4);
-      const scoreB = (densidadB * 0.6) + (prioridadB * 0.4);
-      
+      const scoreA = clientesPorZona[a].reduce((sum, c) => sum + calcularScoreClienteRuta(c), 0);
+      const scoreB = clientesPorZona[b].reduce((sum, c) => sum + calcularScoreClienteRuta(c), 0);
       return scoreB - scoreA;
     });
 
@@ -738,21 +830,8 @@ const RutasCobro = () => {
         info: `${clientesPorZona[zona].length} clientes`
       });
       
-      // Ordenar clientes dentro de la zona por antigüedad de factura (más antigua primero)
-      // Luego por prioridad como segundo criterio
-      const clientesEnZona = [...clientesPorZona[zona]]
-        .sort((a, b) => {
-          // Primero ordenar por antigüedad (mayor a menor días = más antigua primero)
-          const diferenciaDias = b.diasDesdePrimeraFactura - a.diasDesdePrimeraFactura;
-          
-          // Si la diferencia de días es significativa (>10 días), priorizar por antigüedad
-          if (Math.abs(diferenciaDias) > 10) {
-            return diferenciaDias;
-          }
-          
-          // Si las facturas son similares en antigüedad, ordenar por prioridad
-          return b.puntuacionPrioridad - a.puntuacionPrioridad;
-        });
+      // Ordenar clientes dentro de la zona por: sin abonos, antigüedad última factura, factura alta
+      const clientesEnZona = [...clientesPorZona[zona]].sort(compararClientesRuta);
       
       clientesEnZona.forEach((cliente, index) => {
         ruta.push({ 
@@ -801,6 +880,18 @@ const RutasCobro = () => {
     verFacturasCliente(clienteSeleccionado);
   };
 
+  const irARutaGenerada = () => {
+    document.querySelector('.ruta-generada-section')?.scrollIntoView({ 
+      behavior: 'smooth' 
+    });
+  };
+
+  const irAFiltros = () => {
+    document.querySelector('.controles-principales')?.scrollIntoView({ 
+      behavior: 'smooth' 
+    });
+  };
+
   // Filtrar y ordenar clientes
   const clientesFiltrados = buscarCliente(busquedaCliente)
     .filter(cliente => 
@@ -812,7 +903,7 @@ const RutasCobro = () => {
         case 'deuda':
           return b.totalDeuda - a.totalDeuda;
         case 'antiguedad':
-          return a.diasDesdePrimeraFactura - b.diasDesdePrimeraFactura;
+          return b.diasDesdeUltimaFactura - a.diasDesdeUltimaFactura;
         case 'zona':
           return a.zona.localeCompare(b.zona);
         case 'cliente':
@@ -934,7 +1025,7 @@ const RutasCobro = () => {
               >
                 <option value="prioridad">Prioridad (Recomendado)</option>
                 <option value="deuda">Monto Deuda</option>
-                <option value="antiguedad">Antigüedad</option>
+                <option value="antiguedad">Antigüedad (Última factura)</option>
                 <option value="zona">Zona</option>
                 <option value="vendedor">Vendedor</option>
                 <option value="cliente">Nombre Cliente</option>
@@ -949,6 +1040,9 @@ const RutasCobro = () => {
           >
             <i className="fas fa-route"></i> Generar Ruta Optimizada
           </button>
+          <div className="ruta-hint">
+            Clientes filtrados: <strong>{clientesFiltrados.length}</strong>
+          </div>
         </div>
 
         {/* Botones de Análisis */}
@@ -975,6 +1069,18 @@ const RutasCobro = () => {
             }}
           >
             <i className="fas fa-chart-line"></i> Clientes Menos Visitados
+          </button>
+
+          <button 
+            className="button danger-button"
+            onClick={() => {
+              setMostrarMapaDeuda(!mostrarMapaDeuda);
+              setMostrarHistorialVisitas(false);
+              setMostrarClientesMenosVisitados(false);
+              setMostrarClientesSinVisitar(false);
+            }}
+          >
+            <i className="fas fa-chart-bar"></i> Clientes Mayor Deuda
           </button>
 
           <button 
@@ -1450,120 +1556,219 @@ const RutasCobro = () => {
 
       {/* Lista de Clientes con Deuda */}
       <div className="clientes-deuda-section">
-        <h3>
-          <i className="fas fa-list"></i> 
-          Clientes con Deuda Pendiente ({clientesFiltrados.length})
-          {filtroZona && ` - Zona: ${filtroZona}`}
-          {filtroVendedor && ` - Vendedor: ${filtroVendedor}`}
-        </h3>
-        
-        {clientesFiltrados.length === 0 ? (
-          <div className="empty-state">
-            <i className="fas fa-search"></i>
-            <h4>No se encontraron clientes</h4>
-            <p>
-              {busquedaCliente 
-                ? `No hay resultados para "${busquedaCliente}" con los filtros aplicados`
-                : 'No se encontraron clientes con deudas según los filtros aplicados'
-              }
-            </p>
-            {(busquedaCliente || filtroZona || filtroVendedor) && (
+        <div className="clientes-deuda-header">
+          <h3>
+            <i className="fas fa-list"></i> 
+            Clientes con Deuda Pendiente ({clientesFiltrados.length})
+            {filtroZona && ` - Zona: ${filtroZona}`}
+            {filtroVendedor && ` - Vendedor: ${filtroVendedor}`}
+          </h3>
+          <div className="clientes-deuda-actions">
+            {mostrarMapa && rutaGenerada.length > 0 && (
               <button 
-                className="button primary-button"
-                onClick={() => {
-                  setBusquedaCliente('');
-                  setFiltroZona('');
-                  setFiltroVendedor('');
-                }}
+                className="button info-button"
+                onClick={irARutaGenerada}
               >
-                <i className="fas fa-refresh"></i> Limpiar todos los filtros
+                <i className="fas fa-route"></i> Ir a Ruta
               </button>
             )}
+            <button 
+              className="button secondary-button"
+              onClick={() => setMostrarListaClientes(!mostrarListaClientes)}
+            >
+              <i className={`fas ${mostrarListaClientes ? 'fa-eye-slash' : 'fa-eye'}`}></i>
+              {mostrarListaClientes ? 'Ocultar lista' : 'Mostrar lista'}
+            </button>
           </div>
-        ) : (
-          <div className="clientes-grid">
-            {clientesFiltrados.map((cliente, index) => (
-              <div key={cliente.nombre} className={`cliente-card prioridad-${cliente.nivelPrioridad.toLowerCase()} ${cliente.visitadoHoy ? 'visitado' : ''}`}>
-                <div className="cliente-header">
-                  <div className="cliente-info">
-                    <h4>{cliente.nombre}</h4>
-                    <div className="cliente-badges">
-                      <span className="zona-badge">{cliente.zona}</span>
-                      <span className="vendedor-badge">{cliente.vendedor}</span>
-                      {cliente.visitadoHoy && (
-                        <span className="visitado-badge">
-                          <i className="fas fa-check"></i> Visitado Hoy
-                        </span>
-                      )}
+        </div>
+        
+        {mostrarListaClientes && (
+          clientesFiltrados.length === 0 ? (
+            <div className="empty-state">
+              <i className="fas fa-search"></i>
+              <h4>No se encontraron clientes</h4>
+              <p>
+                {busquedaCliente 
+                  ? `No hay resultados para "${busquedaCliente}" con los filtros aplicados`
+                  : 'No se encontraron clientes con deudas según los filtros aplicados'
+                }
+              </p>
+              {(busquedaCliente || filtroZona || filtroVendedor) && (
+                <button 
+                  className="button primary-button"
+                  onClick={() => {
+                    setBusquedaCliente('');
+                    setFiltroZona('');
+                    setFiltroVendedor('');
+                  }}
+                >
+                  <i className="fas fa-refresh"></i> Limpiar todos los filtros
+                </button>
+              )}
+            </div>
+          ) : (
+            <div className="clientes-grid">
+              {clientesFiltrados.map((cliente, index) => (
+                <div key={cliente.nombre} className={`cliente-card prioridad-${cliente.nivelPrioridad.toLowerCase()} ${cliente.visitadoHoy ? 'visitado' : ''}`}>
+                  <div className="cliente-header">
+                    <div className="cliente-info">
+                      <h4>{cliente.nombre}</h4>
+                      <div className="cliente-badges">
+                        <span className="zona-badge">{cliente.zona}</span>
+                        <span className="vendedor-badge">{cliente.vendedor}</span>
+                        {cliente.visitadoHoy && (
+                          <span className="visitado-badge">
+                            <i className="fas fa-check"></i> Visitado Hoy
+                          </span>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                  <div className={`prioridad-badge ${cliente.nivelPrioridad.toLowerCase()}`}>
-                    {cliente.nivelPrioridad}
-                  </div>
-                </div>
-                
-                <div className="cliente-details">
-                  <div className="detail-item">
-                    <i className="fas fa-map-marker-alt"></i>
-                    <span>{cliente.direccion}</span>
-                  </div>
-                  {cliente.telefono !== 'Sin teléfono' && (
-                    <div className="detail-item">
-                      <i className="fas fa-phone"></i>
-                      <span>{cliente.telefono}</span>
-                    </div>
-                  )}
-                  <div className="detail-item">
-                    <i className="fas fa-user-tie"></i>
-                    <span>Vendedor: {cliente.vendedor}</span>
-                  </div>
-                </div>
-                
-                <div className="deuda-info">
-                  <div className="deuda-stats">
-                    <div className="stat">
-                      <span>Deuda Total:</span>
-                      <strong>{formatMoneda(cliente.totalDeuda)}</strong>
-                    </div>
-                    <div className="stat">
-                      <span>Facturas Pendientes:</span>
-                      <span>{cliente.facturasPendientes.length}</span>
+                    <div className={`prioridad-badge ${cliente.nivelPrioridad.toLowerCase()}`}>
+                      {cliente.nivelPrioridad}
                     </div>
                   </div>
                   
-                  <div className="tiempo-info">
-                    <div className="tiempo-item">
-                      <small>Deuda desde:</small>
-                      <span>{cliente.diasDesdePrimeraFactura} días</span>
+                  <div className="cliente-details">
+                    <div className="detail-item">
+                      <i className="fas fa-map-marker-alt"></i>
+                      <span>{cliente.direccion}</span>
                     </div>
-                    <div className="tiempo-item">
-                      <small>Última factura:</small>
-                      <span>{cliente.diasDesdeUltimaFactura} días</span>
+                    {cliente.telefono !== 'Sin teléfono' && (
+                      <div className="detail-item">
+                        <i className="fas fa-phone"></i>
+                        <span>{cliente.telefono}</span>
+                      </div>
+                    )}
+                    <div className="detail-item">
+                      <i className="fas fa-user-tie"></i>
+                      <span>Vendedor: {cliente.vendedor}</span>
                     </div>
                   </div>
+                  
+                  <div className="deuda-info">
+                    <div className="deuda-stats">
+                      <div className="stat">
+                        <span>Deuda Total:</span>
+                        <strong>{formatMoneda(cliente.totalDeuda)}</strong>
+                      </div>
+                      <div className="stat">
+                        <span>Facturas Pendientes:</span>
+                        <span>{cliente.facturasPendientes.length}</span>
+                      </div>
+                    </div>
+                    
+                    <div className="tiempo-info">
+                      <div className="tiempo-item">
+                        <small>Deuda desde:</small>
+                        <span>{cliente.diasDesdePrimeraFactura} días</span>
+                      </div>
+                      <div className="tiempo-item">
+                        <small>Última factura:</small>
+                        <span>{cliente.diasDesdeUltimaFactura} días</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="cliente-actions">
+                    <button 
+                      className="button info-button"
+                      onClick={() => verDetallesDeuda(cliente)}
+                    >
+                      <i className="fas fa-file-invoice"></i> Ver Deuda
+                    </button>
+                    <button 
+                      className={`button ${cliente.visitadoHoy ? 'secondary-button' : 'primary-button'}`}
+                      onClick={() => marcarComoVisitado(cliente)}
+                      disabled={cliente.visitadoHoy}
+                    >
+                      <i className={`fas ${cliente.visitadoHoy ? 'fa-check' : 'fa-user-check'}`}></i>
+                      {cliente.visitadoHoy ? 'Visitado' : 'Marcar Visitado'}
+                    </button>
+                  </div>
                 </div>
-                
-                <div className="cliente-actions">
-                  <button 
-                    className="button info-button"
-                    onClick={() => verDetallesDeuda(cliente)}
-                  >
-                    <i className="fas fa-file-invoice"></i> Ver Deuda
-                  </button>
-                  <button 
-                    className={`button ${cliente.visitadoHoy ? 'secondary-button' : 'primary-button'}`}
-                    onClick={() => marcarComoVisitado(cliente)}
-                    disabled={cliente.visitadoHoy}
-                  >
-                    <i className={`fas ${cliente.visitadoHoy ? 'fa-check' : 'fa-user-check'}`}></i>
-                    {cliente.visitadoHoy ? 'Visitado' : 'Marcar Visitado'}
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )
         )}
       </div>
+
+      {/* Mapa de Mayor Deuda */}
+      {mostrarMapaDeuda && (
+        <div className="mapa-deuda-section">
+          <div className="mapa-deuda-header">
+            <h3>
+              <i className="fas fa-chart-bar"></i> Top 10 Clientes con Mayor Deuda
+            </h3>
+            <button 
+              className="button micro-button secondary-button"
+              onClick={() => setMostrarMapaDeuda(false)}
+            >
+              <i className="fas fa-times"></i>
+            </button>
+          </div>
+
+          <div className="top-clientes-container">
+            {obtenerTopClientesPorDeuda(10).map((cliente, index) => {
+              const totalDeuda = clientesConDeuda.reduce((sum, c) => sum + c.totalDeuda, 0);
+              const porcentaje = (cliente.totalDeuda / totalDeuda) * 100;
+              const maxDeuda = Math.max(...clientesFiltrados.map(c => c.totalDeuda));
+              const ancho = (cliente.totalDeuda / maxDeuda) * 100;
+
+              return (
+                <div key={cliente.nombre} className="top-cliente-item">
+                  <div className="top-cliente-ranking">
+                    <span className="ranking-number">{index + 1}</span>
+                  </div>
+                  <div className="top-cliente-info">
+                    <div className="top-cliente-header-info">
+                      <h4>{cliente.nombre}</h4>
+                      <span className={`prioridad-badge ${cliente.nivelPrioridad.toLowerCase()}`}>
+                        {cliente.nivelPrioridad}
+                      </span>
+                    </div>
+                    <p className="top-cliente-detalles">
+                      {cliente.direccion} | {cliente.zona}
+                    </p>
+                  </div>
+                  <div className="top-cliente-bar">
+                    <div className="deuda-bar-container">
+                      <div 
+                        className="deuda-bar-fill" 
+                        style={{width: `${ancho}%`}}
+                      ></div>
+                    </div>
+                  </div>
+                  <div className="top-cliente-stats">
+                    <div className="stat-mini">
+                      <span className="stat-label">Deuda:</span>
+                      <strong>{formatMoneda(cliente.totalDeuda)}</strong>
+                    </div>
+                    <div className="stat-mini">
+                      <span className="stat-label">Facturas:</span>
+                      <strong>{cliente.facturasPendientes.length}</strong>
+                    </div>
+                    <div className="stat-mini">
+                      <span className="stat-label">Antigüedad:</span>
+                      <strong>{cliente.diasDesdePrimeraFactura}d</strong>
+                    </div>
+                    <div className="stat-mini percent">
+                      <span className="stat-label">% del total:</span>
+                      <strong>{porcentaje.toFixed(1)}%</strong>
+                    </div>
+                  </div>
+                  <button 
+                    className="button micro-button info-button"
+                    onClick={() => verDetallesDeuda(cliente)}
+                    style={{marginTop: '8px', width: '100%'}}
+                  >
+                    <i className="fas fa-file-invoice"></i> Ver Detalles
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {/* Mapa de Ruta Generada */}
       {mostrarMapa && rutaGenerada.length > 0 && (
@@ -1573,6 +1778,12 @@ const RutasCobro = () => {
               <i className="fas fa-route"></i> Ruta de Cobro Optimizada
             </h3>
             <div className="ruta-header-actions">
+              <button 
+                className="button info-button"
+                onClick={irAFiltros}
+              >
+                <i className="fas fa-arrow-up"></i> Volver a Filtros
+              </button>
               <button 
                 className="button success-button"
                 onClick={() => {
@@ -1736,6 +1947,10 @@ const RutasCobro = () => {
                     <span className="label">Última Visita:</span>
                     <span className="value">{clienteSeleccionado.ultimaVisita ? formatFecha(clienteSeleccionado.ultimaVisita) : 'Nunca visitado'}</span>
                   </div>
+                  <div className="info-item">
+                    <span className="label">Último Abono:</span>
+                    <span className="value">{clienteSeleccionado.ultimaFechaAbono ? formatFecha(clienteSeleccionado.ultimaFechaAbono) : 'Sin abonos'}</span>
+                  </div>
                 </div>
               </div>
 
@@ -1836,6 +2051,37 @@ const RutasCobro = () => {
                     </span>
                   </div>
                 </div>
+              </div>
+
+              {/* Abonos en facturas pendientes */}
+              <div className="seccion-detalles">
+                <h3>Abonos en Facturas Pendientes</h3>
+                {clienteSeleccionado.abonosPendientes?.length ? (
+                  <div className="facturas-table">
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>Fecha</th>
+                          <th>ID Factura</th>
+                          <th>Monto</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {clienteSeleccionado.abonosPendientes
+                          .sort((a, b) => new Date(b.fecha || 0) - new Date(a.fecha || 0))
+                          .map((abono, idx) => (
+                            <tr key={`${abono.facturaId}-${idx}`}>
+                              <td>{abono.fecha ? formatFecha(abono.fecha) : 'Sin fecha'}</td>
+                              <td className="factura-id">#{abono.facturaId}</td>
+                              <td>{formatMoneda(abono.monto)}</td>
+                            </tr>
+                          ))}
+                      </tbody>
+                    </table>
+                  </div>
+                ) : (
+                  <p className="empty-state">No hay abonos registrados para facturas pendientes.</p>
+                )}
               </div>
             </div>
 

@@ -464,7 +464,7 @@ const MallMap = () => {
             className={`show-all-btn ${zoneFilter === 'all' ? 'active' : ''}`}
             onClick={handleShowAll}
           >
-            Mostrar todos
+            Mostrar todas las zonas
           </button>
         </div>
 
@@ -698,7 +698,7 @@ const MallMap = () => {
             onClick={() => setViewFilter('all')}
             disabled={isEditing}
           >
-            Ver Todos
+            Todos los estados
           </button>
           <button 
             className={viewFilter === 'available' ? 'active' : ''}

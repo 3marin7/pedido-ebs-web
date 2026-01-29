@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from './supabaseClient';
 import './CatalogoProductos.css';
 import { useAuth } from '../App';
+import { getProductSalesAndRecommendations, mergeRecommendationsIntoProducts } from '../lib/inventoryUtils';
 
 // Componente para subir imágenes a Cloudinary
 const CloudinaryUpload = ({ onImageUpload }) => {
@@ -385,6 +386,8 @@ const ReporteInventario = ({ productos }) => {
               <th>Categoría</th>
               <th>Precio Unitario</th>
               <th>Stock</th>
+              <th>Rotación (1-5)</th>
+              <th>Pedido Sugerido</th>
               <th>Valor Total</th>
               <th>Estado</th>
             </tr>
@@ -399,6 +402,8 @@ const ReporteInventario = ({ productos }) => {
                   <td>{producto.categoria || 'Sin categoría'}</td>
                   <td>{formatPrecio(producto.precio)}</td>
                   <td>{producto.stock || 0}</td>
+                  <td>{producto.rotation || 1}</td>
+                  <td>{producto.suggestedOrder === null ? '—' : producto.suggestedOrder}</td>
                   <td>{formatPrecio(valorTotalProducto)}</td>
                   <td>
                     <span className={`estado-badge ${producto.activo ? 'activo' : 'inactivo'}`}>
@@ -510,6 +515,15 @@ const CatalogoProductos = ({ mode = 'admin' }) => {
         if (error) throw error;
 
         setProductos(data || []);
+
+        // Obtener recomendaciones de rotación y sugerencias de pedido
+        try {
+          const recs = await getProductSalesAndRecommendations({ periodDays: 90, leadTimeDays: 14, safetyDays: 7 });
+          const merged = mergeRecommendationsIntoProducts(data || [], recs);
+          setProductos(merged);
+        } catch (recErr) {
+          console.warn('No se pudieron obtener recomendaciones de inventario:', recErr);
+        }
       } catch (error) {
         console.error("Error cargando productos:", error);
         alert('Error al cargar los productos');
