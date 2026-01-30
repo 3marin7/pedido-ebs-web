@@ -946,6 +946,27 @@
     "vendedor_id": null
   },
   {
+    "id": 433,
+    "cliente": "zzz",
+    "fecha": "2026-01-19",
+    "vendedor": "Fabian Marin",
+    "direccion": null,
+    "telefono": "234242342",
+    "correo": null,
+    "total": 122,
+    "created_at": "2026-01-19T18:55:51.296749+00:00",
+    "productos": [
+      {
+        "id": 1768848942423,
+        "nombre": "sss",
+        "precio": 122,
+        "cantidad": 1,
+        "producto_id": null
+      }
+    ],
+    "vendedor_id": null
+  },
+  {
     "id": 106,
     "cliente": "RAMIRO",
     "fecha": "2025-08-23",
@@ -1931,27 +1952,6 @@
     "vendedor_id": null
   },
   {
-    "id": 352,
-    "cliente": "FERNANDO FERROCARRIL",
-    "fecha": "2025-11-07",
-    "vendedor": "Edwin Marin",
-    "direccion": "FERROCARRIL",
-    "telefono": null,
-    "correo": null,
-    "total": 272000,
-    "created_at": "2025-11-14T14:09:45.705537+00:00",
-    "productos": [
-      {
-        "id": 1763129374781,
-        "nombre": "pañal etapa 3 x25*8",
-        "precio": 2,
-        "cantidad": 136000,
-        "producto_id": null
-      }
-    ],
-    "vendedor_id": null
-  },
-  {
     "id": 353,
     "cliente": "ADRIAN SABANA",
     "fecha": "2025-11-07",
@@ -2017,6 +2017,27 @@
     "vendedor_id": null
   },
   {
+    "id": 434,
+    "cliente": "rwerwe",
+    "fecha": "2026-01-19",
+    "vendedor": "Fabian Marin",
+    "direccion": null,
+    "telefono": "3004583117",
+    "correo": null,
+    "total": 41000,
+    "created_at": "2026-01-19T22:18:06.681267+00:00",
+    "productos": [
+      {
+        "id": 1768861067126.8367,
+        "nombre": "Arrurru loción ",
+        "precio": 41000,
+        "cantidad": 1,
+        "producto_id": null
+      }
+    ],
+    "vendedor_id": null
+  },
+  {
     "id": 112,
     "cliente": "MARTHA TABARES",
     "fecha": "2025-08-23",
@@ -2055,6 +2076,28 @@
       }
     ],
     "vendedor_id": 2
+  },
+  {
+    "id": 499,
+    "cliente": "SARA",
+    "fecha": "2026-01-23",
+    "vendedor": "Edwin Marin",
+    "direccion": "SABANA",
+    "telefono": null,
+    "correo": null,
+    "total": 564000,
+    "created_at": "2026-01-23T21:57:18.956567+00:00",
+    "productos": [
+      {
+        "id": 1769205415798.2336,
+        "codigo": "",
+        "nombre": "sundays",
+        "precio": 47000,
+        "cantidad": 12,
+        "producto_id": 188
+      }
+    ],
+    "vendedor_id": null
   },
   {
     "id": 221,
@@ -6377,6 +6420,28 @@
     "vendedor_id": null
   },
   {
+    "id": 448,
+    "cliente": "Yolima",
+    "fecha": "2026-01-20",
+    "vendedor": "Fredy Marin",
+    "direccion": null,
+    "telefono": "3024528329",
+    "correo": null,
+    "total": 444000,
+    "created_at": "2026-01-20T22:47:53.934093+00:00",
+    "productos": [
+      {
+        "id": 1768949266623.5098,
+        "codigo": "",
+        "nombre": "TARRITO ROJO X 380 G",
+        "precio": 18500,
+        "cantidad": 24,
+        "producto_id": 152
+      }
+    ],
+    "vendedor_id": null
+  },
+  {
     "id": 46,
     "cliente": "DORIS ",
     "fecha": "2025-01-14",
@@ -10442,6 +10507,27 @@
     "vendedor_id": null
   },
   {
+    "id": 430,
+    "cliente": "Cliente Prueba 2",
+    "fecha": "2026-01-19",
+    "vendedor": "Fabian Marin",
+    "direccion": null,
+    "telefono": "3004583117",
+    "correo": null,
+    "total": 533000,
+    "created_at": "2026-01-19T18:25:10.168125+00:00",
+    "productos": [
+      {
+        "id": 1768847074275.2732,
+        "nombre": "Arrurru loción ",
+        "precio": 41000,
+        "cantidad": 13,
+        "producto_id": null
+      }
+    ],
+    "vendedor_id": null
+  },
+  {
     "id": 404,
     "cliente": "YANET GONZÁLEZ ",
     "fecha": "2025-12-04",
@@ -10911,6 +10997,72 @@
     "vendedor_id": null
   },
   {
+    "id": 431,
+    "cliente": "rwerwe",
+    "fecha": "2026-01-19",
+    "vendedor": "Fabian Marin",
+    "direccion": null,
+    "telefono": "3004583117",
+    "correo": null,
+    "total": 41000,
+    "created_at": "2026-01-19T18:31:04.573807+00:00",
+    "productos": [
+      {
+        "id": 1768847445817.3672,
+        "codigo": "",
+        "nombre": "Arrurru loción ",
+        "precio": 41000,
+        "cantidad": 1,
+        "producto_id": 111
+      }
+    ],
+    "vendedor_id": null
+  },
+  {
+    "id": 449,
+    "cliente": "Jorge",
+    "fecha": "2026-01-20",
+    "vendedor": "Fredy Marin",
+    "direccion": null,
+    "telefono": "3024528329",
+    "correo": null,
+    "total": 192000,
+    "created_at": "2026-01-20T22:48:52.489991+00:00",
+    "productos": [
+      {
+        "id": 1768949326650.987,
+        "codigo": "",
+        "nombre": "KOTEX BUENAS NOCHES X24",
+        "precio": 12000,
+        "cantidad": 16,
+        "producto_id": 59
+      }
+    ],
+    "vendedor_id": null
+  },
+  {
+    "id": 451,
+    "cliente": "Sandra perez",
+    "fecha": "2026-01-20",
+    "vendedor": "Fredy Marin",
+    "direccion": null,
+    "telefono": "3024528329",
+    "correo": null,
+    "total": 240000,
+    "created_at": "2026-01-20T22:50:24.596405+00:00",
+    "productos": [
+      {
+        "id": 1768949417876.366,
+        "codigo": "",
+        "nombre": "PONDS Clarant B3 Antimanchas con FPS 30 100g",
+        "precio": 20000,
+        "cantidad": 12,
+        "producto_id": 96
+      }
+    ],
+    "vendedor_id": null
+  },
+  {
     "id": 421,
     "cliente": "JUAN PABLO ",
     "fecha": "2026-01-09",
@@ -11125,6 +11277,3621 @@
         "precio": 22000,
         "cantidad": 12,
         "producto_id": 69
+      }
+    ],
+    "vendedor_id": null
+  },
+  {
+    "id": 426,
+    "cliente": "KELLY HERMANA DE ADRIAN",
+    "fecha": "2026-01-16",
+    "vendedor": "Edwin Marin",
+    "direccion": "Ferrocarril",
+    "telefono": null,
+    "correo": null,
+    "total": 4646300,
+    "created_at": "2026-01-16T20:00:39.092736+00:00",
+    "productos": [
+      {
+        "id": 152,
+        "codigo": "",
+        "nombre": "TARRITO ROJO X 380 G",
+        "precio": 18500,
+        "cantidad": 24,
+        "producto_id": 152
+      },
+      {
+        "id": 184,
+        "codigo": "",
+        "nombre": "Aceite johnsons",
+        "precio": 5700,
+        "cantidad": 144,
+        "producto_id": 184
+      },
+      {
+        "id": 21,
+        "codigo": "",
+        "nombre": "TANGA SPF100 24X12",
+        "precio": 28000,
+        "cantidad": 24,
+        "producto_id": 21
+      },
+      {
+        "id": 78,
+        "codigo": "",
+        "nombre": "Crema Dental Sensodyne 8 Beneficios En 1 x 50 gr",
+        "precio": 6000,
+        "cantidad": 50,
+        "producto_id": 78
+      },
+      {
+        "id": 166,
+        "codigo": "",
+        "nombre": "Desodorante Dove spray 2 precio especial",
+        "precio": 24000,
+        "cantidad": 12,
+        "producto_id": 166
+      },
+      {
+        "id": 141,
+        "codigo": "",
+        "nombre": "Nivea facial. 5 en 1 100gr",
+        "precio": 14500,
+        "cantidad": 23,
+        "producto_id": 141
+      },
+      {
+        "id": 186,
+        "codigo": "",
+        "nombre": "nopikex",
+        "precio": 13500,
+        "cantidad": 24,
+        "producto_id": 186
+      },
+      {
+        "id": 36,
+        "codigo": "",
+        "nombre": "NOSOTRAS BUENAS NOCHES X 10",
+        "precio": 7000,
+        "cantidad": 36,
+        "producto_id": 36
+      },
+      {
+        "id": 167,
+        "codigo": "",
+        "nombre": "Teatrical roja 100ml",
+        "precio": 18000,
+        "cantidad": 24,
+        "producto_id": 167
+      },
+      {
+        "id": 12,
+        "codigo": "",
+        "nombre": "TAMPON KOTEX DIGITAL RISTRA 6...",
+        "precio": 11500,
+        "cantidad": 12,
+        "producto_id": 12
+      },
+      {
+        "id": 168,
+        "codigo": "",
+        "nombre": "Nude Protec 50SPF x 50 ml",
+        "precio": 32000,
+        "cantidad": 12,
+        "producto_id": 168
+      },
+      {
+        "id": 102,
+        "codigo": "",
+        "nombre": "CALADER LOCIÓN ",
+        "precio": 9000,
+        "cantidad": 12,
+        "producto_id": 102
+      },
+      {
+        "id": 29,
+        "codigo": "",
+        "nombre": "SHAMPOO SAVITAL CON ACEITE DE ARGAN CAJA X 20 SOBRES",
+        "precio": 12500,
+        "cantidad": 12,
+        "producto_id": 29
+      }
+    ],
+    "vendedor_id": null
+  },
+  {
+    "id": 428,
+    "cliente": "marcela  daniel",
+    "fecha": "2026-01-19",
+    "vendedor": "Edwin Marin",
+    "direccion": "ferrocarril",
+    "telefono": null,
+    "correo": null,
+    "total": 624000,
+    "created_at": "2026-01-19T13:57:57.984024+00:00",
+    "productos": [
+      {
+        "id": 141,
+        "codigo": "",
+        "nombre": "Nivea facial. 5 en 1 100gr",
+        "precio": 14500,
+        "cantidad": 24,
+        "producto_id": 141
+      },
+      {
+        "id": 31,
+        "codigo": "",
+        "nombre": "PONDS CR REJUVENESS 6X100G+...",
+        "precio": 23000,
+        "cantidad": 12,
+        "producto_id": 31
+      }
+    ],
+    "vendedor_id": null
+  },
+  {
+    "id": 429,
+    "cliente": "SARA",
+    "fecha": "2026-01-19",
+    "vendedor": "Fabian Marin",
+    "direccion": "SABANA",
+    "telefono": null,
+    "correo": null,
+    "total": 542000,
+    "created_at": "2026-01-19T17:09:42.233589+00:00",
+    "productos": [
+      {
+        "id": 1768842515520.0803,
+        "nombre": "CALADER LOCIÓN ",
+        "precio": 9000,
+        "cantidad": 1,
+        "producto_id": null
+      },
+      {
+        "id": 1768842515520.151,
+        "nombre": "Arrurru loción ",
+        "precio": 41000,
+        "cantidad": 13,
+        "producto_id": null
+      }
+    ],
+    "vendedor_id": null
+  },
+  {
+    "id": 435,
+    "cliente": "Hector gonzalez",
+    "fecha": "2026-01-20",
+    "vendedor": "Fredy Marin",
+    "direccion": null,
+    "telefono": "3215762269",
+    "correo": null,
+    "total": 1749000,
+    "created_at": "2026-01-20T12:42:19.415725+00:00",
+    "productos": [
+      {
+        "id": 1768912750767.7786,
+        "codigo": "",
+        "nombre": "Desodorante Dove spray 2 precio especial",
+        "precio": 24000,
+        "cantidad": 12,
+        "producto_id": 166
+      },
+      {
+        "id": 1768912750767.8616,
+        "codigo": "",
+        "nombre": "PONDS REJUVENESS X100G",
+        "precio": 21000,
+        "cantidad": 13,
+        "producto_id": 41
+      },
+      {
+        "id": 1768912750767.0942,
+        "codigo": "",
+        "nombre": "KOTEX BUENAS NOCHES X24",
+        "precio": 12000,
+        "cantidad": 16,
+        "producto_id": 59
+      },
+      {
+        "id": 1768912750767.475,
+        "codigo": "",
+        "nombre": "Toallas Kotex Normal 24 Und",
+        "precio": 7500,
+        "cantidad": 16,
+        "producto_id": 85
+      },
+      {
+        "id": 1768912750767.6328,
+        "codigo": "",
+        "nombre": "NOSOTRAS BUENAS NOCHES +PROTE...",
+        "precio": 17500,
+        "cantidad": 24,
+        "producto_id": 35
+      },
+      {
+        "id": 54,
+        "codigo": "",
+        "nombre": "PONDS CREMA S 100 G",
+        "precio": 18000,
+        "cantidad": 12,
+        "producto_id": 54
+      },
+      {
+        "id": 96,
+        "codigo": "",
+        "nombre": "PONDS Clarant B3 Antimanchas con FPS 30 100g",
+        "precio": 20000,
+        "cantidad": 12,
+        "producto_id": 96
+      }
+    ],
+    "vendedor_id": null
+  },
+  {
+    "id": 452,
+    "cliente": "Orlando",
+    "fecha": "2026-01-20",
+    "vendedor": "Fredy Marin",
+    "direccion": null,
+    "telefono": "3004583117",
+    "correo": null,
+    "total": 486000,
+    "created_at": "2026-01-20T23:25:24.472285+00:00",
+    "productos": [
+      {
+        "id": 1768951516550.0422,
+        "codigo": "",
+        "nombre": "Kotex x 24 ultraproteccion",
+        "precio": 7500,
+        "cantidad": 8,
+        "producto_id": 193
+      },
+      {
+        "id": 1768951516550.1777,
+        "codigo": "",
+        "nombre": "Nivea labial strawberry  fresa",
+        "precio": 11500,
+        "cantidad": 12,
+        "producto_id": 195
+      },
+      {
+        "id": 1768951516550.9304,
+        "codigo": "",
+        "nombre": "Vitamina C 500 Mg La Santé naranja Caja X 100",
+        "precio": 24000,
+        "cantidad": 12,
+        "producto_id": 185
+      }
+    ],
+    "vendedor_id": null
+  },
+  {
+    "id": 474,
+    "cliente": "Javier pineda",
+    "fecha": "2026-01-22",
+    "vendedor": "Edwin Marin",
+    "direccion": null,
+    "telefono": "3133418733",
+    "correo": null,
+    "total": 1272000,
+    "created_at": "2026-01-22T13:06:50.180825+00:00",
+    "productos": [
+      {
+        "id": 1769087191711.921,
+        "codigo": "",
+        "nombre": "ENJUAGUE BUCAL LISTERINE COOL MINT 1L",
+        "precio": 22000,
+        "cantidad": 12,
+        "producto_id": 69
+      },
+      {
+        "id": 1769087191711.5354,
+        "codigo": "",
+        "nombre": "ELVIVE HIDRA HIALURONICO SH X370ML",
+        "precio": 13000,
+        "cantidad": 24,
+        "producto_id": 74
+      },
+      {
+        "id": 1769087191711.3513,
+        "codigo": "",
+        "nombre": "PONDS REJUVENESS X100G",
+        "precio": 21000,
+        "cantidad": 12,
+        "producto_id": 41
+      },
+      {
+        "id": 1769087191711.9553,
+        "codigo": "",
+        "nombre": "TARRITO ROJO X 380 G",
+        "precio": 18500,
+        "cantidad": 24,
+        "producto_id": 152
+      }
+    ],
+    "vendedor_id": null
+  },
+  {
+    "id": 436,
+    "cliente": "Natalia",
+    "fecha": "2026-01-20",
+    "vendedor": "Fredy Marin",
+    "direccion": null,
+    "telefono": "3024528329",
+    "correo": null,
+    "total": 1407000,
+    "created_at": "2026-01-20T14:51:15.421155+00:00",
+    "productos": [
+      {
+        "id": 1768920620785.8408,
+        "codigo": "",
+        "nombre": "Speed stick clinical 100gramos hombre",
+        "precio": 8500,
+        "cantidad": 18,
+        "producto_id": 164
+      },
+      {
+        "id": 1768920620785.4084,
+        "codigo": "",
+        "nombre": "TARRITO ROJO X 380 G",
+        "precio": 18500,
+        "cantidad": 24,
+        "producto_id": 152
+      },
+      {
+        "id": 1768920620785.2246,
+        "codigo": "",
+        "nombre": "Intibon jabon íntimo x210 ml x 2",
+        "precio": 21000,
+        "cantidad": 6,
+        "producto_id": 174
+      },
+      {
+        "id": 1768920620785.908,
+        "nombre": "Arrurru colonia  800 rosada loción",
+        "precio": 42000,
+        "cantidad": 6,
+        "producto_id": null
+      },
+      {
+        "id": 1768920620785.697,
+        "codigo": "",
+        "nombre": "Talco Rexona Eficiente Talco Pack 180g +55g",
+        "precio": 14000,
+        "cantidad": 12,
+        "producto_id": 135
+      },
+      {
+        "id": 1768920620785.1338,
+        "codigo": "",
+        "nombre": "ENJUAGUE BUCAL LISTERINE COOL MINT 1L",
+        "precio": 22000,
+        "cantidad": 12,
+        "producto_id": 69
+      }
+    ],
+    "vendedor_id": null
+  },
+  {
+    "id": 438,
+    "cliente": "Edison rojas",
+    "fecha": "2026-01-20",
+    "vendedor": "Fredy Marin",
+    "direccion": null,
+    "telefono": null,
+    "correo": null,
+    "total": 4245000,
+    "created_at": "2026-01-20T14:57:41.799028+00:00",
+    "productos": [
+      {
+        "id": 1768920859122.4763,
+        "codigo": "",
+        "nombre": "KOTEX BUENAS NOCHES X24",
+        "precio": 12000,
+        "cantidad": 8,
+        "producto_id": 59
+      },
+      {
+        "id": 1768920859122.4526,
+        "codigo": "",
+        "nombre": "Gel Capilar Ego Attraction X 110 Ml",
+        "precio": 4250,
+        "cantidad": 24,
+        "producto_id": 134
+      },
+      {
+        "id": 1768920859122.1006,
+        "codigo": "",
+        "nombre": "Dolex bebe 1-24 meses",
+        "precio": 11000,
+        "cantidad": 24,
+        "producto_id": 187
+      },
+      {
+        "id": 1768920859122.907,
+        "codigo": "",
+        "nombre": "CALADERM LOCIÓN GEL",
+        "precio": 9000,
+        "cantidad": 11,
+        "producto_id": 102
+      },
+      {
+        "id": 1768920859122.815,
+        "codigo": "",
+        "nombre": "Vitamina C 500 Mg La Santé naranja Caja X 100",
+        "precio": 24000,
+        "cantidad": 24,
+        "producto_id": 185
+      },
+      {
+        "id": 1768920859122.576,
+        "codigo": "",
+        "nombre": "TEATRICAL ACLADORA",
+        "precio": 18000,
+        "cantidad": 24,
+        "producto_id": 67
+      },
+      {
+        "id": 1768920859122.5833,
+        "codigo": "",
+        "nombre": "TARRITO ROJO X 380 G",
+        "precio": 18500,
+        "cantidad": 24,
+        "producto_id": 152
+      },
+      {
+        "id": 1768920859122.1213,
+        "codigo": "",
+        "nombre": "sundays",
+        "precio": 47000,
+        "cantidad": 12,
+        "producto_id": 188
+      },
+      {
+        "id": 1768920859122.692,
+        "codigo": "",
+        "nombre": "Speed stick gel  70 gr",
+        "precio": 7000,
+        "cantidad": 24,
+        "producto_id": 178
+      },
+      {
+        "id": 1768920859122.4448,
+        "codigo": "",
+        "nombre": "PONDS CR REJUVENESS 6X100G+...",
+        "precio": 23000,
+        "cantidad": 24,
+        "producto_id": 31
+      },
+      {
+        "id": 1768920859122.5872,
+        "codigo": "",
+        "nombre": "PONDS Clarant B3 Antimanchas con FPS 30 100g",
+        "precio": 20000,
+        "cantidad": 24,
+        "producto_id": 96
+      },
+      {
+        "id": 1768920859122.749,
+        "codigo": "",
+        "nombre": "nopikex",
+        "precio": 13500,
+        "cantidad": 12,
+        "producto_id": 186
+      },
+      {
+        "id": 1768920859122.1953,
+        "codigo": "",
+        "nombre": "Nivea facial. 5 en 1 100gr",
+        "precio": 14500,
+        "cantidad": 12,
+        "producto_id": 141
+      },
+      {
+        "id": 138,
+        "codigo": "",
+        "nombre": "Nivea spray rojo natural x2",
+        "precio": 22000,
+        "cantidad": 6,
+        "producto_id": 138
+      }
+    ],
+    "vendedor_id": null
+  },
+  {
+    "id": 439,
+    "cliente": "PLUTARCO",
+    "fecha": "2026-01-20",
+    "vendedor": "Fredy Marin",
+    "direccion": null,
+    "telefono": "3024528329",
+    "correo": null,
+    "total": 967000,
+    "created_at": "2026-01-20T15:00:02.932081+00:00",
+    "productos": [
+      {
+        "id": 1768921185498.3875,
+        "codigo": "",
+        "nombre": "Speed stick gel  70 gr",
+        "precio": 7000,
+        "cantidad": 24,
+        "producto_id": 178
+      },
+      {
+        "id": 1768921185498.3545,
+        "codigo": "",
+        "nombre": "Mieltertos Gripa Naranja Día Sobres 24 Sobres",
+        "precio": 35500,
+        "cantidad": 10,
+        "producto_id": 73
+      },
+      {
+        "id": 1768921185498.8994,
+        "codigo": "",
+        "nombre": "TARRITO ROJO X 380 G",
+        "precio": 18500,
+        "cantidad": 24,
+        "producto_id": 152
+      }
+    ],
+    "vendedor_id": null
+  },
+  {
+    "id": 440,
+    "cliente": "Sara",
+    "fecha": "2026-01-20",
+    "vendedor": "Edwin Marin",
+    "direccion": null,
+    "telefono": "3004583117",
+    "correo": null,
+    "total": 5446800,
+    "created_at": "2026-01-20T16:00:56.1898+00:00",
+    "productos": [
+      {
+        "id": 1768924645009.254,
+        "codigo": "",
+        "nombre": "TIO NACHO CONTROL CASPA 415 ENGROSADOR",
+        "precio": 22000,
+        "cantidad": 24,
+        "producto_id": 65
+      },
+      {
+        "id": 1768924645009.988,
+        "codigo": "",
+        "nombre": "TAMPON KOTEX DIGITAL RISTRA 6...",
+        "precio": 11500,
+        "cantidad": 18,
+        "producto_id": 12
+      },
+      {
+        "id": 1768924645009.5496,
+        "codigo": "",
+        "nombre": "Speed stick clinical 100gramos hombre",
+        "precio": 8500,
+        "cantidad": 36,
+        "producto_id": 164
+      },
+      {
+        "id": 1768924645009.85,
+        "codigo": "",
+        "nombre": "REXONA CLINICAL COLACILBLE 30G",
+        "precio": 32000,
+        "cantidad": 24,
+        "producto_id": 55
+      },
+      {
+        "id": 1768924645009.3967,
+        "codigo": "",
+        "nombre": "PONDS CR REJUVENESS 6X100G+...",
+        "precio": 23000,
+        "cantidad": 36,
+        "producto_id": 31
+      },
+      {
+        "id": 1768924645009.0688,
+        "nombre": "Neko Avena x110g",
+        "precio": 12250,
+        "cantidad": 6,
+        "producto_id": null
+      },
+      {
+        "id": 1768924645009.4182,
+        "nombre": "Neko Antibacterial Extra Suave 110g",
+        "precio": 12250,
+        "cantidad": 6,
+        "producto_id": null
+      },
+      {
+        "id": 1768924645009.4553,
+        "codigo": "",
+        "nombre": "Mieltertos mentholyptus pastillas masticables X48 X12X4",
+        "precio": 18500,
+        "cantidad": 24,
+        "producto_id": 133
+      },
+      {
+        "id": 1768924645009.8142,
+        "codigo": "",
+        "nombre": "KOTEX BUENAS NOCHES X24",
+        "precio": 12000,
+        "cantidad": 8,
+        "producto_id": 59
+      },
+      {
+        "id": 1768924645009.9353,
+        "codigo": "",
+        "nombre": "Enjuague Bucal LISTERINE Control Cálculo 500 ml",
+        "precio": 19000,
+        "cantidad": 24,
+        "producto_id": 117
+      },
+      {
+        "id": 1768924645009.6921,
+        "codigo": "",
+        "nombre": "Desodorante Dove spray 2 precio especial",
+        "precio": 24000,
+        "cantidad": 24,
+        "producto_id": 166
+      },
+      {
+        "id": 1768924645009.021,
+        "nombre": "CALADER LOCIÓN ",
+        "precio": 9000,
+        "cantidad": 12,
+        "producto_id": null
+      },
+      {
+        "id": 1768924645009.9678,
+        "nombre": "Aceite johnsons",
+        "precio": 5700,
+        "cantidad": 144,
+        "producto_id": null
+      },
+      {
+        "id": 1768924822255,
+        "nombre": "NOPIKES",
+        "precio": 13500,
+        "cantidad": 12,
+        "producto_id": null
+      }
+    ],
+    "vendedor_id": null
+  },
+  {
+    "id": 441,
+    "cliente": "Yiset",
+    "fecha": "2026-01-20",
+    "vendedor": "Fredy Marin",
+    "direccion": null,
+    "telefono": "3024528329",
+    "correo": null,
+    "total": 832000,
+    "created_at": "2026-01-20T16:30:54.770921+00:00",
+    "productos": [
+      {
+        "id": 1768926628496.8728,
+        "codigo": "",
+        "nombre": "Huggies Active Sec Etapa 5/XXG x 25",
+        "precio": 26000,
+        "cantidad": 32,
+        "producto_id": 83
+      }
+    ],
+    "vendedor_id": null
+  },
+  {
+    "id": 442,
+    "cliente": "Rosendo",
+    "fecha": "2026-01-20",
+    "vendedor": "Fredy Marin",
+    "direccion": null,
+    "telefono": "3024528329",
+    "correo": null,
+    "total": 444000,
+    "created_at": "2026-01-20T16:31:48.855823+00:00",
+    "productos": [
+      {
+        "id": 1768926700536.6255,
+        "codigo": "",
+        "nombre": "TARRITO ROJO X 380 G",
+        "precio": 18500,
+        "cantidad": 24,
+        "producto_id": 152
+      }
+    ],
+    "vendedor_id": null
+  },
+  {
+    "id": 443,
+    "cliente": "Oscar",
+    "fecha": "2026-01-20",
+    "vendedor": "Fredy Marin",
+    "direccion": null,
+    "telefono": "3024528329",
+    "correo": null,
+    "total": 1992000,
+    "created_at": "2026-01-20T16:37:42.649332+00:00",
+    "productos": [
+      {
+        "id": 1768927050289.4788,
+        "codigo": "",
+        "nombre": "Speed stick gel  70 gr",
+        "precio": 7000,
+        "cantidad": 54,
+        "producto_id": 178
+      },
+      {
+        "id": 1768927050289.1199,
+        "codigo": "",
+        "nombre": "Intibon jabon íntimo x210 ml x 2",
+        "precio": 21000,
+        "cantidad": 30,
+        "producto_id": 174
+      },
+      {
+        "id": 1768927050289.483,
+        "codigo": "",
+        "nombre": "PONDS Clarant B3 Antimanchas con FPS 30 100g",
+        "precio": 20000,
+        "cantidad": 24,
+        "producto_id": 96
+      },
+      {
+        "id": 1768927050289.4243,
+        "codigo": "",
+        "nombre": "PONDS REJUVENESS X100G",
+        "precio": 21000,
+        "cantidad": 24,
+        "producto_id": 41
+      }
+    ],
+    "vendedor_id": null
+  },
+  {
+    "id": 444,
+    "cliente": "Fredy medina",
+    "fecha": "2026-01-20",
+    "vendedor": "Fredy Marin",
+    "direccion": null,
+    "telefono": "3024528329",
+    "correo": null,
+    "total": 120000,
+    "created_at": "2026-01-20T22:42:58.341142+00:00",
+    "productos": [
+      {
+        "id": 1768948962764.4402,
+        "codigo": "",
+        "nombre": "Nivea facial gel  hyaluron 100ml.",
+        "precio": 20000,
+        "cantidad": 6,
+        "producto_id": 194
+      }
+    ],
+    "vendedor_id": null
+  },
+  {
+    "id": 445,
+    "cliente": "Monica",
+    "fecha": "2026-01-20",
+    "vendedor": "Fredy Marin",
+    "direccion": null,
+    "telefono": "3024528329",
+    "correo": null,
+    "total": 474000,
+    "created_at": "2026-01-20T22:43:40.814329+00:00",
+    "productos": [
+      {
+        "id": 1768949009587.2046,
+        "codigo": "",
+        "nombre": "Intibon jabon íntimo x210 ml x 2",
+        "precio": 21000,
+        "cantidad": 12,
+        "producto_id": 174
+      },
+      {
+        "id": 1768949009587.6543,
+        "codigo": "",
+        "nombre": "Nivea tono natural clinical  2x1",
+        "precio": 18500,
+        "cantidad": 12,
+        "producto_id": 192
+      }
+    ],
+    "vendedor_id": null
+  },
+  {
+    "id": 446,
+    "cliente": "Juan Pablo",
+    "fecha": "2026-01-20",
+    "vendedor": "Fredy Marin",
+    "direccion": null,
+    "telefono": "3004583117",
+    "correo": null,
+    "total": 138000,
+    "created_at": "2026-01-20T22:45:05.268994+00:00",
+    "productos": [
+      {
+        "id": 1768949089731.9436,
+        "codigo": "",
+        "nombre": "PONDS CR REJUVENESS 6X100G+...",
+        "precio": 23000,
+        "cantidad": 6,
+        "producto_id": 31
+      }
+    ],
+    "vendedor_id": null
+  },
+  {
+    "id": 447,
+    "cliente": "Rubiela",
+    "fecha": "2026-01-20",
+    "vendedor": "Edwin Marin",
+    "direccion": null,
+    "telefono": "3135198654",
+    "correo": null,
+    "total": 2753000,
+    "created_at": "2026-01-20T22:46:52.551885+00:00",
+    "productos": [
+      {
+        "id": 1768949172404.9155,
+        "codigo": "",
+        "nombre": "ENJUAGUE BUCAL LISTERINE COOL MINT 1L",
+        "precio": 22000,
+        "cantidad": 6,
+        "producto_id": 69
+      },
+      {
+        "id": 1768949172404.7693,
+        "codigo": "",
+        "nombre": "TARRITO ROJO X 380 G",
+        "precio": 18500,
+        "cantidad": 12,
+        "producto_id": 152
+      },
+      {
+        "id": 1768949172404.1558,
+        "codigo": "",
+        "nombre": "Talco Rexona Eficiente Talco Pack 180g +55g",
+        "precio": 14000,
+        "cantidad": 25,
+        "producto_id": 135
+      },
+      {
+        "id": 1768949172404.0205,
+        "codigo": "",
+        "nombre": "Speed stick clinical 100gramos hombre",
+        "precio": 8500,
+        "cantidad": 6,
+        "producto_id": 164
+      },
+      {
+        "id": 1768949172404.9287,
+        "codigo": "",
+        "nombre": "PONDS REJUVENESS X100G",
+        "precio": 21000,
+        "cantidad": 12,
+        "producto_id": 41
+      },
+      {
+        "id": 1768949172404.5515,
+        "codigo": "",
+        "nombre": "PONDS CR REJUVENESS 6X100G+...",
+        "precio": 23000,
+        "cantidad": 6,
+        "producto_id": 31
+      },
+      {
+        "id": 1768949172404.3987,
+        "codigo": "",
+        "nombre": "PONDS Clarant B3 Antimanchas con FPS 30 100g",
+        "precio": 20000,
+        "cantidad": 12,
+        "producto_id": 96
+      },
+      {
+        "id": 1768949172404.3936,
+        "codigo": "",
+        "nombre": "NOSOTRAS BUENAS NOCHES +PROTE...",
+        "precio": 17500,
+        "cantidad": 12,
+        "producto_id": 35
+      },
+      {
+        "id": 1768949172404.9067,
+        "codigo": "",
+        "nombre": "Nivea tono natural  clásico touch 2x1",
+        "precio": 17000,
+        "cantidad": 6,
+        "producto_id": 191
+      },
+      {
+        "id": 1768949172404.3315,
+        "codigo": "",
+        "nombre": "NIVEA DEO BLACK WHITE SPRAY X150 2PACK",
+        "precio": 22000,
+        "cantidad": 6,
+        "producto_id": 189
+      },
+      {
+        "id": 1768949172404.5093,
+        "codigo": "",
+        "nombre": "Kotex x 24 ultraproteccion",
+        "precio": 7500,
+        "cantidad": 8,
+        "producto_id": 193
+      },
+      {
+        "id": 1768949172404.3616,
+        "codigo": "",
+        "nombre": "KOTEX BUENAS NOCHES X24",
+        "precio": 12000,
+        "cantidad": 8,
+        "producto_id": 59
+      },
+      {
+        "id": 1768949172404.26,
+        "codigo": "",
+        "nombre": "Intibon jabon íntimo x210 ml x 2",
+        "precio": 21000,
+        "cantidad": 6,
+        "producto_id": 174
+      },
+      {
+        "id": 1768949172404.577,
+        "codigo": "",
+        "nombre": "COLONIA ARRURRU ROSADA X800ML",
+        "precio": 42000,
+        "cantidad": 6,
+        "producto_id": 169
+      },
+      {
+        "id": 1768949172404.6062,
+        "codigo": "",
+        "nombre": "Desodorante Nivea tono spray natural  clásico touch 2x1 150 ml",
+        "precio": 22000,
+        "cantidad": 6,
+        "producto_id": 199
+      },
+      {
+        "id": 1768949172404.2622,
+        "codigo": "",
+        "nombre": "Desodorante Dove spray 2 precio especial",
+        "precio": 24000,
+        "cantidad": 6,
+        "producto_id": 166
+      },
+      {
+        "id": 1768949172404.1218,
+        "codigo": "",
+        "nombre": "Enjuague Bucal LISTERINE Control Cálculo 500 ml",
+        "precio": 19000,
+        "cantidad": 6,
+        "producto_id": 117
+      }
+    ],
+    "vendedor_id": null
+  },
+  {
+    "id": 450,
+    "cliente": "Jorge",
+    "fecha": "2026-01-20",
+    "vendedor": "Fredy Marin",
+    "direccion": null,
+    "telefono": "3024528329",
+    "correo": null,
+    "total": 888000,
+    "created_at": "2026-01-20T22:49:33.322399+00:00",
+    "productos": [
+      {
+        "id": 1768949367092.2368,
+        "codigo": "",
+        "nombre": "Mieltertos mentholyptus pastillas masticables X48 X12X4",
+        "precio": 18500,
+        "cantidad": 48,
+        "producto_id": 133
+      }
+    ],
+    "vendedor_id": null
+  },
+  {
+    "id": 475,
+    "cliente": "Mabel",
+    "fecha": "2026-01-22",
+    "vendedor": "Fredy Marin",
+    "direccion": null,
+    "telefono": "3024528329",
+    "correo": null,
+    "total": 192000,
+    "created_at": "2026-01-22T13:07:48.583383+00:00",
+    "productos": [
+      {
+        "id": 1769087260251.5066,
+        "codigo": "",
+        "nombre": "KOTEX BUENAS NOCHES X24",
+        "precio": 12000,
+        "cantidad": 16,
+        "producto_id": 59
+      }
+    ],
+    "vendedor_id": null
+  },
+  {
+    "id": 505,
+    "cliente": "EEEE",
+    "fecha": "2026-01-26",
+    "vendedor": "Edwin Marin",
+    "direccion": null,
+    "telefono": "3004483117",
+    "correo": null,
+    "total": 1452,
+    "created_at": "2026-01-26T17:22:16.532937+00:00",
+    "productos": [
+      {
+        "id": 1769448129138.2412,
+        "codigo": "",
+        "nombre": "prueba",
+        "precio": 12,
+        "cantidad": 121,
+        "producto_id": 208
+      }
+    ],
+    "vendedor_id": null
+  },
+  {
+    "id": 453,
+    "cliente": "Jesús huiza",
+    "fecha": "2026-01-20",
+    "vendedor": "Fredy Marin",
+    "direccion": null,
+    "telefono": "3024528329",
+    "correo": null,
+    "total": 1272000,
+    "created_at": "2026-01-20T23:26:25.900288+00:00",
+    "productos": [
+      {
+        "id": 1768951577317.2292,
+        "codigo": "",
+        "nombre": "NIVEA DEO BLACK WHITE SPRAY X150 2PACK",
+        "precio": 22000,
+        "cantidad": 12,
+        "producto_id": 189
+      },
+      {
+        "id": 1768951577317.2668,
+        "codigo": "",
+        "nombre": "Nivea facial. 5 en 1 100gr",
+        "precio": 14500,
+        "cantidad": 12,
+        "producto_id": 141
+      },
+      {
+        "id": 1768951577317.1763,
+        "codigo": "",
+        "nombre": "Nivea facial gel  hyaluron 100ml.",
+        "precio": 20000,
+        "cantidad": 12,
+        "producto_id": 194
+      },
+      {
+        "id": 1768951577317.0713,
+        "codigo": "",
+        "nombre": "Nivea tono natural clinical  2x1",
+        "precio": 18500,
+        "cantidad": 12,
+        "producto_id": 192
+      },
+      {
+        "id": 1768951577317.781,
+        "codigo": "",
+        "nombre": "Rexona Bambo x50g",
+        "precio": 7000,
+        "cantidad": 12,
+        "producto_id": 173
+      },
+      {
+        "id": 1768951577317.3962,
+        "codigo": "",
+        "nombre": "Vitamina C 500 Mg La Santé naranja Caja X 100",
+        "precio": 24000,
+        "cantidad": 12,
+        "producto_id": 185
+      }
+    ],
+    "vendedor_id": null
+  },
+  {
+    "id": 455,
+    "cliente": "JESUS TAT",
+    "fecha": "2026-01-21",
+    "vendedor": "Fredy Marin",
+    "direccion": null,
+    "telefono": "3212070200",
+    "correo": null,
+    "total": 235600,
+    "created_at": "2026-01-21T14:47:52.336842+00:00",
+    "productos": [
+      {
+        "id": 145,
+        "codigo": "",
+        "nombre": "DOVE AC RECONSTRUCCIÓN DPL 12X24X18ML",
+        "precio": 7800,
+        "cantidad": 6,
+        "producto_id": 145
+      },
+      {
+        "id": 1769006554142,
+        "nombre": "DOVE SH RECONSTRUCCION DPL 12X24X18ML",
+        "precio": 7800,
+        "cantidad": 6,
+        "producto_id": null
+      },
+      {
+        "id": 133,
+        "codigo": "",
+        "nombre": "Mieltertos mentholyptus pastillas masticables X48 X12X4",
+        "precio": 18500,
+        "cantidad": 2,
+        "producto_id": 133
+      },
+      {
+        "id": 29,
+        "codigo": "",
+        "nombre": "SHAMPOO SAVITAL CON ACEITE DE ARGAN CAJA X 20 SOBRES",
+        "precio": 12500,
+        "cantidad": 4,
+        "producto_id": 29
+      },
+      {
+        "id": 1769006826309,
+        "nombre": "TOAL NOSOTRAS RAPIGEL X30",
+        "precio": 11000,
+        "cantidad": 5,
+        "producto_id": null
+      }
+    ],
+    "vendedor_id": null
+  },
+  {
+    "id": 461,
+    "cliente": "Marcela  ferrocarril",
+    "fecha": "2026-01-21",
+    "vendedor": "Fredy Marin",
+    "direccion": null,
+    "telefono": "3024528329",
+    "correo": null,
+    "total": 654000,
+    "created_at": "2026-01-21T17:33:16.076639+00:00",
+    "productos": [
+      {
+        "id": 1769016775664.7627,
+        "codigo": "",
+        "nombre": "Nivea facial gel  hyaluron 100ml.",
+        "precio": 20000,
+        "cantidad": 24,
+        "producto_id": 194
+      },
+      {
+        "id": 1769016775664.8186,
+        "codigo": "",
+        "nombre": "Nivea facial. 5 en 1 100gr",
+        "precio": 14500,
+        "cantidad": 12,
+        "producto_id": 141
+      }
+    ],
+    "vendedor_id": null
+  },
+  {
+    "id": 462,
+    "cliente": "Wendy",
+    "fecha": "2026-01-21",
+    "vendedor": "Edwin Marin",
+    "direccion": null,
+    "telefono": "3105675464",
+    "correo": null,
+    "total": 1152000,
+    "created_at": "2026-01-21T18:19:37.866266+00:00",
+    "productos": [
+      {
+        "id": 1769019549010.092,
+        "codigo": "",
+        "nombre": "Speed stick clinical 100gramos hombre",
+        "precio": 8500,
+        "cantidad": 12,
+        "producto_id": 164
+      },
+      {
+        "id": 1769019549010.9392,
+        "codigo": "",
+        "nombre": "TANGA SPF100 24X12",
+        "precio": 28000,
+        "cantidad": 12,
+        "producto_id": 21
+      },
+      {
+        "id": 1769019549010.082,
+        "codigo": "",
+        "nombre": "Talco Rexona Eficiente Talco Pack 180g +55g",
+        "precio": 14000,
+        "cantidad": 24,
+        "producto_id": 135
+      },
+      {
+        "id": 1769019549010.39,
+        "codigo": "",
+        "nombre": "PONDS CR REJUVENESS 6X100G+...",
+        "precio": 23000,
+        "cantidad": 6,
+        "producto_id": 31
+      },
+      {
+        "id": 1769019549010.0396,
+        "codigo": "",
+        "nombre": "Nivea facial gel  hyaluron 100ml.",
+        "precio": 20000,
+        "cantidad": 12,
+        "producto_id": 194
+      }
+    ],
+    "vendedor_id": null
+  },
+  {
+    "id": 463,
+    "cliente": "Juan pablo",
+    "fecha": "2026-01-21",
+    "vendedor": "Edwin Marin",
+    "direccion": null,
+    "telefono": "3153813295",
+    "correo": null,
+    "total": 528000,
+    "created_at": "2026-01-21T18:22:27.299085+00:00",
+    "productos": [
+      {
+        "id": 1769019741041.2175,
+        "codigo": "",
+        "nombre": "NIVEA DEO BLACK WHITE SPRAY X150 2PACK",
+        "precio": 22000,
+        "cantidad": 24,
+        "producto_id": 189
+      }
+    ],
+    "vendedor_id": null
+  },
+  {
+    "id": 485,
+    "cliente": "jesus T&T",
+    "fecha": "2026-01-22",
+    "vendedor": "Fredy Marin",
+    "direccion": null,
+    "telefono": null,
+    "correo": null,
+    "total": 51000,
+    "created_at": "2026-01-22T13:51:20.934119+00:00",
+    "productos": [
+      {
+        "id": 134,
+        "codigo": "",
+        "nombre": "Gel Capilar Ego Attraction X 110 Ml",
+        "precio": 2125,
+        "cantidad": 24,
+        "producto_id": 134
+      }
+    ],
+    "vendedor_id": null
+  },
+  {
+    "id": 506,
+    "cliente": "eeeee",
+    "fecha": "2026-01-26",
+    "vendedor": "Edwin Marin",
+    "direccion": null,
+    "telefono": null,
+    "correo": null,
+    "total": 156,
+    "created_at": "2026-01-26T17:36:34.730737+00:00",
+    "productos": [
+      {
+        "id": 208,
+        "codigo": "",
+        "nombre": "prueba",
+        "precio": 12,
+        "cantidad": 13,
+        "producto_id": 208
+      }
+    ],
+    "vendedor_id": null
+  },
+  {
+    "id": 469,
+    "cliente": "ADRIAN SABANA",
+    "fecha": "2026-01-22",
+    "vendedor": "Edwin Marin",
+    "direccion": "Sábana local ",
+    "telefono": "3115793179",
+    "correo": null,
+    "total": 2760000,
+    "created_at": "2026-01-22T12:58:59.711806+00:00",
+    "productos": [
+      {
+        "id": 1769086718899.1138,
+        "codigo": "",
+        "nombre": "Vitamina C 500 Mg La Santé naranja Caja X 100",
+        "precio": 24000,
+        "cantidad": 12,
+        "producto_id": 185
+      },
+      {
+        "id": 1769086718899.445,
+        "codigo": "",
+        "nombre": "Teatrical roja 100ml",
+        "precio": 18000,
+        "cantidad": 12,
+        "producto_id": 167
+      },
+      {
+        "id": 1769086718899.2524,
+        "codigo": "",
+        "nombre": "PILA DURACELL AAA 10X6",
+        "precio": 195000,
+        "cantidad": 2,
+        "producto_id": 14
+      },
+      {
+        "id": 1769086718899.4363,
+        "codigo": "",
+        "nombre": "PILA DURACEL AA 10X6",
+        "precio": 195000,
+        "cantidad": 2,
+        "producto_id": 15
+      },
+      {
+        "id": 1769086718899.241,
+        "codigo": "",
+        "nombre": "Mieltertos mentholyptus pastillas masticables X48 X12X4",
+        "precio": 18500,
+        "cantidad": 48,
+        "producto_id": 133
+      },
+      {
+        "id": 1769086718899.0793,
+        "codigo": "",
+        "nombre": "KOTEX BUENAS NOCHES X24",
+        "precio": 12000,
+        "cantidad": 16,
+        "producto_id": 59
+      },
+      {
+        "id": 1769086718899.6914,
+        "codigo": "",
+        "nombre": "Dolex bebe 1-24 meses",
+        "precio": 11000,
+        "cantidad": 36,
+        "producto_id": 187
+      }
+    ],
+    "vendedor_id": null
+  },
+  {
+    "id": 470,
+    "cliente": "JAVIER BUITRAGO ",
+    "fecha": "2026-01-22",
+    "vendedor": "Edwin Marin",
+    "direccion": "Ferrocaril A003",
+    "telefono": "3114411220",
+    "correo": null,
+    "total": 1158000,
+    "created_at": "2026-01-22T13:00:29.28354+00:00",
+    "productos": [
+      {
+        "id": 1769086805488.0015,
+        "codigo": "",
+        "nombre": "PONDS CR REJUVENESS 6X100G+...",
+        "precio": 23000,
+        "cantidad": 12,
+        "producto_id": 31
+      },
+      {
+        "id": 1769086805488.5706,
+        "codigo": "",
+        "nombre": "Nivea tono natural  clásico touch 2x1",
+        "precio": 17000,
+        "cantidad": 6,
+        "producto_id": 191
+      },
+      {
+        "id": 1769086805488.693,
+        "codigo": "",
+        "nombre": "Nivea facial gel  hyaluron 100ml.",
+        "precio": 20000,
+        "cantidad": 6,
+        "producto_id": 194
+      },
+      {
+        "id": 1769086805488.3577,
+        "codigo": "",
+        "nombre": "NIVEA DEO BLACK WHITE SPRAY X150 2PACK",
+        "precio": 22000,
+        "cantidad": 6,
+        "producto_id": 189
+      },
+      {
+        "id": 1769086805488.709,
+        "codigo": "",
+        "nombre": "ENJUAGUE BUCAL LISTERINE COOL MINT 1L",
+        "precio": 22000,
+        "cantidad": 24,
+        "producto_id": 69
+      }
+    ],
+    "vendedor_id": null
+  },
+  {
+    "id": 471,
+    "cliente": "Frank Ramírez",
+    "fecha": "2026-01-22",
+    "vendedor": "Edwin Marin",
+    "direccion": null,
+    "telefono": "3166470853",
+    "correo": null,
+    "total": 5605800,
+    "created_at": "2026-01-22T13:03:28.636491+00:00",
+    "productos": [
+      {
+        "id": 1769086995179.8977,
+        "codigo": "",
+        "nombre": "Vitamina C 500 Mg La Santé naranja Caja X 100",
+        "precio": 24000,
+        "cantidad": 24,
+        "producto_id": 185
+      },
+      {
+        "id": 1769086995179.4707,
+        "codigo": "",
+        "nombre": "Toallas Kotex Normal 24 Und",
+        "precio": 7500,
+        "cantidad": 16,
+        "producto_id": 85
+      },
+      {
+        "id": 1769086995179.0376,
+        "codigo": "",
+        "nombre": "TARRITO ROJO X 380 G",
+        "precio": 18500,
+        "cantidad": 24,
+        "producto_id": 152
+      },
+      {
+        "id": 1769086995179.0671,
+        "codigo": "",
+        "nombre": "Speed stick gel  70 gr",
+        "precio": 7000,
+        "cantidad": 54,
+        "producto_id": 178
+      },
+      {
+        "id": 1769086995179.1497,
+        "codigo": "",
+        "nombre": "SHAMPOO SAVITAL CON ACEITE DE ARGAN CAJA X 20 SOBRES",
+        "precio": 12500,
+        "cantidad": 24,
+        "producto_id": 29
+      },
+      {
+        "id": 1769086995179.1787,
+        "codigo": "",
+        "nombre": "REXONA CLINICAL COLACILBLE 30G",
+        "precio": 32000,
+        "cantidad": 6,
+        "producto_id": 55
+      },
+      {
+        "id": 1769086995179.184,
+        "codigo": "",
+        "nombre": "Protector Diario Nosotras Multiestilo 15 U",
+        "precio": 16500,
+        "cantidad": 6,
+        "producto_id": 76
+      },
+      {
+        "id": 1769086995179.1702,
+        "codigo": "",
+        "nombre": "PONDS CR REJUVENESS 6X100G+...",
+        "precio": 23000,
+        "cantidad": 6,
+        "producto_id": 31
+      },
+      {
+        "id": 1769086995179.6326,
+        "codigo": "",
+        "nombre": "Mieltertos mentholyptus pastillas masticables X48 X12X4",
+        "precio": 18500,
+        "cantidad": 48,
+        "producto_id": 133
+      },
+      {
+        "id": 1769086995179.0037,
+        "codigo": "",
+        "nombre": "Intibon jabon íntimo x210 ml x 2",
+        "precio": 21000,
+        "cantidad": 12,
+        "producto_id": 174
+      },
+      {
+        "id": 1769086995179.757,
+        "codigo": "",
+        "nombre": "Gel Capilar Ego Attraction X 110 Ml",
+        "precio": 2125,
+        "cantidad": 144,
+        "producto_id": 134
+      },
+      {
+        "id": 1769086995179.297,
+        "codigo": "",
+        "nombre": "ELVIVE HIDRA HIALURONICO SH X370ML",
+        "precio": 13000,
+        "cantidad": 12,
+        "producto_id": 74
+      },
+      {
+        "id": 1769086995179.6492,
+        "codigo": "",
+        "nombre": "ENJUAGUE BUCAL LISTERINE COOL MINT 1L",
+        "precio": 22000,
+        "cantidad": 18,
+        "producto_id": 69
+      },
+      {
+        "id": 1769086995179.1633,
+        "codigo": "",
+        "nombre": "CALADERM LOCIÓN GEL",
+        "precio": 9000,
+        "cantidad": 4,
+        "producto_id": 102
+      },
+      {
+        "id": 1769086995179.9548,
+        "codigo": "",
+        "nombre": "COLONIA ARRURRU ROSADA X800ML",
+        "precio": 42000,
+        "cantidad": 12,
+        "producto_id": 169
+      },
+      {
+        "id": 1769086995179.983,
+        "codigo": "",
+        "nombre": "ACEITE JOHNSONS BABY X50ML",
+        "precio": 5700,
+        "cantidad": 144,
+        "producto_id": 184
+      }
+    ],
+    "vendedor_id": null
+  },
+  {
+    "id": 472,
+    "cliente": "Luz muños",
+    "fecha": "2026-01-22",
+    "vendedor": "Fredy Marin",
+    "direccion": null,
+    "telefono": "3024528329",
+    "correo": null,
+    "total": 717000,
+    "created_at": "2026-01-22T13:04:36.63012+00:00",
+    "productos": [
+      {
+        "id": 1769087063628.6003,
+        "codigo": "",
+        "nombre": "Teatrical roja 100ml",
+        "precio": 18000,
+        "cantidad": 3,
+        "producto_id": 167
+      },
+      {
+        "id": 1769087063628.9365,
+        "codigo": "",
+        "nombre": "TEATRICAL ACLADORA",
+        "precio": 18000,
+        "cantidad": 3,
+        "producto_id": 67
+      },
+      {
+        "id": 1769087063628.835,
+        "codigo": "",
+        "nombre": "Vitamina C 500 Mg La Santé naranja Caja X 100",
+        "precio": 24000,
+        "cantidad": 12,
+        "producto_id": 185
+      },
+      {
+        "id": 1769087063628.8892,
+        "codigo": "",
+        "nombre": "TAMPON KOTEX DIGITAL RISTRA 6...",
+        "precio": 11500,
+        "cantidad": 6,
+        "producto_id": 12
+      },
+      {
+        "id": 1769087063628.7932,
+        "codigo": "",
+        "nombre": "COLONIA ARRURRU ROSADA X800ML",
+        "precio": 42000,
+        "cantidad": 6,
+        "producto_id": 169
+      }
+    ],
+    "vendedor_id": null
+  },
+  {
+    "id": 473,
+    "cliente": "ALEJANDRA LADY",
+    "fecha": "2026-01-22",
+    "vendedor": "Edwin Marin",
+    "direccion": "PARQUE",
+    "telefono": null,
+    "correo": null,
+    "total": 1194000,
+    "created_at": "2026-01-22T13:05:45.221389+00:00",
+    "productos": [
+      {
+        "id": 1769087122649.2559,
+        "codigo": "",
+        "nombre": "TAMPON KOTEX DIGITAL RISTRA 6...",
+        "precio": 11500,
+        "cantidad": 12,
+        "producto_id": 12
+      },
+      {
+        "id": 1769087122649.8684,
+        "codigo": "",
+        "nombre": "PONDS CR REJUVENESS 6X100G+...",
+        "precio": 23000,
+        "cantidad": 12,
+        "producto_id": 31
+      },
+      {
+        "id": 1769087122649.8928,
+        "codigo": "",
+        "nombre": "PILA DURACELL AAA 10X6",
+        "precio": 195000,
+        "cantidad": 2,
+        "producto_id": 14
+      },
+      {
+        "id": 1769087122649.4097,
+        "codigo": "",
+        "nombre": "PILA DURACEL AA 10X6",
+        "precio": 195000,
+        "cantidad": 2,
+        "producto_id": 15
+      }
+    ],
+    "vendedor_id": null
+  },
+  {
+    "id": 507,
+    "cliente": "eeee",
+    "fecha": "2026-01-26",
+    "vendedor": "Edwin Marin",
+    "direccion": null,
+    "telefono": null,
+    "correo": null,
+    "total": 60,
+    "created_at": "2026-01-26T17:42:28.759902+00:00",
+    "productos": [
+      {
+        "id": 208,
+        "codigo": "",
+        "nombre": "prueba",
+        "precio": 12,
+        "cantidad": 5,
+        "producto_id": 208
+      }
+    ],
+    "vendedor_id": null
+  },
+  {
+    "id": 476,
+    "cliente": "Héctor parque",
+    "fecha": "2026-01-22",
+    "vendedor": "Edwin Marin",
+    "direccion": null,
+    "telefono": "3215762269",
+    "correo": null,
+    "total": 2222800,
+    "created_at": "2026-01-22T13:08:41.227202+00:00",
+    "productos": [
+      {
+        "id": 1769087309538.9927,
+        "codigo": "",
+        "nombre": "PILA DURACELL AAA 10X6",
+        "precio": 195000,
+        "cantidad": 2,
+        "producto_id": 14
+      },
+      {
+        "id": 1769087309538.8015,
+        "codigo": "",
+        "nombre": "TANGA SPF100 24X12",
+        "precio": 28000,
+        "cantidad": 12,
+        "producto_id": 21
+      },
+      {
+        "id": 1769087309538.103,
+        "codigo": "",
+        "nombre": "REXONA CLINICAL COLACILBLE 30G",
+        "precio": 32000,
+        "cantidad": 2,
+        "producto_id": 55
+      },
+      {
+        "id": 1769087309538.807,
+        "codigo": "",
+        "nombre": "PILA DURACEL AA 10X6",
+        "precio": 195000,
+        "cantidad": 2,
+        "producto_id": 15
+      },
+      {
+        "id": 1769087309538.813,
+        "codigo": "",
+        "nombre": "Nivea tono natural clinical  2x1",
+        "precio": 18500,
+        "cantidad": 12,
+        "producto_id": 192
+      },
+      {
+        "id": 1769087309538.2085,
+        "codigo": "",
+        "nombre": "ACEITE JOHNSONS BABY X50ML",
+        "precio": 5700,
+        "cantidad": 144,
+        "producto_id": 184
+      }
+    ],
+    "vendedor_id": null
+  },
+  {
+    "id": 477,
+    "cliente": "LUCERO ",
+    "fecha": "2026-01-22",
+    "vendedor": "Edwin Marin",
+    "direccion": "Parque ",
+    "telefono": "3112964773",
+    "correo": null,
+    "total": 2204400,
+    "created_at": "2026-01-22T13:10:55.876267+00:00",
+    "productos": [
+      {
+        "id": 1769087441684.6404,
+        "codigo": "",
+        "nombre": "Vitamina C 500 Mg La Santé naranja Caja X 100",
+        "precio": 24000,
+        "cantidad": 12,
+        "producto_id": 185
+      },
+      {
+        "id": 1769087441684.1733,
+        "codigo": "",
+        "nombre": "Toallas Kotex Normal 24 Und",
+        "precio": 7500,
+        "cantidad": 8,
+        "producto_id": 85
+      },
+      {
+        "id": 1769087441684.0286,
+        "codigo": "",
+        "nombre": "sundays",
+        "precio": 47000,
+        "cantidad": 12,
+        "producto_id": 188
+      },
+      {
+        "id": 1769087441684.487,
+        "codigo": "",
+        "nombre": "Nivea tono natural  clásico touch 2x1",
+        "precio": 17000,
+        "cantidad": 6,
+        "producto_id": 191
+      },
+      {
+        "id": 1769087441684.25,
+        "codigo": "",
+        "nombre": "ACEITE JOHNSONS BABY X50ML",
+        "precio": 5700,
+        "cantidad": 72,
+        "producto_id": 184
+      },
+      {
+        "id": 1769087441684.422,
+        "codigo": "",
+        "nombre": "PILA DURACELL AAA 10X6",
+        "precio": 195000,
+        "cantidad": 2,
+        "producto_id": 14
+      },
+      {
+        "id": 1769087441684.6204,
+        "codigo": "",
+        "nombre": "PILA DURACEL AA 10X6",
+        "precio": 195000,
+        "cantidad": 2,
+        "producto_id": 15
+      }
+    ],
+    "vendedor_id": null
+  },
+  {
+    "id": 478,
+    "cliente": "Fred soler",
+    "fecha": "2026-01-22",
+    "vendedor": "Fredy Marin",
+    "direccion": null,
+    "telefono": "3024528329",
+    "correo": null,
+    "total": 1644000,
+    "created_at": "2026-01-22T13:11:37.688325+00:00",
+    "productos": [
+      {
+        "id": 1769087485532.577,
+        "codigo": "",
+        "nombre": "TARRITO ROJO X 380 G",
+        "precio": 18500,
+        "cantidad": 48,
+        "producto_id": 152
+      },
+      {
+        "id": 1769087485532.292,
+        "codigo": "",
+        "nombre": "Intibon jabon íntimo x210 ml x 2",
+        "precio": 21000,
+        "cantidad": 12,
+        "producto_id": 174
+      },
+      {
+        "id": 1769087485532.2385,
+        "codigo": "",
+        "nombre": "COLONIA ARRURRU ROSADA X800ML",
+        "precio": 42000,
+        "cantidad": 12,
+        "producto_id": 169
+      }
+    ],
+    "vendedor_id": null
+  },
+  {
+    "id": 479,
+    "cliente": "Jorge Bedoya jiraldo",
+    "fecha": "2026-01-22",
+    "vendedor": "Fredy Marin",
+    "direccion": null,
+    "telefono": "3024528329",
+    "correo": null,
+    "total": 2580000,
+    "created_at": "2026-01-22T13:13:13.413314+00:00",
+    "productos": [
+      {
+        "id": 1769087539321.3503,
+        "codigo": "",
+        "nombre": "sundays",
+        "precio": 47000,
+        "cantidad": 12,
+        "producto_id": 188
+      },
+      {
+        "id": 1769087539321.5107,
+        "codigo": "",
+        "nombre": "PONDS REJUVENESS X100G",
+        "precio": 21000,
+        "cantidad": 12,
+        "producto_id": 41
+      },
+      {
+        "id": 1769087539321.209,
+        "codigo": "",
+        "nombre": "Nude Protec 50SPF x 50 ml",
+        "precio": 32000,
+        "cantidad": 12,
+        "producto_id": 168
+      },
+      {
+        "id": 1769087539321.6362,
+        "codigo": "",
+        "nombre": "Nivea facial. 5 en 1 100gr",
+        "precio": 14500,
+        "cantidad": 24,
+        "producto_id": 141
+      },
+      {
+        "id": 1769087539321.8904,
+        "codigo": "",
+        "nombre": "Nivea facial gel  hyaluron 100ml.",
+        "precio": 20000,
+        "cantidad": 24,
+        "producto_id": 194
+      },
+      {
+        "id": 1769087539321.2837,
+        "codigo": "",
+        "nombre": "Intibon jabon íntimo x210 ml x 2",
+        "precio": 21000,
+        "cantidad": 12,
+        "producto_id": 174
+      },
+      {
+        "id": 1769087539321.6074,
+        "codigo": "",
+        "nombre": "Garnier vitamina c",
+        "precio": 25000,
+        "cantidad": 12,
+        "producto_id": 181
+      }
+    ],
+    "vendedor_id": null
+  },
+  {
+    "id": 480,
+    "cliente": "Juan Carlos",
+    "fecha": "2026-01-22",
+    "vendedor": "Fredy Marin",
+    "direccion": null,
+    "telefono": "3024528329",
+    "correo": null,
+    "total": 1731600,
+    "created_at": "2026-01-22T13:14:01.095769+00:00",
+    "productos": [
+      {
+        "id": 1769087626724.4421,
+        "codigo": "",
+        "nombre": "PILA DURACELL AAA 10X6",
+        "precio": 195000,
+        "cantidad": 3,
+        "producto_id": 14
+      },
+      {
+        "id": 1769087626724.472,
+        "codigo": "",
+        "nombre": "PILA DURACEL AA 10X6",
+        "precio": 195000,
+        "cantidad": 3,
+        "producto_id": 15
+      },
+      {
+        "id": 1769087626724.153,
+        "codigo": "",
+        "nombre": "DOVE AC RECONSTRUCCIÓN DPL 12X24X18ML",
+        "precio": 7800,
+        "cantidad": 72,
+        "producto_id": 145
+      }
+    ],
+    "vendedor_id": null
+  },
+  {
+    "id": 481,
+    "cliente": "Nando",
+    "fecha": "2026-01-22",
+    "vendedor": "Edwin Marin",
+    "direccion": null,
+    "telefono": "3024528329",
+    "correo": null,
+    "total": 576000,
+    "created_at": "2026-01-22T13:14:48.377159+00:00",
+    "productos": [
+      {
+        "id": 1769087673654.634,
+        "codigo": "",
+        "nombre": "Vitamina C 500 Mg La Santé naranja Caja X 100",
+        "precio": 24000,
+        "cantidad": 24,
+        "producto_id": 185
+      }
+    ],
+    "vendedor_id": null
+  },
+  {
+    "id": 482,
+    "cliente": "Gloria",
+    "fecha": "2026-01-22",
+    "vendedor": "Edwin Marin",
+    "direccion": null,
+    "telefono": "3202779275",
+    "correo": null,
+    "total": 236000,
+    "created_at": "2026-01-22T13:15:26.735837+00:00",
+    "productos": [
+      {
+        "id": 1769087716508.9734,
+        "codigo": "",
+        "nombre": "Speed stick gel  70 gr",
+        "precio": 7000,
+        "cantidad": 18,
+        "producto_id": 178
+      },
+      {
+        "id": 1769087716508.0527,
+        "codigo": "",
+        "nombre": "Asepxia Jabon Facial Antiacne Carbon 100G",
+        "precio": 11000,
+        "cantidad": 10,
+        "producto_id": 119
+      }
+    ],
+    "vendedor_id": null
+  },
+  {
+    "id": 496,
+    "cliente": "MARTHA BLANCO",
+    "fecha": "2026-01-23",
+    "vendedor": "Edwin Marin",
+    "direccion": "SÁBANA ",
+    "telefono": "3001234555",
+    "correo": "mb@gmail.com",
+    "total": 4884800,
+    "created_at": "2026-01-23T02:16:35.205998+00:00",
+    "productos": [
+      {
+        "id": 1769133656401.0857,
+        "codigo": "",
+        "nombre": "Vitamina C 500 Mg La Santé naranja Caja X 100",
+        "precio": 24000,
+        "cantidad": 24,
+        "producto_id": 185
+      },
+      {
+        "id": 1769133656401.3025,
+        "codigo": "",
+        "nombre": "Toallas Kotex Normal 24 Und",
+        "precio": 7500,
+        "cantidad": 24,
+        "producto_id": 85
+      },
+      {
+        "id": 1769133656401.0066,
+        "nombre": "TEATRICAL ACLADORA",
+        "precio": 18000,
+        "cantidad": 12,
+        "producto_id": null
+      },
+      {
+        "id": 1769133656401.5667,
+        "nombre": "PONDS CREMA S 100 G",
+        "precio": 18000,
+        "cantidad": 12,
+        "producto_id": null
+      },
+      {
+        "id": 1769133656401.0132,
+        "nombre": "PONDS Clarant B3 Antimanchas con FPS 30 100g",
+        "precio": 20000,
+        "cantidad": 12,
+        "producto_id": null
+      },
+      {
+        "id": 1769133656401.1956,
+        "codigo": "",
+        "nombre": "PILA DURACEL AA 10X6",
+        "precio": 195000,
+        "cantidad": 2,
+        "producto_id": 15
+      },
+      {
+        "id": 1769133656401.0537,
+        "codigo": "",
+        "nombre": "PILA DURACELL AAA 10X6",
+        "precio": 195000,
+        "cantidad": 1,
+        "producto_id": 14
+      },
+      {
+        "id": 1769133656401.08,
+        "codigo": "",
+        "nombre": "Nude Protec 50SPF x 50 ml",
+        "precio": 32000,
+        "cantidad": 6,
+        "producto_id": 168
+      },
+      {
+        "id": 1769133656401.8987,
+        "codigo": "",
+        "nombre": "Mieltertos mentholyptus pastillas masticables X48 X12X4",
+        "precio": 18500,
+        "cantidad": 24,
+        "producto_id": 133
+      },
+      {
+        "id": 1769133656401.8296,
+        "codigo": "",
+        "nombre": "Mieltertos Gripa Naranja Día Sobres 24 Sobres",
+        "precio": 35500,
+        "cantidad": 10,
+        "producto_id": 73
+      },
+      {
+        "id": 1769133656401.0652,
+        "codigo": "",
+        "nombre": "ENJUAGUE BUCAL LISTERINE COOL MINT 1L",
+        "precio": 22000,
+        "cantidad": 6,
+        "producto_id": 69
+      },
+      {
+        "id": 1769133656401.8547,
+        "codigo": "",
+        "nombre": "Desodorante Dove spray 2 precio especial",
+        "precio": 24000,
+        "cantidad": 12,
+        "producto_id": 166
+      },
+      {
+        "id": 1769133656401.9019,
+        "codigo": "",
+        "nombre": "Asepxia Jabon Facial Antiacne Carbon 100G",
+        "precio": 11000,
+        "cantidad": 20,
+        "producto_id": 119
+      },
+      {
+        "id": 59,
+        "codigo": "",
+        "nombre": "KOTEX BUENAS NOCHES X24",
+        "precio": 12000,
+        "cantidad": 16,
+        "producto_id": 59
+      },
+      {
+        "id": 1769134172682,
+        "nombre": "Enjuague Bucal LISTERINE Control Calculo 500 ml",
+        "precio": 19000,
+        "cantidad": 12,
+        "producto_id": null
+      },
+      {
+        "id": 1769134525226,
+        "nombre": "ACEITE JOHNSONS BABY X 50ML",
+        "precio": 5700,
+        "cantidad": 144,
+        "producto_id": null
+      }
+    ],
+    "vendedor_id": null
+  },
+  {
+    "id": 498,
+    "cliente": "Fabián soler",
+    "fecha": "2026-01-23",
+    "vendedor": "Fredy Marin",
+    "direccion": null,
+    "telefono": "3024528329",
+    "correo": null,
+    "total": 588000,
+    "created_at": "2026-01-23T17:28:39.977511+00:00",
+    "productos": [
+      {
+        "id": 1769189245984.9185,
+        "codigo": "",
+        "nombre": "NEKO AVENA 16X110GRX3",
+        "precio": 196000,
+        "cantidad": 1,
+        "producto_id": 123
+      },
+      {
+        "id": 1769189302944,
+        "nombre": "NEKO ANTIBACTERIAL EXTRA SUAVE 16X110GRX 3 ",
+        "precio": 196000,
+        "cantidad": 2,
+        "producto_id": null
+      }
+    ],
+    "vendedor_id": null
+  },
+  {
+    "id": 486,
+    "cliente": "Angie Triviño",
+    "fecha": "2026-01-22",
+    "vendedor": "Fredy Marin",
+    "direccion": null,
+    "telefono": "3017340187",
+    "correo": null,
+    "total": 2256000,
+    "created_at": "2026-01-22T13:59:27.127175+00:00",
+    "productos": [
+      {
+        "id": 1769090065119.1099,
+        "codigo": "",
+        "nombre": "Teatrical roja 100ml",
+        "precio": 18000,
+        "cantidad": 8,
+        "producto_id": 167
+      },
+      {
+        "id": 1769090065119.0144,
+        "codigo": "",
+        "nombre": "TEATRICAL ACLADORA",
+        "precio": 18000,
+        "cantidad": 8,
+        "producto_id": 67
+      },
+      {
+        "id": 1769090065119.0317,
+        "codigo": "",
+        "nombre": "Talco Rexona Eficiente Talco Pack 180g +55g",
+        "precio": 14000,
+        "cantidad": 24,
+        "producto_id": 135
+      },
+      {
+        "id": 1769090065119.57,
+        "codigo": "",
+        "nombre": "PONDS REJUVENESS X100G",
+        "precio": 21000,
+        "cantidad": 12,
+        "producto_id": 41
+      },
+      {
+        "id": 1769090065119.831,
+        "codigo": "",
+        "nombre": "PONDS CR REJUVENESS 6X100G+...",
+        "precio": 23000,
+        "cantidad": 12,
+        "producto_id": 31
+      },
+      {
+        "id": 1769090065119.721,
+        "codigo": "",
+        "nombre": "Nude Protec 50SPF x 50 ml",
+        "precio": 32000,
+        "cantidad": 8,
+        "producto_id": 168
+      },
+      {
+        "id": 1769090065119.7065,
+        "codigo": "",
+        "nombre": "Nivea facial. 5 en 1 100gr",
+        "precio": 14500,
+        "cantidad": 12,
+        "producto_id": 141
+      },
+      {
+        "id": 1769090065119.247,
+        "codigo": "",
+        "nombre": "NIVEA DEO BLACK WHITE SPRAY X150 2PACK",
+        "precio": 22000,
+        "cantidad": 6,
+        "producto_id": 189
+      },
+      {
+        "id": 1769090065119.9148,
+        "codigo": "",
+        "nombre": "Intibon jabon íntimo x210 ml x 2",
+        "precio": 21000,
+        "cantidad": 6,
+        "producto_id": 174
+      },
+      {
+        "id": 1769090065119.4907,
+        "codigo": "",
+        "nombre": "Garnier vitamina c",
+        "precio": 25000,
+        "cantidad": 8,
+        "producto_id": 181
+      },
+      {
+        "id": 1769090335039,
+        "nombre": "PONDS CREMA S 100 Gr",
+        "precio": 18000,
+        "cantidad": 12,
+        "producto_id": null
+      }
+    ],
+    "vendedor_id": null
+  },
+  {
+    "id": 487,
+    "cliente": "SEBASTIAN FELIPE",
+    "fecha": "2026-01-22",
+    "vendedor": "Fredy Marin",
+    "direccion": "PARQUEADERO 18",
+    "telefono": "3024794417",
+    "correo": null,
+    "total": 814600,
+    "created_at": "2026-01-22T16:15:55.123761+00:00",
+    "productos": [
+      {
+        "id": 1769097220006,
+        "nombre": "SAVITAL SOBRE X 24 SURTIDO",
+        "precio": 12500,
+        "cantidad": 24,
+        "producto_id": null
+      },
+      {
+        "id": 134,
+        "codigo": "",
+        "nombre": "Gel Capilar Ego Attraction X 110 Ml",
+        "precio": 2125,
+        "cantidad": 48,
+        "producto_id": 134
+      },
+      {
+        "id": 133,
+        "codigo": "",
+        "nombre": "Mieltertos mentholyptus pastillas masticables X48 X12X4",
+        "precio": 18500,
+        "cantidad": 12,
+        "producto_id": 133
+      },
+      {
+        "id": 145,
+        "codigo": "",
+        "nombre": "DOVE AC RECONSTRUCCIÓN DPL 12X24X18ML sobres",
+        "precio": 7800,
+        "cantidad": 6,
+        "producto_id": 145
+      },
+      {
+        "id": 1769097372201,
+        "nombre": "DOVE SH RECONSTRUCCION DPL 12X24X18ML",
+        "precio": 7800,
+        "cantidad": 6,
+        "producto_id": null
+      },
+      {
+        "id": 181,
+        "codigo": "",
+        "nombre": "Garnier vitamina c",
+        "precio": 25000,
+        "cantidad": 1,
+        "producto_id": 181
+      },
+      {
+        "id": 58,
+        "codigo": "",
+        "nombre": "PAÑAL TENA SLIP",
+        "precio": 36000,
+        "cantidad": 2,
+        "producto_id": 58
+      }
+    ],
+    "vendedor_id": null
+  },
+  {
+    "id": 488,
+    "cliente": "PAOLA HUERTAS",
+    "fecha": "2026-01-22",
+    "vendedor": "Fredy Marin",
+    "direccion": null,
+    "telefono": "3245900467",
+    "correo": "pao.lacreativaa@gmail.com",
+    "total": 91000,
+    "created_at": "2026-01-22T17:06:13.739729+00:00",
+    "productos": [
+      {
+        "id": 181,
+        "codigo": "",
+        "nombre": "Garnier vitamina c",
+        "precio": 25000,
+        "cantidad": 1,
+        "producto_id": 181
+      },
+      {
+        "id": 65,
+        "codigo": "",
+        "nombre": "TIO NACHO CONTROL CASPA 415 ENGROSADOR",
+        "precio": 22000,
+        "cantidad": 1,
+        "producto_id": 65
+      },
+      {
+        "id": 185,
+        "codigo": "",
+        "nombre": "Vitamina C 500 Mg La Santé naranja Caja X 100",
+        "precio": 24000,
+        "cantidad": 1,
+        "producto_id": 185
+      },
+      {
+        "id": 96,
+        "codigo": "",
+        "nombre": "PONDS Clarant B3 Antimanchas con FPS 30 100g tuvo",
+        "precio": 20000,
+        "cantidad": 1,
+        "producto_id": 96
+      }
+    ],
+    "vendedor_id": null
+  },
+  {
+    "id": 491,
+    "cliente": "SARA",
+    "fecha": "2026-01-22",
+    "vendedor": "Edwin Marin",
+    "direccion": "SABANA",
+    "telefono": null,
+    "correo": null,
+    "total": 396000,
+    "created_at": "2026-01-22T20:24:17.765308+00:00",
+    "productos": [
+      {
+        "id": 1769113441126.1296,
+        "codigo": "",
+        "nombre": "ENJUAGUE BUCAL LISTERINE COOL MINT 1L",
+        "precio": 22000,
+        "cantidad": 18,
+        "producto_id": 69
+      }
+    ],
+    "vendedor_id": null
+  },
+  {
+    "id": 492,
+    "cliente": "MARIELA ",
+    "fecha": "2026-01-22",
+    "vendedor": "Edwin Marin",
+    "direccion": "Ferrocaril ",
+    "telefono": "300",
+    "correo": null,
+    "total": 412000,
+    "created_at": "2026-01-22T20:42:58.596063+00:00",
+    "productos": [
+      {
+        "id": 1769114555563.127,
+        "codigo": "",
+        "nombre": "Asepxia Jabon Facial Antiacne Carbon 100G",
+        "precio": 11000,
+        "cantidad": 12,
+        "producto_id": 119
+      },
+      {
+        "id": 1769114555563.8535,
+        "codigo": "",
+        "nombre": "Talco Rexona Eficiente Talco Pack 180g +55g",
+        "precio": 14000,
+        "cantidad": 12,
+        "producto_id": 135
+      },
+      {
+        "id": 1769114555563.3528,
+        "codigo": "",
+        "nombre": "Speed stick gel  70 gr",
+        "precio": 7000,
+        "cantidad": 16,
+        "producto_id": 178
+      }
+    ],
+    "vendedor_id": null
+  },
+  {
+    "id": 493,
+    "cliente": "MICHELL SARITA BALLESTEROS",
+    "fecha": "2026-01-22",
+    "vendedor": "Fredy Marin",
+    "direccion": "3118507353",
+    "telefono": null,
+    "correo": null,
+    "total": 873000,
+    "created_at": "2026-01-22T20:57:03.933763+00:00",
+    "productos": [
+      {
+        "id": 1769115335424.462,
+        "codigo": "",
+        "nombre": "PONDS Clarant B3 Antimanchas con FPS 30 100g tuvo",
+        "precio": 20000,
+        "cantidad": 12,
+        "producto_id": 96
+      },
+      {
+        "id": 1769115335424.1406,
+        "codigo": "",
+        "nombre": "NIVEA DEO BLACK WHITE SPRAY X150 2PACK",
+        "precio": 22000,
+        "cantidad": 3,
+        "producto_id": 189
+      },
+      {
+        "id": 1769115335424.7322,
+        "codigo": "",
+        "nombre": "Nivea tono natural clinical  2x1 rollon",
+        "precio": 18500,
+        "cantidad": 6,
+        "producto_id": 192
+      },
+      {
+        "id": 1769115335424.023,
+        "codigo": "",
+        "nombre": "TANGA SPF100 24X12 sobres",
+        "precio": 28000,
+        "cantidad": 6,
+        "producto_id": 21
+      },
+      {
+        "id": 1769115335424.9917,
+        "codigo": "",
+        "nombre": "Vitamina C 500 Mg La Santé naranja Caja X 100",
+        "precio": 24000,
+        "cantidad": 12,
+        "producto_id": 185
+      }
+    ],
+    "vendedor_id": null
+  },
+  {
+    "id": 494,
+    "cliente": "DISNEY",
+    "fecha": "2026-01-22",
+    "vendedor": "Fredy Marin",
+    "direccion": "PARQUE ESPAÑA",
+    "telefono": "3024528329",
+    "correo": null,
+    "total": 957000,
+    "created_at": "2026-01-22T21:09:39.596197+00:00",
+    "productos": [
+      {
+        "id": 1769116122219.4697,
+        "codigo": "",
+        "nombre": "Dolex bebe 1-24 meses",
+        "precio": 11000,
+        "cantidad": 12,
+        "producto_id": 187
+      },
+      {
+        "id": 1769116122219.3572,
+        "codigo": "",
+        "nombre": "Intibon jabon íntimo x210 ml x 2",
+        "precio": 21000,
+        "cantidad": 6,
+        "producto_id": 174
+      },
+      {
+        "id": 1769116122219.9988,
+        "codigo": "",
+        "nombre": "PONDS CR REJUVENESS 6X100G+...",
+        "precio": 23000,
+        "cantidad": 12,
+        "producto_id": 31
+      },
+      {
+        "id": 1769116122219.7024,
+        "codigo": "",
+        "nombre": "TAMPON KOTEX DIGITAL RISTRA 6...",
+        "precio": 11500,
+        "cantidad": 18,
+        "producto_id": 12
+      },
+      {
+        "id": 1769116122220.0112,
+        "codigo": "",
+        "nombre": "TEATRICAL ACLADORA 100 ml",
+        "precio": 18000,
+        "cantidad": 12,
+        "producto_id": 67
+      }
+    ],
+    "vendedor_id": null
+  },
+  {
+    "id": 495,
+    "cliente": "ALFONSO SALINAS",
+    "fecha": "2026-01-23",
+    "vendedor": "Fredy Marin",
+    "direccion": "Sabana local ",
+    "telefono": null,
+    "correo": null,
+    "total": 2530800,
+    "created_at": "2026-01-23T01:58:56.229561+00:00",
+    "productos": [
+      {
+        "id": 1769133507952.1838,
+        "codigo": "",
+        "nombre": "Enjuague Bucal LISTERINE Control Cálculo 500 ml",
+        "precio": 19000,
+        "cantidad": 90,
+        "producto_id": 117
+      },
+      {
+        "id": 1769133507952.2852,
+        "codigo": "",
+        "nombre": "ACEITE JOHNSONS BABY X50ML",
+        "precio": 5700,
+        "cantidad": 144,
+        "producto_id": 184
+      }
+    ],
+    "vendedor_id": null
+  },
+  {
+    "id": 497,
+    "cliente": "Edwin dis",
+    "fecha": "2026-01-23",
+    "vendedor": "Fredy Marin",
+    "direccion": null,
+    "telefono": "3024528329",
+    "correo": null,
+    "total": 1000000,
+    "created_at": "2026-01-23T17:26:23.510984+00:00",
+    "productos": [
+      {
+        "id": 1769189109604.4211,
+        "codigo": "",
+        "nombre": "Pestañina lash maker waterproof  negra",
+        "precio": 10000,
+        "cantidad": 100,
+        "producto_id": 200
+      }
+    ],
+    "vendedor_id": null
+  },
+  {
+    "id": 500,
+    "cliente": "luz marina",
+    "fecha": "2026-01-23",
+    "vendedor": "Edwin Marin",
+    "direccion": "sabana",
+    "telefono": null,
+    "correo": null,
+    "total": 1488000,
+    "created_at": "2026-01-23T21:58:16.981306+00:00",
+    "productos": [
+      {
+        "id": 1769205468301.6067,
+        "codigo": "",
+        "nombre": "sundays",
+        "precio": 47000,
+        "cantidad": 6,
+        "producto_id": 188
+      },
+      {
+        "id": 1769205468301.8652,
+        "codigo": "",
+        "nombre": "PONDS CREMA S  HUMECTANTE 100 ML TUVO",
+        "precio": 18000,
+        "cantidad": 6,
+        "producto_id": 54
+      },
+      {
+        "id": 1769205468301.9717,
+        "codigo": "",
+        "nombre": "ENJUAGUE BUCAL LISTERINE COOL MINT 1L",
+        "precio": 22000,
+        "cantidad": 6,
+        "producto_id": 69
+      },
+      {
+        "id": 1769205468301.289,
+        "codigo": "",
+        "nombre": "COLONIA ARRURRU ROSADA X800ML",
+        "precio": 42000,
+        "cantidad": 4,
+        "producto_id": 169
+      },
+      {
+        "id": 1769205468301.7324,
+        "codigo": "",
+        "nombre": "Arden for men 2x1 135gramos",
+        "precio": 14000,
+        "cantidad": 12,
+        "producto_id": 202
+      },
+      {
+        "id": 1769205468301.7234,
+        "codigo": "",
+        "nombre": "PONDS CR REJUVENESS 6X100G+...",
+        "precio": 23000,
+        "cantidad": 6,
+        "producto_id": 31
+      },
+      {
+        "id": 1769205468301.6506,
+        "codigo": "",
+        "nombre": "PONDS REJUVENESS X100G TUVO",
+        "precio": 21000,
+        "cantidad": 12,
+        "producto_id": 41
+      },
+      {
+        "id": 1769205468301.6104,
+        "codigo": "",
+        "nombre": "PONDS Clarant B3 Antimanchas con FPS 30 100g tuvo",
+        "precio": 20000,
+        "cantidad": 12,
+        "producto_id": 96
+      }
+    ],
+    "vendedor_id": null
+  },
+  {
+    "id": 501,
+    "cliente": "Fabián soler",
+    "fecha": "2026-01-24",
+    "vendedor": "Fredy Marin",
+    "direccion": null,
+    "telefono": "3024528329",
+    "correo": null,
+    "total": 196392,
+    "created_at": "2026-01-24T00:24:35.679553+00:00",
+    "productos": [
+      {
+        "id": 1769214264424.2756,
+        "codigo": "",
+        "nombre": "NEKO AVENA 16X110GRX3",
+        "precio": 196000,
+        "cantidad": 1,
+        "producto_id": 123
+      },
+      {
+        "id": 1769214264424.814,
+        "codigo": "",
+        "nombre": "NEKO ANTIBACTERIAL EXTRA SUAVE 16X110GRX3",
+        "precio": 196,
+        "cantidad": 2,
+        "producto_id": 124
+      }
+    ],
+    "vendedor_id": null
+  },
+  {
+    "id": 503,
+    "cliente": "HUGO GALINDO",
+    "fecha": "2026-01-26",
+    "vendedor": "Fredy Marin",
+    "direccion": "PARQUE ESPAÑA",
+    "telefono": "3024528329",
+    "correo": null,
+    "total": 1776000,
+    "created_at": "2026-01-26T16:59:44.691836+00:00",
+    "productos": [
+      {
+        "id": 1769446688456.5767,
+        "codigo": "",
+        "nombre": "Mieltertos mentholyptus pastillas masticables X48 X12X4",
+        "precio": 18500,
+        "cantidad": 96,
+        "producto_id": 133
+      }
+    ],
+    "vendedor_id": null
+  },
+  {
+    "id": 504,
+    "cliente": "edison",
+    "fecha": "2026-01-26",
+    "vendedor": "Fredy Marin",
+    "direccion": null,
+    "telefono": "3024528329",
+    "correo": null,
+    "total": 1911000,
+    "created_at": "2026-01-26T17:01:52.382828+00:00",
+    "productos": [
+      {
+        "id": 1769446887440.119,
+        "codigo": "",
+        "nombre": "TAMPON KOTEX DIGITAL RISTRA 6...",
+        "precio": 11500,
+        "cantidad": 18,
+        "producto_id": 12
+      },
+      {
+        "id": 1769446887440.2803,
+        "codigo": "",
+        "nombre": "TANGA SPF100 24X12 sobres",
+        "precio": 28000,
+        "cantidad": 12,
+        "producto_id": 21
+      },
+      {
+        "id": 1769446887440.3445,
+        "codigo": "",
+        "nombre": "ENJUAGUE BUCAL LISTERINE COOL MINT 1L",
+        "precio": 22000,
+        "cantidad": 24,
+        "producto_id": 69
+      },
+      {
+        "id": 1769446887440.2615,
+        "codigo": "",
+        "nombre": "Arden for men 2x1 135gramos",
+        "precio": 14000,
+        "cantidad": 60,
+        "producto_id": 202
+      }
+    ],
+    "vendedor_id": null
+  },
+  {
+    "id": 508,
+    "cliente": "Ramiro",
+    "fecha": "2026-01-27",
+    "vendedor": "Edwin Marin",
+    "direccion": null,
+    "telefono": "3004583117",
+    "correo": null,
+    "total": 780000,
+    "created_at": "2026-01-27T14:08:34.763575+00:00",
+    "productos": [
+      {
+        "id": 1769522878018.4717,
+        "codigo": "",
+        "nombre": "PILA DURACEL AA 10X6",
+        "precio": 195000,
+        "cantidad": 2,
+        "producto_id": 15
+      },
+      {
+        "id": 1769522878018.261,
+        "codigo": "",
+        "nombre": "PILA DURACELL AAA 10X6",
+        "precio": 195000,
+        "cantidad": 2,
+        "producto_id": 14
+      }
+    ],
+    "vendedor_id": null
+  },
+  {
+    "id": 509,
+    "cliente": "RAUL  ZIPA ",
+    "fecha": "2026-01-27",
+    "vendedor": "Edwin Marin",
+    "direccion": "Parque",
+    "telefono": "31",
+    "correo": "worwiz",
+    "total": 168000,
+    "created_at": "2026-01-27T14:10:27.185654+00:00",
+    "productos": [
+      {
+        "id": 1769522988563.6782,
+        "codigo": "",
+        "nombre": "Arden for men 2x1 135gramos",
+        "precio": 14000,
+        "cantidad": 12,
+        "producto_id": 202
+      }
+    ],
+    "vendedor_id": null
+  },
+  {
+    "id": 510,
+    "cliente": "ALIX ACEBEDO",
+    "fecha": "2026-01-27",
+    "vendedor": "Fredy Marin",
+    "direccion": "PARQUE ESPAÑA",
+    "telefono": "3024528329",
+    "correo": null,
+    "total": 1204000,
+    "created_at": "2026-01-27T14:12:39.332736+00:00",
+    "productos": [
+      {
+        "id": 1769523069017.1133,
+        "codigo": "",
+        "nombre": "Vitamina C 500 Mg La Santé naranja Caja X 100",
+        "precio": 24000,
+        "cantidad": 24,
+        "producto_id": 185
+      },
+      {
+        "id": 1769523069017.4263,
+        "codigo": "",
+        "nombre": "PILA DURACELL AAA 10X6",
+        "precio": 195000,
+        "cantidad": 1,
+        "producto_id": 14
+      },
+      {
+        "id": 1769523069017.6404,
+        "codigo": "",
+        "nombre": "PILA DURACEL AA 10X6",
+        "precio": 195000,
+        "cantidad": 1,
+        "producto_id": 15
+      },
+      {
+        "id": 1769523069017.0007,
+        "codigo": "",
+        "nombre": "Intibon jabon íntimo x210 ml x 2",
+        "precio": 21000,
+        "cantidad": 6,
+        "producto_id": 174
+      },
+      {
+        "id": 1769523069017.9773,
+        "codigo": "",
+        "nombre": "Arden for men 2x1 135gramos",
+        "precio": 14000,
+        "cantidad": 8,
+        "producto_id": 202
+      }
+    ],
+    "vendedor_id": null
+  },
+  {
+    "id": 511,
+    "cliente": "ORLANDO",
+    "fecha": "2026-01-27",
+    "vendedor": "Fredy Marin",
+    "direccion": null,
+    "telefono": "573132109871",
+    "correo": null,
+    "total": 2944000,
+    "created_at": "2026-01-27T14:40:41.410698+00:00",
+    "productos": [
+      {
+        "id": 1769524797953.8118,
+        "codigo": "",
+        "nombre": "Vitamina C 500 Mg La Santé naranja Caja X 100",
+        "precio": 24000,
+        "cantidad": 48,
+        "producto_id": 185
+      },
+      {
+        "id": 1769524797953.0032,
+        "codigo": "",
+        "nombre": "ENJUAGUE BUCAL LISTERINE COOL MINT 1L",
+        "precio": 22000,
+        "cantidad": 24,
+        "producto_id": 69
+      },
+      {
+        "id": 1769524797953.7505,
+        "codigo": "",
+        "nombre": "PONDS CR REJUVENESS 6X100G+...",
+        "precio": 23000,
+        "cantidad": 48,
+        "producto_id": 31
+      },
+      {
+        "id": 183,
+        "codigo": "",
+        "nombre": "PONDS  S 200 ML",
+        "precio": 20000,
+        "cantidad": 8,
+        "producto_id": 183
+      }
+    ],
+    "vendedor_id": null
+  },
+  {
+    "id": 513,
+    "cliente": "LUZ MUÑOZ",
+    "fecha": "2026-01-27",
+    "vendedor": "Fredy Marin",
+    "direccion": null,
+    "telefono": "3024528329",
+    "correo": null,
+    "total": 612000,
+    "created_at": "2026-01-27T22:23:40.865659+00:00",
+    "productos": [
+      {
+        "id": 1769552581591.3867,
+        "codigo": "",
+        "nombre": "NOSOTRAS BUENAS NOCHES +PROTE...",
+        "precio": 17500,
+        "cantidad": 24,
+        "producto_id": 35
+      },
+      {
+        "id": 1769552581591.8054,
+        "codigo": "",
+        "nombre": "KOTEX BUENAS NOCHES X24",
+        "precio": 12000,
+        "cantidad": 16,
+        "producto_id": 59
+      }
+    ],
+    "vendedor_id": null
+  },
+  {
+    "id": 514,
+    "cliente": "CARLOS NELLY",
+    "fecha": "2026-01-27",
+    "vendedor": "Fredy Marin",
+    "direccion": "PARQUE ESPAÑA",
+    "telefono": "3024528329",
+    "correo": null,
+    "total": 474000,
+    "created_at": "2026-01-27T22:26:06.609244+00:00",
+    "productos": [
+      {
+        "id": 1769552696805.462,
+        "codigo": "",
+        "nombre": "Dolex bebe 1-24 meses",
+        "precio": 11000,
+        "cantidad": 12,
+        "producto_id": 187
+      },
+      {
+        "id": 1769552696805.1475,
+        "codigo": "",
+        "nombre": "BEDOYECTA TRI SOL INY 3JGA",
+        "precio": 28500,
+        "cantidad": 12,
+        "producto_id": 132
+      }
+    ],
+    "vendedor_id": null
+  },
+  {
+    "id": 515,
+    "cliente": "NANCY LOPEZ",
+    "fecha": "2026-01-27",
+    "vendedor": "Edwin Marin",
+    "direccion": "PARQUE",
+    "telefono": null,
+    "correo": null,
+    "total": 240000,
+    "created_at": "2026-01-27T22:30:08.488825+00:00",
+    "productos": [
+      {
+        "id": 1769552927841.5657,
+        "codigo": "",
+        "nombre": "Pestañina lash maker waterproof  negra",
+        "precio": 10000,
+        "cantidad": 24,
+        "producto_id": 200
+      }
+    ],
+    "vendedor_id": null
+  },
+  {
+    "id": 516,
+    "cliente": "CAMILO SEPULVEDA",
+    "fecha": "2026-01-27",
+    "vendedor": "Fredy Marin",
+    "direccion": "PARQUE ESPAÑA",
+    "telefono": "3197287297",
+    "correo": null,
+    "total": 1771500,
+    "created_at": "2026-01-27T22:42:22.391553+00:00",
+    "productos": [
+      {
+        "id": 1769553654022.3154,
+        "codigo": "",
+        "nombre": "Savital Crema de peinar con aceite de argón y sabila",
+        "precio": 12500,
+        "cantidad": 15,
+        "producto_id": 207
+      },
+      {
+        "id": 1769553654022.246,
+        "codigo": "",
+        "nombre": "Rexona Bambo x50g rollon",
+        "precio": 7000,
+        "cantidad": 12,
+        "producto_id": 173
+      },
+      {
+        "id": 1769553654022.4048,
+        "codigo": "",
+        "nombre": "PONDS Clarant B3 Antimanchas con FPS 30 100g tuvo",
+        "precio": 20000,
+        "cantidad": 36,
+        "producto_id": 96
+      },
+      {
+        "id": 1769553654022.1729,
+        "codigo": "",
+        "nombre": "Dolex bebe 1-24 meses",
+        "precio": 11000,
+        "cantidad": 48,
+        "producto_id": 187
+      },
+      {
+        "id": 1769553654022.2996,
+        "codigo": "",
+        "nombre": "Arden for men 2x1 135gramos",
+        "precio": 14000,
+        "cantidad": 18,
+        "producto_id": 202
+      }
+    ],
+    "vendedor_id": null
+  },
+  {
+    "id": 522,
+    "cliente": "1",
+    "fecha": "2026-01-28",
+    "vendedor": "Fabian Marin",
+    "direccion": null,
+    "telefono": null,
+    "correo": null,
+    "total": 13,
+    "created_at": "2026-01-28T23:43:48.895426+00:00",
+    "productos": [
+      {
+        "id": 216,
+        "codigo": "",
+        "nombre": "aaa",
+        "precio": 1,
+        "cantidad": 13,
+        "producto_id": 216
+      }
+    ],
+    "vendedor_id": null
+  },
+  {
+    "id": 517,
+    "cliente": "MARCOS SEPULVEDA",
+    "fecha": "2026-01-27",
+    "vendedor": "Fredy Marin",
+    "direccion": "parque ",
+    "telefono": null,
+    "correo": null,
+    "total": 1725000,
+    "created_at": "2026-01-27T23:07:35.71797+00:00",
+    "productos": [
+      {
+        "id": 1769555149224.432,
+        "codigo": "",
+        "nombre": "Rexona Bambo x50g rollon",
+        "precio": 7000,
+        "cantidad": 24,
+        "producto_id": 173
+      },
+      {
+        "id": 1769555149224.7234,
+        "codigo": "",
+        "nombre": "PONDS Clarant B3 Antimanchas con FPS 30 100g tuvo",
+        "precio": 20000,
+        "cantidad": 24,
+        "producto_id": 96
+      },
+      {
+        "id": 1769555149224.6528,
+        "codigo": "",
+        "nombre": "Mieltertos Gripa Naranja Día Sobres 24 Sobres",
+        "precio": 35500,
+        "cantidad": 6,
+        "producto_id": 73
+      },
+      {
+        "id": 1769555149224.5554,
+        "codigo": "",
+        "nombre": "Dolex bebe 1-24 meses",
+        "precio": 11000,
+        "cantidad": 48,
+        "producto_id": 187
+      },
+      {
+        "id": 1769555149224.1965,
+        "codigo": "",
+        "nombre": "Arden for men 2x1 135gramos",
+        "precio": 14000,
+        "cantidad": 24,
+        "producto_id": 202
+      }
+    ],
+    "vendedor_id": null
+  },
+  {
+    "id": 518,
+    "cliente": "Martha tabares",
+    "fecha": "2026-01-28",
+    "vendedor": "Fredy Marin",
+    "direccion": null,
+    "telefono": "3024528329",
+    "correo": null,
+    "total": 504000,
+    "created_at": "2026-01-28T17:11:19.382993+00:00",
+    "productos": [
+      {
+        "id": 1769620263453.191,
+        "codigo": "",
+        "nombre": "COLONIA ARRURRU ROSADA X800ML",
+        "precio": 42000,
+        "cantidad": 12,
+        "producto_id": 169
+      }
+    ],
+    "vendedor_id": null
+  },
+  {
+    "id": 519,
+    "cliente": "Droguería Jireh kkk",
+    "fecha": "2026-01-28",
+    "vendedor": "Fredy Marin",
+    "direccion": null,
+    "telefono": "3209105993",
+    "correo": null,
+    "total": 373000,
+    "created_at": "2026-01-28T17:12:04.918829+00:00",
+    "productos": [
+      {
+        "id": 1769620313800.5027,
+        "codigo": "",
+        "nombre": "TIO NACHO CONTROL CASPA 415 ENGROSADOR",
+        "precio": 22000,
+        "cantidad": 2,
+        "producto_id": 65
+      },
+      {
+        "id": 1769620313800.7551,
+        "codigo": "",
+        "nombre": "TIO NACHO CONTROL CASPA 415",
+        "precio": 23000,
+        "cantidad": 2,
+        "producto_id": 33
+      },
+      {
+        "id": 1769620313800.6729,
+        "codigo": "",
+        "nombre": "Teatrical roja 100ml",
+        "precio": 18000,
+        "cantidad": 1,
+        "producto_id": 167
+      },
+      {
+        "id": 1769620313800.0906,
+        "codigo": "",
+        "nombre": "Talco Rexona Eficiente Talco Pack 180g +55g",
+        "precio": 14000,
+        "cantidad": 2,
+        "producto_id": 135
+      },
+      {
+        "id": 1769620313800.0833,
+        "codigo": "",
+        "nombre": "Sacrusyt",
+        "precio": 9000,
+        "cantidad": 5,
+        "producto_id": 196
+      },
+      {
+        "id": 1769620313800.0796,
+        "codigo": "",
+        "nombre": "PONDS Clarant B3 Antimanchas con FPS 30 100g tuvo",
+        "precio": 20000,
+        "cantidad": 1,
+        "producto_id": 96
+      },
+      {
+        "id": 1769620313800.3716,
+        "codigo": "",
+        "nombre": "PONDS REJUVENESS X100G TUVO",
+        "precio": 21000,
+        "cantidad": 1,
+        "producto_id": 41
+      },
+      {
+        "id": 1769620313800.8462,
+        "codigo": "",
+        "nombre": "PONDS CREMA S  HUMECTANTE 100 ML TUVO",
+        "precio": 18000,
+        "cantidad": 1,
+        "producto_id": 54
+      },
+      {
+        "id": 1769620313800.2126,
+        "codigo": "",
+        "nombre": "Pestañina lash maker waterproof  negra",
+        "precio": 10000,
+        "cantidad": 3,
+        "producto_id": 200
+      },
+      {
+        "id": 1769620313800.0781,
+        "codigo": "",
+        "nombre": "Nivea labial strawberry  fresa",
+        "precio": 11500,
+        "cantidad": 2,
+        "producto_id": 195
+      },
+      {
+        "id": 1769620313800.137,
+        "codigo": "",
+        "nombre": "Mieltertos mentholyptus pastillas masticables X48 X12X4",
+        "precio": 18500,
+        "cantidad": 2,
+        "producto_id": 133
+      },
+      {
+        "id": 1769620313800.9807,
+        "codigo": "",
+        "nombre": "Dolex bebe 1-24 meses",
+        "precio": 11000,
+        "cantidad": 2,
+        "producto_id": 187
+      },
+      {
+        "id": 1769620313800.1963,
+        "codigo": "",
+        "nombre": "Bloqueador nude  fac 30  40 ml",
+        "precio": 7000,
+        "cantidad": 3,
+        "producto_id": 203
+      }
+    ],
+    "vendedor_id": null
+  },
+  {
+    "id": 520,
+    "cliente": "FABIAN SOLER",
+    "fecha": "2026-01-28",
+    "vendedor": "Fredy Marin",
+    "direccion": "Parque L int 4 104",
+    "telefono": "3008647449",
+    "correo": null,
+    "total": 528000,
+    "created_at": "2026-01-28T21:58:48.801315+00:00",
+    "productos": [
+      {
+        "id": 1769637515566.756,
+        "codigo": "",
+        "nombre": "ENJUAGUE BUCAL LISTERINE COOL MINT 1L",
+        "precio": 22000,
+        "cantidad": 24,
+        "producto_id": 69
+      }
+    ],
+    "vendedor_id": null
+  },
+  {
+    "id": 521,
+    "cliente": "ADRIANA LEON",
+    "fecha": "2026-01-28",
+    "vendedor": "Fredy Marin",
+    "direccion": null,
+    "telefono": "3024528329",
+    "correo": null,
+    "total": 1510000,
+    "created_at": "2026-01-28T22:00:11.655503+00:00",
+    "productos": [
+      {
+        "id": 1769637587452.9673,
+        "codigo": "",
+        "nombre": "Vitamina e procaps 150 ",
+        "precio": 40000,
+        "cantidad": 1,
+        "producto_id": 201
+      },
+      {
+        "id": 1769637587452.9304,
+        "codigo": "",
+        "nombre": "Talco Rexona Eficiente Talco Pack 180g +55g",
+        "precio": 14000,
+        "cantidad": 24,
+        "producto_id": 135
+      },
+      {
+        "id": 1769637587452.3462,
+        "codigo": "",
+        "nombre": "Speed stick clinical 100gramos hombre",
+        "precio": 8500,
+        "cantidad": 12,
+        "producto_id": 164
+      },
+      {
+        "id": 1769637587452.7449,
+        "codigo": "",
+        "nombre": "Intibon jabon íntimo x210 ml x 2",
+        "precio": 21000,
+        "cantidad": 6,
+        "producto_id": 174
+      },
+      {
+        "id": 1769637587452.701,
+        "codigo": "",
+        "nombre": "Garnier vitamina c",
+        "precio": 25000,
+        "cantidad": 6,
+        "producto_id": 181
+      },
+      {
+        "id": 1769637587452.5876,
+        "codigo": "",
+        "nombre": "Bloqueador nude  fac 30  40 ml",
+        "precio": 7000,
+        "cantidad": 12,
+        "producto_id": 203
+      },
+      {
+        "id": 1769637587452.1924,
+        "codigo": "",
+        "nombre": "COLONIA ARRURRU ROSADA X800ML",
+        "precio": 42000,
+        "cantidad": 12,
+        "producto_id": 169
+      },
+      {
+        "id": 1769637587452.4407,
+        "codigo": "",
+        "nombre": "Arden for men 2x1 135gramos",
+        "precio": 14000,
+        "cantidad": 12,
+        "producto_id": 202
+      }
+    ],
+    "vendedor_id": null
+  },
+  {
+    "id": 523,
+    "cliente": "ALEJA CETINA",
+    "fecha": "2026-01-29",
+    "vendedor": "Fredy Marin",
+    "direccion": null,
+    "telefono": "3024528329",
+    "correo": null,
+    "total": 584000,
+    "created_at": "2026-01-29T21:48:29.952507+00:00",
+    "productos": [
+      {
+        "id": 1769723270921.5251,
+        "codigo": "",
+        "nombre": "CONDON DUO  CAJA x 50UND",
+        "precio": 80000,
+        "cantidad": 1,
+        "producto_id": 155
+      },
+      {
+        "id": 1769723270921.8225,
+        "codigo": "",
+        "nombre": "Bloqueador nude  fac 30  40 ml",
+        "precio": 7000,
+        "cantidad": 24,
+        "producto_id": 203
+      },
+      {
+        "id": 1769723270921.699,
+        "codigo": "",
+        "nombre": "Arden for men 2x1 135gramos",
+        "precio": 14000,
+        "cantidad": 24,
+        "producto_id": 202
+      }
+    ],
+    "vendedor_id": null
+  },
+  {
+    "id": 524,
+    "cliente": "SARA VERTEL",
+    "fecha": "2026-01-29",
+    "vendedor": "Fredy Marin",
+    "direccion": null,
+    "telefono": "3024528329",
+    "correo": null,
+    "total": 1962000,
+    "created_at": "2026-01-29T21:49:13.599624+00:00",
+    "productos": [
+      {
+        "id": 1769723338856.9902,
+        "codigo": "",
+        "nombre": "Vitamina C 500 Mg La Santé naranja Caja X 100",
+        "precio": 24000,
+        "cantidad": 24,
+        "producto_id": 185
+      },
+      {
+        "id": 1769723338856.6294,
+        "codigo": "",
+        "nombre": "PONDS Clarant B3 Antimanchas con FPS 30 100g tuvo",
+        "precio": 20000,
+        "cantidad": 12,
+        "producto_id": 96
+      },
+      {
+        "id": 1769723338856.709,
+        "codigo": "",
+        "nombre": "Nude Protec 50SPF x 50 ml",
+        "precio": 32000,
+        "cantidad": 24,
+        "producto_id": 168
+      },
+      {
+        "id": 1769723338856.0488,
+        "codigo": "",
+        "nombre": "Lady speed stick floral gel 70 gramos",
+        "precio": 7000,
+        "cantidad": 54,
+        "producto_id": 210
+      }
+    ],
+    "vendedor_id": null
+  },
+  {
+    "id": 525,
+    "cliente": "RAMIRO",
+    "fecha": "2026-01-29",
+    "vendedor": "Edwin Marin",
+    "direccion": "Ferrocarril",
+    "telefono": "3125250038",
+    "correo": null,
+    "total": 444000,
+    "created_at": "2026-01-29T21:50:47.784386+00:00",
+    "productos": [
+      {
+        "id": 1769723423841.9788,
+        "codigo": "",
+        "nombre": "Mieltertos mentholyptus pastillas masticables X48 X12X4",
+        "precio": 18500,
+        "cantidad": 24,
+        "producto_id": 133
+      }
+    ],
+    "vendedor_id": null
+  },
+  {
+    "id": 526,
+    "cliente": "Adriána",
+    "fecha": "2026-01-29",
+    "vendedor": "Edwin Marin",
+    "direccion": null,
+    "telefono": null,
+    "correo": null,
+    "total": 576000,
+    "created_at": "2026-01-29T21:53:44.135522+00:00",
+    "productos": [
+      {
+        "id": 185,
+        "codigo": "",
+        "nombre": "Vitamina C 500 Mg La Santé naranja Caja X 100",
+        "precio": 24000,
+        "cantidad": 24,
+        "producto_id": 185
+      }
+    ],
+    "vendedor_id": null
+  },
+  {
+    "id": 527,
+    "cliente": "MARCOS SEPULVEDA",
+    "fecha": "2026-01-30",
+    "vendedor": "Fredy Marin",
+    "direccion": "parque ",
+    "telefono": null,
+    "correo": null,
+    "total": 192000,
+    "created_at": "2026-01-30T15:52:56.819909+00:00",
+    "productos": [
+      {
+        "id": 1769788362123.2483,
+        "codigo": "",
+        "nombre": "KOTEX BUENAS NOCHES X24",
+        "precio": 12000,
+        "cantidad": 16,
+        "producto_id": 59
+      }
+    ],
+    "vendedor_id": null
+  },
+  {
+    "id": 529,
+    "cliente": "Juan Carlos  cuellar",
+    "fecha": "2026-01-30",
+    "vendedor": "Fredy Marin",
+    "direccion": null,
+    "telefono": "3024528329",
+    "correo": null,
+    "total": 2012400,
+    "created_at": "2026-01-30T16:28:02.893082+00:00",
+    "productos": [
+      {
+        "id": 1769790390924.1326,
+        "codigo": "",
+        "nombre": "DOVE AC RECONSTRUCCIÓN DPL 12X24X18ML sobres",
+        "precio": 7800,
+        "cantidad": 120,
+        "producto_id": 145
+      },
+      {
+        "id": 1769790390924.272,
+        "codigo": "",
+        "nombre": "PILA DURACELL AAA 10X6",
+        "precio": 195000,
+        "cantidad": 1,
+        "producto_id": 14
+      },
+      {
+        "id": 1769790390924.0024,
+        "codigo": "",
+        "nombre": "PILA DURACEL AA 10X6",
+        "precio": 195000,
+        "cantidad": 3,
+        "producto_id": 15
+      },
+      {
+        "id": 146,
+        "codigo": "",
+        "nombre": "Shampoo dove sobres ",
+        "precio": 7800,
+        "cantidad": 38,
+        "producto_id": 146
       }
     ],
     "vendedor_id": null

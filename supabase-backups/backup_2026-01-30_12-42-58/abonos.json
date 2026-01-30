@@ -4104,15 +4104,6 @@
     "created_at": "2025-11-29T22:13:32.560817+00:00"
   },
   {
-    "id": 475,
-    "factura_id": 389,
-    "fecha": "2025-12-01",
-    "monto": 4999.96,
-    "metodo": "Efectivo",
-    "nota": "abono descuento ",
-    "created_at": "2025-12-01T17:07:22.629094+00:00"
-  },
-  {
     "id": 476,
     "factura_id": 386,
     "fecha": "2025-12-01",
@@ -4255,6 +4246,15 @@
     "metodo": "Efectivo",
     "nota": null,
     "created_at": "2025-12-03T16:04:08.560562+00:00"
+  },
+  {
+    "id": 475,
+    "factura_id": 389,
+    "fecha": "2025-12-01",
+    "monto": 5000,
+    "metodo": "Efectivo",
+    "nota": "abono descuento ",
+    "created_at": "2025-12-01T17:07:22.629094+00:00"
   },
   {
     "id": 492,
@@ -5616,15 +5616,6 @@
     "created_at": "2026-01-15T21:02:27.059171+00:00"
   },
   {
-    "id": 645,
-    "factura_id": 225,
-    "fecha": "2026-01-15",
-    "monto": 627000,
-    "metodo": "Efectivo",
-    "nota": null,
-    "created_at": "2026-01-15T21:02:40.136143+00:00"
-  },
-  {
     "id": 594,
     "factura_id": 146,
     "fecha": "2025-12-20",
@@ -5650,5 +5641,779 @@
     "metodo": "Efectivo",
     "nota": null,
     "created_at": "2026-01-15T22:27:25.200753+00:00"
+  },
+  {
+    "id": 648,
+    "factura_id": 142,
+    "fecha": "2026-01-01",
+    "monto": 288000,
+    "metodo": "Transferencia",
+    "nota": null,
+    "created_at": "2026-01-16T21:21:58.871953+00:00"
+  },
+  {
+    "id": 649,
+    "factura_id": 143,
+    "fecha": "2026-01-01",
+    "monto": 1056000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2026-01-16T21:22:41.182517+00:00"
+  },
+  {
+    "id": 650,
+    "factura_id": 101,
+    "fecha": "2026-01-01",
+    "monto": 736000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2026-01-16T21:23:25.357231+00:00"
+  },
+  {
+    "id": 651,
+    "factura_id": 147,
+    "fecha": "2026-01-01",
+    "monto": 560000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2026-01-16T21:23:57.336228+00:00"
+  },
+  {
+    "id": 652,
+    "factura_id": 170,
+    "fecha": "2026-01-16",
+    "monto": 500000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2026-01-16T21:26:36.996113+00:00"
+  },
+  {
+    "id": 653,
+    "factura_id": 60,
+    "fecha": "2026-01-16",
+    "monto": 100000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2026-01-16T21:34:36.188038+00:00"
+  },
+  {
+    "id": 654,
+    "factura_id": 264,
+    "fecha": "2026-01-16",
+    "monto": 242000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2026-01-16T22:13:40.043869+00:00"
+  },
+  {
+    "id": 655,
+    "factura_id": 242,
+    "fecha": "2026-01-16",
+    "monto": 164000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2026-01-16T22:17:22.096676+00:00"
+  },
+  {
+    "id": 656,
+    "factura_id": 252,
+    "fecha": "2026-01-16",
+    "monto": 336000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2026-01-16T22:17:56.00199+00:00"
+  },
+  {
+    "id": 657,
+    "factura_id": 205,
+    "fecha": "2026-01-16",
+    "monto": 295000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2026-01-16T23:08:59.258675+00:00"
+  },
+  {
+    "id": 658,
+    "factura_id": 269,
+    "fecha": "2025-12-26",
+    "monto": 81000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2026-01-16T23:10:41.802997+00:00"
+  },
+  {
+    "id": 659,
+    "factura_id": 300,
+    "fecha": "2026-01-16",
+    "monto": 528000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2026-01-16T23:19:53.667966+00:00"
+  },
+  {
+    "id": 660,
+    "factura_id": 292,
+    "fecha": "2026-01-17",
+    "monto": 70000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2026-01-17T21:09:46.225913+00:00"
+  },
+  {
+    "id": 661,
+    "factura_id": 102,
+    "fecha": "2026-01-17",
+    "monto": 150000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2026-01-17T21:28:00.85865+00:00"
+  },
+  {
+    "id": 662,
+    "factura_id": 410,
+    "fecha": "2025-12-18",
+    "monto": 1000000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2026-01-17T21:36:31.248723+00:00"
+  },
+  {
+    "id": 663,
+    "factura_id": 410,
+    "fecha": "2026-01-17",
+    "monto": 756000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2026-01-17T21:36:39.781066+00:00"
+  },
+  {
+    "id": 664,
+    "factura_id": 305,
+    "fecha": "2026-01-17",
+    "monto": 200000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2026-01-17T21:56:25.058253+00:00"
+  },
+  {
+    "id": 665,
+    "factura_id": 417,
+    "fecha": "2026-01-17",
+    "monto": 350000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2026-01-17T22:18:46.324597+00:00"
+  },
+  {
+    "id": 666,
+    "factura_id": 315,
+    "fecha": "2026-01-17",
+    "monto": 650000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2026-01-17T22:41:24.936652+00:00"
+  },
+  {
+    "id": 645,
+    "factura_id": 225,
+    "fecha": "2026-01-15",
+    "monto": 627000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2026-01-15T21:02:40.136143+00:00"
+  },
+  {
+    "id": 668,
+    "factura_id": 152,
+    "fecha": "2025-01-19",
+    "monto": 24000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2026-01-19T23:21:28.425062+00:00"
+  },
+  {
+    "id": 670,
+    "factura_id": 440,
+    "fecha": "2026-01-20",
+    "monto": 264000,
+    "metodo": "Otro",
+    "nota": "Devolución. Tío nacho",
+    "created_at": "2026-01-20T20:48:52.662124+00:00"
+  },
+  {
+    "id": 671,
+    "factura_id": 305,
+    "fecha": "2026-01-20",
+    "monto": 200000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2026-01-20T21:52:26.506368+00:00"
+  },
+  {
+    "id": 672,
+    "factura_id": 164,
+    "fecha": "2026-01-20",
+    "monto": 316000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2026-01-20T22:44:08.714017+00:00"
+  },
+  {
+    "id": 673,
+    "factura_id": 170,
+    "fecha": "2026-01-20",
+    "monto": 210000,
+    "metodo": "Transferencia",
+    "nota": null,
+    "created_at": "2026-01-20T22:55:18.335009+00:00"
+  },
+  {
+    "id": 674,
+    "factura_id": 170,
+    "fecha": "2026-01-20",
+    "monto": 106000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2026-01-20T22:56:31.391861+00:00"
+  },
+  {
+    "id": 675,
+    "factura_id": 60,
+    "fecha": "2026-01-20",
+    "monto": 100000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2026-01-20T23:09:14.673996+00:00"
+  },
+  {
+    "id": 676,
+    "factura_id": 54,
+    "fecha": "2026-01-21",
+    "monto": 300000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2026-01-21T18:29:50.752323+00:00"
+  },
+  {
+    "id": 677,
+    "factura_id": 54,
+    "fecha": "2026-01-21",
+    "monto": 330000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2026-01-21T19:16:48.261338+00:00"
+  },
+  {
+    "id": 678,
+    "factura_id": 409,
+    "fecha": "2026-01-21",
+    "monto": 432000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2026-01-21T20:28:04.607312+00:00"
+  },
+  {
+    "id": 679,
+    "factura_id": 288,
+    "fecha": "2026-01-21",
+    "monto": 500000,
+    "metodo": "Transferencia",
+    "nota": "Llave",
+    "created_at": "2026-01-21T20:52:15.791535+00:00"
+  },
+  {
+    "id": 680,
+    "factura_id": 288,
+    "fecha": "2026-01-21",
+    "monto": 76000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2026-01-21T20:52:26.137571+00:00"
+  },
+  {
+    "id": 681,
+    "factura_id": 315,
+    "fecha": "2026-01-21",
+    "monto": 1000000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2026-01-21T21:28:45.27946+00:00"
+  },
+  {
+    "id": 682,
+    "factura_id": 362,
+    "fecha": "2026-01-21",
+    "monto": 200000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2026-01-21T21:35:31.977508+00:00"
+  },
+  {
+    "id": 683,
+    "factura_id": 372,
+    "fecha": "2025-12-16",
+    "monto": 358000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2026-01-21T21:38:20.619221+00:00"
+  },
+  {
+    "id": 684,
+    "factura_id": 192,
+    "fecha": "2026-01-21",
+    "monto": 100000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2026-01-21T21:47:52.898098+00:00"
+  },
+  {
+    "id": 685,
+    "factura_id": 447,
+    "fecha": "2026-01-21",
+    "monto": 2753000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2026-01-21T21:50:28.675315+00:00"
+  },
+  {
+    "id": 686,
+    "factura_id": 446,
+    "fecha": "2026-01-21",
+    "monto": 138000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2026-01-21T21:51:26.022421+00:00"
+  },
+  {
+    "id": 687,
+    "factura_id": 383,
+    "fecha": "2026-01-21",
+    "monto": 100000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2026-01-21T22:10:37.021127+00:00"
+  },
+  {
+    "id": 688,
+    "factura_id": 393,
+    "fecha": "2026-01-21",
+    "monto": 208000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2026-01-21T22:13:07.323799+00:00"
+  },
+  {
+    "id": 689,
+    "factura_id": 396,
+    "fecha": "2026-01-21",
+    "monto": 1000000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2026-01-21T22:24:34.207958+00:00"
+  },
+  {
+    "id": 690,
+    "factura_id": 444,
+    "fecha": "2026-01-22",
+    "monto": 120000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2026-01-22T12:06:20.138267+00:00"
+  },
+  {
+    "id": 691,
+    "factura_id": 449,
+    "fecha": "2026-01-22",
+    "monto": 192000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2026-01-22T12:06:48.702163+00:00"
+  },
+  {
+    "id": 692,
+    "factura_id": 450,
+    "fecha": "2026-01-22",
+    "monto": 888000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2026-01-22T12:07:32.158278+00:00"
+  },
+  {
+    "id": 693,
+    "factura_id": 485,
+    "fecha": "2026-01-22",
+    "monto": 51000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2026-01-22T13:51:38.254198+00:00"
+  },
+  {
+    "id": 694,
+    "factura_id": 463,
+    "fecha": "2026-01-23",
+    "monto": 528000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2026-01-23T01:24:56.635474+00:00"
+  },
+  {
+    "id": 695,
+    "factura_id": 481,
+    "fecha": "2026-01-23",
+    "monto": 576000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2026-01-23T01:27:29.603547+00:00"
+  },
+  {
+    "id": 696,
+    "factura_id": 7,
+    "fecha": "2025-12-30",
+    "monto": 10500,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2026-01-23T19:54:43.465135+00:00"
+  },
+  {
+    "id": 697,
+    "factura_id": 7,
+    "fecha": "2026-01-23",
+    "monto": 900000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2026-01-23T19:54:59.140411+00:00"
+  },
+  {
+    "id": 698,
+    "factura_id": 127,
+    "fecha": "2026-01-23",
+    "monto": 240000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2026-01-23T20:44:05.463125+00:00"
+  },
+  {
+    "id": 699,
+    "factura_id": 243,
+    "fecha": "2026-01-23",
+    "monto": 150000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2026-01-23T20:55:44.746036+00:00"
+  },
+  {
+    "id": 700,
+    "factura_id": 305,
+    "fecha": "2026-01-23",
+    "monto": 186000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2026-01-23T21:08:56.679846+00:00"
+  },
+  {
+    "id": 701,
+    "factura_id": 303,
+    "fecha": "2026-01-23",
+    "monto": 41000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2026-01-23T22:02:59.331802+00:00"
+  },
+  {
+    "id": 702,
+    "factura_id": 310,
+    "fecha": "2026-01-23",
+    "monto": 324000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2026-01-23T22:03:56.029592+00:00"
+  },
+  {
+    "id": 703,
+    "factura_id": 226,
+    "fecha": "2026-01-22",
+    "monto": 250000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2026-01-23T22:11:34.279327+00:00"
+  },
+  {
+    "id": 704,
+    "factura_id": 180,
+    "fecha": "2026-01-23",
+    "monto": 400,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2026-01-23T22:14:30.270331+00:00"
+  },
+  {
+    "id": 705,
+    "factura_id": 354,
+    "fecha": "2026-01-23",
+    "monto": 17600,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2026-01-26T19:41:32.571663+00:00"
+  },
+  {
+    "id": 706,
+    "factura_id": 395,
+    "fecha": "2026-01-23",
+    "monto": 124000,
+    "metodo": "Transferencia",
+    "nota": null,
+    "created_at": "2026-01-26T19:42:18.174289+00:00"
+  },
+  {
+    "id": 707,
+    "factura_id": 287,
+    "fecha": "2026-01-26",
+    "monto": 288000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2026-01-26T19:56:14.755342+00:00"
+  },
+  {
+    "id": 708,
+    "factura_id": 295,
+    "fecha": "2026-01-26",
+    "monto": 250000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2026-01-26T19:57:39.965727+00:00"
+  },
+  {
+    "id": 709,
+    "factura_id": 55,
+    "fecha": "2026-01-26",
+    "monto": 200000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2026-01-26T20:02:29.728367+00:00"
+  },
+  {
+    "id": 710,
+    "factura_id": 292,
+    "fecha": "2026-01-26",
+    "monto": 100000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2026-01-26T20:51:25.271409+00:00"
+  },
+  {
+    "id": 711,
+    "factura_id": 292,
+    "fecha": "2026-01-18",
+    "monto": 70000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2026-01-26T20:52:35.435671+00:00"
+  },
+  {
+    "id": 712,
+    "factura_id": 350,
+    "fecha": "2026-01-26",
+    "monto": 150000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2026-01-26T21:04:30.736705+00:00"
+  },
+  {
+    "id": 713,
+    "factura_id": 146,
+    "fecha": "2026-01-22",
+    "monto": 200000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2026-01-26T21:11:18.268151+00:00"
+  },
+  {
+    "id": 714,
+    "factura_id": 146,
+    "fecha": "2026-01-26",
+    "monto": 195000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2026-01-26T21:12:42.736156+00:00"
+  },
+  {
+    "id": 715,
+    "factura_id": 303,
+    "fecha": "2026-01-26",
+    "monto": 199000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2026-01-26T21:29:46.073366+00:00"
+  },
+  {
+    "id": 716,
+    "factura_id": 307,
+    "fecha": "2026-01-08",
+    "monto": 300000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2026-01-26T21:35:18.473622+00:00"
+  },
+  {
+    "id": 717,
+    "factura_id": 307,
+    "fecha": "2026-01-26",
+    "monto": 970000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2026-01-26T21:35:37.393991+00:00"
+  },
+  {
+    "id": 718,
+    "factura_id": 329,
+    "fecha": "2026-01-26",
+    "monto": 30000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2026-01-26T21:37:06.616804+00:00"
+  },
+  {
+    "id": 719,
+    "factura_id": 285,
+    "fecha": "2026-01-27",
+    "monto": 276000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2026-01-27T19:39:31.018498+00:00"
+  },
+  {
+    "id": 720,
+    "factura_id": 225,
+    "fecha": "2026-01-27",
+    "monto": 500000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2026-01-27T21:17:10.242869+00:00"
+  },
+  {
+    "id": 721,
+    "factura_id": 306,
+    "fecha": "2026-01-27",
+    "monto": 200000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2026-01-27T21:24:45.701371+00:00"
+  },
+  {
+    "id": 722,
+    "factura_id": 374,
+    "fecha": "2026-01-16",
+    "monto": 90000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2026-01-27T21:41:39.820518+00:00"
+  },
+  {
+    "id": 723,
+    "factura_id": 374,
+    "fecha": "2026-01-27",
+    "monto": 389952,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2026-01-27T21:43:18.103812+00:00"
+  },
+  {
+    "id": 724,
+    "factura_id": 519,
+    "fecha": "2026-01-28",
+    "monto": 373000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2026-01-28T17:32:27.176412+00:00"
+  },
+  {
+    "id": 725,
+    "factura_id": 248,
+    "fecha": "2026-01-09",
+    "monto": 300000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2026-01-28T20:18:40.746021+00:00"
+  },
+  {
+    "id": 726,
+    "factura_id": 248,
+    "fecha": "2026-01-28",
+    "monto": 300000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2026-01-28T20:18:51.168651+00:00"
+  },
+  {
+    "id": 727,
+    "factura_id": 243,
+    "fecha": "2026-01-28",
+    "monto": 100000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2026-01-28T20:34:35.007565+00:00"
+  },
+  {
+    "id": 728,
+    "factura_id": 160,
+    "fecha": "2026-01-28",
+    "monto": 500000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2026-01-28T20:47:11.64862+00:00"
+  },
+  {
+    "id": 729,
+    "factura_id": 223,
+    "fecha": "2026-01-28",
+    "monto": 171336,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2026-01-28T21:22:58.451223+00:00"
+  },
+  {
+    "id": 730,
+    "factura_id": 216,
+    "fecha": "2026-01-21",
+    "monto": 200000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2026-01-29T20:28:22.568199+00:00"
+  },
+  {
+    "id": 731,
+    "factura_id": 216,
+    "fecha": "2026-01-29",
+    "monto": 201000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2026-01-29T20:28:34.835422+00:00"
+  },
+  {
+    "id": 732,
+    "factura_id": 401,
+    "fecha": "2026-01-29",
+    "monto": 200000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2026-01-29T20:38:54.405201+00:00"
+  },
+  {
+    "id": 733,
+    "factura_id": 158,
+    "fecha": "2026-01-29",
+    "monto": 250000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2026-01-29T20:42:09.311338+00:00"
+  },
+  {
+    "id": 734,
+    "factura_id": 396,
+    "fecha": "2026-01-29",
+    "monto": 1000000,
+    "metodo": "Efectivo",
+    "nota": null,
+    "created_at": "2026-01-29T20:51:07.073931+00:00"
   }
 ]

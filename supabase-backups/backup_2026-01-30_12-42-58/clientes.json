@@ -220,17 +220,6 @@
     "actualizado_en": "2025-08-20T14:52:59.083982+00:00"
   },
   {
-    "id": 32,
-    "nombre": "LUCERO ",
-    "direccion": "Parque ",
-    "telefono": "",
-    "correo": "",
-    "clasificacion": 3,
-    "fecha_registro": "2025-08-20T14:53:57.15604+00:00",
-    "creado_en": "2025-08-20T14:53:57.15604+00:00",
-    "actualizado_en": "2025-08-20T14:53:57.15604+00:00"
-  },
-  {
     "id": 34,
     "nombre": "LUZ HELENA",
     "direccion": "Parque ",
@@ -671,17 +660,6 @@
     "actualizado_en": "2025-09-24T15:19:03.390531+00:00"
   },
   {
-    "id": 63,
-    "nombre": "MARCOS",
-    "direccion": "parque ",
-    "telefono": "",
-    "correo": "",
-    "clasificacion": 5,
-    "fecha_registro": "2025-09-24T14:47:08.668954+00:00",
-    "creado_en": "2025-09-24T14:47:08.668954+00:00",
-    "actualizado_en": "2025-09-24T15:25:19.923+00:00"
-  },
-  {
     "id": 64,
     "nombre": "LUZ",
     "direccion": "parque",
@@ -911,5 +889,148 @@
     "fecha_registro": "2025-10-21T12:41:42.915244+00:00",
     "creado_en": "2025-10-21T12:41:42.915244+00:00",
     "actualizado_en": "2026-01-13T23:01:17.404+00:00"
+  },
+  {
+    "id": 84,
+    "nombre": "juan perez",
+    "direccion": "",
+    "telefono": "311123456",
+    "correo": "",
+    "clasificacion": 3,
+    "fecha_registro": "2026-01-19T12:30:55.108229+00:00",
+    "creado_en": "2026-01-19T12:30:55.108229+00:00",
+    "actualizado_en": "2026-01-19T12:30:55.108229+00:00"
+  },
+  {
+    "id": 85,
+    "nombre": "zzz",
+    "direccion": "",
+    "telefono": "234242342",
+    "correo": "",
+    "clasificacion": 3,
+    "fecha_registro": "2026-01-19T18:54:11.349726+00:00",
+    "creado_en": "2026-01-19T18:54:11.349726+00:00",
+    "actualizado_en": "2026-01-19T18:54:11.349726+00:00"
+  },
+  {
+    "id": 86,
+    "nombre": "Angie Triviño",
+    "direccion": "",
+    "telefono": "",
+    "correo": "",
+    "clasificacion": 3,
+    "fecha_registro": "2026-01-22T12:53:37.130807+00:00",
+    "creado_en": "2026-01-22T12:53:37.130807+00:00",
+    "actualizado_en": "2026-01-22T12:53:37.130807+00:00"
+  },
+  {
+    "id": 32,
+    "nombre": "LUCERO ",
+    "direccion": "Parque ",
+    "telefono": "3112964773",
+    "correo": "",
+    "clasificacion": 3,
+    "fecha_registro": "2025-08-20T14:53:57.15604+00:00",
+    "creado_en": "2025-08-20T14:53:57.15604+00:00",
+    "actualizado_en": "2026-01-22T13:10:00.503+00:00"
+  },
+  {
+    "id": 87,
+    "nombre": "SEBASTIAN FELIPE",
+    "direccion": "PARQUEADERO 18",
+    "telefono": "3024794417",
+    "correo": "",
+    "clasificacion": 3,
+    "fecha_registro": "2026-01-22T15:51:58.568898+00:00",
+    "creado_en": "2026-01-22T15:51:58.568898+00:00",
+    "actualizado_en": "2026-01-22T15:51:58.568898+00:00"
+  },
+  {
+    "id": 88,
+    "nombre": "PAOLA HUERTAS",
+    "direccion": "",
+    "telefono": "3245900467",
+    "correo": "pao.lacreativaa@gmail.com",
+    "clasificacion": 3,
+    "fecha_registro": "2026-01-22T17:04:31.572991+00:00",
+    "creado_en": "2026-01-22T17:04:31.572991+00:00",
+    "actualizado_en": "2026-01-22T17:04:31.572991+00:00"
+  },
+  {
+    "id": 89,
+    "nombre": "DOR ORLANDO TAT",
+    "direccion": "",
+    "telefono": "3004583117",
+    "correo": "",
+    "clasificacion": 3,
+    "fecha_registro": "2026-01-22T20:16:27.344754+00:00",
+    "creado_en": "2026-01-22T20:16:27.344754+00:00",
+    "actualizado_en": "2026-01-22T20:16:27.344754+00:00"
+  },
+  {
+    "id": 90,
+    "nombre": "MICHELL SARITA BALLESTEROS",
+    "direccion": "3118507353",
+    "telefono": "",
+    "correo": "",
+    "clasificacion": 3,
+    "fecha_registro": "2026-01-22T20:56:45.538242+00:00",
+    "creado_en": "2026-01-22T20:56:45.538242+00:00",
+    "actualizado_en": "2026-01-22T20:56:45.538242+00:00"
+  },
+  {
+    "id": 91,
+    "nombre": "HUGO GALINDO",
+    "direccion": "PARQUE ESPAÑA",
+    "telefono": "3024528329",
+    "correo": "",
+    "clasificacion": 4,
+    "fecha_registro": "2026-01-26T16:59:26.205012+00:00",
+    "creado_en": "2026-01-26T16:59:26.205012+00:00",
+    "actualizado_en": "2026-01-26T16:59:26.205012+00:00"
+  },
+  {
+    "id": 92,
+    "nombre": "ALIX ACEBEDO",
+    "direccion": "PARQUE ESPAÑA",
+    "telefono": "3024528329",
+    "correo": "",
+    "clasificacion": 3,
+    "fecha_registro": "2026-01-27T14:12:25.627205+00:00",
+    "creado_en": "2026-01-27T14:12:25.627205+00:00",
+    "actualizado_en": "2026-01-27T14:12:25.627205+00:00"
+  },
+  {
+    "id": 93,
+    "nombre": "CARLOS NELLY",
+    "direccion": "PARQUE ESPAÑA",
+    "telefono": "3024528329",
+    "correo": "",
+    "clasificacion": 3,
+    "fecha_registro": "2026-01-27T22:25:53.793669+00:00",
+    "creado_en": "2026-01-27T22:25:53.793669+00:00",
+    "actualizado_en": "2026-01-27T22:25:53.793669+00:00"
+  },
+  {
+    "id": 94,
+    "nombre": "CAMILO SEPULVEDA",
+    "direccion": "PARQUE ESPAÑA",
+    "telefono": "3197287297",
+    "correo": "",
+    "clasificacion": 3,
+    "fecha_registro": "2026-01-27T22:42:14.699561+00:00",
+    "creado_en": "2026-01-27T22:42:14.699561+00:00",
+    "actualizado_en": "2026-01-27T22:42:14.699561+00:00"
+  },
+  {
+    "id": 63,
+    "nombre": "MARCOS SEPULVEDA",
+    "direccion": "parque ",
+    "telefono": "",
+    "correo": "",
+    "clasificacion": 5,
+    "fecha_registro": "2025-09-24T14:47:08.668954+00:00",
+    "creado_en": "2025-09-24T14:47:08.668954+00:00",
+    "actualizado_en": "2026-01-27T23:06:44.074+00:00"
   }
 ]
