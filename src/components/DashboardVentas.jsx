@@ -18,6 +18,12 @@ const DashboardVentas = () => {
   const [cobrosDiariosVendedor, setCobrosDiariosVendedor] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('general');
+  // Nuevos estados para análisis detallado
+  const [comparativaMensual, setComparativaMensual] = useState([]);
+  const [ventasMensualesPorVendedor, setVentasMensualesPorVendedor] = useState([]);
+  const [resumenVendedorDetallado, setResumenVendedorDetallado] = useState(null);
+  const [vendedorSeleccionadoAnalisis, setVendedorSeleccionadoAnalisis] = useState('');
+  const [variacionesPorcentuales, setVariacionesPorcentuales] = useState([]);
   // Estados para Reportes
   const [fechaInicio, setFechaInicio] = useState(() => {
     const d = new Date();
@@ -40,31 +46,40 @@ const DashboardVentas = () => {
   });
   const [fechaFinProductos, setFechaFinProductos] = useState(() => new Date().toISOString().split('T')[0]);
   const [busquedaProducto, setBusquedaProducto] = useState('');
+  // Nuevos estados para filtros globales de fechas
+  const [filtroFechaInicio, setFiltroFechaInicio] = useState(() => {
+    const d = new Date();
+    d.setDate(d.getDate() - 30);
+    return d.toISOString().split('T')[0];
+  });
+  const [filtroFechaFin, setFiltroFechaFin] = useState(() => new Date().toISOString().split('T')[0]);
+  const [mostrarFiltroFechas, setMostrarFiltroFechas] = useState(false);
 
   useEffect(() => {
     fetchDashboardData();
-  }, []);
+  }, [filtroFechaInicio, filtroFechaFin]);
 
   const fetchDashboardData = async () => {
     try {
       setLoading(true);
       
+      // Usar los filtros globales de fecha
+      const fechaInicioFiltro = filtroFechaInicio;
+      const fechaFinFiltro = filtroFechaFin;
       const hoy = new Date();
-      const hace30Dias = new Date();
-      hace30Dias.setDate(hace30Dias.getDate() - 30);
 
-      // 1. Facturas de los últimos 30 días
+      // 1. Facturas en el rango de fechas filtrado
       const { data: facturasData, error: facturasError } = await supabase
         .from('facturas')
         .select('fecha, total, cliente, vendedor')
-        .gte('fecha', hace30Dias.toISOString().split('T')[0])
-        .lte('fecha', hoy.toISOString().split('T')[0])
+        .gte('fecha', fechaInicioFiltro)
+        .lte('fecha', fechaFinFiltro)
         .order('fecha', { ascending: true });
 
       if (facturasError) throw facturasError;
       setFacturasUltimos30Dias(facturasData || []);
 
-      // 2. Ventas del mes actual
+      // 2. Ventas del mes actual (siempre del mes actual, no del filtro)
       const primerDiaMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
       const { data: ventasMesData, error: ventasMesError } = await supabase
         .from('facturas')
@@ -76,7 +91,7 @@ const DashboardVentas = () => {
       const totalVentasMes = ventasMesData.reduce((sum, venta) => sum + (parseFloat(venta.total) || 0), 0);
       setVentasMesActual(totalVentasMes);
 
-      // 3. Total ventas anual
+      // 3. Total ventas anual (siempre del año actual)
       const primerDiaAnio = new Date(hoy.getFullYear(), 0, 1);
       const { data: ventasAnualData, error: ventasAnualError } = await supabase
         .from('facturas')
@@ -88,10 +103,15 @@ const DashboardVentas = () => {
       const totalVentasAnual = ventasAnualData.reduce((sum, venta) => sum + (parseFloat(venta.total) || 0), 0);
       setTotalVentasAnual(totalVentasAnual);
 
-      // 4. Datos para gráficos
-      await loadChartData();
-      await loadVendedorData();
-      await loadCobrosData();
+      // 4. Datos para gráficos con filtro de fechas
+      await loadChartData(fechaInicioFiltro, fechaFinFiltro);
+      await loadVendedorData(fechaInicioFiltro, fechaFinFiltro);
+      await loadCobrosData(fechaInicioFiltro, fechaFinFiltro);
+      
+      // Nuevas cargas de datos
+      await getComparativaMensual(fechaInicioFiltro, fechaFinFiltro);
+      await getVentasMensualesPorVendedor(null, fechaInicioFiltro, fechaFinFiltro);
+      await calcularVariaciones(fechaInicioFiltro, fechaFinFiltro);
 
       // Lista inicial de vendedores para reportes
       await fetchVendedoresLista();
@@ -162,6 +182,10 @@ const DashboardVentas = () => {
     }
     if (activeTab === 'productos') {
       cargarProductosMasVendidos();
+    }
+    if (activeTab === 'comparativo') {
+      // Cargar datos de comparativo cuando se abre la pestaña
+      getVentasMensualesPorVendedor(null, filtroFechaInicio, filtroFechaFin);
     }
   }, [activeTab]);
 
@@ -493,14 +517,14 @@ const DashboardVentas = () => {
     }, 250);
   };
 
-  const loadChartData = async () => {
+  const loadChartData = async (fechaInicio, fechaFin) => {
     try {
       // Gráfico de ventas mensuales
-      const ventasMensualesData = await getVentasMensuales();
+      const ventasMensualesData = await getVentasMensuales(fechaInicio, fechaFin);
       setVentasMensuales(ventasMensualesData);
 
       // Gráfico de ingresos diarios
-      const ingresosDiariosData = await getIngresosDiarios();
+      const ingresosDiariosData = await getIngresosDiarios(fechaInicio, fechaFin);
       setIngresosDiarios(ingresosDiariosData);
 
     } catch (error) {
@@ -508,12 +532,14 @@ const DashboardVentas = () => {
     }
   };
 
-  const loadVendedorData = async () => {
+  const loadVendedorData = async (fechaInicio, fechaFin) => {
     try {
       // Ventas totales por vendedor
       const { data: vendedoresData, error } = await supabase
         .from('facturas')
         .select('vendedor, total')
+        .gte('fecha', fechaInicio)
+        .lte('fecha', fechaFin)
         .not('vendedor', 'is', null)
         .order('vendedor');
 
@@ -536,7 +562,7 @@ const DashboardVentas = () => {
     }
   };
 
-  const loadCobrosData = async () => {
+  const loadCobrosData = async (fechaInicio, fechaFin) => {
     try {
       const hoy = new Date();
       const currentYear = hoy.getFullYear();
@@ -598,19 +624,16 @@ const DashboardVentas = () => {
         }).sort((a, b) => a.periodo.localeCompare(b.periodo)));
       }
 
-      // 3. COBROS DE LOS ÚLTIMOS 30 DÍAS
-      const hace30Dias = new Date();
-      hace30Dias.setDate(hace30Dias.getDate() - 30);
-      
-      const { data: cobros30DiasData } = await supabase
+      // 3. COBROS EN EL RANGO DE FECHAS FILTRADO
+      const { data: cobrosRangoData } = await supabase
         .from('abonos')
         .select('monto')
-        .gte('fecha', hace30Dias.toISOString().split('T')[0])
-        .lte('fecha', hoy.toISOString().split('T')[0]);
+        .gte('fecha', fechaInicio)
+        .lte('fecha', fechaFin);
 
-      const total30Dias = cobros30DiasData ? 
-        cobros30DiasData.reduce((sum, abono) => sum + (parseFloat(abono.monto) || 0), 0) : 0;
-      setCobrosUltimos30Dias(total30Dias);
+      const totalRango = cobrosRangoData ? 
+        cobrosRangoData.reduce((sum, abono) => sum + (parseFloat(abono.monto) || 0), 0) : 0;
+      setCobrosUltimos30Dias(totalRango);
 
       // 4. MÉTODOS DE PAGO (gráfico circular)
       const metodosPago = {};
@@ -630,7 +653,7 @@ const DashboardVentas = () => {
       }
 
       // 5. COBROS DIARIOS POR VENDEDOR
-      await loadCobrosDiariosVendedor();
+      await loadCobrosDiariosVendedor(fechaInicio, fechaFin);
 
     } catch (error) {
       console.error('Error loading cobros data:', error);
@@ -638,19 +661,14 @@ const DashboardVentas = () => {
   };
 
   // Nueva función para cargar cobros diarios por vendedor
-  const loadCobrosDiariosVendedor = async () => {
+  const loadCobrosDiariosVendedor = async (fechaInicio, fechaFin) => {
     try {
-      const hace30Dias = new Date();
-      hace30Dias.setDate(hace30Dias.getDate() - 30);
-      const fechaInicio = hace30Dias.toISOString().split('T')[0];
-      const hoy = new Date().toISOString().split('T')[0];
-
-      // Obtener abonos de los últimos 30 días
+      // Obtener abonos en el rango de fechas
       const { data: abonosData, error: abonosError } = await supabase
         .from('abonos')
         .select('fecha, monto, factura_id')
         .gte('fecha', fechaInicio)
-        .lte('fecha', hoy)
+        .lte('fecha', fechaFin)
         .order('fecha');
 
       if (abonosError) throw abonosError;
@@ -726,14 +744,13 @@ const DashboardVentas = () => {
   };
 
   // Función para obtener ventas mensuales
-  const getVentasMensuales = async () => {
+  const getVentasMensuales = async (fechaInicio, fechaFin) => {
     try {
-      const year = new Date().getFullYear();
       const { data, error } = await supabase
         .from('facturas')
         .select('fecha, total')
-        .gte('fecha', `${year}-01-01`)
-        .lte('fecha', `${year}-12-31`)
+        .gte('fecha', fechaInicio)
+        .lte('fecha', fechaFin)
         .order('fecha');
 
       if (error) throw error;
@@ -756,16 +773,13 @@ const DashboardVentas = () => {
   };
 
   // Función para obtener ingresos diarios
-  const getIngresosDiarios = async () => {
+  const getIngresosDiarios = async (fechaInicio, fechaFin) => {
     try {
-      const hace30Dias = new Date();
-      hace30Dias.setDate(hace30Dias.getDate() - 30);
-      const fechaInicio = hace30Dias.toISOString().split('T')[0];
-
       const { data, error } = await supabase
         .from('facturas')
         .select('fecha, total')
         .gte('fecha', fechaInicio)
+        .lte('fecha', fechaFin)
         .order('fecha');
 
       if (error) throw error;
@@ -789,12 +803,187 @@ const DashboardVentas = () => {
     }
   };
 
+  // Nueva función: Obtener comparativa mensual (últimos 3 años)
+  const getComparativaMensual = async (fechaInicio, fechaFin) => {
+    try {
+      const { data, error } = await supabase
+        .from('facturas')
+        .select('fecha, total')
+        .gte('fecha', fechaInicio)
+        .lte('fecha', fechaFin)
+        .order('fecha');
+
+      if (error) throw error;
+
+      const meses = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+      const comparativaPorMes = {};
+
+      if (data) {
+        data.forEach(factura => {
+          const fecha = new Date(factura.fecha);
+          const mes = fecha.getMonth();
+          const anio = fecha.getFullYear();
+          const clave = `${meses[mes]}-${anio}`;
+          
+          if (!comparativaPorMes[clave]) {
+            comparativaPorMes[clave] = { mes: meses[mes], anio, total: 0, facturas: 0, mes_anio: clave };
+          }
+          comparativaPorMes[clave].total += parseFloat(factura.total) || 0;
+          comparativaPorMes[clave].facturas += 1;
+        });
+      }
+
+      const resultado = Object.values(comparativaPorMes)
+        .sort((a, b) => {
+          if (a.anio !== b.anio) return a.anio - b.anio;
+          return meses.indexOf(a.mes) - meses.indexOf(b.mes);
+        });
+
+      setComparativaMensual(resultado);
+    } catch (error) {
+      console.error('Error en getComparativaMensual:', error);
+    }
+  };
+
+  // Nueva función: Obtener ventas mensuales detalladas por vendedor
+  const getVentasMensualesPorVendedor = async (vendedor = null, fechaInicio, fechaFin) => {
+    try {
+      let query = supabase
+        .from('facturas')
+        .select('fecha, total, vendedor')
+        .gte('fecha', fechaInicio)
+        .lte('fecha', fechaFin);
+
+      if (vendedor && vendedor !== 'todos') {
+        query = query.eq('vendedor', vendedor);
+      }
+
+      const { data, error } = await query.order('fecha');
+
+      if (error) throw error;
+
+      const meses = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+      const ventasPorMesVendedor = {};
+
+      if (data) {
+        data.forEach(factura => {
+          const fecha = new Date(factura.fecha);
+          const mes = fecha.getMonth();
+          const anio = fecha.getFullYear();
+          const clave = `${meses[mes]}-${anio}`;
+
+          if (!ventasPorMesVendedor[clave]) {
+            ventasPorMesVendedor[clave] = { 
+              mes: meses[mes], 
+              anio, 
+              mes_anio: clave,
+              vendedor: vendedor || 'Todos',
+              total: 0, 
+              facturas: 0,
+              promedio: 0 
+            };
+          }
+          ventasPorMesVendedor[clave].total += parseFloat(factura.total) || 0;
+          ventasPorMesVendedor[clave].facturas += 1;
+        });
+
+        // Calcular promedios
+        Object.values(ventasPorMesVendedor).forEach(item => {
+          item.promedio = item.facturas > 0 ? item.total / item.facturas : 0;
+        });
+      }
+
+      const resultado = Object.values(ventasPorMesVendedor)
+        .sort((a, b) => {
+          if (a.anio !== b.anio) return a.anio - b.anio;
+          return meses.indexOf(a.mes) - meses.indexOf(b.mes);
+        });
+
+      setVentasMensualesPorVendedor(resultado);
+      
+      // Calcular resumen detallado
+      const resumen = {
+        totalFacturas: data ? data.length : 0,
+        totalVentas: data ? data.reduce((s, f) => s + (parseFloat(f.total) || 0), 0) : 0,
+        promedio: 0,
+        variacionUltimo: 0
+      };
+      resumen.promedio = resumen.totalFacturas > 0 ? resumen.totalVentas / resumen.totalFacturas : 0;
+
+      // Calcular variación del mes actual vs mes anterior
+      if (resultado.length >= 2) {
+        const ultimoMes = resultado[resultado.length - 1].total;
+        const mesAnterior = resultado[resultado.length - 2].total;
+        resumen.variacionUltimo = mesAnterior > 0 ? ((ultimoMes - mesAnterior) / mesAnterior) * 100 : 0;
+      }
+
+      setResumenVendedorDetallado(resumen);
+    } catch (error) {
+      console.error('Error en getVentasMensualesPorVendedor:', error);
+    }
+  };
+
+  // Nueva función: Calcular variaciones porcentuales
+  const calcularVariaciones = async (fechaInicio, fechaFin) => {
+    try {
+      const hoy = new Date();
+      const anioActual = hoy.getFullYear();
+      const anioAnterior = anioActual - 1;
+
+      const { data: datosActual, error: errorActual } = await supabase
+        .from('facturas')
+        .select('fecha, total')
+        .gte('fecha', fechaInicio)
+        .lte('fecha', fechaFin);
+
+      const { data: datosAnterior, error: errorAnterior } = await supabase
+        .from('facturas')
+        .select('fecha, total')
+        .gte('fecha', `${anioAnterior}-01-01`)
+        .lte('fecha', `${anioAnterior}-12-31`);
+
+      if (errorActual || errorAnterior) throw new Error('Error loading data');
+
+      const meses = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+      const ventasActual = Array(12).fill(0);
+      const ventasAnterior = Array(12).fill(0);
+
+      datosActual?.forEach(f => {
+        const mes = new Date(f.fecha).getMonth();
+        ventasActual[mes] += parseFloat(f.total) || 0;
+      });
+
+      datosAnterior?.forEach(f => {
+        const mes = new Date(f.fecha).getMonth();
+        ventasAnterior[mes] += parseFloat(f.total) || 0;
+      });
+
+      const variaciones = meses.map((mes, idx) => ({
+        mes,
+        [anioAnterior]: ventasAnterior[idx],
+        [anioActual]: ventasActual[idx],
+        variacion: ventasAnterior[idx] > 0 
+          ? ((ventasActual[idx] - ventasAnterior[idx]) / ventasAnterior[idx]) * 100 
+          : 0,
+        diferencia: ventasActual[idx] - ventasAnterior[idx]
+      }));
+
+      setVariacionesPorcentuales(variaciones);
+    } catch (error) {
+      console.error('Error en calcularVariaciones:', error);
+    }
+  };
+
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat('es-CO', {
       style: 'currency',
       currency: 'COP',
       minimumFractionDigits: 0
     }).format(amount);
+  };
+
+  const formatPercentage = (value) => {
+    return `${value >= 0 ? '+' : ''}${value.toFixed(2)}%`;
   };
 
   // Colores para los gráficos
@@ -825,6 +1014,12 @@ const DashboardVentas = () => {
           📊 General
         </button>
         <button 
+          className={`tab ${activeTab === 'comparativo' ? 'active' : ''}`}
+          onClick={() => setActiveTab('comparativo')}
+        >
+          📈 Comparativo
+        </button>
+        <button 
           className={`tab ${activeTab === 'vendedores' ? 'active' : ''}`}
           onClick={() => setActiveTab('vendedores')}
         >
@@ -852,9 +1047,30 @@ const DashboardVentas = () => {
 
       {activeTab === 'general' && (
         <>
+          {/* Resumen del período filtrado */}
+          <div className="dashboard-card full-width" style={{ marginBottom: '20px', backgroundColor: '#e3f2fd', borderLeft: '4px solid #2196F3' }}>
+            <h2 style={{ color: '#1976D2', marginBottom: '10px' }}>📅 Período Filtrado</h2>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '15px' }}>
+              <div style={{ padding: '10px', backgroundColor: 'white', borderRadius: '4px' }}>
+                <span style={{ fontSize: '0.9rem', color: '#666', display: 'block' }}>Desde:</span>
+                <strong style={{ fontSize: '1.1rem', color: '#2196F3' }}>{new Date(filtroFechaInicio).toLocaleDateString('es-CO')}</strong>
+              </div>
+              <div style={{ padding: '10px', backgroundColor: 'white', borderRadius: '4px' }}>
+                <span style={{ fontSize: '0.9rem', color: '#666', display: 'block' }}>Hasta:</span>
+                <strong style={{ fontSize: '1.1rem', color: '#2196F3' }}>{new Date(filtroFechaFin).toLocaleDateString('es-CO')}</strong>
+              </div>
+              <div style={{ padding: '10px', backgroundColor: 'white', borderRadius: '4px' }}>
+                <span style={{ fontSize: '0.9rem', color: '#666', display: 'block' }}>Duración:</span>
+                <strong style={{ fontSize: '1.1rem', color: '#2196F3' }}>
+                  {Math.ceil((new Date(filtroFechaFin) - new Date(filtroFechaInicio)) / (1000 * 60 * 60 * 24))} días
+                </strong>
+              </div>
+            </div>
+          </div>
+
           <div className="dashboard-grid">
             <div className="dashboard-card">
-              <h2>Facturas (Últimos 30 días)</h2>
+              <h2>Facturas (Período Filtrado)</h2>
               <div className="metric">
                 <span className="metric-label">Total Facturado:</span>
                 <span className="metric-value">
@@ -884,7 +1100,7 @@ const DashboardVentas = () => {
 
           {/* Gráfico de Ventas Mensuales (Barras) */}
           <div className="dashboard-card full-width">
-            <h2>Ventas Mensuales {new Date().getFullYear()}</h2>
+            <h2>Ventas Mensuales - Período Filtrado</h2>
             {ventasMensuales.length > 0 ? (
               <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={ventasMensuales}>
@@ -916,6 +1132,291 @@ const DashboardVentas = () => {
             ) : (
               <p>No hay datos para mostrar el gráfico</p>
             )}
+          </div>
+        </>
+      )}
+
+      {activeTab === 'comparativo' && (
+        <>
+          <div className="dashboard-card full-width">
+            <h2>📊 Comparativa de Ventas Mensuales (Histórico)</h2>
+            <div className="resumen-reporte">
+              <div className="resumen-item">
+                <span>Período Analizado</span>
+                <strong>Últimos 3 años</strong>
+              </div>
+              <div className="resumen-item">
+                <span>Total Registros</span>
+                <strong>{comparativaMensual.length} meses</strong>
+              </div>
+              <div className="resumen-item">
+                <span>Total Ventas</span>
+                <strong>{formatCurrency(comparativaMensual.reduce((s, c) => s + c.total, 0))}</strong>
+              </div>
+            </div>
+
+            {comparativaMensual.length > 0 ? (
+              <>
+                {/* Gráfico de Comparativa */}
+                <div className="dashboard-card full-width" style={{ marginTop: '20px' }}>
+                  <h3>Ventas Mensuales - Línea de Tendencia</h3>
+                  <ResponsiveContainer width="100%" height={400}>
+                    <LineChart data={comparativaMensual}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="mes_anio" angle={-45} textAnchor="end" height={100} />
+                      <YAxis tickFormatter={value => `$${value/1000000}M`} />
+                      <Tooltip 
+                        formatter={(value, name) => {
+                          if (name === 'total') return [formatCurrency(value), 'Ventas'];
+                          if (name === 'facturas') return [value, 'Facturas'];
+                          return [value, name];
+                        }}
+                      />
+                      <Legend />
+                      <Line type="monotone" dataKey="total" stroke="#0088FE" strokeWidth={2} name="Ventas Totales" />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+
+                {/* Tabla Comparativa Detallada */}
+                <div className="tabla-reporte-wrapper" style={{ marginTop: '20px' }}>
+                  <table className="tabla-reporte">
+                    <thead>
+                      <tr>
+                        <th>Mes</th>
+                        <th>Año</th>
+                        <th>Total Ventas</th>
+                        <th>Num. Facturas</th>
+                        <th>Promedio/Factura</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {comparativaMensual.map((item, idx) => (
+                        <tr key={idx}>
+                          <td><strong>{item.mes}</strong></td>
+                          <td>{item.anio}</td>
+                          <td className="col-total">{formatCurrency(item.total)}</td>
+                          <td className="col-cantidad">{item.facturas}</td>
+                          <td className="col-total">{formatCurrency(item.facturas > 0 ? item.total / item.facturas : 0)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </>
+            ) : (
+              <p style={{ marginTop: '20px' }}>No hay datos disponibles para la comparativa.</p>
+            )}
+          </div>
+
+          {/* NUEVA SECCIÓN: Variaciones Porcentuales */}
+          <div className="dashboard-card full-width">
+            <h2>📊 Variación Porcentual - Año Actual vs Anterior</h2>
+            {variacionesPorcentuales.length > 0 ? (
+              <>
+                {/* Gráfico de Variaciones */}
+                <div className="dashboard-card full-width" style={{ marginTop: '20px' }}>
+                  <h3>Comparativa de Ventas Mes a Mes</h3>
+                  <ResponsiveContainer width="100%" height={400}>
+                    <BarChart data={variacionesPorcentuales}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="mes" />
+                      <YAxis tickFormatter={value => `$${value/1000000}M`} />
+                      <Tooltip 
+                        formatter={(value, name) => {
+                          if (typeof value === 'number' && value < 0) return [formatCurrency(value), name];
+                          if (typeof value === 'number') return [formatCurrency(value), name];
+                          return [value, name];
+                        }}
+                      />
+                      <Legend />
+                      <Bar dataKey={new Date().getFullYear() - 1} fill="#8884d8" name={`${new Date().getFullYear() - 1}`} />
+                      <Bar dataKey={new Date().getFullYear()} fill="#82ca9d" name={`${new Date().getFullYear()}`} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+
+                {/* Tabla de Variaciones */}
+                <div className="tabla-reporte-wrapper" style={{ marginTop: '20px' }}>
+                  <table className="tabla-reporte">
+                    <thead>
+                      <tr>
+                        <th>Mes</th>
+                        <th>{new Date().getFullYear() - 1}</th>
+                        <th>{new Date().getFullYear()}</th>
+                        <th>Diferencia ($)</th>
+                        <th>% Variación</th>
+                        <th>Comportamiento</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {variacionesPorcentuales.map((item, idx) => {
+                        const comportamiento = item.variacion > 0 ? '📈 Crecimiento' : item.variacion < 0 ? '📉 Caída' : '➡️ Estable';
+                        return (
+                          <tr key={idx} style={{ background: item.variacion > 0 ? '#e8f5e9' : item.variacion < 0 ? '#ffebee' : '#f5f5f5' }}>
+                            <td><strong>{item.mes}</strong></td>
+                            <td className="col-total">{formatCurrency(item[new Date().getFullYear() - 1])}</td>
+                            <td className="col-total">{formatCurrency(item[new Date().getFullYear()])}</td>
+                            <td className="col-total" style={{ color: item.diferencia > 0 ? '#4CAF50' : '#F44336' }}>
+                              {formatCurrency(item.diferencia)}
+                            </td>
+                            <td style={{ 
+                              fontWeight: 'bold', 
+                              color: item.variacion > 0 ? '#4CAF50' : item.variacion < 0 ? '#F44336' : '#666',
+                              textAlign: 'center'
+                            }}>
+                              {formatPercentage(item.variacion)}
+                            </td>
+                            <td style={{ textAlign: 'center' }}>{comportamiento}</td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </>
+            ) : (
+              <p style={{ marginTop: '20px' }}>Cargando datos de variaciones...</p>
+            )}
+          </div>
+
+          {/* NUEVA SECCIÓN: Análisis Detallado por Vendedor */}
+          <div className="dashboard-card full-width">
+            <h2>👥 Análisis de Ventas por Vendedor (Histórico)</h2>
+            <div className="filtros-reporte">
+              <div className="filtro">
+                <label>Seleccionar Vendedor</label>
+                <select 
+                  value={vendedorSeleccionadoAnalisis} 
+                  onChange={e => {
+                    setVendedorSeleccionadoAnalisis(e.target.value);
+                    getVentasMensualesPorVendedor(e.target.value || null, filtroFechaInicio, filtroFechaFin);
+                  }}
+                >
+                  <option value="">Todos los vendedores</option>
+                  {vendedoresLista.map(v => (
+                    <option key={v} value={v}>{v}</option>
+                  ))}
+                </select>
+              </div>
+              <div style={{ gridColumn: '1 / -1', fontSize: '0.9rem', color: '#666', textAlign: 'center', marginTop: '10px' }}>
+                💡 <strong>Tip:</strong> Selecciona "Todos los vendedores" para ver una tabla comparativa de todos, o elige uno específico para análisis detallado.
+              </div>
+            </div>
+
+            {vendedorSeleccionadoAnalisis === '' && (
+              /* Tabla Comparativa de TODOS los vendedores por mes */
+              <div className="tabla-reporte-wrapper" style={{ marginTop: '20px' }}>
+                <h3 style={{ marginBottom: '15px', color: '#2c3e50' }}>📊 Comparativa de Vendedores - Período Filtrado</h3>
+                {ventasPorVendedor.length > 0 ? (
+                  <table className="tabla-reporte">
+                    <thead>
+                      <tr>
+                        <th style={{ textAlign: 'left' }}>Vendedor</th>
+                        <th>Total Ventas</th>
+                        <th>Num. Facturas</th>
+                        <th>Promedio/Factura</th>
+                        <th>% Participación</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {(() => {
+                        const totalGeneral = ventasPorVendedor.reduce((sum, v) => sum + v.ventas, 0);
+                        return ventasPorVendedor.map((vendedor, idx) => {
+                          const participacion = totalGeneral > 0 ? (vendedor.ventas / totalGeneral) * 100 : 0;
+                          return (
+                            <tr key={idx} style={{ backgroundColor: idx % 2 === 0 ? '#ffffff' : '#f9f9f9' }}>
+                              <td style={{ fontWeight: '600', color: '#2196F3' }}>{vendedor.vendedor}</td>
+                              <td className="col-total">{formatCurrency(vendedor.ventas)}</td>
+                              <td className="col-cantidad">-</td>
+                              <td className="col-total">-</td>
+                              <td style={{ textAlign: 'center', fontWeight: '600', color: '#FF6B6B' }}>{participacion.toFixed(1)}%</td>
+                            </tr>
+                          );
+                        });
+                      })()}
+                    </tbody>
+                  </table>
+                ) : (
+                  <p style={{ textAlign: 'center', color: '#999' }}>No hay datos de vendedores para el período seleccionado.</p>
+                )}
+              </div>
+            )}
+
+            {resumenVendedorDetallado && vendedorSeleccionadoAnalisis !== '' && (
+              <div className="resumen-reporte">
+                <div className="resumen-item">
+                  <span>Total Facturas</span>
+                  <strong>{resumenVendedorDetallado.totalFacturas}</strong>
+                </div>
+                <div className="resumen-item">
+                  <span>Total Ventas</span>
+                  <strong>{formatCurrency(resumenVendedorDetallado.totalVentas)}</strong>
+                </div>
+                <div className="resumen-item">
+                  <span>Ticket Promedio</span>
+                  <strong>{formatCurrency(resumenVendedorDetallado.promedio)}</strong>
+                </div>
+                <div className="resumen-item">
+                  <span>Variación Última</span>
+                  <strong style={{ color: resumenVendedorDetallado.variacionUltimo > 0 ? '#4CAF50' : '#F44336' }}>
+                    {formatPercentage(resumenVendedorDetallado.variacionUltimo)}
+                  </strong>
+                </div>
+              </div>
+            )}
+
+            {ventasMensualesPorVendedor.length > 0 && vendedorSeleccionadoAnalisis !== '' ? (
+              <>
+                {/* Gráfico de Vendedor */}
+                <div className="dashboard-card full-width" style={{ marginTop: '20px' }}>
+                  <h3>📈 Ventas Mensuales - {vendedorSeleccionadoAnalisis} (Tendencia)</h3>
+                  <ResponsiveContainer width="100%" height={400}>
+                    <LineChart data={ventasMensualesPorVendedor}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="mes_anio" angle={-45} textAnchor="end" height={100} />
+                      <YAxis tickFormatter={value => `$${value/1000000}M`} />
+                      <Tooltip formatter={(value) => formatCurrency(value)} />
+                      <Legend />
+                      <Line type="monotone" dataKey="total" stroke="#FF6B6B" strokeWidth={2} name="Ventas Totales" />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+
+                {/* Tabla Detallada de Vendedor */}
+                <div className="tabla-reporte-wrapper" style={{ marginTop: '20px' }}>
+                  <h3 style={{ marginBottom: '15px', color: '#2c3e50' }}>📊 Desglose Mensual - {vendedorSeleccionadoAnalisis}</h3>
+                  <table className="tabla-reporte">
+                    <thead>
+                      <tr>
+                        <th>Período</th>
+                        <th>Mes</th>
+                        <th>Año</th>
+                        <th>Total Ventas</th>
+                        <th>Num. Facturas</th>
+                        <th>Promedio/Factura</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {ventasMensualesPorVendedor.map((item, idx) => (
+                        <tr key={idx}>
+                          <td><strong>{item.mes_anio}</strong></td>
+                          <td>{item.mes}</td>
+                          <td>{item.anio}</td>
+                          <td className="col-total">{formatCurrency(item.total)}</td>
+                          <td className="col-cantidad">{item.facturas}</td>
+                          <td className="col-total">{formatCurrency(item.promedio)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </>
+            ) : vendedorSeleccionadoAnalisis !== '' ? (
+              <p style={{ marginTop: '20px', textAlign: 'center', color: '#999' }}>
+                Cargando datos del vendedor <strong>{vendedorSeleccionadoAnalisis}</strong>...
+              </p>
+            ) : null}
           </div>
         </>
       )}
@@ -1390,9 +1891,81 @@ const DashboardVentas = () => {
         </>
       )}
 
-      <button onClick={fetchDashboardData} className="refresh-btn">
-        🔄 Actualizar Datos
-      </button>
+      <div style={{ marginTop: '30px', padding: '20px', backgroundColor: '#f8f9fa', borderRadius: '8px' }}>
+        <button 
+          onClick={() => setMostrarFiltroFechas(!mostrarFiltroFechas)}
+          className="refresh-btn"
+          style={{ marginBottom: '15px' }}
+        >
+          {mostrarFiltroFechas ? '🔽 Ocultar' : '🔼 Mostrar'} Filtro de Fechas
+        </button>
+        
+        {mostrarFiltroFechas && (
+          <div className="filtros-reporte" style={{ backgroundColor: 'white', marginBottom: '15px' }}>
+            <div className="filtro">
+              <label>Fecha Inicio</label>
+              <input 
+                type="date" 
+                value={filtroFechaInicio} 
+                onChange={e => setFiltroFechaInicio(e.target.value)}
+              />
+            </div>
+            <div className="filtro">
+              <label>Fecha Fin</label>
+              <input 
+                type="date" 
+                value={filtroFechaFin} 
+                onChange={e => setFiltroFechaFin(e.target.value)}
+              />
+            </div>
+            <div className="acciones">
+              <button 
+                className="btn" 
+                onClick={() => {
+                  const d = new Date();
+                  d.setDate(d.getDate() - 30);
+                  setFiltroFechaInicio(d.toISOString().split('T')[0]);
+                  setFiltroFechaFin(new Date().toISOString().split('T')[0]);
+                }}
+              >
+                Últimos 30 días
+              </button>
+              <button 
+                className="btn" 
+                onClick={() => {
+                  const hoy = new Date();
+                  const primerDia = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
+                  setFiltroFechaInicio(primerDia.toISOString().split('T')[0]);
+                  setFiltroFechaFin(hoy.toISOString().split('T')[0]);
+                }}
+              >
+                Mes Actual
+              </button>
+              <button 
+                className="btn" 
+                onClick={() => {
+                  const hoy = new Date();
+                  const primerDia = new Date(hoy.getFullYear(), 0, 1);
+                  setFiltroFechaInicio(primerDia.toISOString().split('T')[0]);
+                  setFiltroFechaFin(hoy.toISOString().split('T')[0]);
+                }}
+              >
+                Año Actual
+              </button>
+            </div>
+          </div>
+        )}
+        
+        <button onClick={fetchDashboardData} className="refresh-btn">
+          🔄 Actualizar Datos
+        </button>
+        
+        {mostrarFiltroFechas && (
+          <p style={{ fontSize: '0.85rem', color: '#666', marginTop: '10px', textAlign: 'center' }}>
+            📅 Período seleccionado: <strong>{new Date(filtroFechaInicio).toLocaleDateString('es-CO')}</strong> a <strong>{new Date(filtroFechaFin).toLocaleDateString('es-CO')}</strong>
+          </p>
+        )}
+      </div>
     </div>
   );
 };
