@@ -666,8 +666,42 @@ const FacturaDetalle = () => {
       
       if (error) throw error;
 
-      // Actualizar estado local
-      setAbonos([data[0], ...abonos]);
+      // Actualizar estado local primero
+      const nuevosAbonos = [data[0], ...abonos];
+      setAbonos(nuevosAbonos);
+      
+      // 🔔 Enviar notificación por WhatsApp con el cálculo correcto
+      const totalAbonado = nuevosAbonos.reduce((sum, a) => sum + (a.monto || 0), 0);
+      const saldoPendiente = factura.total - totalAbonado;
+      
+      const numerosWhatsApp = ['573002945085', '573004583117'];
+      
+      let mensaje = `*🔔 NUEVO ABONO REGISTRADO*%0A%0A`;
+      mensaje += `*📋 Factura:* #${factura.id}%0A`;
+      mensaje += `*👤 Cliente:* ${factura.cliente}%0A`;
+      mensaje += `*💵 Total Factura:* ${formatearMoneda(factura.total)}%0A%0A`;
+      mensaje += `*➕ Abono Agregado:* ${formatearMoneda(data[0].monto)}%0A`;
+      mensaje += `*📅 Fecha Abono:* ${new Date(data[0].fecha).toLocaleDateString('es-CO')}%0A`;
+      mensaje += `*💳 Método:* ${data[0].metodo}%0A`;
+      if (data[0].nota) {
+        mensaje += `*📝 Nota:* ${data[0].nota}%0A`;
+      }
+      mensaje += `%0A*💰 Total Abonado:* ${formatearMoneda(totalAbonado)}%0A`;
+      mensaje += `*⚠️ Saldo Pendiente:* ${formatearMoneda(saldoPendiente)}%0A%0A`;
+      
+      if (saldoPendiente <= 0) {
+        mensaje += `✅ *¡FACTURA PAGADA COMPLETAMENTE!*%0A%0A`;
+      }
+      
+      mensaje += `_Notificación automática del sistema_`;
+      
+      // Enviar a los números de WhatsApp
+      numerosWhatsApp.forEach((numero, index) => {
+        const url = `https://api.whatsapp.com/send?phone=${numero}&text=${mensaje}`;
+        setTimeout(() => {
+          window.open(url, '_blank');
+        }, index * 500);
+      });
       
       // Resetear formulario
       setNuevoAbono({

@@ -12,6 +12,7 @@ const CatalogoClientes = () => {
   const [clienteInfo, setClienteInfo] = useState({
     nombre: '',
     telefono: '',
+    direccion: '',
     notas: ''
   });
   const [mostrarCarrito, setMostrarCarrito] = useState(false);
@@ -259,6 +260,9 @@ const CatalogoClientes = () => {
     setProductosSeleccionados([]);
     setClienteInfo(prev => ({
       ...prev,
+      nombre: '',
+      telefono: '',
+      direccion: '',
       notas: ''
     }));
     setPedidoEnviado(false);
@@ -289,6 +293,7 @@ const CatalogoClientes = () => {
           {
             cliente_nombre: clienteInfo.nombre.trim(),
             cliente_telefono: clienteInfo.telefono.replace(/\D/g, ''),
+            direccion_entrega: clienteInfo.direccion.trim() || '',
             cliente_notas: clienteInfo.notas.trim() || 'Ninguna',
             productos: productosSeleccionados,
             total: calcularTotal(),
@@ -307,8 +312,11 @@ const CatalogoClientes = () => {
       
       let mensaje = `*¡NUEVO PEDIDO!*%0A%0A`;
       mensaje += `*Cliente:* ${clienteInfo.nombre}%0A`;
-      mensaje += `*Teléfono:* ${clienteInfo.telefono}%0A%0A`;
-      mensaje += `*📦 PRODUCTOS SELECCIONADOS:*%0A%0A`;
+      mensaje += `*Teléfono:* ${clienteInfo.telefono}%0A`;
+      if (clienteInfo.direccion.trim()) {
+        mensaje += `*Dirección:* ${clienteInfo.direccion}%0A`;
+      }
+      mensaje += `%0A*📦 PRODUCTOS SELECCIONADOS:*%0A%0A`;
       
       productosSeleccionados.forEach(p => {
         mensaje += `✔️ ${p.nombre}%0A`;
@@ -782,6 +790,18 @@ const CatalogoClientes = () => {
                         {!clienteInfo.telefono.trim() && <span className="error-text">Campo obligatorio</span>}
                         <small>El teléfono debe tener al menos 10 dígitos</small>
                       </div>
+                      <div className="form-group">
+                        <label htmlFor="direccion-cliente">Dirección (Opcional)</label>
+                        <input
+                          id="direccion-cliente"
+                          type="text"
+                          name="direccion"
+                          value={clienteInfo.direccion}
+                          onChange={handleInputChange}
+                          placeholder="Ej: Calle 10 #25-30, Apto 5B"
+                        />
+                        <small>Para poder facturar en la dirección correcta</small>
+                      </div>
                     </div>
                   </div>
                   
@@ -791,7 +811,7 @@ const CatalogoClientes = () => {
                       name="notas"
                       value={clienteInfo.notas}
                       onChange={handleInputChange}
-                      placeholder="Ej: Necesito el pedido para el viernes, local, direccion, etc."
+                      placeholder="Ej: Necesito el pedido para el viernes, local, etc."
                       rows="3"
                     />
                   </div>

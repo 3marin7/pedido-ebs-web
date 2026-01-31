@@ -573,3 +573,31 @@
   background: #bdc3c7;
   cursor: not-allowed;
 }
+/* Estilos para estados de pago */
+.estado {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.estado-pagada {
+  background-color: #d4edda;
+  color: #27ae60;
+  border: 1px solid #c3e6cb;
+}
+
+.estado-parcial {
+  background-color: #fff8e1;
+  color: #f39c12;
+  border: 1px solid #ffe08a;
+}
+
+.estado-pendiente {
+  background-color: #ffebee;
+  color: #e74c3c;
+  border: 1px solid #f5c6cb;
+}

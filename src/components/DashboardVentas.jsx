@@ -32,6 +32,7 @@ const DashboardVentas = () => {
   });
   const [fechaFin, setFechaFin] = useState(() => new Date().toISOString().split('T')[0]);
   const [vendedorSeleccionado, setVendedorSeleccionado] = useState('todos');
+  const [estadoPagoSeleccionado, setEstadoPagoSeleccionado] = useState('todas');
   const [vendedoresLista, setVendedoresLista] = useState([]);
   const [reporteVentas, setReporteVentas] = useState([]);
   const [resumenReporte, setResumenReporte] = useState({ total: 0, facturas: 0, promedio: 0 });
@@ -151,16 +152,46 @@ const DashboardVentas = () => {
       }
       const { data, error } = await query;
       if (error) throw error;
-      const ventas = (data || []).map(f => ({
-        id: f.id,
-        fecha: f.fecha,
-        cliente: f.cliente || '—',
-        vendedor: f.vendedor || '—',
-        total: parseFloat(f.total) || 0,
-      }));
-      setReporteVentas(ventas);
-      const total = ventas.reduce((s, v) => s + v.total, 0);
-      const facturas = ventas.length;
+      
+      // Obtener todos los abonos
+      const { data: abonosData, error: abonosError } = await supabase
+        .from('abonos')
+        .select('factura_id, monto');
+      
+      if (abonosError) throw abonosError;
+      
+      // Calcular saldo y estado para cada factura
+      const ventas = (data || []).map(f => {
+        const abonosFactura = (abonosData || []).filter(a => a.factura_id === f.id);
+        const totalAbonado = abonosFactura.reduce((sum, abono) => sum + (parseFloat(abono.monto) || 0), 0);
+        const total = parseFloat(f.total) || 0;
+        const saldo = total - totalAbonado;
+        const estado = saldo <= 0 ? 'Pagada' : (totalAbonado > 0 ? 'Parcial' : 'Pendiente');
+        
+        return {
+          id: f.id,
+          fecha: f.fecha,
+          cliente: f.cliente || '—',
+          vendedor: f.vendedor || '—',
+          total: total,
+          totalAbonado: totalAbonado,
+          saldo: saldo,
+          estado: estado
+        };
+      });
+      
+      // Filtrar por estado de pago
+      const ventasFiltradas = estadoPagoSeleccionado === 'todas' 
+        ? ventas 
+        : ventas.filter(v => {
+            if (estadoPagoSeleccionado === 'pagadas') return v.estado === 'Pagada';
+            if (estadoPagoSeleccionado === 'pendientes') return v.estado === 'Pendiente' || v.estado === 'Parcial';
+            return true;
+          });
+      
+      setReporteVentas(ventasFiltradas);
+      const total = ventasFiltradas.reduce((s, v) => s + v.total, 0);
+      const facturas = ventasFiltradas.length;
       const promedio = facturas ? total / facturas : 0;
       setResumenReporte({ total, facturas, promedio });
     } catch (e) {
@@ -193,7 +224,7 @@ const DashboardVentas = () => {
     if (activeTab === 'reportes') {
       generarReporteVentas();
     }
-  }, [fechaInicio, fechaFin, vendedorSeleccionado]);
+  }, [fechaInicio, fechaFin, vendedorSeleccionado, estadoPagoSeleccionado]);
 
   useEffect(() => {
     if (activeTab === 'productos') {
@@ -279,8 +310,8 @@ const DashboardVentas = () => {
   };
 
   const exportarCSV = () => {
-    const encabezados = ['ID', 'Fecha', 'Cliente', 'Vendedor', 'Total'];
-    const filas = reporteVentas.map(r => [r.id, r.fecha, r.cliente, r.vendedor, r.total]);
+    const encabezados = ['ID', 'Fecha', 'Cliente', 'Vendedor', 'Total', 'Abonado', 'Saldo', 'Estado'];
+    const filas = reporteVentas.map(r => [r.id, r.fecha, r.cliente, r.vendedor, r.total, r.totalAbonado || 0, r.saldo || 0, r.estado || 'Pendiente']);
     const csv = [encabezados, ...filas]
       .map(row => row.map(val => `"${String(val).replace(/"/g, '"')}"`).join(','))
       .join('\n');
@@ -288,7 +319,8 @@ const DashboardVentas = () => {
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `reporte-ventas-${fechaInicio}_a_${fechaFin}${vendedorSeleccionado!=='todos' ? `-${vendedorSeleccionado}` : ''}.csv`;
+    const estadoFiltro = estadoPagoSeleccionado !== 'todas' ? `-${estadoPagoSeleccionado}` : '';
+    link.download = `reporte-ventas-${fechaInicio}_a_${fechaFin}${vendedorSeleccionado!=='todos' ? `-${vendedorSeleccionado}` : ''}${estadoFiltro}.csv`;
     link.click();
     URL.revokeObjectURL(url);
   };
@@ -299,11 +331,15 @@ const DashboardVentas = () => {
     const fechaDesde = new Date(fechaInicio).toLocaleDateString('es-CO');
     const fechaHasta = new Date(fechaFin).toLocaleDateString('es-CO');
     const vendedorFiltro = vendedorSeleccionado === 'todos' ? 'Todos los vendedores' : vendedorSeleccionado;
+    const estadoFiltro = estadoPagoSeleccionado === 'todas' ? 'Todas' : (estadoPagoSeleccionado === 'pagadas' ? 'Pagadas' : 'Pendientes');
     const totalFilas = reporteVentas.length;
     const totalMonto = reporteVentas.reduce((s, r) => s + r.total, 0);
+    const totalAbonado = reporteVentas.reduce((s, r) => s + (r.totalAbonado || 0), 0);
+    const totalSaldo = reporteVentas.reduce((s, r) => s + (r.saldo || 0), 0);
     const promedio = totalFilas > 0 ? totalMonto / totalFilas : 0;
 
     const filasHTML = reporteVentas.map(r => {
+      const estadoClass = r.estado === 'Pagada' ? 'pagada' : (r.estado === 'Parcial' ? 'parcial' : 'pendiente');
       return `
         <tr>
           <td class="col-id">#${String(r.id).padStart(6, '0')}</td>
@@ -311,6 +347,9 @@ const DashboardVentas = () => {
           <td>${r.cliente}</td>
           <td>${r.vendedor}</td>
           <td class="col-total">${formatCurrency(r.total)}</td>
+          <td class="col-total">${formatCurrency(r.totalAbonado || 0)}</td>
+          <td class="col-total" style="color: ${r.saldo > 0 ? '#e74c3c' : '#27ae60'}">${formatCurrency(r.saldo || 0)}</td>
+          <td class="col-estado"><span class="badge estado-${estadoClass}">${r.estado || 'Pendiente'}</span></td>
         </tr>
       `;
     }).join('');
@@ -330,7 +369,7 @@ const DashboardVentas = () => {
             background: #fff;
           }
           .reporte-container {
-            max-width: 900px;
+            max-width: 1000px;
             margin: 0 auto;
           }
           .header {
@@ -350,7 +389,7 @@ const DashboardVentas = () => {
           }
           .info-general {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(5, 1fr);
             gap: 15px;
             margin-bottom: 20px;
             background: #f9f9f9;
@@ -372,7 +411,7 @@ const DashboardVentas = () => {
           }
           .resumen {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(4, 1fr);
             gap: 15px;
             margin-bottom: 20px;
           }
@@ -381,6 +420,12 @@ const DashboardVentas = () => {
             border-left: 4px solid #2196F3;
             padding: 12px;
             border-radius: 3px;
+          }
+          .resumen-card.saldo {
+            border-left-color: #e74c3c;
+          }
+          .resumen-card.abonado {
+            border-left-color: #27ae60;
           }
           .resumen-card label {
             font-size: 11px;
@@ -423,12 +468,36 @@ const DashboardVentas = () => {
           .col-id {
             text-align: center;
             font-weight: bold;
-            width: 60px;
+            width: 50px;
           }
           .col-total {
             text-align: right;
             font-weight: bold;
-            width: 100px;
+            width: 90px;
+          }
+          .col-estado {
+            text-align: center;
+            width: 80px;
+          }
+          .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 9px;
+            font-weight: bold;
+            text-transform: uppercase;
+          }
+          .estado-pagada {
+            background: #d4edda;
+            color: #27ae60;
+          }
+          .estado-parcial {
+            background: #fff8e1;
+            color: #f39c12;
+          }
+          .estado-pendiente {
+            background: #ffebee;
+            color: #e74c3c;
           }
           .footer {
             margin-top: 30px;
@@ -462,6 +531,10 @@ const DashboardVentas = () => {
               <span>${vendedorFiltro}</span>
             </div>
             <div class="info-item">
+              <label>Estado:</label>
+              <span>${estadoFiltro}</span>
+            </div>
+            <div class="info-item">
               <label>Total Facturas:</label>
               <span>${totalFilas}</span>
             </div>
@@ -476,9 +549,13 @@ const DashboardVentas = () => {
               <label>Total Facturado</label>
               <div class="valor">${formatCurrency(totalMonto)}</div>
             </div>
-            <div class="resumen-card">
-              <label>Número de Facturas</label>
-              <div class="valor">${totalFilas}</div>
+            <div class="resumen-card abonado">
+              <label>Total Abonado</label>
+              <div class="valor">${formatCurrency(totalAbonado)}</div>
+            </div>
+            <div class="resumen-card saldo">
+              <label>Saldo Pendiente</label>
+              <div class="valor">${formatCurrency(totalSaldo)}</div>
             </div>
             <div class="resumen-card">
               <label>Ticket Promedio</label>
@@ -494,6 +571,9 @@ const DashboardVentas = () => {
                 <th>Cliente</th>
                 <th>Vendedor</th>
                 <th class="col-total">Total</th>
+                <th class="col-total">Abonado</th>
+                <th class="col-total">Saldo</th>
+                <th class="col-estado">Estado</th>
               </tr>
             </thead>
             <tbody>
@@ -1443,6 +1523,14 @@ const DashboardVentas = () => {
                   ))}
                 </select>
               </div>
+              <div className="filtro">
+                <label>Estado de Pago</label>
+                <select value={estadoPagoSeleccionado} onChange={e => setEstadoPagoSeleccionado(e.target.value)}>
+                  <option value="todas">Todas</option>
+                  <option value="pagadas">Pagadas</option>
+                  <option value="pendientes">Pendientes</option>
+                </select>
+              </div>
               <div className="acciones">
                 <button className="btn" onClick={generarReporteVentas}>Generar Reporte</button>
                 <button className="btn" onClick={exportarCSV} disabled={reporteVentas.length===0}>Exportar CSV</button>
@@ -1479,6 +1567,9 @@ const DashboardVentas = () => {
                       <th>Cliente</th>
                       <th>Vendedor</th>
                       <th>Total</th>
+                      <th>Abonado</th>
+                      <th>Saldo</th>
+                      <th>Estado</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -1489,6 +1580,15 @@ const DashboardVentas = () => {
                         <td>{r.cliente}</td>
                         <td>{r.vendedor}</td>
                         <td className="col-total">{formatCurrency(r.total)}</td>
+                        <td className="col-total">{formatCurrency(r.totalAbonado || 0)}</td>
+                        <td className="col-total" style={{ color: r.saldo > 0 ? '#e74c3c' : '#27ae60' }}>
+                          {formatCurrency(r.saldo || 0)}
+                        </td>
+                        <td>
+                          <span className={`estado estado-${r.estado?.toLowerCase() || 'pendiente'}`}>
+                            {r.estado || 'Pendiente'}
+                          </span>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
