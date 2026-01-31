@@ -676,21 +676,21 @@ const FacturaDetalle = () => {
       
       const numerosWhatsApp = ['573002945085', '573004583117'];
 
-      let mensaje = `🔔 NUEVO ABONO REGISTRADO\n\n`;
-      mensaje += `📋 Factura: #${factura.id}\n`;
-      mensaje += `👤 Cliente: ${factura.cliente}\n`;
-      mensaje += `💵 Total Factura: ${formatearMoneda(factura.total)}\n\n`;
-      mensaje += `➕ Abono Agregado: ${formatearMoneda(data[0].monto)}\n`;
-      mensaje += `📅 Fecha Abono: ${new Date(data[0].fecha).toLocaleDateString('es-CO')}\n`;
-      mensaje += `💳 Método: ${data[0].metodo}\n`;
+      let mensaje = `NUEVO ABONO REGISTRADO\n\n`;
+      mensaje += `Factura: #${factura.id}\n`;
+      mensaje += `Cliente: ${factura.cliente}\n`;
+      mensaje += `Total Factura: ${formatearMoneda(factura.total)}\n\n`;
+      mensaje += `Abono Agregado: ${formatearMoneda(data[0].monto)}\n`;
+      mensaje += `Fecha Abono: ${new Date(data[0].fecha).toLocaleDateString('es-CO')}\n`;
+      mensaje += `Método: ${data[0].metodo}\n`;
       if (data[0].nota) {
-        mensaje += `📝 Nota: ${data[0].nota}\n`;
+        mensaje += `Nota: ${data[0].nota}\n`;
       }
-      mensaje += `\n💰 Total Abonado: ${formatearMoneda(totalAbonado)}\n`;
-      mensaje += `⚠️ Saldo Pendiente: ${formatearMoneda(saldoPendiente)}\n\n`;
+      mensaje += `\nTotal Abonado: ${formatearMoneda(totalAbonado)}\n`;
+      mensaje += `Saldo Pendiente: ${formatearMoneda(saldoPendiente)}\n\n`;
 
       if (saldoPendiente <= 0) {
-        mensaje += `✅ ¡FACTURA PAGADA COMPLETAMENTE!\n\n`;
+        mensaje += `¡FACTURA PAGADA COMPLETAMENTE!\n\n`;
       }
 
       mensaje += `Notificación automática del sistema`;
