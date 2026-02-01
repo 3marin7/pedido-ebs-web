@@ -69,11 +69,12 @@ button {
 
 /* Contenedor principal - Mejorado */
 .catalogo-container {
-  max-width: 1400px;
-  margin: 2rem auto;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
   background-color: var(--white);
-  border-radius: var(--border-radius-lg);
-  box-shadow: var(--shadow-md);
+  border-radius: 0;
+  box-shadow: none;
   overflow: hidden;
   min-height: calc(100vh - 4rem);
   display: flex;
@@ -85,7 +86,7 @@ button {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1.5rem 2rem;
+  padding: 1.5rem 1rem;
   border-bottom: 1px solid var(--medium-gray);
   background-color: var(--white);
   flex-wrap: wrap;
@@ -212,7 +213,7 @@ button {
 
 /* Contenido principal - Mejorado y compatible con Safari */
 .catalogo-content {
-  padding: 2rem;
+  padding: 0;
   flex: 1;
   min-width: 0;
   width: 100%;
@@ -224,7 +225,7 @@ button {
 .resumen-productos {
   display: flex;
   gap: 1.5rem;
-  margin-bottom: 1.5rem;
+  margin: 0 1rem 1.5rem 1rem;
   padding: 1rem;
   background: var(--light-gray);
   border-radius: var(--border-radius-md);
@@ -248,7 +249,7 @@ button {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  margin-bottom: 2rem;
+  margin: 0 1rem 2rem 1rem;
 }
 
 .search-box {
@@ -343,8 +344,9 @@ button {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 1.5rem;
-  margin-top: 1rem;
-  width: 100%;
+  margin: 1rem 1rem 0 1rem;
+  padding: 0;
+  width: calc(100% - 2rem);
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
 }

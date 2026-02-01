@@ -1,8 +1,8 @@
 /* HistorialInventario.css */
 .historial-container {
-  padding: 1.5rem;
-  max-width: 1400px;
-  margin: 0 auto;
+  padding: 1.5rem 1rem;
+  max-width: 100%;
+  margin: 0;
 }
 
 /* Header Styles */

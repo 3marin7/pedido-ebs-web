@@ -57,17 +57,31 @@ const Navigation = () => {
     // Enlaces para usuarios logueados (según rol)
     if (user.role === 'admin') {
       return [
-        // VENTAS E INICIO - Grupo
+        // INICIO & VENTAS - Grupo
         { 
           path: '#ventas', 
           label: 'Inicio & Ventas', 
           icon: '🏠', 
           tipo: 'grupo',
           submenu: [
-            { path: '/dashboard-ventas', label: 'Dashboard Ventas', icon: '📊' },
-            { path: '/facturacion', label: 'Facturación', icon: '🧾' },
             { path: '/nueva-factura', label: 'Nueva Factura', icon: '➕' },
-            { path: '/facturas', label: 'Facturas Guardadas', icon: '📄' }
+            { path: '/facturas', label: 'Facturas Guardadas', icon: '📄' },
+            { path: '/clientes', label: 'Gestión Clientes', icon: '👤' },
+            { path: '/mapa-locales', label: 'Mapa de Locales', icon: '🗺️' },
+            { path: '/rutas-cobro', label: 'Rutas de Cobro', icon: '🚗' }
+          ]
+        },
+        // INFORMES - Grupo
+        { 
+          path: '#informes', 
+          label: 'Informes', 
+          icon: '📑', 
+          tipo: 'grupo',
+          submenu: [
+            { path: '/auditoria-productos', label: 'Auditoría de Productos', icon: '📋' },
+            { path: '/movimientos', label: 'Historial Movimientos', icon: '📊' },
+            { path: '/dashboard-ventas', label: 'Dashboard Ventas', icon: '📈' },
+            { path: '/rutas-cobro', label: 'Rutas de Cobro', icon: '🚗' }
           ]
         },
         // CONTABILIDAD - Grupo
@@ -77,21 +91,8 @@ const Navigation = () => {
           icon: '💰', 
           tipo: 'grupo',
           submenu: [
-            { path: '/dashboard-contabilidad', label: 'Dashboard Contabilidad', icon: '📊' },
-            { path: '/reportes-cobros', label: 'Reportes Cobros', icon: '📈' },
             { path: '/gastos', label: 'Gestión de Gastos', icon: '💸' },
-            { path: '/rutas-cobro', label: 'Rutas de Cobro', icon: '🚗' }
-          ]
-        },
-        // CLIENTES - Grupo
-        { 
-          path: '#clientes', 
-          label: 'Clientes', 
-          icon: '👥', 
-          tipo: 'grupo',
-          submenu: [
-            { path: '/clientes', label: 'Gestión Clientes', icon: '👤' },
-            { path: '/mapa-locales', label: 'Mapa de Locales', icon: '🗺️' }
+            { path: '/dashboard-contabilidad', label: 'Dashboard Contabilidad', icon: '📊' }
           ]
         },
         // BODEGA - Grupo
@@ -103,8 +104,6 @@ const Navigation = () => {
           submenu: [
             { path: '/catalogo', label: 'Catálogo Productos', icon: '📚' },
             { path: '/gestion-inventario', label: 'Gestión Inventario', icon: '📋' },
-            { path: '/movimientos', label: 'Historial Movimientos', icon: '📊' },
-            { path: '/auditoria-productos', label: 'Auditoría de Productos', icon: '📋' },
             { path: '/gestion-pedidos', label: 'Gestión Pedidos', icon: '🛒' }
           ]
         }

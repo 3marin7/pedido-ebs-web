@@ -1,9 +1,9 @@
 /* Historial de Movimientos de Inventario */
 
 .historial-container {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 20px;
+  max-width: 100%;
+  margin: 0;
+  padding: 0 1rem;
   background: #f5f5f5;
   min-height: 100vh;
 }

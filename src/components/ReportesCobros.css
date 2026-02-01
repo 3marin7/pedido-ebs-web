@@ -1,8 +1,8 @@
 /* Estilos generales */
 .reportes-container {
-  padding: 20px;
-  max-width: 1200px;
-  margin: 0 auto;
+  padding: 0 1rem;
+  max-width: 100%;
+  margin: 0;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 

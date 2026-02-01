@@ -1,8 +1,8 @@
 /* MovimientosInventario.css */
 .movimientos-container {
-  padding: 1.5rem;
-  max-width: 900px;
-  margin: 0 auto;
+  padding: 0 1rem;
+  max-width: 100%;
+  margin: 0;
 }
 
 /* Header Styles */

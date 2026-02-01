@@ -2,12 +2,12 @@
 
 /* Estilos generales */
 .factura-detalle-container {
-  max-width: 900px;
-  margin: 1rem auto;
+  max-width: 100%;
+  margin: 0;
   padding: 1rem;
   background: white;
-  border-radius: 10px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  border-radius: 0;
+  box-shadow: none;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   color: #333;
 }

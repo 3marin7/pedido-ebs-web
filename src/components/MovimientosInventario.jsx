@@ -1,8 +1,11 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
+import { useAuth } from '../App';
 import './MovimientosInventario.css';
 
 export default function MovimientosInventario() {
+  const { user } = useAuth();
+  
   const [movimiento, setMovimiento] = useState({
     producto_id: '',
     tipo_movimiento: 'entrada',
@@ -88,12 +91,30 @@ export default function MovimientosInventario() {
     }
 
     try {
+      // Obtener el producto para capturar stock anterior
+      const producto = productos.find(p => p.id == movimiento.producto_id);
+      const stockAnterior = producto?.stock || 0;
+      const cantidadMovida = parseInt(movimiento.cantidad);
+      
+      // Calcular nuevo stock según tipo de movimiento
+      let stockNuevo = stockAnterior;
+      if (movimiento.tipo_movimiento === 'entrada') {
+        stockNuevo = stockAnterior + cantidadMovida;
+      } else if (movimiento.tipo_movimiento === 'salida') {
+        stockNuevo = stockAnterior - cantidadMovida;
+      }
+
       const { data, error } = await supabase
         .from('movimientos_inventario')
         .insert([{
           producto_id: movimiento.producto_id,
           tipo_movimiento: movimiento.tipo_movimiento,
-          cantidad: parseInt(movimiento.cantidad),
+          cantidad: cantidadMovida,
+          stock_anterior: stockAnterior,
+          stock_nuevo: stockNuevo,
+          descripcion: `${movimiento.motivo}${movimiento.observaciones ? ' - ' + movimiento.observaciones : ''}`,
+          usuario: user?.email || 'Sistema',
+          rol_usuario: user?.role || 'N/A',
           precio_unitario: movimiento.precio_unitario ? parseFloat(movimiento.precio_unitario) : null,
           motivo: movimiento.motivo,
           observaciones: movimiento.observaciones
