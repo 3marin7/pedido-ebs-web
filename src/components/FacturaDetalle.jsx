@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from './supabaseClient';
+import { useAuth } from '../App';
 import './FacturaDetalle.css';
 
 const FacturaDetalle = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [factura, setFactura] = useState(null);
   const [cargando, setCargando] = useState(true);
   const [copiado, setCopiado] = useState(false);
@@ -997,7 +999,7 @@ const FacturaDetalle = () => {
               </strong>
             </div>
           </div>
-          {!mostrarFormAbono && (
+          {!mostrarFormAbono && user?.role === 'admin' && (
             <button 
               className="button primary-button"
               onClick={() => setMostrarFormAbono(true)}
@@ -1008,7 +1010,7 @@ const FacturaDetalle = () => {
           )}
         </div>
 
-        {mostrarFormAbono && (
+        {mostrarFormAbono && user?.role === 'admin' && (
           <div className="abono-form">
             <h4>{editandoAbono ? 'Editar Abono' : 'Nuevo Abono'}</h4>
             <div className="form-group">
@@ -1092,22 +1094,26 @@ const FacturaDetalle = () => {
                     <td>{abono.metodo || 'Efectivo'}</td>
                     <td>{abono.nota || '-'}</td>
                     <td className="acciones-cell">
-                      <button 
-                        className="button icon-button small"
-                        onClick={() => iniciarEdicionAbono(abono)}
-                        title="Editar"
-                        disabled={cargando}
-                      >
-                        ✏️
-                      </button>
-                      <button 
-                        className="button icon-button small danger"
-                        onClick={() => eliminarAbono(abono.id)}
-                        title="Eliminar"
-                        disabled={cargando}
-                      >
-                        🗑️
-                      </button>
+                      {user?.role === 'admin' && (
+                        <>
+                          <button 
+                            className="button icon-button small"
+                            onClick={() => iniciarEdicionAbono(abono)}
+                            title="Editar"
+                            disabled={cargando}
+                          >
+                            ✏️
+                          </button>
+                          <button 
+                            className="button icon-button small danger"
+                            onClick={() => eliminarAbono(abono.id)}
+                            title="Eliminar"
+                            disabled={cargando}
+                          >
+                            🗑️
+                          </button>
+                        </>
+                      )}
                     </td>
                   </tr>
                 ))}
