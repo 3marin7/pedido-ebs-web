@@ -403,7 +403,7 @@ const ReporteInventario = ({ productos }) => {
                   <td>{formatPrecio(producto.precio)}</td>
                   <td>{producto.stock || 0}</td>
                   <td>{producto.rotation || 1}</td>
-                  <td>{producto.suggestedOrder === null ? '—' : producto.suggestedOrder}</td>
+                  <td>{producto.suggestedOrder == null ? 0 : producto.suggestedOrder}</td>
                   <td>{formatPrecio(valorTotalProducto)}</td>
                   <td>
                     <span className={`estado-badge ${producto.activo ? 'activo' : 'inactivo'}`}>

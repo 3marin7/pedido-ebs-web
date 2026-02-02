@@ -55,7 +55,8 @@ export async function getProductSalesAndRecommendations({ periodDays = 90, leadT
 export function mergeRecommendationsIntoProducts(productos, recs) {
   const map = new Map(recs.map(r => [r.producto_id, r]))
   return productos.map(p => {
-    const r = map.get(p.id) || { totalSold: 0, avgDaily: 0, rotation: 1, reorderPoint: 0, suggestedOrder: null }
-    return { ...p, rotation: r.rotation, totalSold: r.totalSold, avgDaily: r.avgDaily, reorderPoint: r.reorderPoint, suggestedOrder: r.suggestedOrder }
+    const r = map.get(p.id) || { totalSold: 0, avgDaily: 0, rotation: 1, reorderPoint: 0, suggestedOrder: 0 }
+    const suggestedOrder = r.suggestedOrder === null || r.suggestedOrder === undefined ? 0 : r.suggestedOrder
+    return { ...p, rotation: r.rotation, totalSold: r.totalSold, avgDaily: r.avgDaily, reorderPoint: r.reorderPoint, suggestedOrder }
   })
 }
