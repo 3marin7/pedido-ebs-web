@@ -482,3 +482,128 @@
     font-size: 1.5rem;
   }
 }
+
+@media (max-width: 480px) {
+  .clientes-content {
+    width: 98%;
+    padding: 12px;
+  }
+
+  .clientes-header h1 {
+    font-size: 1.25rem;
+  }
+
+  .cliente-item {
+    padding: 10px;
+    gap: 8px;
+  }
+
+  .cliente-info {
+    font-size: 0.85rem;
+  }
+
+  .cliente-nombre {
+    font-size: 0.95rem;
+  }
+
+  .cliente-telefono,
+  .cliente-email {
+    font-size: 0.75rem;
+  }
+
+  .cliente-acciones {
+    gap: 6px;
+  }
+
+  .btn-cliente {
+    padding: 6px 10px;
+    font-size: 0.75rem;
+  }
+
+  .search-input,
+  .form-row input,
+  .form-row select {
+    padding: 8px;
+    font-size: 0.85rem;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .stat-card {
+    padding: 10px;
+  }
+
+  .stat-valor {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .clientes-content {
+    width: 100%;
+    padding: 8px;
+  }
+
+  .clientes-header h1 {
+    font-size: 1rem;
+  }
+
+  .clientes-header p {
+    font-size: 0.75rem;
+  }
+
+  .cliente-item {
+    padding: 8px;
+    gap: 6px;
+  }
+
+  .cliente-nombre {
+    font-size: 0.85rem;
+  }
+
+  .cliente-info {
+    font-size: 0.75rem;
+  }
+
+  .cliente-telefono,
+  .cliente-email,
+  .cliente-direccion {
+    font-size: 0.65rem;
+  }
+
+  .cliente-acciones {
+    gap: 4px;
+    flex-wrap: wrap;
+  }
+
+  .btn-cliente {
+    padding: 5px 8px;
+    font-size: 0.65rem;
+  }
+
+  .search-input,
+  .form-row input,
+  .form-row select {
+    padding: 6px;
+    font-size: 0.75rem;
+  }
+
+  .stat-card {
+    padding: 8px;
+  }
+
+  .stat-label {
+    font-size: 0.65rem;
+  }
+
+  .stat-valor {
+    font-size: 1.25rem;
+  }
+
+  .star {
+    font-size: 1rem;
+  }
+}
