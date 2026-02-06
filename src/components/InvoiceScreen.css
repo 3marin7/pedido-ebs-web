@@ -37,6 +37,21 @@ h1 {
   width: 100%;
 }
 
+@media (max-width: 480px) {
+  h1 {
+    font-size: 16px;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+  }
+}
+
+@media (max-width: 360px) {
+  h1 {
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+}
+
 /* Formulario - CORREGIDO PARA USAR 100% */
 .form-row {
   display: flex;
@@ -44,6 +59,20 @@ h1 {
   margin-bottom: 12px;
   flex-wrap: wrap;
   width: 100%;
+}
+
+@media (max-width: 480px) {
+  .form-row {
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+}
+
+@media (max-width: 360px) {
+  .form-row {
+    gap: 6px;
+    margin-bottom: 8px;
+  }
 }
 
 .form-group {
@@ -89,6 +118,22 @@ input:focus, select:focus {
   border-color: #2b6cb0;
   box-shadow: 0 0 0 3px rgba(43, 108, 176, 0.2);
   outline: none;
+}
+
+@media (max-width: 480px) {
+  input, select {
+    padding: 10px;
+    font-size: 13px;
+    height: 40px;
+  }
+}
+
+@media (max-width: 360px) {
+  input, select {
+    padding: 8px;
+    font-size: 12px;
+    height: 36px;
+  }
 }
 
 select {
@@ -145,6 +190,45 @@ select {
 .product-input {
   flex: 1;
   min-width: 120px;
+}
+
+@media (max-width: 768px) {
+  .product-form-row {
+    gap: 8px;
+  }
+  
+  .product-input {
+    min-width: 100px;
+  }
+}
+
+@media (max-width: 480px) {
+  .product-form-row {
+    gap: 6px;
+    flex-direction: column;
+  }
+  
+  .product-input {
+    width: 100%;
+    min-width: auto;
+  }
+  
+  .add-product-button,
+  .catalog-button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 360px) {
+  .product-form-row {
+    gap: 4px;
+  }
+  
+  .add-product-button,
+  .catalog-button {
+    padding: 8px 10px;
+    font-size: 12px;
+  }
 }
 
 /* Lista de productos expandida - CORREGIDO */
@@ -208,11 +292,36 @@ select {
   flex-wrap: wrap;
   gap: 10px;
   width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .producto-item-expanded:hover {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
   transform: translateY(-1px);
+}
+
+@media (max-width: 768px) {
+  .producto-item-expanded {
+    padding: 10px;
+    gap: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .producto-item-expanded {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 8px;
+    gap: 6px;
+  }
+}
+
+@media (max-width: 360px) {
+  .producto-item-expanded {
+    padding: 6px;
+    gap: 4px;
+  }
 }
 
 .producto-main-info {
@@ -267,6 +376,24 @@ select {
   flex-wrap: wrap;
 }
 
+@media (max-width: 768px) {
+  .botones-rapidos-linea {
+    gap: 3px;
+  }
+}
+
+@media (max-width: 480px) {
+  .botones-rapidos-linea {
+    gap: 2px;
+  }
+}
+
+@media (max-width: 360px) {
+  .botones-rapidos-linea {
+    gap: 1px;
+  }
+}
+
 .acciones-principales {
   display: flex;
   gap: 4px;
@@ -293,6 +420,32 @@ select {
   text-decoration: none;
 }
 
+@media (max-width: 768px) {
+  .button {
+    padding: 8px 12px;
+    font-size: 12px;
+    height: 36px;
+  }
+}
+
+@media (max-width: 480px) {
+  .button {
+    padding: 8px 10px;
+    font-size: 11px;
+    height: 34px;
+    min-width: 80px;
+  }
+}
+
+@media (max-width: 360px) {
+  .button {
+    padding: 6px 8px;
+    font-size: 10px;
+    height: 32px;
+    min-width: 70px;
+  }
+}
+
 .button:hover:not(:disabled) {
   background: #2c5282;
   transform: translateY(-2px);
@@ -312,6 +465,18 @@ select {
 
 .button i {
   font-size: 13px;
+}
+
+@media (max-width: 480px) {
+  .button i {
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 360px) {
+  .button i {
+    font-size: 10px;
+  }
 }
 
 .primary-button {
@@ -378,6 +543,45 @@ select {
 .micro-button i {
   font-size: 11px !important;
   margin-right: 0 !important;
+}
+
+@media (max-width: 768px) {
+  .micro-button {
+    padding: 6px 8px !important;
+    font-size: 11px !important;
+    height: 30px !important;
+    min-width: 36px !important;
+  }
+  
+  .micro-button i {
+    font-size: 10px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .micro-button {
+    padding: 5px 6px !important;
+    font-size: 10px !important;
+    height: 28px !important;
+    min-width: 32px !important;
+  }
+  
+  .micro-button i {
+    font-size: 9px !important;
+  }
+}
+
+@media (max-width: 360px) {
+  .micro-button {
+    padding: 4px 5px !important;
+    font-size: 9px !important;
+    height: 26px !important;
+    min-width: 28px !important;
+  }
+  
+  .micro-button i {
+    font-size: 8px !important;
+  }
 }
 
 .cantidad-rapida-btn {
