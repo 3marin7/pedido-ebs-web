@@ -286,10 +286,41 @@ ${pedido.cliente_notas && pedido.cliente_notas !== 'Ninguna' ? `• Notas: ${ped
     return encodeURIComponent(mensaje);
   };
 
+  // Normaliza teléfono para WhatsApp (solo Colombia)
+  const normalizarTelefonoWhatsApp = (telefono) => {
+    if (!telefono) return '';
+
+    const soloDigitos = String(telefono).replace(/\D/g, '');
+    if (!soloDigitos) return '';
+
+    // Si ya viene con código de país (57XXXXXXXXXX)
+    if (soloDigitos.startsWith('57') && soloDigitos.length === 12) return soloDigitos; // Colombia
+
+    // Colombia: 10 dígitos (ej: 3214058023) -> 57 + número
+    if (soloDigitos.length === 10) return `57${soloDigitos}`;
+
+    // Si no coincide, inválido
+    return '';
+  };
+
+  const validarTelefonoColombia = (telefono) => {
+    const soloDigitos = String(telefono || '').replace(/\D/g, '');
+    return soloDigitos.length === 10 || (soloDigitos.startsWith('57') && soloDigitos.length === 12);
+  };
+
   // Función para enviar pedido por WhatsApp
   const enviarPedidoWhatsApp = (pedido) => {
+    if (!validarTelefonoColombia(pedido?.cliente_telefono)) {
+      alert('❌ El teléfono debe tener 10 dígitos (Colombia).');
+      return;
+    }
     const mensaje = generarMensajePedido(pedido);
-    const url = `https://wa.me/${pedido.cliente_telefono}?text=${mensaje}`;
+    const telefonoWhatsApp = normalizarTelefonoWhatsApp(pedido.cliente_telefono);
+    if (!telefonoWhatsApp) {
+      alert('❌ Teléfono inválido o vacío. Verifica el número del cliente.');
+      return;
+    }
+    const url = `https://wa.me/${telefonoWhatsApp}?text=${mensaje}`;
     window.open(url, '_blank');
   };
 
@@ -1076,10 +1107,19 @@ ${pedido.cliente_notas && pedido.cliente_notas !== 'Ninguna' ? `• Notas: ${ped
                     </button>
                     
                     <a 
-                      href={`https://wa.me/${pedido.cliente_telefono}?text=Hola ${encodeURIComponent(pedido.cliente_nombre)}, soy de Distribuciones EBS. Tu pedido #${pedido.id} (${formatPrecio(pedido.total)}) está: ${getTextoEstado(pedido.estado)}`}
+                      href={validarTelefonoColombia(pedido.cliente_telefono)
+                        ? `https://wa.me/${normalizarTelefonoWhatsApp(pedido.cliente_telefono)}?text=Hola ${encodeURIComponent(pedido.cliente_nombre)}, soy de Distribuciones EBS. Tu pedido #${pedido.id} (${formatPrecio(pedido.total)}) está: ${getTextoEstado(pedido.estado)}`
+                        : '#'
+                      }
                       target="_blank"
                       rel="noopener noreferrer"
                       className="btn-whatsapp"
+                      onClick={(e) => {
+                        if (!validarTelefonoColombia(pedido.cliente_telefono)) {
+                          e.preventDefault();
+                          alert('❌ El teléfono debe tener 10 dígitos (Colombia).');
+                        }
+                      }}
                     >
                       📱 Contactar por WhatsApp
                     </a>

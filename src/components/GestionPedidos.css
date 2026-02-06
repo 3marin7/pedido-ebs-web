@@ -1274,10 +1274,30 @@
 }
 
 /* Responsive */
+@media (max-width: 1024px) {
+  .controles-superiores {
+    gap: 10px;
+  }
+
+  .busqueda-section {
+    flex: 1;
+    min-width: 200px;
+  }
+
+  .filtros select {
+    min-width: 150px;
+  }
+}
+
 @media (max-width: 768px) {
+  .gestion-pedidos {
+    padding: 0 0.5rem;
+  }
+
   .controles-superiores {
     flex-direction: column;
     align-items: stretch;
+    gap: 12px;
   }
 
   .busqueda-section {
@@ -1403,16 +1423,35 @@
 }
 
 @media (max-width: 480px) {
+  .gestion-pedidos {
+    padding: 0 0.25rem;
+  }
+
+  .header-gestion h1 {
+    font-size: 1.25rem;
+  }
+
   .estadisticas-rapidas {
     grid-template-columns: 1fr;
   }
   
   .modal-verificacion {
     margin: 10px;
+    padding: 1rem;
   }
   
   .modal-actions {
     flex-direction: column;
+  }
+
+  .btn-preparacion {
+    padding: 0.5rem 1rem;
+    font-size: 0.75rem;
+  }
+
+  .btn-cargar-factura {
+    padding: 0.5rem 1rem;
+    font-size: 0.75rem;
   }
   
   .modal-imagen-header h3 {

@@ -118,6 +118,11 @@ const ClientesScreen = ({
     return re.test(telefono);
   };
 
+  const limpiarTelefono = (telefono) => {
+    if (!telefono) return '';
+    return String(telefono).replace(/\D/g, '');
+  };
+
   // Funciones para gestión de clientes
   const iniciarEdicionCliente = (cliente) => {
     setClienteEditando(cliente);
@@ -159,6 +164,8 @@ const ClientesScreen = ({
       return;
     }
 
+    const telefonoLimpio = limpiarTelefono(nuevoCliente.telefono);
+
     try {
       if (clienteEditando) {
         // Actualizar cliente existente
@@ -167,7 +174,7 @@ const ClientesScreen = ({
           .update({
             nombre: nuevoCliente.nombre,
             direccion: nuevoCliente.direccion,
-            telefono: nuevoCliente.telefono,
+            telefono: telefonoLimpio,
             correo: nuevoCliente.correo,
             clasificacion: nuevoCliente.clasificacion,
             actualizado_en: new Date().toISOString()
@@ -197,7 +204,7 @@ const ClientesScreen = ({
           .insert([{
             nombre: nuevoCliente.nombre,
             direccion: nuevoCliente.direccion,
-            telefono: nuevoCliente.telefono,
+            telefono: telefonoLimpio,
             correo: nuevoCliente.correo,
             clasificacion: clasificacion
           }]);

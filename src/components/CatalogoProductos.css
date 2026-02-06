@@ -131,12 +131,27 @@ button {
   font-size: 0.9em;
 }
 
+.button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+  background-color: var(--medium-gray) !important;
+  color: var(--text-light) !important;
+  transform: none;
+  box-shadow: none;
+}
+
+.button:disabled:hover {
+  background-color: var(--medium-gray) !important;
+  transform: none;
+  box-shadow: none;
+}
+
 .primary-button {
   background-color: var(--primary-color);
   color: var(--white);
 }
 
-.primary-button:hover {
+.primary-button:hover:not(:disabled) {
   background-color: var(--primary-dark);
   transform: translateY(-1px);
   box-shadow: var(--shadow-md);
@@ -147,7 +162,7 @@ button {
   color: var(--white);
 }
 
-.secondary-button:hover {
+.secondary-button:hover:not(:disabled) {
   background-color: #5e08a0;
   transform: translateY(-1px);
   box-shadow: var(--shadow-md);
@@ -158,7 +173,7 @@ button {
   color: var(--white);
 }
 
-.success-button:hover {
+.success-button:hover:not(:disabled) {
   background-color: #3bc25d;
   transform: translateY(-1px);
   box-shadow: var(--shadow-md);
@@ -342,7 +357,7 @@ button {
 /* Grid de productos - Mejorado y compatible con Safari */
 .productos-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   gap: 1.5rem;
   margin: 1rem 1rem 0 1rem;
   padding: 0;
@@ -511,12 +526,24 @@ button {
   font-size: 0.875rem;
 }
 
+.action-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+  background-color: var(--medium-gray) !important;
+  color: var(--text-light) !important;
+}
+
+.action-button:disabled:hover {
+  background-color: var(--medium-gray) !important;
+  transform: none;
+}
+
 .toggle-button {
   background: var(--warning-color);
   color: var(--white);
 }
 
-.toggle-button:hover {
+.toggle-button:hover:not(:disabled) {
   background: #e68a19;
 }
 
@@ -525,7 +552,7 @@ button {
   color: var(--white);
 }
 
-.edit-button:hover {
+.edit-button:hover:not(:disabled) {
   background: var(--primary-dark);
 }
 
@@ -879,15 +906,41 @@ button {
   }
 }
 
+@media (max-width: 768px) {
+  .productos-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1rem;
+    margin: 1rem 0.5rem 0 0.5rem;
+    width: calc(100% - 1rem);
+  }
+
+  .producto-card {
+    padding: 1rem;
+  }
+
+  .producto-header h3 {
+    font-size: 0.875rem;
+  }
+
+  .producto-precio {
+    font-size: 1.125rem;
+  }
+
+  .action-button {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.65rem;
+  }
+}
+
 @media (max-width: 480px) {
   .productos-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
   }
   
   .producto-form {
     width: 95%;
-    padding: 1.5rem;
-    margin: 1rem;
+    padding: 1rem;
+    margin: 1rem 0.5rem;
   }
   
   .header-actions {

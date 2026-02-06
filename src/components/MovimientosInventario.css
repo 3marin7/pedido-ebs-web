@@ -134,20 +134,30 @@
 /* Responsive Design */
 @media (max-width: 768px) {
   .movimientos-container {
-    padding: 1rem;
+    padding: 0.5rem;
   }
   
   .movimientos-content {
-    padding: 1.5rem;
+    padding: 1rem;
   }
   
   .form-row {
     grid-template-columns: 1fr;
-    gap: 1.5rem;
+    gap: 1rem;
   }
   
   .movimientos-title {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
+  }
+
+  .form-actions {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .submit-button {
+    flex: 1;
+    min-width: 120px;
   }
 }
 
@@ -157,7 +167,7 @@
   }
   
   .movimientos-content {
-    padding: 1rem;
+    padding: 0.75rem;
   }
   
   .submit-button {

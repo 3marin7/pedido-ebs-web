@@ -826,7 +826,7 @@ const CatalogoProductos = ({ mode = 'admin' }) => {
           >
             <i className="fas fa-exclamation-triangle"></i> Stock Bajo ({notificacionesStock.length})
           </button>
-          {!isReadOnly && (
+          {!isReadOnly && user?.role !== 'inventario' && (
             <button 
               className="button success-button"
               onClick={() => {
@@ -1089,12 +1089,14 @@ const CatalogoProductos = ({ mode = 'admin' }) => {
                   >
                     Cancelar
                   </button>
-                  <button 
-                    className="button primary-button"
-                    onClick={guardarProducto}
-                  >
-                    {editandoId ? 'Guardar Cambios' : 'Agregar Producto'}
-                  </button>
+                  {user?.role !== 'inventario' && (
+                    <button 
+                      className="button primary-button"
+                      onClick={guardarProducto}
+                    >
+                      {editandoId ? 'Guardar Cambios' : 'Agregar Producto'}
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
@@ -1158,7 +1160,7 @@ const CatalogoProductos = ({ mode = 'admin' }) => {
                     )}
                   </div>
                   
-                  {!isReadOnly && (
+                  {!isReadOnly && user?.role !== 'inventario' && (
                     <div className="producto-actions">
                       <button 
                         className="action-button toggle-button"
