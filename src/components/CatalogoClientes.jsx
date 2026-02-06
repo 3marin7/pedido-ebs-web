@@ -23,7 +23,7 @@ const CatalogoClientes = () => {
   const [pedidoEnviado, setPedidoEnviado] = useState(false);
   const [numeroPedido, setNumeroPedido] = useState(null);
   const [imagenAmpliada, setImagenAmpliada] = useState(null);
-  const [ordenamiento, setOrdenamiento] = useState('nombre-asc');
+  const [ordenamiento, setOrdenamiento] = useState('ultimos-agregados');
   const [cantidadesRapidas] = useState([12, 24, 36, 48, 60, 72]);
   const [vistaActual, setVistaActual] = useState('grid'); // 'grid' o 'lista'
 
@@ -47,7 +47,8 @@ const CatalogoClientes = () => {
             descripcion,
             imagen_url,
             stock,
-            activo
+            activo,
+            created_at
           `)
           .eq('activo', true)
           .order('nombre', { ascending: true });
@@ -144,6 +145,11 @@ const CatalogoClientes = () => {
           return a.nombre.localeCompare(b.nombre);
         case 'nombre-desc':
           return b.nombre.localeCompare(a.nombre);
+        case 'ultimos-agregados':
+          // Ordenar por fecha más reciente primero (DESC)
+          const fechaA = new Date(a.created_at || 0);
+          const fechaB = new Date(b.created_at || 0);
+          return fechaB - fechaA;
         default:
           return 0;
       }
@@ -159,6 +165,17 @@ const CatalogoClientes = () => {
       currency: 'COP',
       minimumFractionDigits: 0
     }).format(precio || 0);
+  };
+
+  // Determinar si un producto es nuevo (últimos 30 días)
+  const esProductoNuevo = (fechaCreacion) => {
+    if (!fechaCreacion) return false;
+    const DIAS_NUEVO = 30; // Configurable: duración del badge "NUEVO"
+    const fechaProducto = new Date(fechaCreacion);
+    const fechaActual = new Date();
+    const diferenciaMilisegundos = fechaActual - fechaProducto;
+    const diferenciaDias = diferenciaMilisegundos / (1000 * 60 * 60 * 24);
+    return diferenciaDias <= DIAS_NUEVO;
   };
 
   // Manejar selección de productos - AHORA AGREGA AL INICIO
@@ -411,6 +428,7 @@ const CatalogoClientes = () => {
               onChange={handleOrdenamientoChange}
               className="order-selector"
             >
+              <option value="ultimos-agregados">Últimos Agregados</option>
               <option value="nombre-asc">Nombre A-Z</option>
               <option value="nombre-desc">Nombre Z-A</option>
               <option value="precio-asc">Precio: Menor a Mayor</option>
@@ -475,6 +493,14 @@ const CatalogoClientes = () => {
                       e.target.src = 'https://via.placeholder.com/300?text=Imagen+no+disponible';
                     }}
                   />
+                  
+                  {/* Badge de Producto Nuevo */}
+                  {esProductoNuevo(producto.created_at) && (
+                    <div className="nuevo-badge">
+                      <span className="nuevo-icon">🆕</span>
+                      <span className="nuevo-text">NUEVO</span>
+                    </div>
+                  )}
                   
                   {/* Badge de Stock */}
                   <div className={`stock-badge ${producto.stock <= 0 ? 'sin-stock' : producto.stock <= 10 ? 'stock-bajo' : 'stock-disponible'}`}>

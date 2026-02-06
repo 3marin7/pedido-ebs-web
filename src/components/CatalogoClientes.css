@@ -521,6 +521,62 @@ body {
   font-weight: 900;
 }
 
+/* Badge de producto nuevo */
+.nuevo-badge {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  padding: 3px 8px;
+  background: linear-gradient(135deg, #ff6b6b 0%, #ff4757 100%);
+  border-radius: 12px;
+  font-size: 0.65rem;
+  font-weight: bold;
+  color: white;
+  z-index: 3;
+  box-shadow: 0 2px 8px rgba(255, 71, 87, 0.4);
+  animation: pulseNuevo 2s ease-in-out infinite;
+}
+
+.nuevo-icon {
+  font-size: 0.9rem;
+  line-height: 1;
+  animation: rotateNuevo 3s ease-in-out infinite;
+}
+
+.nuevo-text {
+  font-size: 0.65rem;
+  letter-spacing: 0.5px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* Animación de pulso suave */
+@keyframes pulseNuevo {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 2px 8px rgba(255, 71, 87, 0.4);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 3px 12px rgba(255, 71, 87, 0.6);
+  }
+}
+
+/* Animación de rotación del ícono */
+@keyframes rotateNuevo {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-10deg);
+  }
+  75% {
+    transform: rotate(10deg);
+  }
+}
+
 .expand-image-btn {
   position: absolute;
   bottom: 5px;
@@ -1536,6 +1592,21 @@ body {
   .quantity-input {
     width: 40px;
     height: 32px;
+  }
+  
+  /* Badge nuevo en móviles pequeños */
+  .nuevo-badge {
+    padding: 2px 6px;
+    font-size: 0.6rem;
+    gap: 2px;
+  }
+  
+  .nuevo-icon {
+    font-size: 0.75rem;
+  }
+  
+  .nuevo-text {
+    font-size: 0.55rem;
   }
 }
 
