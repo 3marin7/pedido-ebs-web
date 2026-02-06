@@ -1520,3 +1520,73 @@
     font-size: 20px;
   }
 }
+
+@media (max-width: 360px) {
+  .rutas-cobro-container {
+    padding: 0 0.5rem;
+  }
+
+  .rutas-header {
+    padding: 15px;
+    margin-bottom: 15px;
+  }
+
+  .rutas-header h1 {
+    font-size: 18px;
+  }
+
+  .header-subtitle {
+    font-size: 13px;
+  }
+
+  .controles-principales {
+    padding: 15px;
+    margin-bottom: 15px;
+  }
+
+  .filtros-group {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .filtro-item label {
+    font-size: 12px;
+  }
+
+  .filtro-item select,
+  .search-input {
+    padding: 8px;
+    font-size: 13px;
+  }
+
+  .cliente-card {
+    padding: 12px;
+    margin-bottom: 10px;
+  }
+
+  .cliente-nombre {
+    font-size: 14px;
+  }
+
+  .deuda-badge {
+    font-size: 12px;
+  }
+
+  .modal-header {
+    padding: 12px;
+  }
+
+  .modal-title h2 {
+    font-size: 14px;
+  }
+
+  .modal-content {
+    padding: 12px;
+  }
+
+  .button-close {
+    width: 30px;
+    height: 30px;
+    font-size: 18px;
+  }
+}

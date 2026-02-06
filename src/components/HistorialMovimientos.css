@@ -399,4 +399,87 @@
   .header-historial h1 {
     font-size: 18px;
   }
+
+  .tabla-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .tabla-movimientos .fecha {
+    min-width: 130px;
+  }
+
+  .tabla-movimientos .producto {
+    min-width: 100px;
+  }
+}
+
+@media (max-width: 360px) {
+  .historial-container {
+    padding: 5px;
+  }
+
+  .header-historial {
+    padding: 10px;
+    margin-bottom: 15px;
+  }
+
+  .header-historial h1 {
+    font-size: 14px;
+  }
+
+  .header-historial p {
+    font-size: 12px;
+  }
+
+  .filtros-historial {
+    gap: 8px;
+    padding: 10px;
+  }
+
+  .filtro-grupo label {
+    font-size: 11px;
+  }
+
+  .filtro-select,
+  .filtro-input {
+    padding: 8px;
+    font-size: 13px;
+  }
+
+  .btn-limpiar,
+  .btn-exportar {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+
+  .tabla-movimientos {
+    font-size: 10px;
+  }
+
+  .tabla-movimientos th,
+  .tabla-movimientos td {
+    padding: 4px 6px;
+  }
+
+  .tabla-movimientos th {
+    font-size: 9px;
+  }
+
+  .resumen-card {
+    padding: 12px;
+  }
+
+  .resumen-card .label {
+    font-size: 10px;
+  }
+
+  .resumen-card .valor {
+    font-size: 20px;
+  }
+
+  .badge-tipo {
+    padding: 2px 6px;
+    font-size: 8px;
+  }
 }

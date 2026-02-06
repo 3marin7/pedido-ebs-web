@@ -310,3 +310,101 @@
     grid-template-columns: 1fr;
   }
 }
+
+@media (max-width: 480px) {
+  .auditoria-container {
+    padding: 0 0.5rem;
+  }
+
+  .header-auditoria {
+    padding: 15px;
+    margin-bottom: 15px;
+  }
+
+  .header-auditoria h1 {
+    font-size: 1.25rem;
+  }
+
+  .header-auditoria p {
+    font-size: 0.85rem;
+  }
+
+  .filtros-auditoria {
+    gap: 10px;
+    padding: 15px;
+    margin-bottom: 15px;
+  }
+
+  .filtro-grupo label {
+    font-size: 0.8rem;
+  }
+
+  .filtro-select,
+  .filtro-input {
+    padding: 8px;
+    font-size: 0.9rem;
+  }
+
+  .btn-limpiar,
+  .btn-exportar {
+    padding: 8px 15px;
+    font-size: 0.85rem;
+    width: 100%;
+  }
+
+  .tabla-auditoria {
+    font-size: 0.75rem;
+  }
+
+  .tabla-auditoria th,
+  .tabla-auditoria td {
+    padding: 6px 4px;
+  }
+
+  .tabla-auditoria th {
+    font-size: 0.7rem;
+  }
+
+  .tabla-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .resumen-card {
+    padding: 10px;
+  }
+
+  .resumen-card .label {
+    font-size: 0.75rem;
+  }
+
+  .resumen-card .valor {
+    font-size: 1.5rem;
+  }
+
+  .badge-tipo {
+    padding: 3px 8px;
+    font-size: 0.7rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .header-auditoria h1 {
+    font-size: 1rem;
+  }
+
+  .tabla-auditoria {
+    font-size: 0.65rem;
+  }
+
+  .tabla-auditoria th,
+  .tabla-auditoria td {
+    padding: 4px 2px;
+  }
+
+  .btn-limpiar,
+  .btn-exportar {
+    font-size: 0.75rem;
+    padding: 6px 10px;
+  }
+}

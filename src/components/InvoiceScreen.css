@@ -657,30 +657,37 @@ select {
     flex-direction: row; /* Mantenemos filas en tablet */
     gap: 10px;
     width: 100%;
+    flex-wrap: wrap;
   }
 
   .product-input {
     min-width: 0;
     flex: 1;
+    min-width: 100px;
   }
 
   .producto-item-expanded {
     flex-direction: row; /* Mantenemos filas en tablet */
-    align-items: center;
+    align-items: flex-start;
     gap: 12px;
     width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
   .producto-controls-expanded {
     margin-left: 0;
+    flex-shrink: 0;
   }
 
   .botones-rapidos-linea {
     justify-content: flex-start;
+    flex-wrap: wrap;
   }
 
   .acciones-principales {
     justify-content: flex-start;
+    flex-wrap: wrap;
   }
 
   .productos-header {
