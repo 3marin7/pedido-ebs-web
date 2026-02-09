@@ -81,6 +81,7 @@ const Navigation = () => {
             { path: '/auditoria-productos', label: 'Auditoría de Productos', icon: '📋' },
             { path: '/movimientos', label: 'Historial Movimientos', icon: '📊' },
             { path: '/dashboard-ventas', label: 'Dashboard Ventas', icon: '📈' },
+            { path: '/reporte-clientes-producto', label: 'Clientes por Producto', icon: '👥' },
             { path: '/rutas-cobro', label: 'Rutas de Cobro', icon: '🚗' }
           ]
         },
@@ -116,6 +117,7 @@ const Navigation = () => {
         { path: '/dashboard-contabilidad', label: 'Dashboard Contabilidad', icon: '📊', tipo: 'simple' },
         { path: '/facturas', label: 'Facturas Guardadas', icon: '📄', tipo: 'simple' },
         { path: '/reportes-cobros', label: 'Reportes de Cobros', icon: '📈', tipo: 'simple' },
+        { path: '/reporte-clientes-producto', label: 'Clientes por Producto', icon: '👥', tipo: 'simple' },
         { path: '/gastos', label: 'Gestión de Gastos', icon: '💰', tipo: 'simple' },
         { path: '/rutas-cobro', label: 'Rutas de Cobro', icon: '🚗', tipo: 'simple' },
         { path: '/gestion-pedidos', label: 'Gestión Pedidos', icon: '🛒', tipo: 'simple' },

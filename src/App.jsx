@@ -20,6 +20,7 @@ import GastosScreen from './components/GastosScreen';
 import ContabilidadScreen from './components/ContabilidadScreen';
 import HistorialMovimientos from './components/HistorialMovimientos';
 import AuditoriaProductos from './components/AuditoriaProductos';
+import ReporteClientesPorProducto from './components/ReporteClientesPorProducto';
 
 // Contexto de autenticación
 const AuthContext = createContext();
@@ -302,6 +303,16 @@ function App() {
                 <>
                   <PageMeta title="Reportes de Cobros - EBS" description="Reportes y análisis de cobros" />
                   <ReportesCobros />
+                </>
+              </ProtectedRoute>
+            } />
+
+            {/* Ruta para Reporte de Clientes por Producto */}
+            <Route path="/reporte-clientes-producto" element={
+              <ProtectedRoute requiredRoles={['admin', 'contabilidad']}>
+                <>
+                  <PageMeta title="Clientes por Producto - EBS" description="Reporte de clientes que compraron cada producto" />
+                  <ReporteClientesPorProducto />
                 </>
               </ProtectedRoute>
             } />
