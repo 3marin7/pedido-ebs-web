@@ -311,7 +311,7 @@ select {
 @media (max-width: 480px) {
   .producto-item-expanded {
     flex-direction: column;
-    align-items: stretch;
+    align-items: flex-start;
     padding: 8px;
     gap: 6px;
   }
@@ -319,6 +319,7 @@ select {
 
 @media (max-width: 360px) {
   .producto-item-expanded {
+    align-items: flex-start;
     padding: 6px;
     gap: 4px;
   }
@@ -367,10 +368,7 @@ select {
 .controles-rapidos-supercompactos {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-}
-
-.botones-rapidos-linea {
+    gap: 4px;
   display: flex;
   gap: 4px;
   flex-wrap: wrap;
@@ -560,19 +558,6 @@ select {
 
 @media (max-width: 480px) {
   .micro-button {
-    padding: 5px 6px !important;
-    font-size: 10px !important;
-    height: 28px !important;
-    min-width: 32px !important;
-  }
-  
-  .micro-button i {
-    font-size: 9px !important;
-  }
-}
-
-@media (max-width: 360px) {
-  .micro-button {
     padding: 4px 5px !important;
     font-size: 9px !important;
     height: 26px !important;
@@ -581,6 +566,19 @@ select {
   
   .micro-button i {
     font-size: 8px !important;
+  }
+}
+
+@media (max-width: 360px) {
+  .micro-button {
+    padding: 3px 4px !important;
+    font-size: 8px !important;
+    height: 24px !important;
+    min-width: 24px !important;
+  }
+  
+  .micro-button i {
+    font-size: 7px !important;
   }
 }
 
@@ -950,7 +948,7 @@ select {
   .customer-info-section,
   .add-products-section,
   .productos-list-expanded {
-    padding: 12px;
+    padding: 8px;
     width: 100%;
   }
 
@@ -967,8 +965,9 @@ select {
 
   .producto-item-expanded {
     flex-direction: column;
-    align-items: stretch;
-    gap: 10px;
+    align-items: flex-start;
+    gap: 6px;
+    padding: 6px;
   }
 
   .button {
