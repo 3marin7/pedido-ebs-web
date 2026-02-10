@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import { useAuth } from '../App';
 import { Link } from 'react-router-dom';
 import './Login.css'; // Asegúrate de importar el CSS
-import ebsLogo from '../assets/ebs-logo.svg';
 
 const Login = () => {
   const [username, setUsername] = useState('');
@@ -15,28 +14,28 @@ const Login = () => {
   const users = [
     { 
       id: 1, 
-      username: 'Edwin', 
+      username: 'e11', 
       password: 'emc', 
       role: 'admin',
       descripcion: 'Admin - Acceso Total. Administrador del sistema. Ver todo, gestionar usuarios, reportes completos.'
     },
     { 
       id: 2, 
-      username: 'fredy', 
+      username: 'EBS', 
       password: '801551', 
       role: 'admin',
       descripcion: 'Admin - Acceso Total. Administrador del sistema. Ver todo, gestionar usuarios, reportes completos.'
     },
     { 
       id: 8,
-      username: 'EMC',
+      username: 'superadmin',
       password: 'superadmin123',
       role: 'superadmin',
       descripcion: 'SUPERADMIN - Acceso EXCLUSIVO a reportes avanzados. Reporte de clientes por producto, análisis completo.'
     },
     { 
       id: 3, 
-      username: 'paola', 
+      username: 'inv', 
       password: '1v3nt', 
       role: 'inventario',
       descripcion: 'Bodega (Inventario) - Crear facturas, catálogo, gestión de inventario, gestión de pedidos.'
@@ -47,13 +46,6 @@ const Login = () => {
       password: 'caro123', 
       role: 'contabilidad',
       descripcion: 'Contabilidad - Ver facturas guardadas, reportes de cobros, análisis de contabilidad.'
-    },
-    { 
-      id: 5, 
-      username: 'fabian', 
-      password: '0411', 
-      role: 'admin',
-      descripcion: 'Admin - Acceso Total. Administrador del sistema. Ver todo, gestionar usuarios, reportes completos.'
     }
   ];
 
@@ -74,7 +66,8 @@ const Login = () => {
     <div className="login-container">
       <div className="login-card">
         <div className="login-header">
-          <img src={ebsLogo} alt="EBS Distribuidora" className="login-logo" />
+          <h1>Distribuciones EBS Hermanos Marín</h1>
+          <p>Sistema de pedidos y catálogo digital</p>
         </div>
         
         <div className="login-content">
