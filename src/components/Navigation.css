@@ -273,7 +273,7 @@
   align-items: center;
   padding: 0.85rem 1.1rem;
   text-decoration: none;
-  color: var(--text-light);
+  color: white;
   transition: var(--transition);
   border-left: 3px solid transparent;
   gap: 0.5rem;
