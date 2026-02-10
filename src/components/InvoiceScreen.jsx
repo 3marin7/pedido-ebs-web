@@ -40,6 +40,9 @@ const InvoiceScreen = () => {
   const [clientes, setClientes] = useState([]);
   const [cargando, setCargando] = useState(false);
   const [erroresStock, setErroresStock] = useState({});
+  
+  // Estados para vista de productos agregados
+  const [vistaProductosAgregados, setVistaProductosAgregados] = useState('grid'); // 'grid' o 'list'
 
   const vendedores = ['Edwin Marin', 'Fredy Marin', 'Fabian Marin'];
 
@@ -808,11 +811,27 @@ const InvoiceScreen = () => {
               <div className="productos-list-expanded">
                 <div className="productos-header">
                   <h3>Productos Agregados ({productos.length})</h3>
+                  <div className="view-controls-container">
+                    <button
+                      className={`view-toggle-btn ${vistaProductosAgregados === 'grid' ? 'active' : ''}`}
+                      onClick={() => setVistaProductosAgregados('grid')}
+                      title="Vista cuadrícula"
+                    >
+                      <i className="fas fa-th"></i>
+                    </button>
+                    <button
+                      className={`view-toggle-btn ${vistaProductosAgregados === 'list' ? 'active' : ''}`}
+                      onClick={() => setVistaProductosAgregados('list')}
+                      title="Vista lista"
+                    >
+                      <i className="fas fa-list"></i>
+                    </button>
+                  </div>
                   <div className="total-preview">
                     Total: <span className="total-amount">${total.toFixed(2)}</span>
                   </div>
                 </div>
-                <div className="productos-grid">
+                <div className={`productos-grid ${vistaProductosAgregados === 'list' ? 'view-lista' : 'view-grid'}`}>
                   {productos.map((p) => (
                     <div key={p.id} className={`producto-item-expanded ${erroresStock[p.id] ? 'error-stock' : ''}`}>
                       <div className="producto-main-info">
