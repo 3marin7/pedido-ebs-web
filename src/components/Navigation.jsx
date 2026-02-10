@@ -71,27 +71,17 @@ const Navigation = () => {
             { path: '/rutas-cobro', label: 'Rutas de Cobro', icon: '🚗' }
           ]
         },
-        // INFORMES EXCLUSIVOS SUPERADMIN - Grupo
+        // REPORTES & ANÁLISIS - Grupo
         { 
-          path: '#informes-superadmin', 
-          label: 'Reportes Exclusivos', 
-          icon: '🔐', 
+          path: '#informes', 
+          label: 'Reportes & Análisis', 
+          icon: '📊', 
           tipo: 'grupo',
           submenu: [
             { path: '/auditoria-productos', label: 'Auditoría de Productos', icon: '📋' },
             { path: '/movimientos', label: 'Historial Movimientos', icon: '📊' },
             { path: '/dashboard-ventas', label: 'Dashboard Ventas', icon: '📈' },
             { path: '/reporte-clientes-producto', label: 'Clientes por Producto', icon: '👥' },
-            { path: '/rutas-cobro', label: 'Rutas de Cobro', icon: '🚗' }
-          ]
-        },
-        // INFORMES GENERALES - Grupo
-        { 
-          path: '#informes', 
-          label: 'Informes', 
-          icon: '📑', 
-          tipo: 'grupo',
-          submenu: [
             { path: '/reportes-cobros', label: 'Reportes de Cobros', icon: '💰' }
           ]
         },
