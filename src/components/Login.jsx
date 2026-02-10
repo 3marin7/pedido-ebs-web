@@ -109,8 +109,8 @@ const Login = () => {
               </button>
             </form>
 
-            {/* Información de Roles */}
-            <div className="roles-info">
+            {/* Información de Roles - OCULTA */}
+            {/* <div className="roles-info">
               <h4>Roles y Accesos:</h4>
               <div className="roles-list">
                 {users.map((user) => (
@@ -123,7 +123,7 @@ const Login = () => {
                   </div>
                 ))}
               </div>
-            </div>
+            </div> */}
           </div>
           
           <div className="catalog-section">
