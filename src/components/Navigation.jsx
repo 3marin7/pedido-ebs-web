@@ -55,6 +55,73 @@ const Navigation = () => {
     }
 
     // Enlaces para usuarios logueados (según rol)
+    if (user.role === 'superadmin') {
+      return [
+        // INICIO & VENTAS - Grupo
+        { 
+          path: '#ventas', 
+          label: 'Inicio & Ventas', 
+          icon: '🏠', 
+          tipo: 'grupo',
+          submenu: [
+            { path: '/nueva-factura', label: 'Nueva Factura', icon: '➕' },
+            { path: '/facturas', label: 'Facturas Guardadas', icon: '📄' },
+            { path: '/clientes', label: 'Gestión Clientes', icon: '👤' },
+            { path: '/mapa-locales', label: 'Mapa de Locales', icon: '🗺️' },
+            { path: '/rutas-cobro', label: 'Rutas de Cobro', icon: '🚗' }
+          ]
+        },
+        // INFORMES EXCLUSIVOS SUPERADMIN - Grupo
+        { 
+          path: '#informes-superadmin', 
+          label: 'Reportes Exclusivos', 
+          icon: '🔐', 
+          tipo: 'grupo',
+          submenu: [
+            { path: '/auditoria-productos', label: 'Auditoría de Productos', icon: '📋' },
+            { path: '/movimientos', label: 'Historial Movimientos', icon: '📊' },
+            { path: '/dashboard-ventas', label: 'Dashboard Ventas', icon: '📈' },
+            { path: '/reporte-clientes-producto', label: 'Clientes por Producto', icon: '👥' },
+            { path: '/rutas-cobro', label: 'Rutas de Cobro', icon: '🚗' }
+          ]
+        },
+        // INFORMES GENERALES - Grupo
+        { 
+          path: '#informes', 
+          label: 'Informes', 
+          icon: '📑', 
+          tipo: 'grupo',
+          submenu: [
+            { path: '/reportes-cobros', label: 'Reportes de Cobros', icon: '💰' }
+          ]
+        },
+        // CONTABILIDAD - Grupo
+        { 
+          path: '#contabilidad', 
+          label: 'Contabilidad', 
+          icon: '💰', 
+          tipo: 'grupo',
+          submenu: [
+            { path: '/gastos', label: 'Gestión de Gastos', icon: '💸' },
+            { path: '/dashboard-contabilidad', label: 'Dashboard Contabilidad', icon: '📊' }
+          ]
+        },
+        // BODEGA - Grupo
+        { 
+          path: '#bodega', 
+          label: 'Bodega', 
+          icon: '📦', 
+          tipo: 'grupo',
+          submenu: [
+            { path: '/catalogo', label: 'Catálogo Productos', icon: '📚' },
+            { path: '/gestion-inventario', label: 'Gestión Inventario', icon: '📋' },
+            { path: '/gestion-pedidos', label: 'Gestión Pedidos', icon: '🛒' }
+          ]
+        }
+      ];
+    }
+
+    // Enlaces para usuarios logueados (según rol)
     if (user.role === 'admin') {
       return [
         // INICIO & VENTAS - Grupo

@@ -309,7 +309,7 @@ function App() {
 
             {/* Ruta para Reporte de Clientes por Producto */}
             <Route path="/reporte-clientes-producto" element={
-              <ProtectedRoute requiredRoles={['admin', 'contabilidad']}>
+              <ProtectedRoute requiredRoles={['superadmin']}>
                 <>
                   <PageMeta title="Clientes por Producto - EBS" description="Reporte de clientes que compraron cada producto" />
                   <ReporteClientesPorProducto />
