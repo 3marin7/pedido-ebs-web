@@ -116,11 +116,12 @@ const users = [
 
 | Usuario | Contraseña | Rol | 
 |---------|-----------|-----|
-| `e11` | `emc` | admin |
-| `EBS` | `801551` | admin |
-| `superadmin` | `superadmin123` | **superadmin** 🔐 |
-| `inv` | `1v3nt` | inventario |
+| `Edwin` | `emc` | admin |
+| `fredy` | `801551` | admin |
+| `EMC` | `superadmin123` | **superadmin** 🔐 |
+| `paola` | `1v3nt` | inventario |
 | `caro` | `caro123` | contabilidad |
+| `fabian` | `0411` | admin |
 
 ---
 
