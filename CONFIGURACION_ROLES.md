@@ -95,47 +95,57 @@
 
 ## 🔧 Cómo Cambiar el Rol de un Usuario
 
-### Método 1: Directamente en Supabase (SQL)
+### Método 1: Agregar Usuario en Login.jsx (LOCAL)
 
-```sql
--- Cambiar a SUPERADMIN
-UPDATE auth.users 
-SET user_metadata = jsonb_set(user_metadata, '{role}', '"superadmin"')
-WHERE email = 'email@usuario.com';
+Editar `/src/components/Login.jsx` y agregar un nuevo objeto a la lista `users`:
 
--- Cambiar a ADMIN
-UPDATE auth.users 
-SET user_metadata = jsonb_set(user_metadata, '{role}', '"admin"')
-WHERE email = 'email@usuario.com';
-
--- Cambiar a CONTABILIDAD
-UPDATE auth.users 
-SET user_metadata = jsonb_set(user_metadata, '{role}', '"contabilidad"')
-WHERE email = 'email@usuario.com';
-
--- Cambiar a INVENTARIO
-UPDATE auth.users 
-SET user_metadata = jsonb_set(user_metadata, '{role}', '"inventario"')
-WHERE email = 'email@usuario.com';
-
--- Cambiar a VENDEDOR
-UPDATE auth.users 
-SET user_metadata = jsonb_set(user_metadata, '{role}', '"vendedor"')
-WHERE email = 'email@usuario.com';
-
--- Ver rol actual de un usuario
-SELECT email, user_metadata->>'role' as role
-FROM auth.users
-WHERE email = 'email@usuario.com';
+```jsx
+const users = [
+  // ... otros usuarios
+  { 
+    id: 8,
+    username: 'nuevouser',
+    password: 'contraseña123',
+    role: 'superadmin',  // o 'admin', 'contabilidad', 'inventario', 'vendedor'
+    descripcion: 'Descripción del usuario'
+  },
+];
 ```
 
-### Método 2: Panel de Administración (si se implementa)
+**Usuarios disponibles actualmente:**
 
-En el futuro, puede crearse una pantalla de administración donde solo SUPERADMIN pueda:
-- Ver lista de usuarios
-- Cambiar roles
-- Activar/desactivar usuarios
-- Ver historial de accesos
+| Usuario | Contraseña | Rol | 
+|---------|-----------|-----|
+| `e11` | `emc` | admin |
+| `EBS` | `801551` | admin |
+| `superadmin` | `superadmin123` | **superadmin** 🔐 |
+| `inv` | `1v3nt` | inventario |
+| `caro` | `caro123` | contabilidad |
+
+---
+
+### Método 2: Directamente en Supabase (si usas base de datos)
+
+Si tu aplicación está conectada a Supabase, ejecuta estos comandos en la tabla apropiada:
+
+**Opción A - Si los roles están en tabla `public.usuarios` o `public.perfiles`:**
+```sql
+UPDATE public.usuarios 
+SET rol = 'superadmin'
+WHERE email = 'usuario@email.com';
+```
+
+**Opción B - Si los roles están en `auth.users` (raw_user_meta_data):**
+```sql
+UPDATE auth.users 
+SET raw_user_meta_data = jsonb_set(COALESCE(raw_user_meta_data, '{}'::jsonb), '{role}', '"superadmin"')
+WHERE email = 'usuario@email.com';
+```
+
+**Verificar rol actual:**
+```sql
+SELECT username, rol FROM public.usuarios WHERE email = 'usuario@email.com';
+```
 
 ---
 

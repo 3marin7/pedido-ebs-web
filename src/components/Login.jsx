@@ -27,6 +27,13 @@ const Login = () => {
       descripcion: 'Admin - Acceso Total. Administrador del sistema. Ver todo, gestionar usuarios, reportes completos.'
     },
     { 
+      id: 8,
+      username: 'superadmin',
+      password: 'superadmin123',
+      role: 'superadmin',
+      descripcion: 'SUPERADMIN - Acceso EXCLUSIVO a reportes avanzados. Reporte de clientes por producto, análisis completo.'
+    },
+    { 
       id: 3, 
       username: 'inv', 
       password: '1v3nt', 
