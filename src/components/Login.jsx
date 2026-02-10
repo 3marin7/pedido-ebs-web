@@ -14,28 +14,28 @@ const Login = () => {
   const users = [
     { 
       id: 1, 
-      username: 'e11', 
+      username: 'Edwin', 
       password: 'emc', 
       role: 'admin',
       descripcion: 'Admin - Acceso Total. Administrador del sistema. Ver todo, gestionar usuarios, reportes completos.'
     },
     { 
       id: 2, 
-      username: 'EBS', 
+      username: 'fredy', 
       password: '801551', 
       role: 'admin',
       descripcion: 'Admin - Acceso Total. Administrador del sistema. Ver todo, gestionar usuarios, reportes completos.'
     },
     { 
       id: 8,
-      username: 'superadmin',
+      username: 'EMC',
       password: 'superadmin123',
       role: 'superadmin',
       descripcion: 'SUPERADMIN - Acceso EXCLUSIVO a reportes avanzados. Reporte de clientes por producto, análisis completo.'
     },
     { 
       id: 3, 
-      username: 'inv', 
+      username: 'paola', 
       password: '1v3nt', 
       role: 'inventario',
       descripcion: 'Bodega (Inventario) - Crear facturas, catálogo, gestión de inventario, gestión de pedidos.'
@@ -46,6 +46,13 @@ const Login = () => {
       password: 'caro123', 
       role: 'contabilidad',
       descripcion: 'Contabilidad - Ver facturas guardadas, reportes de cobros, análisis de contabilidad.'
+    },
+    { 
+      id: 5, 
+      username: 'fabian', 
+      password: '0411', 
+      role: 'admin',
+      descripcion: 'Admin - Acceso Total. Administrador del sistema. Ver todo, gestionar usuarios, reportes completos.'
     }
   ];
 
