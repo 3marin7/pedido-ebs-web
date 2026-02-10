@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { useAuth } from '../App';
 import { Link } from 'react-router-dom';
 import './Login.css'; // Asegúrate de importar el CSS
+import ebsLogo from '../assets/ebs-logo.svg';
 
 const Login = () => {
   const [username, setUsername] = useState('');
@@ -73,8 +74,7 @@ const Login = () => {
     <div className="login-container">
       <div className="login-card">
         <div className="login-header">
-          <h1>Distribuciones EBS Hermanos Marín</h1>
-          <p>Sistema de pedidos y catálogo digital</p>
+          <img src={ebsLogo} alt="EBS Distribuidora" className="login-logo" />
         </div>
         
         <div className="login-content">
