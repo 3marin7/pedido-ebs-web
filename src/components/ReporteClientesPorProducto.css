@@ -681,3 +681,74 @@
     font-size: 0.95rem;
   }
 }
+
+/* Filtro de estado de productos */
+.filtro-estado-productos {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.filtro-btn {
+  padding: 10px 20px;
+  background: var(--white);
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-dark);
+}
+
+.filtro-btn:hover {
+  border-color: var(--primary-color);
+  background: #f8fdf8;
+  transform: translateY(-2px);
+}
+
+.filtro-btn.active {
+  background: var(--primary-color);
+  color: var(--white);
+  border-color: var(--primary-color);
+  box-shadow: var(--shadow-md);
+}
+
+.filtro-btn i {
+  font-size: 1.1rem;
+}
+
+/* Producto inactivo */
+.producto-item.inactivo {
+  opacity: 0.7;
+  background: #fafafa;
+  border-left: 4px solid var(--danger-color);
+}
+
+.producto-item.inactivo:hover {
+  opacity: 0.85;
+  background: #f5f5f5;
+}
+
+.producto-imagen {
+  position: relative;
+}
+
+.badge-inactivo {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background: var(--danger-color);
+  color: var(--white);
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  box-shadow: var(--shadow-sm);
+  z-index: 1;
+}

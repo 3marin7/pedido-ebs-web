@@ -22,18 +22,19 @@
 .login-header {
   background: #4a6bdf;
   color: white;
-  padding: 30px 25px;
+  padding: 25px;
   text-align: center;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 
-.login-logo {
-  width: 180px;
-  height: auto;
-  max-height: 200px;
-  object-fit: contain;
+.login-header h1 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.login-header p {
+  margin: 8px 0 0;
+  opacity: 0.9;
 }
 
 .login-content {

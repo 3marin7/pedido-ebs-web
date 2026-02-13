@@ -12,6 +12,7 @@ const ReporteClientesPorProducto = () => {
   const [fechaInicio, setFechaInicio] = useState('');
   const [fechaFin, setFechaFin] = useState('');
   const [estadisticas, setEstadisticas] = useState(null);
+  const [filtroEstado, setFiltroEstado] = useState('activos'); // 'activos', 'inactivos', 'todos'
 
   // Cargar productos y facturas
   useEffect(() => {
@@ -19,14 +20,11 @@ const ReporteClientesPorProducto = () => {
       try {
         setCargando(true);
 
-        // Cargar productos
-        const { data: productosData, error: productosError } = await supabase
-          .from('productos')
-          .select('id, codigo, nombre, precio, categoria, imagen_url')
-          .eq('activo', true)
-          .order('nombre', { ascending: true });
-
-        if (productosError) throw productosError;
+       // Cargar TODOS los productos (activos, inactivos, con/sin stock)
+const { data: productosData, error: productosError } = await supabase
+  .from('productos')
+  .select('id, codigo, nombre, precio, categoria, imagen_url, activo, stock')
+  .order('nombre', { ascending: true });
 
         // Cargar facturas con productos
         const { data: facturasData, error: facturasError } = await supabase
@@ -168,10 +166,20 @@ const ReporteClientesPorProducto = () => {
     setBusquedaProducto('');
   };
 
-  const productosFiltrados = productos.filter(p =>
-    p.nombre.toLowerCase().includes(busquedaProducto.toLowerCase()) ||
-    (p.codigo && p.codigo.toLowerCase().includes(busquedaProducto.toLowerCase()))
-  );
+ const productosFiltrados = productos.filter(p => {
+  // Filtro de búsqueda
+  const coincideBusqueda = p.nombre.toLowerCase().includes(busquedaProducto.toLowerCase()) ||
+    (p.codigo && p.codigo.toLowerCase().includes(busquedaProducto.toLowerCase()));
+  
+  if (!coincideBusqueda) return false;
+  
+  // Filtro por estado
+  if (filtroEstado === 'activos') return p.activo === true;
+  if (filtroEstado === 'inactivos') return p.activo === false;
+  if (filtroEstado === 'sinstock') return p.stock === 0 || p.stock === null;
+  
+  return true; // 'todos'
+});
 
   const formatPrecio = (precio) => {
     return new Intl.NumberFormat('es-CO', {
@@ -264,6 +272,41 @@ const ReporteClientesPorProducto = () => {
                 </button>
               )}
             </div>
+
+            {/* Filtros de estado */}
+            <div className="filtro-estado-productos">
+              <button
+                className={`filtro-btn ${filtroEstado === 'todos' ? 'active' : ''}`}
+                onClick={() => setFiltroEstado('todos')}
+              >
+                <i className="fas fa-list"></i>
+                Todos ({productos.length})
+              </button>
+              <button
+                className={`filtro-btn ${filtroEstado === 'activos' ? 'active' : ''}`}
+                onClick={() => setFiltroEstado('activos')}
+              >
+                <i className="fas fa-check-circle"></i>
+                Activos ({productos.filter(p => p.activo === true).length})
+              </button>
+              <button
+                className={`filtro-btn ${filtroEstado === 'inactivos' ? 'active' : ''}`}
+                onClick={() => setFiltroEstado('inactivos')}
+              >
+                <i className="fas fa-times-circle"></i>
+                Inactivos ({productos.filter(p => p.activo === false).length})
+              </button>
+              <button
+                className={`filtro-btn ${filtroEstado === 'sinstock' ? 'active' : ''}`}
+                onClick={() => setFiltroEstado('sinstock')}
+              >
+                <i className="fas fa-exclamation-triangle"></i>
+                Sin Stock ({productos.filter(p => p.stock === 0 || p.stock === null).length})
+              </button>
+            </div>
+
+
+
 
             <div className="productos-lista">
               {productosFiltrados.length === 0 ? (
