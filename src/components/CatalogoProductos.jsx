@@ -69,6 +69,7 @@ const CloudinaryUpload = ({ onImageUpload }) => {
 // Componente para importar/exportar productos
 const ImportExportActions = ({ productos, productosFiltrados, setProductos }) => {
   const fileInputRef = React.useRef(null);
+  const [exportOpen, setExportOpen] = useState(false);
 
   const formatPrecio = (precio) => {
     return new Intl.NumberFormat('es-CO', {
@@ -232,20 +233,34 @@ const ImportExportActions = ({ productos, productosFiltrados, setProductos }) =>
     fileInputRef.current.click();
   };
 
+  const toggleExportMenu = () => {
+    setExportOpen((prev) => !prev);
+  };
+
+  const handleExportAction = (action) => {
+    action();
+    setExportOpen(false);
+  };
+
   return (
     <div className="import-export-actions">
       <div className="dropdown">
-        <button className="button info-button">
+        <button
+          className="button info-button"
+          onClick={toggleExportMenu}
+          aria-expanded={exportOpen}
+          type="button"
+        >
           <i className="fas fa-file-export"></i> Exportar ▼
         </button>
-        <div className="dropdown-content">
-          <button onClick={() => exportarProductos('todos')}>JSON - Todos</button>
-          <button onClick={() => exportarProductos('activos')}>JSON - Activos</button>
-          <button onClick={() => exportarProductos('filtrados')}>JSON - Filtrados</button>
+        <div className={`dropdown-content ${exportOpen ? 'open' : ''}`}>
+          <button onClick={() => handleExportAction(() => exportarProductos('todos'))}>JSON - Todos</button>
+          <button onClick={() => handleExportAction(() => exportarProductos('activos'))}>JSON - Activos</button>
+          <button onClick={() => handleExportAction(() => exportarProductos('filtrados'))}>JSON - Filtrados</button>
           <div className="dropdown-divider"></div>
-          <button onClick={() => exportarAExcel('todos')}>Excel - Todos</button>
-          <button onClick={() => exportarAExcel('activos')}>Excel - Activos</button>
-          <button onClick={() => exportarAExcel('filtrados')}>Excel - Filtrados</button>
+          <button onClick={() => handleExportAction(() => exportarAExcel('todos'))}>Excel - Todos</button>
+          <button onClick={() => handleExportAction(() => exportarAExcel('activos'))}>Excel - Activos</button>
+          <button onClick={() => handleExportAction(() => exportarAExcel('filtrados'))}>Excel - Filtrados</button>
         </div>
       </div>
       
@@ -499,6 +514,7 @@ const CatalogoProductos = ({ mode = 'admin' }) => {
   });
   const [notificacionesStock, setNotificacionesStock] = useState([]);
   const [mostrarNotificaciones, setMostrarNotificaciones] = useState(false);
+  const [mostrarAccionesMobile, setMostrarAccionesMobile] = useState(false);
 
   const categorias = ['Toallas', 'Bloqueadores y Cuidado de la Piel', 'Pañales', 'Alimentos', 'Desodorantes', 'Medicamentos', 'Cuidado del Cabello','Jabones y Geles','Otros','Producto del Dia Promocion'];
 
@@ -811,7 +827,19 @@ const CatalogoProductos = ({ mode = 'admin' }) => {
           <i className="fas fa-boxes"></i> 
           {isReadOnly ? 'Catálogo de Productos (Solo Lectura)' : 'Catálogo de Productos'}
         </h1>
-        <div className="header-actions">
+        <button
+          className="mobile-actions-toggle"
+          onClick={() => setMostrarAccionesMobile(!mostrarAccionesMobile)}
+          aria-expanded={mostrarAccionesMobile}
+          aria-controls="catalogo-acciones"
+          type="button"
+        >
+          <i className="fas fa-bars"></i> Acciones
+        </button>
+        <div
+          id="catalogo-acciones"
+          className={`header-actions ${mostrarAccionesMobile ? 'mobile-open' : ''}`}
+        >
           {!isReadOnly && (
             <ImportExportActions 
               productos={productos}

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from './supabaseClient';
 import * as XLSX from 'xlsx';
 import { Bar, Pie } from 'react-chartjs-2';
+import './MejoresProductos.css';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -273,22 +274,23 @@ export default function MejoresProductos() {
   };
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-semibold text-gray-800">
-          🏆 Productos Más Vendidos
-        </h2>
+    <div className="mejores-productos-container">
+      <div className="mejores-header">
+        <div>
+          <h2>🏆 Productos Más Vendidos</h2>
+          <p className="mejores-subtitle">Analiza el rendimiento por período y exporta resultados</p>
+        </div>
         
-        <div className="flex space-x-2">
+        <div className="mejores-actions">
           <button
             onClick={exportarCSV}
-            className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 flex items-center"
+            className="btn-excel"
           >
             📊 Excel
           </button>
           <button
             onClick={exportarPDF}
-            className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 flex items-center"
+            className="btn-pdf"
           >
             📄 PDF
           </button>
@@ -296,33 +298,30 @@ export default function MejoresProductos() {
       </div>
 
       {/* Filtros */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Fecha Inicio</label>
+      <div className="filtros-section">
+        <div className="filtro-group">
+          <label>Fecha Inicio</label>
           <input
             type="date"
             value={fechaInicio}
             onChange={(e) => setFechaInicio(e.target.value)}
-            className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
         
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Fecha Fin</label>
+        <div className="filtro-group">
+          <label>Fecha Fin</label>
           <input
             type="date"
             value={fechaFin}
             onChange={(e) => setFechaFin(e.target.value)}
-            className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
         
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Vista</label>
+        <div className="filtro-group">
+          <label>Vista</label>
           <select
             value={vista}
             onChange={(e) => setVista(e.target.value)}
-            className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value="lista">Lista</option>
             <option value="barras">Gráfico de Barras</option>
@@ -330,53 +329,52 @@ export default function MejoresProductos() {
           </select>
         </div>
         
-        <div className="flex items-end">
-          <label className="flex items-center">
+        <div className="filtro-group checkbox-group">
+          <label className="checkbox-label">
             <input
               type="checkbox"
               checked={comparativa}
               onChange={(e) => setComparativa(e.target.checked)}
-              className="rounded text-blue-600 focus:ring-blue-500"
             />
-            <span className="ml-2 text-sm text-gray-700">Comparar con período anterior</span>
+            <span>Comparar con período anterior</span>
           </label>
         </div>
       </div>
 
       {cargando ? (
-        <div className="text-center py-8">
-          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
-          <p className="mt-2 text-gray-600">Cargando datos...</p>
+        <div className="loading-spinner">
+          <div className="spinner"></div>
+          <p>Cargando datos...</p>
         </div>
       ) : productosMasVendidos.length > 0 ? (
         <>
           {/* Selector de vista */}
           {vista === 'lista' && (
-            <div className="space-y-4">
+            <div className="mejores-productos-list">
               {productosMasVendidos.map((producto, index) => {
                 // Encontrar datos del período anterior para comparación
                 const productoAnterior = periodoAnterior.find(p => p.nombre === producto.nombre);
                 const diferencia = productoAnterior ? producto.cantidad - productoAnterior.cantidad : null;
                 
                 return (
-                  <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                    <div className="flex items-center">
-                      <div className="w-8 h-8 flex items-center justify-center bg-blue-100 text-blue-600 rounded-full mr-4">
+                  <div key={index} className="mejores-producto-item">
+                    <div className="mejores-producto-info">
+                      <div className="mejores-producto-posicion">
                         {index + 1}
                       </div>
-                      <div>
-                        <h3 className="font-medium text-gray-800">{producto.nombre}</h3>
-                        <p className="text-sm text-gray-600">{producto.vecesVendido} ventas</p>
+                      <div className="mejores-producto-details">
+                        <h3>{producto.nombre}</h3>
+                        <p>{producto.vecesVendido} ventas</p>
                         {comparativa && diferencia !== null && (
-                          <p className={`text-xs ${diferencia > 0 ? 'text-green-600' : 'text-red-600'}`}>
+                          <p className={`mejores-comparativa-text ${diferencia > 0 ? 'positive' : 'negative'}`}>
                             {diferencia > 0 ? '↑' : '↓'} {Math.abs(diferencia)} unidades vs. período anterior
                           </p>
                         )}
                       </div>
                     </div>
-                    <div className="text-right">
-                      <p className="font-semibold text-gray-800">{producto.cantidad} unidades</p>
-                      <p className="text-sm text-green-600">${producto.totalVentas.toLocaleString()}</p>
+                    <div className="mejores-producto-stats">
+                      <p className="mejores-stats-cantidad">{producto.cantidad} unidades</p>
+                      <p className="mejores-stats-valor">${producto.totalVentas.toLocaleString()}</p>
                     </div>
                   </div>
                 );
@@ -385,19 +383,19 @@ export default function MejoresProductos() {
           )}
           
           {vista === 'barras' && (
-            <div className="h-96 mt-6">
+            <div className="chart-container">
               <Bar data={datosGraficoBarras} options={opcionesGrafico} />
             </div>
           )}
           
           {vista === 'torta' && (
-            <div className="h-96 mt-6">
+            <div className="chart-container">
               <Pie data={datosGraficoTorta} options={opcionesGrafico} />
             </div>
           )}
         </>
       ) : (
-        <div className="text-center py-8 text-gray-500">
+        <div className="empty-state">
           No hay datos de ventas para el período seleccionado.
         </div>
       )}
