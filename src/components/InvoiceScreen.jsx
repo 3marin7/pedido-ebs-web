@@ -964,12 +964,6 @@ const InvoiceScreen = () => {
               >
                 <i className="fas fa-clipboard-list"></i> Gestión Pedidos
               </button>
-              <button
-                className="button primary-button"
-                onClick={() => window.open('https://mercagi.com/login/', '_blank')}
-              >
-                <i className="fas fa-external-link-alt"></i> Mercagi
-              </button>
             </div>
           </div>
         </>

@@ -66,6 +66,7 @@ const Navigation = () => {
           submenu: [
             { path: '/nueva-factura', label: 'Nueva Factura', icon: '➕' },
             { path: '/facturas', label: 'Facturas Guardadas', icon: '📄' },
+            { path: '/catalogo-clientes', label: 'Enviar Catálogo', icon: '📤' },
             { path: '/clientes', label: 'Gestión Clientes', icon: '👤' },
             { path: '/mapa-locales', label: 'Mapa de Locales', icon: '🗺️' },
             { path: '/rutas-cobro', label: 'Rutas de Cobro', icon: '🚗' }
@@ -123,6 +124,7 @@ const Navigation = () => {
           submenu: [
             { path: '/nueva-factura', label: 'Nueva Factura', icon: '➕' },
             { path: '/facturas', label: 'Facturas Guardadas', icon: '📄' },
+            { path: '/catalogo-clientes', label: 'Enviar Catálogo', icon: '📤' },
             { path: '/clientes', label: 'Gestión Clientes', icon: '👤' },
             { path: '/mapa-locales', label: 'Mapa de Locales', icon: '🗺️' },
             { path: '/rutas-cobro', label: 'Rutas de Cobro', icon: '🚗' }
@@ -172,6 +174,7 @@ const Navigation = () => {
       return [
         { path: '/dashboard-contabilidad', label: 'Dashboard Contabilidad', icon: '📊', tipo: 'simple' },
         { path: '/facturas', label: 'Facturas Guardadas', icon: '📄', tipo: 'simple' },
+        { path: '/catalogo-clientes', label: 'Enviar Catálogo', icon: '📤', tipo: 'simple' },
         { path: '/reportes-cobros', label: 'Reportes de Cobros', icon: '📈', tipo: 'simple' },
         { path: '/gastos', label: 'Gestión de Gastos', icon: '💰', tipo: 'simple' },
         { path: '/rutas-cobro', label: 'Rutas de Cobro', icon: '🚗', tipo: 'simple' },
@@ -186,9 +189,11 @@ const Navigation = () => {
     if (user.role === 'inventario') {
       return [
         { path: '/catalogo', label: 'Catálogo Productos', icon: '📚', tipo: 'simple' },
+        { path: '/catalogo-clientes', label: 'Enviar Catálogo', icon: '📤', tipo: 'simple' },
         { path: '/gestion-inventario', label: 'Gestión Inventario', icon: '📋', tipo: 'simple' },
         { path: '/movimientos', label: 'Historial Movimientos', icon: '📊', tipo: 'simple' },
-        { path: '/gestion-pedidos', label: 'Gestión Pedidos', icon: '🛒', tipo: 'simple' }
+        { path: '/gestion-pedidos', label: 'Gestión Pedidos', icon: '🛒', tipo: 'simple' },
+        { path: '/facturas', label: 'Ver Facturas', icon: '🧾', tipo: 'simple' }
       ];
     }
 

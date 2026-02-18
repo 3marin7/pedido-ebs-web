@@ -96,6 +96,20 @@ export default function MovimientosInventario() {
       const stockAnterior = producto?.stock || 0;
       const cantidadMovida = parseInt(movimiento.cantidad);
       
+      // Determinar qué usar como nombre de usuario
+      let nombreUsuario = 'Sistema';
+      if (user) {
+        if (user.username) {
+          nombreUsuario = user.username;
+        } else if (user.email) {
+          nombreUsuario = user.email;
+        } else if (user.id) {
+          nombreUsuario = user.id;
+        } else if (user.name) {
+          nombreUsuario = user.name;
+        }
+      }
+      
       // Calcular nuevo stock según tipo de movimiento
       let stockNuevo = stockAnterior;
       if (movimiento.tipo_movimiento === 'entrada') {
@@ -113,7 +127,7 @@ export default function MovimientosInventario() {
           stock_anterior: stockAnterior,
           stock_nuevo: stockNuevo,
           descripcion: `${movimiento.motivo}${movimiento.observaciones ? ' - ' + movimiento.observaciones : ''}`,
-          usuario: user?.email || 'Sistema',
+          usuario: nombreUsuario,
           rol_usuario: user?.role || 'N/A',
           precio_unitario: movimiento.precio_unitario ? parseFloat(movimiento.precio_unitario) : null,
           motivo: movimiento.motivo,

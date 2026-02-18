@@ -41,7 +41,6 @@ const HistorialMovimientos = () => {
     } catch (err) {
       console.error('Error cargando datos:', err);
       setError(`Error al cargar los datos: ${err.message || err}`);
-    } finally {
       setCargando(false);
     }
   };
@@ -83,9 +82,11 @@ const HistorialMovimientos = () => {
 
       if (err) throw err;
       setMovimientos(data || []);
+      setCargando(false);
     } catch (err) {
       console.error('Error cargando movimientos:', err);
       setError(`Error al cargar los movimientos: ${err.message || err}`);
+      setCargando(false);
     }
   };
 
@@ -126,6 +127,33 @@ const HistorialMovimientos = () => {
     return iconos[tipo] || '•';
   };
 
+  const obtenerNombreUsuario = (usuario) => {
+    if (!usuario) return 'Sistema';
+    
+    // Mapeo de usernames a nombres completos (con variaciones)
+    const nombresUsuarios = {
+      'Edwin': 'Edwin Marín',
+      'edwin': 'Edwin Marín',
+      'EDWIN': 'Edwin Marín',
+      'fredy': 'Fredy',
+      'Fredy': 'Fredy',
+      'FREDY': 'Fredy',
+      'paola': 'Paola',
+      'Paola': 'Paola',
+      'PAOLA': 'Paola',
+      'caro': 'Caro', 
+      'Caro': 'Caro',
+      'CARO': 'Caro',
+      'fabian': 'Fabian',
+      'Fabian': 'Fabian',
+      'FABIAN': 'Fabian',
+      'EMC': 'Edwin M. C.',
+      'emc': 'Edwin M. C.'
+    };
+    
+    return nombresUsuarios[usuario] || usuario;
+  };
+
   const exportarCSV = () => {
     const headers = ['Fecha', 'Producto', 'Tipo', 'Cantidad', 'Stock Anterior', 'Stock Nuevo', 'Usuario', 'Rol', 'Factura', 'Descripción'];
     const rows = movimientos.map(m => [
@@ -135,7 +163,7 @@ const HistorialMovimientos = () => {
       m.cantidad,
       m.stock_anterior,
       m.stock_nuevo,
-      m.usuario,
+      obtenerNombreUsuario(m.usuario),
       m.rol_usuario || 'N/A',
       m.factura_id || '-',
       m.descripcion || '-'
@@ -323,7 +351,7 @@ const HistorialMovimientos = () => {
                     <td className="cantidad">{movimiento.cantidad}</td>
                     <td className="stock-anterior">{movimiento.stock_anterior}</td>
                     <td className="stock-nuevo">{movimiento.stock_nuevo}</td>
-                    <td className="usuario">{movimiento.usuario || 'Sistema'}</td>
+                    <td className="usuario">{obtenerNombreUsuario(movimiento.usuario)}</td>
                     <td className="rol">{movimiento.rol_usuario || 'N/A'}</td>
                     <td className="factura">
                       {movimiento.factura_id ? (
