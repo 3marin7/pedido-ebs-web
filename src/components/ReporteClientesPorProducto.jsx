@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from './supabaseClient';
+import * as XLSX from 'xlsx';
 import './ReporteClientesPorProducto.css';
 
 const ReporteClientesPorProducto = () => {
@@ -226,6 +227,42 @@ const { data: productosData, error: productosError } = await supabase
     link.click();
   };
 
+  const exportarExcel = () => {
+    if (reporteClientes.length === 0) {
+      alert('No hay datos para exportar');
+      return;
+    }
+
+    const headers = ['Cliente', 'Vendedor', 'Cantidad Total', 'Total Ventas', 'N° Compras', 'Primera Compra', 'Última Compra'];
+    const rows = reporteClientes.map(c => [
+      c.cliente,
+      c.vendedor,
+      c.cantidadTotal,
+      c.totalVentas,
+      c.numeroCompras,
+      formatFecha(c.primeraCompra),
+      formatFecha(c.ultimaCompra)
+    ]);
+
+    const ws = XLSX.utils.aoa_to_sheet([headers, ...rows]);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Reporte');
+    
+    // Ajustar ancho de columnas
+    ws['!cols'] = [
+      { wch: 20 }, // Cliente
+      { wch: 15 }, // Vendedor
+      { wch: 15 }, // Cantidad Total
+      { wch: 15 }, // Total Ventas
+      { wch: 12 }, // N° Compras
+      { wch: 15 }, // Primera Compra
+      { wch: 15 }  // Última Compra
+    ];
+
+    const fileName = `reporte_clientes_${productoSeleccionado.nombre.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.xlsx`;
+    XLSX.writeFile(wb, fileName);
+  };
+
   if (cargando) {
     return (
       <div className="reporte-clientes-container">
@@ -448,9 +485,14 @@ const { data: productosData, error: productosError } = await supabase
         <div className="tabla-clientes-section">
           <div className="tabla-header">
             <h2>4. Clientes que Compraron este Producto</h2>
-            <button className="btn-exportar" onClick={exportarCSV}>
-              <i className="fas fa-download"></i> Exportar CSV
-            </button>
+            <div className="export-buttons-group">
+              <button className="btn-exportar btn-csv" onClick={exportarCSV}>
+                <i className="fas fa-download"></i> Exportar CSV
+              </button>
+              <button className="btn-exportar btn-excel" onClick={exportarExcel}>
+                <i className="fas fa-file-excel"></i> Exportar Excel
+              </button>
+            </div>
           </div>
 
           <div className="tabla-wrapper">

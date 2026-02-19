@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from './supabaseClient';
+import * as XLSX from 'xlsx';
 import './AuditoriaProductos.css';
 
 const AuditoriaProductos = () => {
@@ -142,6 +143,35 @@ const AuditoriaProductos = () => {
     link.click();
   };
 
+  const exportarExcel = () => {
+    const headers = ['Fecha', 'Producto', 'Tipo', 'Usuario', 'Rol', 'Cambios'];
+    const rows = auditorias.map(a => [
+      formatearFecha(a.created_at),
+      a.productos?.nombre || 'N/A',
+      a.tipo_accion,
+      a.usuario || 'N/A',
+      a.rol_usuario || 'N/A',
+      a.cambios_resumen || '-'
+    ]);
+
+    const ws = XLSX.utils.aoa_to_sheet([headers, ...rows]);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Auditoría');
+    
+    // Ajustar ancho de columnas
+    ws['!cols'] = [
+      { wch: 20 }, // Fecha
+      { wch: 25 }, // Producto
+      { wch: 15 }, // Tipo
+      { wch: 15 }, // Usuario
+      { wch: 15 }, // Rol
+      { wch: 40 }  // Cambios
+    ];
+
+    const fileName = `auditoria_productos_${new Date().toISOString().split('T')[0]}.xlsx`;
+    XLSX.writeFile(wb, fileName);
+  };
+
   return (
     <div className="auditoria-container">
       <div className="header-auditoria">
@@ -234,13 +264,22 @@ const AuditoriaProductos = () => {
           Limpiar Filtros
         </button>
 
-        <button 
-          onClick={exportarCSV}
-          className="btn-exportar"
-          disabled={auditorias.length === 0}
-        >
-          📥 Exportar CSV
-        </button>
+        <div className="export-buttons-group">
+          <button 
+            onClick={exportarCSV}
+            className="btn-exportar btn-csv"
+            disabled={auditorias.length === 0}
+          >
+            📥 Exportar CSV
+          </button>
+          <button 
+            onClick={exportarExcel}
+            className="btn-exportar btn-excel"
+            disabled={auditorias.length === 0}
+          >
+            📊 Exportar Excel
+          </button>
+        </div>
       </div>
 
       {/* Tabla de auditorías */}

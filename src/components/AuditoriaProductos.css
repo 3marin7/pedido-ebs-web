@@ -80,6 +80,7 @@
 .btn-limpiar {
   background-color: #e74c3c;
   color: white;
+  margin-right: 10px;
 }
 
 .btn-limpiar:hover {
@@ -88,13 +89,41 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
+.export-buttons-group {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
 .btn-exportar {
   background-color: #27ae60;
   color: white;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-exportar.btn-csv {
+  background-color: #2563eb;
+}
+
+.btn-exportar.btn-csv:hover:not(:disabled) {
+  background-color: #1d4ed8;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.btn-exportar.btn-excel {
+  background-color: #16a34a;
+}
+
+.btn-exportar.btn-excel:hover:not(:disabled) {
+  background-color: #15803d;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .btn-exportar:hover:not(:disabled) {
-  background-color: #229954;
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }

@@ -387,6 +387,14 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.export-buttons-group {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
 .btn-exportar {
@@ -404,8 +412,27 @@
   gap: 8px;
 }
 
+.btn-exportar.btn-csv {
+  background: #2563eb;
+}
+
+.btn-exportar.btn-csv:hover {
+  background: #1d4ed8;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-exportar.btn-excel {
+  background: #16a34a;
+}
+
+.btn-exportar.btn-excel:hover {
+  background: #15803d;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
 .btn-exportar:hover {
-  background: #1976D2;
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
 }

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from './supabaseClient';
+import * as XLSX from 'xlsx';
 import './FacturasGuardadas.css';
 
 const FacturasGuardadas = () => {
@@ -275,7 +276,91 @@ const FacturasGuardadas = () => {
     }
   };
 
-  // Exportar facturas y abonos
+  // Exportar facturas y abonos en EXCEL
+  const exportarExcel = async () => {
+    try {
+      setCargando(true);
+      
+      const { data: facturasData, error: facturasError } = await supabase
+        .from('facturas')
+        .select('*');
+      
+      if (facturasError) throw facturasError;
+      
+      const { data: abonosData, error: abonosError } = await supabase
+        .from('abonos')
+        .select('*');
+      
+      if (abonosError) throw abonosError;
+
+      // Crear workbook con dos hojas
+      const wb = XLSX.utils.book_new();
+
+      // Hoja de Facturas
+      const facturasSheet = XLSX.utils.json_to_sheet(facturasData || []);
+      XLSX.utils.book_append_sheet(wb, facturasSheet, 'Facturas');
+
+      // Hoja de Abonos
+      const abonosSheet = XLSX.utils.json_to_sheet(abonosData || []);
+      XLSX.utils.book_append_sheet(wb, abonosSheet, 'Abonos');
+
+      // Descargar
+      const fileName = `facturacion_${new Date().toISOString().slice(0, 10)}.xlsx`;
+      XLSX.writeFile(wb, fileName);
+      
+    } catch (error) {
+      console.error("Error exportando Excel:", error);
+      alert('Error al exportar en Excel');
+    } finally {
+      setCargando(false);
+    }
+  };
+
+  // Exportar facturas y abonos en CSV
+  const exportarCSV = async () => {
+    try {
+      setCargando(true);
+      
+      const { data: facturasData, error: facturasError } = await supabase
+        .from('facturas')
+        .select('*');
+      
+      if (facturasError) throw facturasError;
+      
+      const { data: abonosData, error: abonosError } = await supabase
+        .from('abonos')
+        .select('*');
+      
+      if (abonosError) throw abonosError;
+
+      // Crear contenido CSV con facturas y abonos
+      let csv = 'FACTURAS\n';
+      csv += 'id,cliente,total,estado,fecha,vendedor\n';
+      (facturasData || []).forEach(f => {
+        csv += `${f.id},"${f.cliente}",${f.total},${f.estado},${f.fecha},${f.vendedor || ''}\n`;
+      });
+
+      csv += '\n\nABONOS\n';
+      csv += 'id,factura_id,monto,fecha,observaciones\n';
+      (abonosData || []).forEach(a => {
+        csv += `${a.id},${a.factura_id},${a.monto},${a.fecha},"${a.observaciones || ''}"\n`;
+      });
+
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `facturacion_${new Date().toISOString().slice(0, 10)}.csv`;
+      link.click();
+      
+    } catch (error) {
+      console.error("Error exportando CSV:", error);
+      alert('Error al exportar en CSV');
+    } finally {
+      setCargando(false);
+    }
+  };
+
+  // Exportar facturas y abonos (JSON - mantener para compatibilidad)
   const exportarDatos = async () => {
     try {
       setCargando(true);
@@ -518,12 +603,22 @@ const FacturasGuardadas = () => {
           <button 
             className="menu-btn"
             onClick={() => {
-              exportarDatos();
+              exportarExcel();
               setMenuAbierto(false);
             }}
             disabled={importando || cargando}
           >
-            <i className="fas fa-file-export"></i> Exportar Todo
+            <i className="fas fa-file-excel"></i> Exportar Excel
+          </button>
+          <button 
+            className="menu-btn"
+            onClick={() => {
+              exportarCSV();
+              setMenuAbierto(false);
+            }}
+            disabled={importando || cargando}
+          >
+            <i className="fas fa-file-csv"></i> Exportar CSV
           </button>
           <label 
             htmlFor="importar-datos-mobile" 
@@ -609,11 +704,18 @@ const FacturasGuardadas = () => {
               </button>
               
               <button 
-                className="button info-button"
-                onClick={exportarDatos}
+                className="button success-button"
+                onClick={exportarExcel}
                 disabled={importando || cargando}
               >
-                <i className="fas fa-file-export"></i> Exportar Todo
+                <i className="fas fa-file-excel"></i> Exportar Excel
+              </button>
+              <button 
+                className="button info-button"
+                onClick={exportarCSV}
+                disabled={importando || cargando}
+              >
+                <i className="fas fa-file-csv"></i> Exportar CSV
               </button>
               <label 
                 htmlFor="importar-datos" 

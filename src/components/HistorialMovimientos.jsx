@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from './supabaseClient';
+import * as XLSX from 'xlsx';
 import './HistorialMovimientos.css';
 
 const HistorialMovimientos = () => {
@@ -181,6 +182,43 @@ const HistorialMovimientos = () => {
     link.click();
   };
 
+  const exportarExcel = () => {
+    const headers = ['Fecha', 'Producto', 'Tipo', 'Cantidad', 'Stock Anterior', 'Stock Nuevo', 'Usuario', 'Rol', 'Factura', 'Descripción'];
+    const rows = movimientos.map(m => [
+      formatearFecha(obtenerFechaMovimiento(m)),
+      m.productos?.nombre || 'N/A',
+      m.tipo_movimiento,
+      m.cantidad,
+      m.stock_anterior,
+      m.stock_nuevo,
+      obtenerNombreUsuario(m.usuario),
+      m.rol_usuario || 'N/A',
+      m.factura_id || '-',
+      m.descripcion || '-'
+    ]);
+
+    const ws = XLSX.utils.aoa_to_sheet([headers, ...rows]);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Movimientos');
+    
+    // Ajustar ancho de columnas
+    ws['!cols'] = [
+      { wch: 20 }, // Fecha
+      { wch: 20 }, // Producto
+      { wch: 15 }, // Tipo
+      { wch: 12 }, // Cantidad
+      { wch: 15 }, // Stock Anterior
+      { wch: 15 }, // Stock Nuevo
+      { wch: 15 }, // Usuario
+      { wch: 15 }, // Rol
+      { wch: 12 }, // Factura
+      { wch: 30 }  // Descripción
+    ];
+
+    const fileName = `movimientos_inventario_${new Date().toISOString().split('T')[0]}.xlsx`;
+    XLSX.writeFile(wb, fileName);
+  };
+
   return (
     <div className="historial-container">
       <div className="header-historial">
@@ -276,13 +314,22 @@ const HistorialMovimientos = () => {
           Limpiar Filtros
         </button>
 
-        <button 
-          onClick={exportarCSV}
-          className="btn-exportar"
-          disabled={movimientos.length === 0}
-        >
-          📥 Exportar CSV
-        </button>
+        <div className="export-buttons-group">
+          <button 
+            onClick={exportarCSV}
+            className="btn-exportar btn-csv"
+            disabled={movimientos.length === 0}
+          >
+            📥 Exportar CSV
+          </button>
+          <button 
+            onClick={exportarExcel}
+            className="btn-exportar btn-excel"
+            disabled={movimientos.length === 0}
+          >
+            📊 Exportar Excel
+          </button>
+        </div>
       </div>
 
       {/* Tabla de movimientos */}
