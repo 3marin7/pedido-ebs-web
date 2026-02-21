@@ -333,6 +333,7 @@ ${pedido.cliente_notas && pedido.cliente_notas !== 'Ninguna' ? `• Notas: ${ped
           cliente: pedido.cliente_nombre,
           telefono: pedido.cliente_telefono,
           direccion: pedido.direccion_entrega || '',
+          vendedor: pedido.vendedor || '',
           productos: pedido.productos.map(p => ({
             id: Date.now() + Math.random(),
             nombre: p.nombre,
@@ -494,6 +495,9 @@ ${pedido.cliente_notas && pedido.cliente_notas !== 'Ninguna' ? `• Notas: ${ped
           <div className="modal-content">
             <div className="info-pedido-modal">
               <p><strong>Cliente:</strong> {pedido.cliente_nombre}</p>
+              {pedido.vendedor && (
+                <p><strong>Vendedor:</strong> {pedido.vendedor}</p>
+              )}
               <p><strong>Total:</strong> {formatPrecio(pedido.total)}</p>
               <p><strong>Productos:</strong> {pedido.productos?.length || 0} items</p>
             </div>
@@ -825,6 +829,9 @@ ${pedido.cliente_notas && pedido.cliente_notas !== 'Ninguna' ? `• Notas: ${ped
                     <p><strong>📞 Teléfono:</strong> {pedido.cliente_telefono}</p>
                     {pedido.direccion_entrega && (
                       <p><strong>📍 Dirección:</strong> {pedido.direccion_entrega}</p>
+                    )}
+                    {pedido.vendedor && (
+                      <p><strong>👨‍💼 Vendedor:</strong> {pedido.vendedor}</p>
                     )}
                   </div>
                   <div className="info-total">

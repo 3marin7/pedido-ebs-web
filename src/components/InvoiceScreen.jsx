@@ -54,6 +54,7 @@ const InvoiceScreen = () => {
       setTelefono(pedidoData.telefono || '');
       setDireccion(pedidoData.direccion || '');
       setCorreo(pedidoData.correo || '');
+      setVendedorSeleccionado(pedidoData.vendedor || '');
       setProductos(pedidoData.productos || []);
       
       // Limpiar el state para que no se recargue al volver

@@ -17,6 +17,8 @@ import DashboardVentas from './components/DashboardVentas';
 import MallMap from './components/MallMap';
 import RutasCobro from './components/RutasCobro';
 import GastosScreen from './components/GastosScreen';
+import GastosEmpresa from './components/GastosEmpresa';
+import CuentasPorPagar from './components/CuentasPorPagar';
 import ContabilidadScreen from './components/ContabilidadScreen';
 import HistorialMovimientos from './components/HistorialMovimientos';
 import AuditoriaProductos from './components/AuditoriaProductos';
@@ -323,6 +325,26 @@ function App() {
                 <>
                   <PageMeta title="Gestión de Gastos - EBS" description="Control y análisis de gastos" />
                   <GastosScreen />
+                </>
+              </ProtectedRoute>
+            } />
+
+            {/* Ruta para Cuentas por Pagar */}
+            <Route path="/cuentas-por-pagar" element={
+              <ProtectedRoute requiredRoles={['superadmin', 'admin', 'contabilidad']}>
+                <>
+                  <PageMeta title="Cuentas por Pagar - EBS" description="Gestión de pagos a proveedores" />
+                  <CuentasPorPagar />
+                </>
+              </ProtectedRoute>
+            } />
+
+            {/* Ruta para Gastos de la Empresa */}
+            <Route path="/gastos-empresa" element={
+              <ProtectedRoute requiredRoles={['superadmin', 'admin', 'contabilidad']}>
+                <>
+                  <PageMeta title="Gastos de la Empresa - EBS" description="Control de gastos operacionales" />
+                  <GastosEmpresa />
                 </>
               </ProtectedRoute>
             } />

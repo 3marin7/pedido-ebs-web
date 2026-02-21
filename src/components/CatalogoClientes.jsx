@@ -13,8 +13,10 @@ const CatalogoClientes = () => {
     nombre: '',
     telefono: '',
     direccion: '',
-    notas: ''
+    notas: '',
+    vendedor: ''
   });
+  const vendedores = ['Edwin Marin', 'Fredy Marin', 'Fabian Marin'];
   const [mostrarCarrito, setMostrarCarrito] = useState(false);
   const [showQuantityNotification, setShowQuantityNotification] = useState(false);
   const [categorias, setCategorias] = useState(['Todas']);
@@ -253,6 +255,11 @@ const CatalogoClientes = () => {
 
   // Validar información del cliente
   const validarCliente = () => {
+    if (!clienteInfo.vendedor.trim()) {
+      alert('Por favor selecciona un vendedor');
+      return false;
+    }
+
     if (!clienteInfo.nombre.trim()) {
       alert('Por favor ingresa tu nombre completo');
       return false;
@@ -280,7 +287,8 @@ const CatalogoClientes = () => {
       nombre: '',
       telefono: '',
       direccion: '',
-      notas: ''
+      notas: '',
+      vendedor: ''
     }));
     setPedidoEnviado(false);
     setNumeroPedido(null);
@@ -312,6 +320,7 @@ const CatalogoClientes = () => {
             cliente_telefono: clienteInfo.telefono.replace(/\D/g, ''),
             direccion_entrega: clienteInfo.direccion.trim() || '',
             cliente_notas: clienteInfo.notas.trim() || 'Ninguna',
+            vendedor: clienteInfo.vendedor.trim() || 'Sin asignar',
             productos: productosSeleccionados,
             total: calcularTotal(),
             estado: 'pendiente',
@@ -789,6 +798,22 @@ const CatalogoClientes = () => {
                   <div className="cliente-info-cart">
                     <h3>Completa tus datos para enviar el pedido</h3>
                     <div className="cliente-form">
+                      <div className="form-group">
+                        <label htmlFor="vendedor-cliente">Vendedor *</label>
+                        <select
+                          id="vendedor-cliente"
+                          name="vendedor"
+                          value={clienteInfo.vendedor}
+                          onChange={handleInputChange}
+                          className={!clienteInfo.vendedor.trim() ? 'input-error' : ''}
+                        >
+                          <option value="">Seleccione vendedor</option>
+                          {vendedores.map((v) => (
+                            <option key={v} value={v}>{v}</option>
+                          ))}
+                        </select>
+                        {!clienteInfo.vendedor.trim() && <span className="error-text">Campo obligatorio</span>}
+                      </div>
                       <div className="form-group">
                         <label htmlFor="nombre-cliente">Nombre Completo *</label>
                         <input

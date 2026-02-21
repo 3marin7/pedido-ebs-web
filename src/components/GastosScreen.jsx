@@ -45,7 +45,13 @@ const GastosScreen = () => {
     cantidad: '',
     referencia: '',
     categoria: 'Servicios',
-    descripcion: ''
+    descripcion: '',
+    // Nuevos campos para facturas/cuentas por cobrar
+    refDoc: '',
+    clase: 'RV',
+    fhBase: '',
+    importe: '',
+    abono: ''
   });
 
   // Datos de ejemplo basados en el documento
@@ -206,6 +212,28 @@ const GastosScreen = () => {
         tipo: 'crédito'
       }
     ],
+    facturas: [
+      {
+        id: 1001,
+        refDoc: '500787688',
+        clase: 'RV',
+        fhBase: '2025-09-23',
+        importe: 35806685,
+        abono: 4380669,
+        aPagar: 31426017,
+        tipo: 'factura'
+      },
+      {
+        id: 1002,
+        refDoc: '4400077966',
+        clase: 'NC',
+        fhBase: '',
+        importe: -12861150,
+        abono: 0,
+        aPagar: -12861150,
+        tipo: 'factura'
+      }
+    ],
     cajaMenor: {
       moneda: 43000,
       efectivo: 352000,
@@ -260,12 +288,27 @@ const GastosScreen = () => {
   const validarGasto = () => {
     const errores = {};
     
-    if (!nuevoGasto.fecha) {
+    if (!nuevoGasto.fecha && nuevoGasto.tipo !== 'factura') {
       errores.fecha = 'La fecha es requerida';
     }
     
-    if (!nuevoGasto.cantidad || parseFloat(nuevoGasto.cantidad) <= 0) {
-      errores.cantidad = 'La cantidad debe ser mayor a 0';
+    if (nuevoGasto.tipo === 'factura') {
+      if (!nuevoGasto.refDoc) {
+        errores.refDoc = 'El número de referencia es requerido';
+      }
+      if (!nuevoGasto.clase) {
+        errores.clase = 'La clase es requerida';
+      }
+      if (!nuevoGasto.fhBase) {
+        errores.fhBase = 'La fecha base es requerida';
+      }
+      if (!nuevoGasto.importe || parseFloat(nuevoGasto.importe) <= 0) {
+        errores.importe = 'El importe debe ser mayor a 0';
+      }
+    } else {
+      if (!nuevoGasto.cantidad || parseFloat(nuevoGasto.cantidad) <= 0) {
+        errores.cantidad = 'La cantidad debe ser mayor a 0';
+      }
     }
     
     if (!nuevoGasto.tipo) {
@@ -317,13 +360,29 @@ const GastosScreen = () => {
       descripcion: nuevoGasto.descripcion,
       categoria: nuevoGasto.categoria,
       tipo: nuevoGasto.tipo,
-      persona: nuevoGasto.persona
+      persona: nuevoGasto.persona,
+      // Campos adicionales para facturas
+      ...(nuevoGasto.tipo === 'factura' && {
+        refDoc: nuevoGasto.refDoc,
+        clase: nuevoGasto.clase,
+        fhBase: nuevoGasto.fhBase,
+        importe: parseFloat(nuevoGasto.importe),
+        abono: nuevoGasto.abono ? parseFloat(nuevoGasto.abono) : 0,
+        aPagar: parseFloat(nuevoGasto.importe) - (nuevoGasto.abono ? parseFloat(nuevoGasto.abono) : 0)
+      })
     };
 
     setDatosGastos(prev => {
       const nuevoEstado = JSON.parse(JSON.stringify(prev));
 
       switch (nuevoGasto.tipo) {
+        case 'factura':
+          if (!nuevoEstado.facturas) {
+            nuevoEstado.facturas = [];
+          }
+          nuevoEstado.facturas.push(gasto);
+          break;
+          
         case 'nequi':
           if (!nuevoEstado.gastosNequi[nuevoGasto.persona]) {
             nuevoEstado.gastosNequi[nuevoGasto.persona] = [];
@@ -364,13 +423,19 @@ const GastosScreen = () => {
   const editarGasto = (gasto, tipo, persona = null) => {
     setGastoEditando({ gasto, tipo, persona });
     setNuevoGasto({
-      fecha: gasto.fecha,
+      fecha: gasto.fecha || '',
       tipo: tipo,
       persona: persona || gasto.persona || 'Edwin Marín',
-      cantidad: gasto.cantidad.toString(),
+      cantidad: gasto.cantidad?.toString() || '',
       referencia: gasto.referencia || '',
       categoria: gasto.categoria || 'Servicios',
-      descripcion: gasto.descripcion || ''
+      descripcion: gasto.descripcion || '',
+      // Campos de facturas
+      refDoc: gasto.refDoc || '',
+      clase: gasto.clase || 'RV',
+      fhBase: gasto.fhBase || '',
+      importe: gasto.importe?.toString() || '',
+      abono: gasto.abono?.toString() || ''
     });
     setMostrarFormulario(true);
   };
@@ -397,6 +462,12 @@ const GastosScreen = () => {
         case 'especifico':
           nuevoEstado.gastosEspecificos = nuevoEstado.gastosEspecificos.filter(g => g.id !== gastoId);
           break;
+          
+        case 'factura':
+          if (nuevoEstado.facturas) {
+            nuevoEstado.facturas = nuevoEstado.facturas.filter(f => f.id !== gastoId);
+          }
+          break;
 
         default:
           break;
@@ -416,7 +487,12 @@ const GastosScreen = () => {
       cantidad: '',
       referencia: '',
       categoria: 'Servicios',
-      descripcion: ''
+      descripcion: '',
+      refDoc: '',
+      clase: 'RV',
+      fhBase: '',
+      importe: '',
+      abono: ''
     });
     setGastoEditando(null);
     setMostrarFormulario(false);
@@ -744,6 +820,7 @@ const GastosScreen = () => {
                 {tiposGasto.filter(t => t.value !== 'todos').map(tipo => (
                   <option key={tipo.value} value={tipo.value}>{tipo.label}</option>
                 ))}
+                <option value="factura">📄 Factura/Cuenta por Cobrar</option>
               </select>
               {erroresValidacion.tipo && <span className="error-message">{erroresValidacion.tipo}</span>}
             </div>
@@ -812,6 +889,81 @@ const GastosScreen = () => {
                 rows="3"
               />
             </div>
+            
+            {/* Campos adicionales para facturas/cuentas por cobrar */}
+            {nuevoGasto.tipo === 'factura' && (
+              <>
+                <div className="form-group">
+                  <label>REF DOC *</label>
+                  <input
+                    type="text"
+                    name="refDoc"
+                    value={nuevoGasto.refDoc}
+                    onChange={handleInputChange}
+                    placeholder="Ej: 500787688"
+                    required
+                    className={erroresValidacion.refDoc ? 'input-error' : ''}
+                  />
+                  {erroresValidacion.refDoc && <span className="error-message">{erroresValidacion.refDoc}</span>}
+                </div>
+                
+                <div className="form-group">
+                  <label>CLASE *</label>
+                  <select
+                    name="clase"
+                    value={nuevoGasto.clase}
+                    onChange={handleInputChange}
+                    className={erroresValidacion.clase ? 'input-error' : ''}
+                  >
+                    <option value="RV">RV - Recibo de Venta</option>
+                    <option value="NC">NC - Nota Crédito</option>
+                    <option value="ND">ND - Nota Débito</option>
+                    <option value="FV">FV - Factura de Venta</option>
+                  </select>
+                  {erroresValidacion.clase && <span className="error-message">{erroresValidacion.clase}</span>}
+                </div>
+                
+                <div className="form-group">
+                  <label>FH BASE (Fecha Base) *</label>
+                  <input
+                    type="date"
+                    name="fhBase"
+                    value={nuevoGasto.fhBase}
+                    onChange={handleInputChange}
+                    required
+                    className={erroresValidacion.fhBase ? 'input-error' : ''}
+                  />
+                  {erroresValidacion.fhBase && <span className="error-message">{erroresValidacion.fhBase}</span>}
+                </div>
+                
+                <div className="form-group">
+                  <label>IMPORTE *</label>
+                  <input
+                    type="number"
+                    name="importe"
+                    value={nuevoGasto.importe}
+                    onChange={handleInputChange}
+                    placeholder="0"
+                    step="1000"
+                    required
+                    className={erroresValidacion.importe ? 'input-error' : ''}
+                  />
+                  {erroresValidacion.importe && <span className="error-message">{erroresValidacion.importe}</span>}
+                </div>
+                
+                <div className="form-group">
+                  <label>ABONO</label>
+                  <input
+                    type="number"
+                    name="abono"
+                    value={nuevoGasto.abono}
+                    onChange={handleInputChange}
+                    placeholder="0"
+                    step="1000"
+                  />
+                </div>
+              </>
+            )}
           </div>
 
           {/* Vista Previa del Gasto */}
@@ -1260,6 +1412,82 @@ const GastosScreen = () => {
                   </div>
                 </div>
               ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Facturas y Cuentas por Cobrar */}
+      {(tipoGasto === 'todos' || tipoGasto === 'factura') && datosGastos.facturas && (
+        <div className="seccion-gastos">
+          <div className="seccion-header" onClick={() => toggleSeccion('factura')}>
+            <h2>📄 Facturas y Cuentas por Cobrar <span className="toggle-icon">{seccionesAbiertas.factura !== false ? '▼' : '▶'}</span></h2>
+          </div>
+          {seccionesAbiertas.factura !== false && (
+            <>
+              <div className="tabla-container">
+                <table className="data-table">
+                  <thead>
+                    <tr>
+                      <th>REF DOC</th>
+                      <th>CLASE</th>
+                      <th>FH BASE</th>
+                      <th>IMPORTE</th>
+                      <th>ABONO</th>
+                      <th>A PAGAR</th>
+                      <th>Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {datosGastos.facturas?.map(factura => (
+                      <tr key={factura.id} className={factura.clase === 'NC' ? 'factura-nc' : ''}>
+                        <td className="referencia">{factura.refDoc}</td>
+                        <td>
+                          <span className={`badge badge-${factura.clase === 'NC' ? 'danger' : 'info'}`}>
+                            {factura.clase}
+                          </span>
+                        </td>
+                        <td>{factura.fhBase ? new Date(factura.fhBase).toLocaleDateString('es-CO') : '-'}</td>
+                        <td className={factura.importe < 0 ? 'negative' : 'positive'}>
+                          {formatCurrency(factura.importe)}
+                        </td>
+                        <td className="positive">{formatCurrency(factura.abono)}</td>
+                        <td className={factura.aPagar < 0 ? 'negative' : 'positive'}>
+                          {formatCurrency(factura.aPagar)}
+                        </td>
+                        <td>
+                          <div className="acciones-tabla">
+                            <button 
+                              className="btn-editar"
+                              onClick={() => editarGasto(factura, 'factura')}
+                              title="Editar"
+                            >
+                              ✏️
+                            </button>
+                            <button 
+                              className="btn-eliminar"
+                              onClick={() => eliminarGasto(factura.id, 'factura')}
+                              title="Eliminar"
+                            >
+                              🗑️
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              {datosGastos.facturas?.length > itemsPorPagina && (
+                <div className="tabla-info">
+                  <span>{datosGastos.facturas?.length} factura(s) total</span>
+                </div>
+              )}
+            </>
+          )}
+          {datosGastos.facturas?.length === 0 && (
+            <div className="tabla-vacia">
+              <p>No hay facturas registradas</p>
             </div>
           )}
         </div>

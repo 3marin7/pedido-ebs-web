@@ -207,7 +207,7 @@ const FacturaDetalle = () => {
             }
             .numero-cuenta {
               font-weight: bold;
-              font-size: 11px;
+              font-size: 15px !important;
               margin-bottom: 0.2cm;
               text-align: center;
               margin-top: -0.05cm;
@@ -246,7 +246,7 @@ const FacturaDetalle = () => {
             }
             .info-item h4 {
               margin: 0 0 0.02cm 0;
-              font-size: 7px;
+              font-size: 13px !important;
               font-weight: bold;
             }
             .info-item p {
@@ -257,10 +257,26 @@ const FacturaDetalle = () => {
               font-size: 7px;
             }
             .cliente-nombre {
-              font-size: 11px;
+              font-size: 15px !important;
               font-weight: 900;
               text-transform: uppercase;
               line-height: 1.2;
+            }
+            .vendedor-nombre {
+              font-size: 15px !important;
+              font-weight: 900;
+              text-transform: uppercase;
+              line-height: 1.2;
+            }
+            .direccion-dato,
+            .telefono-dato {
+              font-size: 13px !important;
+            }
+            .numero-cuenta,
+            .cliente-nombre,
+            .vendedor-nombre {
+              font-size: 15px !important;
+              font-weight: 900;
             }
             .tabla-productos {
               width: 100%;
@@ -392,6 +408,10 @@ const FacturaDetalle = () => {
               font-weight: 600;
               text-transform: uppercase;
             }
+            .llave-nequi {
+              font-size: 9px;
+              font-weight: 900;
+            }
             .logo {
               font-weight: bold;
               margin-top: 0.02cm;
@@ -400,8 +420,13 @@ const FacturaDetalle = () => {
             .empresa-info {
               text-align: left;
             }
+            .empresa-info div {
+              font-size: 16px !important;
+              font-weight: 700;
+              line-height: 1.1;
+            }
             .empresa-info strong {
-              font-size: 11px;
+              font-size: 16px !important;
             }
             @media print {
               body {
@@ -442,13 +467,13 @@ const FacturaDetalle = () => {
                   <h4>CLIENTE:</h4>
                   <p class="cliente-nombre">${factura.cliente}</p>
                   <h4>DIRECCIÓN:</h4>
-                  <p>${factura.direccion || 'NO ESPECIFICADO'}</p>
+                  <p class="direccion-dato">${factura.direccion || 'NO ESPECIFICADO'}</p>
                 </div>
                 <div class="info-item">
                   <h4>VENDEDOR:</h4>
-                  <p>${factura.vendedor}</p>
+                  <p class="vendedor-nombre">${factura.vendedor}</p>
                   <h4>TELÉFONO:</h4>
-                  <p>${factura.telefono || 'NO ESPECIFICADO'}</p>
+                  <p class="telefono-dato">${factura.telefono || 'NO ESPECIFICADO'}</p>
                 </div>
               </div>
               
@@ -503,7 +528,7 @@ const FacturaDetalle = () => {
               
               <div class="footer">
                 <div>Gracias por su preferencia.</div>
-                <div class="footer-payment">NEQUI, TU LLAVE 3209105993, CUENTA DAVIVIENDA # 474970011893</div>
+                <div class="footer-payment">NEQUI, TU LLAVE <span class="llave-nequi">3209105993</span>, CUENTA DAVIVIENDA # 474970011893</div>
                 <div class="logo">EBS - Sistema de Ebs-Hermanos Marin</div>
               </div>
             </div>
@@ -530,13 +555,13 @@ const FacturaDetalle = () => {
                   <h4>CLIENTE:</h4>
                   <p class="cliente-nombre">${factura.cliente}</p>
                   <h4>DIRECCIÓN:</h4>
-                  <p>${factura.direccion || 'NO ESPECIFICADO'}</p>
+                  <p class="direccion-dato">${factura.direccion || 'NO ESPECIFICADO'}</p>
                 </div>
                 <div class="info-item">
                   <h4>VENDEDOR:</h4>
-                  <p>${factura.vendedor}</p>
+                  <p class="vendedor-nombre">${factura.vendedor}</p>
                   <h4>TELÉFONO:</h4>
-                  <p>${factura.telefono || 'NO ESPECIFICADO'}</p>
+                  <p class="telefono-dato">${factura.telefono || 'NO ESPECIFICADO'}</p>
                 </div>
               </div>
               
@@ -591,7 +616,7 @@ const FacturaDetalle = () => {
               
               <div class="footer">
                 <div>Gracias por su preferencia.</div>
-                <div class="footer-payment">NEQUI, TU LLAVE 3209105993, CUENTA DAVIVIENDA # 474970011893</div>
+                <div class="footer-payment">NEQUI, TU LLAVE <span class="llave-nequi">3209105993</span>, CUENTA DAVIVIENDA # 474970011893</div>
                 <div class="logo">EBS - Sistema de Ebs-Hermanos Marin</div>
               </div>
             </div>

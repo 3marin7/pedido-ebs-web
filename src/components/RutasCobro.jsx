@@ -925,6 +925,132 @@ const RutasCobro = () => {
     }).format(valor || 0);
   };
 
+  const cerrarPanelAnalisisSiAplica = (cerrarPanel) => {
+    if (cerrarPanel) {
+      setAnalisisOpen(false);
+    }
+  };
+
+  const construirMensajeClientesMas60Dias = (clientesMas60Dias) => {
+    let mensaje = `📋 CLIENTES CON FACTURAS >60 DÍAS Y SALDO PENDIENTE\n\n`;
+    mensaje += `Total: ${clientesMas60Dias.length} clientes\n\n`;
+
+    clientesMas60Dias.slice(0, 25).forEach((cliente, index) => {
+      mensaje += `${index + 1}. ${cliente.nombre}\n`;
+      mensaje += `   📍 ${cliente.direccion}\n`;
+      mensaje += `   📞 ${cliente.telefono}\n`;
+      mensaje += `   💰 Deuda pendiente: ${formatMoneda(cliente.totalDeuda)}\n`;
+      mensaje += `   📅 Máxima antigüedad: ${cliente.diasMaximo} días\n`;
+      mensaje += `   📄 Facturas pendientes: ${cliente.totalFacturas}\n`;
+      mensaje += `   👤 Vendedor: ${cliente.vendedor}\n\n`;
+    });
+
+    const deudaTotal = clientesMas60Dias.reduce((sum, c) => sum + c.totalDeuda, 0);
+    const promedioDias = Math.round(
+      clientesMas60Dias.reduce((sum, c) => sum + c.diasMaximo, 0) / clientesMas60Dias.length
+    );
+    const totalFacturas = clientesMas60Dias.reduce((sum, c) => sum + c.totalFacturas, 0);
+
+    mensaje += `--- RESUMEN ---\n`;
+    mensaje += `💰 Deuda total pendiente: ${formatMoneda(deudaTotal)}\n`;
+    mensaje += `📊 Promedio días antigüedad: ${promedioDias} días\n`;
+    mensaje += `👥 Total clientes críticos: ${clientesMas60Dias.length}\n`;
+    mensaje += `📄 Total facturas pendientes: ${totalFacturas}`;
+
+    return mensaje;
+  };
+
+  const manejarHistorialVisitas = async (cerrarPanel = false) => {
+    await cargarHistorialVisitas();
+    setMostrarHistorialVisitas(prev => !prev);
+    setMostrarClientesMenosVisitados(false);
+    setMostrarClientesSinVisitar(false);
+    cerrarPanelAnalisisSiAplica(cerrarPanel);
+  };
+
+  const manejarClientesMenosVisitados = async (cerrarPanel = false) => {
+    await cargarClientesMenosVisitados();
+    setMostrarClientesMenosVisitados(prev => !prev);
+    setMostrarHistorialVisitas(false);
+    setMostrarClientesSinVisitar(false);
+    cerrarPanelAnalisisSiAplica(cerrarPanel);
+  };
+
+  const manejarClientesMayorDeuda = (cerrarPanel = false) => {
+    setMostrarMapaDeuda(prev => !prev);
+    setMostrarHistorialVisitas(false);
+    setMostrarClientesMenosVisitados(false);
+    setMostrarClientesSinVisitar(false);
+    cerrarPanelAnalisisSiAplica(cerrarPanel);
+  };
+
+  const manejarClientesSinVisitar = async (cerrarPanel = false) => {
+    const clientesUrgentes = await cargarClientesSinVisitar30Dias();
+    setMostrarClientesSinVisitar(prev => !prev);
+    setMostrarHistorialVisitas(false);
+    setMostrarClientesMenosVisitados(false);
+    cerrarPanelAnalisisSiAplica(cerrarPanel);
+
+    if (clientesUrgentes.length === 0) {
+      alert('✅ ¡Excelente! No hay clientes con más de 30 días sin visita.');
+    }
+  };
+
+  const manejarClientesMas60Dias = async (cerrarPanel = false) => {
+    const clientesMas60Dias = await cargarClientesMas60Dias();
+    cerrarPanelAnalisisSiAplica(cerrarPanel);
+
+    if (clientesMas60Dias.length === 0) {
+      return;
+    }
+
+    const mensaje = construirMensajeClientesMas60Dias(clientesMas60Dias);
+    alert(mensaje);
+  };
+
+  const accionesAnalisis = [
+    {
+      id: 'historial-visitas',
+      className: 'button analisis-action-btn',
+      icono: 'fas fa-history',
+      texto: 'Ver Historial de Visitas',
+      onClick: manejarHistorialVisitas
+    },
+    {
+      id: 'clientes-menos-visitados',
+      className: 'button analisis-action-btn',
+      icono: 'fas fa-chart-line',
+      texto: 'Clientes Menos Visitados',
+      onClick: manejarClientesMenosVisitados
+    },
+    {
+      id: 'clientes-mayor-deuda',
+      className: 'button analisis-action-btn',
+      icono: 'fas fa-chart-bar',
+      texto: 'Clientes Mayor Deuda',
+      onClick: manejarClientesMayorDeuda
+    },
+    {
+      id: 'clientes-mas-60-dias',
+      className: 'button analisis-action-btn',
+      icono: 'fas fa-calendar-exclamation',
+      texto: 'Clientes +60 Días',
+      onClick: manejarClientesMas60Dias
+    }
+  ];
+
+  const renderBotonesAnalisis = () => (
+    accionesAnalisis.map(accion => (
+      <button
+        key={accion.id}
+        className={accion.className}
+        onClick={() => accion.onClick(true)}
+      >
+        <i className={accion.icono}></i> {accion.texto}
+      </button>
+    ))
+  );
+
   // Obtener zonas únicas
   const zonasUnicas = [...new Set(clientesConDeuda.map(c => c.zona))].sort();
 
@@ -949,9 +1075,19 @@ const RutasCobro = () => {
     <div className="rutas-cobro-container">
       <header className="rutas-header">
         <div className="header-main">
-          <h1>
-            <i className="fas fa-route"></i> Rutas de Cobro Inteligentes
-          </h1>
+          <div className="header-title-group">
+            <button
+              className="hamburger-analisis-btn"
+              onClick={() => setAnalisisOpen(!analisisOpen)}
+              aria-expanded={analisisOpen}
+              aria-label="Abrir menú de herramientas"
+            >
+              <i className="fas fa-bars"></i>
+            </button>
+            <h1>
+              <i className="fas fa-route"></i> Rutas de Cobro Inteligentes
+            </h1>
+          </div>
           <button 
             className="button secondary-button"
             onClick={() => navigate('/facturas')}
@@ -963,6 +1099,17 @@ const RutasCobro = () => {
           Sistema de priorización para visitas de cobranza
         </p>
       </header>
+
+      <div className={`analisis-overlay ${analisisOpen ? 'active' : ''}`} onClick={() => setAnalisisOpen(false)}></div>
+      <div className={`analisis-side-menu ${analisisOpen ? 'active' : ''}`}>
+        <div className="analisis-menu-header">
+          <h3>Opciones</h3>
+          <button className="panel-close" onClick={() => setAnalisisOpen(false)} aria-label="Cerrar herramientas">✕</button>
+        </div>
+        <div className="analisis-menu-actions">
+          {renderBotonesAnalisis()}
+        </div>
+      </div>
 
       {/* CONTROLES PRINCIPALES AGRUPADOS */}
       <div className="controles-principales">
@@ -1043,153 +1190,6 @@ const RutasCobro = () => {
           </button>
           <div className="ruta-hint">
             Clientes filtrados: <strong>{clientesFiltrados.length}</strong>
-          </div>
-        </div>
-
-        {/* Botones de Análisis: versión desktop + menú hamburguesa para móvil */}
-        <div className="analisis-wrapper">
-          <button
-            className="hamburger-analisis-btn fab"
-            onClick={() => setAnalisisOpen(!analisisOpen)}
-            aria-expanded={analisisOpen}
-            aria-label="Abrir herramientas"
-          >
-            <i className="fas fa-bars"></i>
-            <span className="fab-text">Herramientas</span>
-          </button>
-
-          {/* Desktop: mostrarse en pantallas grandes */}
-          <div className="analisis-section" aria-hidden={analisisOpen}>
-            <button 
-              className="button info-button"
-              onClick={async () => {
-                await cargarHistorialVisitas();
-                setMostrarHistorialVisitas(!mostrarHistorialVisitas);
-                setMostrarClientesMenosVisitados(false);
-                setMostrarClientesSinVisitar(false);
-              }}
-            >
-              <i className="fas fa-history"></i> Ver Historial de Visitas
-            </button>
-            
-            <button 
-              className="button warning-button"
-              onClick={async () => {
-                await cargarClientesMenosVisitados();
-                setMostrarClientesMenosVisitados(!mostrarClientesMenosVisitados);
-                setMostrarHistorialVisitas(false);
-                setMostrarClientesSinVisitar(false);
-              }}
-            >
-              <i className="fas fa-chart-line"></i> Clientes Menos Visitados
-            </button>
-
-            <button 
-              className="button danger-button"
-              onClick={() => {
-                setMostrarMapaDeuda(!mostrarMapaDeuda);
-                setMostrarHistorialVisitas(false);
-                setMostrarClientesMenosVisitados(false);
-                setMostrarClientesSinVisitar(false);
-              }}
-            >
-              <i className="fas fa-chart-bar"></i> Clientes Mayor Deuda
-            </button>
-
-            <button 
-              className="button danger-button"
-              onClick={async () => {
-                const clientesUrgentes = await cargarClientesSinVisitar30Dias();
-                setMostrarClientesSinVisitar(!mostrarClientesSinVisitar);
-                setMostrarHistorialVisitas(false);
-                setMostrarClientesMenosVisitados(false);
-                
-                if (clientesUrgentes.length === 0) {
-                  alert('✅ ¡Excelente! No hay clientes con más de 30 días sin visita.');
-                }
-              }}
-            >
-              <i className="fas fa-exclamation-triangle"></i> Clientes Sin Visitar (+30 días)
-            </button>
-
-            <button 
-              className="button danger-button"
-              onClick={async () => {
-                const clientesMas60Dias = await cargarClientesMas60Dias();
-                
-                if (clientesMas60Dias.length === 0) {
-                  return;
-                }
-
-                // Crear mensaje con la información
-                let mensaje = `📋 CLIENTES CON FACTURAS >60 DÍAS Y SALDO PENDIENTE\n\n`;
-                mensaje += `Total: ${clientesMas60Dias.length} clientes\n\n`;
-                
-                clientesMas60Dias.slice(0, 25).forEach((cliente, index) => {
-                  mensaje += `${index + 1}. ${cliente.nombre}\n`;
-                  mensaje += `   📍 ${cliente.direccion}\n`;
-                  mensaje += `   📞 ${cliente.telefono}\n`;
-                  mensaje += `   💰 Deuda pendiente: ${formatMoneda(cliente.totalDeuda)}\n`;
-                  mensaje += `   📅 Máxima antigüedad: ${cliente.diasMaximo} días\n`;
-                  mensaje += `   📄 Facturas pendientes: ${cliente.totalFacturas}\n`;
-                  mensaje += `   👤 Vendedor: ${cliente.vendedor}\n\n`;
-                });
-
-                // Calcular totales
-                const deudaTotal = clientesMas60Dias.reduce((sum, c) => sum + c.totalDeuda, 0);
-                const promedioDias = Math.round(clientesMas60Dias.reduce((sum, c) => sum + c.diasMaximo, 0) / clientesMas60Dias.length);
-                const totalFacturas = clientesMas60Dias.reduce((sum, c) => sum + c.totalFacturas, 0);
-                
-                mensaje += `--- RESUMEN ---\n`;
-                mensaje += `💰 Deuda total pendiente: ${formatMoneda(deudaTotal)}\n`;
-                mensaje += `📊 Promedio días antigüedad: ${promedioDias} días\n`;
-                mensaje += `👥 Total clientes críticos: ${clientesMas60Dias.length}\n`;
-                mensaje += `📄 Total facturas pendientes: ${totalFacturas}`;
-
-                alert(mensaje);
-              }}
-            >
-              <i className="fas fa-calendar-exclamation"></i> Clientes +60 Días
-            </button>
-          </div>
-
-          {/* Mobile panel: se muestra cuando el usuario abre el menú hamburguesa */}
-          <div className={`analisis-panel ${analisisOpen ? 'open' : ''}`}>
-            <button className="panel-close" onClick={() => setAnalisisOpen(false)} aria-label="Cerrar herramientas">✕</button>
-            <button 
-              className="button info-button"
-              onClick={async () => { await cargarHistorialVisitas(); setMostrarHistorialVisitas(!mostrarHistorialVisitas); setMostrarClientesMenosVisitados(false); setMostrarClientesSinVisitar(false); setAnalisisOpen(false); }}
-            >
-              <i className="fas fa-history"></i> Ver Historial de Visitas
-            </button>
-
-            <button 
-              className="button warning-button"
-              onClick={async () => { await cargarClientesMenosVisitados(); setMostrarClientesMenosVisitados(!mostrarClientesMenosVisitados); setMostrarHistorialVisitas(false); setMostrarClientesSinVisitar(false); setAnalisisOpen(false); }}
-            >
-              <i className="fas fa-chart-line"></i> Clientes Menos Visitados
-            </button>
-
-            <button 
-              className="button danger-button"
-              onClick={() => { setMostrarMapaDeuda(!mostrarMapaDeuda); setMostrarHistorialVisitas(false); setMostrarClientesMenosVisitados(false); setMostrarClientesSinVisitar(false); setAnalisisOpen(false); }}
-            >
-              <i className="fas fa-chart-bar"></i> Clientes Mayor Deuda
-            </button>
-
-            <button 
-              className="button danger-button"
-              onClick={async () => { const clientesUrgentes = await cargarClientesSinVisitar30Dias(); setMostrarClientesSinVisitar(!mostrarClientesSinVisitar); setMostrarHistorialVisitas(false); setMostrarClientesMenosVisitados(false); setAnalisisOpen(false); if (clientesUrgentes.length === 0) { alert('✅ ¡Excelente! No hay clientes con más de 30 días sin visita.'); } }}
-            >
-              <i className="fas fa-exclamation-triangle"></i> Clientes Sin Visitar (+30 días)
-            </button>
-
-            <button 
-              className="button danger-button"
-              onClick={async () => { const clientesMas60Dias = await cargarClientesMas60Dias(); setAnalisisOpen(false); if (clientesMas60Dias.length === 0) return; let mensaje = `📋 CLIENTES CON FACTURAS >60 DÍAS Y SALDO PENDIENTE\n\n`; mensaje += `Total: ${clientesMas60Dias.length} clientes\n\n`; clientesMas60Dias.slice(0, 25).forEach((cliente, index) => { mensaje += `${index + 1}. ${cliente.nombre}\n`; mensaje += `   📍 ${cliente.direccion}\n`; mensaje += `   📞 ${cliente.telefono}\n`; mensaje += `   💰 Deuda pendiente: ${formatMoneda(cliente.totalDeuda)}\n`; mensaje += `   📅 Máxima antigüedad: ${cliente.diasMaximo} días\n`; mensaje += `   📄 Facturas pendientes: ${cliente.totalFacturas}\n`; mensaje += `   👤 Vendedor: ${cliente.vendedor}\n\n`; }); const deudaTotal = clientesMas60Dias.reduce((sum, c) => sum + c.totalDeuda, 0); const promedioDias = Math.round(clientesMas60Dias.reduce((sum, c) => sum + c.diasMaximo, 0) / clientesMas60Dias.length); const totalFacturas = clientesMas60Dias.reduce((sum, c) => sum + c.totalFacturas, 0); mensaje += `--- RESUMEN ---\n`; mensaje += `💰 Deuda total pendiente: ${formatMoneda(deudaTotal)}\n`; mensaje += `📊 Promedio días antigüedad: ${promedioDias} días\n`; mensaje += `👥 Total clientes críticos: ${clientesMas60Dias.length}\n`; mensaje += `📄 Total facturas pendientes: ${totalFacturas}`; alert(mensaje); }}
-            >
-              <i className="fas fa-calendar-exclamation"></i> Clientes +60 Días
-            </button>
           </div>
         </div>
       </div>

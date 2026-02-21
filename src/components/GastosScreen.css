@@ -321,6 +321,16 @@
   color: #b7950b;
 }
 
+.badge-danger {
+  background: #fadbd8;
+  color: #c0392b;
+}
+
+/* Estilos para facturas */
+.factura-nc {
+  background: #fef5f5;
+}
+
 /* Grid de Categorías */
 .categorias-grid {
   display: grid;

@@ -13,6 +13,7 @@ const HistorialMovimientos = () => {
   const [filtroFechaFin, setFiltroFechaFin] = useState('');
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState(null);
+  const [menuAbierto, setMenuAbierto] = useState(false);
 
   // Cargar datos iniciales
   useEffect(() => {
@@ -224,7 +225,59 @@ const HistorialMovimientos = () => {
       <div className="header-historial">
         <h1>📊 Historial de Movimientos de Inventario</h1>
         <p>Registro completo de todos los cambios en el stock</p>
+        <button 
+          className="hamburger-menu-btn"
+          onClick={() => setMenuAbierto(!menuAbierto)}
+          title="Opciones de exportación"
+        >
+          <i className="fas fa-bars"></i>
+        </button>
       </div>
+
+      {/* Overlay y menú lateral */}
+      {menuAbierto && (
+        <>
+          <div 
+            className="menu-overlay"
+            onClick={() => setMenuAbierto(false)}
+          />
+          <div className="menu-side-panel">
+            <div className="menu-header">
+              <h3>Opciones de Exportación</h3>
+              <button 
+                className="menu-close-btn"
+                onClick={() => setMenuAbierto(false)}
+              >
+                <i className="fas fa-times"></i>
+              </button>
+            </div>
+            <div className="menu-actions">
+              <button 
+                onClick={() => {
+                  exportarCSV();
+                  setMenuAbierto(false);
+                }}
+                className="menu-action-btn btn-csv"
+                disabled={movimientos.length === 0}
+              >
+                <i className="fas fa-file-csv"></i>
+                <span>Exportar CSV</span>
+              </button>
+              <button 
+                onClick={() => {
+                  exportarExcel();
+                  setMenuAbierto(false);
+                }}
+                className="menu-action-btn btn-excel"
+                disabled={movimientos.length === 0}
+              >
+                <i className="fas fa-file-excel"></i>
+                <span>Exportar Excel</span>
+              </button>
+            </div>
+          </div>
+        </>
+      )}
 
       {error && (
         <div className="error-message">
@@ -313,23 +366,6 @@ const HistorialMovimientos = () => {
         >
           Limpiar Filtros
         </button>
-
-        <div className="export-buttons-group">
-          <button 
-            onClick={exportarCSV}
-            className="btn-exportar btn-csv"
-            disabled={movimientos.length === 0}
-          >
-            📥 Exportar CSV
-          </button>
-          <button 
-            onClick={exportarExcel}
-            className="btn-exportar btn-excel"
-            disabled={movimientos.length === 0}
-          >
-            📊 Exportar Excel
-          </button>
-        </div>
       </div>
 
       {/* Tabla de movimientos */}
