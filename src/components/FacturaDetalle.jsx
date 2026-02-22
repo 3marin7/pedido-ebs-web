@@ -214,6 +214,7 @@ const FacturaDetalle = () => {
             }
             .fecha {
               font-size: 9px;
+              font-weight: 700;
             }
             .fecha-wrapper {
               text-align: right;
