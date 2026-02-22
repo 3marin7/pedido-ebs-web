@@ -262,7 +262,7 @@ const FacturaDetalle = () => {
             .direccion-dato,
             .telefono-dato {
               font-size: 12px !important;
-              font-weight: 900;
+              font-weight: normal;
               text-transform: uppercase;
               line-height: 1.2;
             }
