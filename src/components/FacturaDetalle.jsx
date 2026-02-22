@@ -256,25 +256,16 @@ const FacturaDetalle = () => {
               min-height: 0.3cm;
               font-size: 7px;
             }
-            .cliente-nombre {
-              font-size: 15px !important;
-              font-weight: 900;
-              text-transform: uppercase;
-              line-height: 1.2;
-            }
-            .vendedor-nombre {
-              font-size: 15px !important;
-              font-weight: 900;
-              text-transform: uppercase;
-              line-height: 1.2;
-            }
+            .cliente-nombre,
+            .vendedor-nombre,
             .direccion-dato,
             .telefono-dato {
-              font-size: 13px !important;
+              font-size: 12px !important;
+              font-weight: 900;
+              text-transform: uppercase;
+              line-height: 1.2;
             }
-            .numero-cuenta,
-            .cliente-nombre,
-            .vendedor-nombre {
+            .numero-cuenta {
               font-size: 15px !important;
               font-weight: 900;
             }
