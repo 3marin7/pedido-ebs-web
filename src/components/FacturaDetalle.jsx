@@ -247,7 +247,7 @@ const FacturaDetalle = () => {
             .info-item h4 {
               margin: 0 0 0.02cm 0;
               font-size: 13px !important;
-              font-weight: bold;
+              font-weight: normal;
             }
             .info-item p {
               margin: 0;
