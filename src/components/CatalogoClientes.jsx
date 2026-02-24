@@ -216,11 +216,24 @@ const CatalogoClientes = () => {
   };
 
   const actualizarCantidad = (id, cantidad, esCantidadRapida = false) => {
+    // ✅ FIX 3: Validar ID de producto antes de usarlo
+    if (!id || typeof id !== 'number') {
+      console.error('❌ ID de producto inválido:', id);
+      setError('Error: ID de producto inválido. Por favor recarga la página.');
+      return;
+    }
+    
+    const productoExistente = productosSeleccionados.find(p => p.id === id);
+    if (!productoExistente) {
+      console.error('❌ Producto no encontrado en carrito:', id);
+      return;
+    }
+    
     let nuevaCantidad;
     
     if (esCantidadRapida) {
       // Si es una cantidad rápida, sumarla a la cantidad actual
-      const cantidadActual = productosSeleccionados.find(p => p.id === id)?.cantidad || 0;
+      const cantidadActual = productoExistente.cantidad || 0;
       nuevaCantidad = cantidadActual + cantidad;
     } else {
       // Si es un cambio normal
@@ -255,24 +268,32 @@ const CatalogoClientes = () => {
 
   // Validar información del cliente
   const validarCliente = () => {
-    if (!clienteInfo.vendedor.trim()) {
-      alert('Por favor selecciona un vendedor');
+    // ✅ FIX 1: Validar vendedor es obligatorio
+    const vendedoresValidos = ['Edwin Marin', 'Fredy Marin', 'Fabian Marin'];
+    if (!clienteInfo.vendedor?.trim() || !vendedoresValidos.includes(clienteInfo.vendedor.trim())) {
+      setError('❌ Por favor selecciona un vendedor válido');
       return false;
     }
 
-    if (!clienteInfo.nombre.trim()) {
-      alert('Por favor ingresa tu nombre completo');
+    if (!clienteInfo.nombre?.trim() || clienteInfo.nombre.trim().length < 3) {
+      setError('❌ Por favor ingresa tu nombre completo (mínimo 3 caracteres)');
       return false;
     }
     
-    if (!clienteInfo.telefono.trim()) {
-      alert('Por favor ingresa tu número de teléfono');
+    if (!clienteInfo.telefono?.trim()) {
+      setError('❌ Por favor ingresa tu número de teléfono');
       return false;
     }
     
-    const telefonoValido = /^[0-9]{10,15}$/.test(clienteInfo.telefono.replace(/\D/g, ''));
-    if (!telefonoValido) {
-      alert('Por favor ingresa un número de teléfono válido (mínimo 10 dígitos)');
+    // ✅ FIX 2: Validación mejorada de teléfono - mínimo 10 dígitos
+    const soloDigitos = clienteInfo.telefono.replace(/\D/g, '');
+    if (soloDigitos.length < 10) {
+      setError(`❌ Teléfono inválido. Encontrados ${soloDigitos.length} dígitos, se requieren mínimo 10`);
+      return false;
+    }
+    
+    if (soloDigitos.length > 15) {
+      setError('❌ Teléfono muy largo. Máximo 15 dígitos');
       return false;
     }
     
@@ -329,9 +350,29 @@ const CatalogoClientes = () => {
         ])
         .select();
 
-      if (error) throw error;
+      if (error) {
+        console.error('❌ Error de Supabase:', error);
+        setEnviandoPedido(false);
+        setError(`Error en servidor: ${error.message}`);
+        return;
+      }
+
+      if (!pedido || !Array.isArray(pedido) || pedido.length === 0) {
+        console.error('❌ Respuesta inválida de Supabase:', pedido);
+        setEnviandoPedido(false);
+        setError('Respuesta inválida del servidor. Por favor intenta nuevamente.');
+        return;
+      }
+
+      if (!pedido[0].id) {
+        console.error('❌ Pedido sin ID:', pedido[0]);
+        setEnviandoPedido(false);
+        setError('No se pudo generar número de pedido. Por favor intenta nuevamente.');
+        return;
+      }
 
       setNumeroPedido(pedido[0].id);
+      setError(null); // Limpiar errores anteriores
 
       // Preparar mensaje para WhatsApp
       const numerosWhatsApp = ['573002945085', '573004583117']; // Dos números de WhatsApp
@@ -378,9 +419,14 @@ const CatalogoClientes = () => {
       }, 2000);
 
     } catch (error) {
-      console.error('Error al guardar el pedido:', error);
-      alert('Hubo un error al procesar tu pedido. Por favor, intenta nuevamente.');
+      console.error('💥 Error al guardar el pedido:', error);
+      // ✅ FIX 6: No limpiar carrito en error, mantener visible para reintentar
       setEnviandoPedido(false);
+      setError(`Error: ${error.message || 'No se pudo procesar el pedido'}`);
+      setMostrarCarrito(true); // Mantener carrito visible
+      
+      // Scroll al error
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
@@ -675,6 +721,16 @@ const CatalogoClientes = () => {
                 &times;
               </button>
             </div>
+
+            {/* Botón Seguir Comprando en la parte superior */}
+            <div className="continue-shopping-top">
+              <button 
+                className="continue-shopping-btn"
+                onClick={toggleMostrarCarrito}
+              >
+                <i className="fas fa-arrow-left"></i> Seguir Comprando
+              </button>
+            </div>
             
             <div className="cart-body">
               {productosSeleccionados.length === 0 ? (
@@ -874,13 +930,6 @@ const CatalogoClientes = () => {
 
                   {/* Botones de acción */}
                   <div className="cart-actions">
-                    <button 
-                      className="continue-shopping-btn"
-                      onClick={toggleMostrarCarrito}
-                    >
-                      <i className="fas fa-arrow-left"></i> Seguir Comprando
-                    </button>
-                    
                     <div className="send-order-container">
                       <button 
                         className="send-order-button"

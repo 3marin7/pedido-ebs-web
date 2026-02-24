@@ -1474,6 +1474,16 @@ body {
   background: #e5e5e5;
 }
 
+/* Botón Seguir Comprando en la parte superior */
+.continue-shopping-top {
+  padding: 10px 15px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.continue-shopping-top .continue-shopping-btn {
+  margin: 0;
+}
+
 /* Acciones del carrito */
 .cart-actions {
   display: flex;
