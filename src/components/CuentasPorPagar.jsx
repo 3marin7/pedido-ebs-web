@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './CuentasPorPagar.css';
 import { supabase } from '../lib/supabase';
+import * as XLSX from 'xlsx';
 
 const CuentasPorPagar = () => {
   // Estados principales
@@ -623,6 +624,275 @@ const CuentasPorPagar = () => {
     return matchEstado && matchProveedor && matchBusqueda;
   });
 
+  const escapeHtml = (value) => {
+    return String(value ?? '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  };
+
+  const formatMoneySimple = (value) => {
+    const numero = Number(value || 0);
+    const valorFormateado = new Intl.NumberFormat('es-CO', {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }).format(Math.abs(numero));
+    return `${numero < 0 ? '-' : ''}$ ${valorFormateado}`;
+  };
+
+  const imprimirInformeCartera = () => {
+    if (facturasFiltradas.length === 0) {
+      alert('No hay registros para generar el informe con los filtros actuales.');
+      return;
+    }
+
+    const proveedorSeleccionado =
+      filtroProveedor === 'todos'
+        ? 'Todos los proveedores'
+        : obtenerProveedor(parseInt(filtroProveedor))?.nombre || 'Proveedor no encontrado';
+
+    const fechaGeneracion = new Date().toLocaleString('es-CO');
+
+    const filas = facturasFiltradas
+      .map((factura) => {
+        const demora = factura.diasVencimiento !== null && factura.diasVencimiento !== undefined
+          ? -factura.diasVencimiento
+          : '';
+
+        const basePP = (parseFloat(factura.subtotal) || 0) + (parseFloat(factura.iva) || 0);
+        const descuento = parseFloat(factura.retencion) || 0;
+        const aPagar = parseFloat(factura.saldo) || 0;
+
+        return `
+          <tr>
+            <td>${escapeHtml(factura.numeroFactura)}</td>
+            <td>${escapeHtml(factura.clase)}</td>
+            <td>${escapeHtml(formatDate(factura.fechaEmision))}</td>
+            <td>${escapeHtml(formatDate(factura.fechaVencimiento))}</td>
+            <td class="demora-cell">${escapeHtml(demora === '' ? '' : demora.toString())}</td>
+            <td class="money-cell">${escapeHtml(formatMoneySimple(factura.total))}</td>
+            <td class="money-cell">${escapeHtml(formatMoneySimple(basePP))}</td>
+            <td class="money-cell">${escapeHtml(formatMoneySimple(descuento))}</td>
+            <td class="money-cell total-pagar">${escapeHtml(formatMoneySimple(aPagar))}</td>
+          </tr>
+        `;
+      })
+      .join('');
+
+    const totalAPagar = facturasFiltradas.reduce((sum, factura) => {
+      return sum + (parseFloat(factura.saldo) || 0);
+    }, 0);
+
+    const ventana = window.open('', '_blank', 'width=1400,height=900');
+
+    if (!ventana) {
+      alert('No se pudo abrir la ventana de impresión. Verifica que el navegador no esté bloqueando popups.');
+      return;
+    }
+
+    ventana.document.write(`
+      <!doctype html>
+      <html lang="es">
+      <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Informe Cuentas por Pagar</title>
+        <style>
+          body {
+            font-family: Arial, Helvetica, sans-serif;
+            margin: 18px;
+            color: #111827;
+          }
+          .header {
+            margin-bottom: 14px;
+          }
+          .header h1 {
+            margin: 0;
+            font-size: 22px;
+          }
+          .meta {
+            margin-top: 4px;
+            font-size: 13px;
+            color: #334155;
+          }
+          table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+          }
+          th, td {
+            border: 1px solid #1f2937;
+            padding: 8px 10px;
+            text-align: center;
+          }
+          th {
+            background: #dbeafe;
+            font-weight: 700;
+          }
+          .money-cell {
+            text-align: right;
+            white-space: nowrap;
+          }
+          .demora-cell {
+            background: #d9f2d0;
+            font-weight: 700;
+          }
+          .total-row td {
+            font-weight: 700;
+            font-size: 16px;
+            background: #f8fafc;
+          }
+          .total-label {
+            text-align: right;
+          }
+          .total-pagar {
+            font-weight: 700;
+          }
+          @media print {
+            body {
+              margin: 8px;
+            }
+          }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <h1>INFORME DE CUENTAS POR PAGAR</h1>
+          <div class="meta"><strong>Proveedor:</strong> ${escapeHtml(proveedorSeleccionado)}</div>
+          <div class="meta"><strong>Registros:</strong> ${facturasFiltradas.length}</div>
+          <div class="meta"><strong>Generado:</strong> ${escapeHtml(fechaGeneracion)}</div>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>REF DOC</th>
+              <th>CLASE</th>
+              <th>FH BASE</th>
+              <th>FH PAGO</th>
+              <th>DEMORA</th>
+              <th>IMPORTE</th>
+              <th>BASE PP</th>
+              <th>DESCUENTO</th>
+              <th>A PAGAR</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${filas}
+            <tr class="total-row">
+              <td class="total-label" colspan="8">TOTAL</td>
+              <td class="money-cell">${escapeHtml(formatMoneySimple(totalAPagar))}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <script>
+          window.onload = function () {
+            window.focus();
+            window.print();
+          };
+        </script>
+      </body>
+      </html>
+    `);
+
+    ventana.document.close();
+  };
+
+  const exportarInformeCarteraExcel = () => {
+    if (facturasFiltradas.length === 0) {
+      alert('No hay registros para exportar con los filtros actuales.');
+      return;
+    }
+
+    const proveedorSeleccionado =
+      filtroProveedor === 'todos'
+        ? 'Todos los proveedores'
+        : obtenerProveedor(parseInt(filtroProveedor))?.nombre || 'Proveedor no encontrado';
+
+    const fechaGeneracion = new Date().toLocaleString('es-CO');
+
+    // Preparar datos para Excel
+    const datos = facturasFiltradas.map((factura) => {
+      const demora = factura.diasVencimiento !== null && factura.diasVencimiento !== undefined
+        ? -factura.diasVencimiento
+        : '';
+
+      const basePP = (parseFloat(factura.subtotal) || 0) + (parseFloat(factura.iva) || 0);
+      const descuento = parseFloat(factura.retencion) || 0;
+      const aPagar = parseFloat(factura.saldo) || 0;
+
+      return {
+        'REF DOC': factura.numeroFactura,
+        'CLASE': factura.clase,
+        'FH BASE': formatDate(factura.fechaEmision),
+        'FH PAGO': formatDate(factura.fechaVencimiento),
+        'DEMORA': demora === '' ? '' : demora,
+        'IMPORTE': factura.total,
+        'BASE PP': basePP,
+        'DESCUENTO': descuento,
+        'A PAGAR': aPagar
+      };
+    });
+
+    const totalAPagar = facturasFiltradas.reduce((sum, factura) => {
+      return sum + (parseFloat(factura.saldo) || 0);
+    }, 0);
+
+    // Agregar fila de totales
+    datos.push({
+      'REF DOC': 'TOTAL',
+      'CLASE': '',
+      'FH BASE': '',
+      'FH PAGO': '',
+      'DEMORA': '',
+      'IMPORTE': '',
+      'BASE PP': '',
+      'DESCUENTO': '',
+      'A PAGAR': totalAPagar
+    });
+
+    // Crear workbook
+    const ws = XLSX.utils.json_to_sheet(datos, {
+      header: ['REF DOC', 'CLASE', 'FH BASE', 'FH PAGO', 'DEMORA', 'IMPORTE', 'BASE PP', 'DESCUENTO', 'A PAGAR']
+    });
+
+    // Ajustar ancho de columnas
+    ws['!cols'] = [
+      { wch: 15 }, // REF DOC
+      { wch: 10 }, // CLASE
+      { wch: 12 }, // FH BASE
+      { wch: 12 }, // FH PAGO
+      { wch: 10 }, // DEMORA
+      { wch: 14 }, // IMPORTE
+      { wch: 14 }, // BASE PP
+      { wch: 14 }, // DESCUENTO
+      { wch: 14 }  // A PAGAR
+    ];
+
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Cartera');
+
+    // Agregar hoja con metadatos
+    const metaData = [
+      ['INFORME DE CUENTAS POR PAGAR'],
+      [''],
+      ['Proveedor:', proveedorSeleccionado],
+      ['Registros:', facturasFiltradas.length],
+      ['Generado:', fechaGeneracion]
+    ];
+
+    const wsMeta = XLSX.utils.aoa_to_sheet(metaData);
+    wsMeta['!cols'] = [{ wch: 20 }, { wch: 40 }];
+    XLSX.utils.book_append_sheet(wb, wsMeta, 'Información');
+
+    // Generar archivo
+    const fileName = `informe_cartera_${new Date().toISOString().split('T')[0]}.xlsx`;
+    XLSX.writeFile(wb, fileName);
+  };
+
   // Obtener clase CSS por estado
   const getEstadoClase = (estado) => {
     switch(estado) {
@@ -648,8 +918,8 @@ const CuentasPorPagar = () => {
     <div className="cuentas-por-pagar-container">
       {/* Header */}
       <div className="cpp-header">
-        <h1>💰 Gestión de Cuentas por Pagar</h1>
-        <p>Sistema completo de pagos a proveedores</p>
+        <h1>💰 Gestión de Gastos Empresa - Proveedores</h1>
+        <p>Control y registro de pagos a proveedores y cuentas por pagar</p>
       </div>
 
       {/* Navegación de vistas */}
@@ -855,6 +1125,14 @@ const CuentasPorPagar = () => {
               <button className="btn-primary" onClick={() => abrirModalFactura()}>
                 ➕ Nueva Factura
               </button>
+
+              <button className="btn-secondary" onClick={imprimirInformeCartera}>
+                🖨️ Imprimir informe
+              </button>
+
+              <button className="btn-secondary" onClick={exportarInformeCarteraExcel}>
+                📊 Exportar Excel
+              </button>
               
               <div className="view-toggle" style={{display: 'flex', gap: '5px', borderRadius: '8px', padding: '4px', background: '#f1f5f9'}}>
                 <button 
@@ -1046,7 +1324,7 @@ const CuentasPorPagar = () => {
                 <table className="cpp-table">
                   <thead>
                     <tr>
-                      <th>Proveedorr     -----  /	N° FACTURA	----/---CLASE. --/--	EMISIÓN	/VENCIMIENTO/---	TOTAL	---/---PAGADO/--	SALDO----/-------	ESTADO	/--ACCIONES </th>
+                      <th>Proveedor</th>
                       <th>N° Factura</th>
                       <th>Clase</th>
                       <th>Emisión</th>
