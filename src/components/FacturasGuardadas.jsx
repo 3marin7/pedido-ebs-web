@@ -4,6 +4,63 @@ import { supabase } from './supabaseClient';
 import * as XLSX from 'xlsx';
 import './FacturasGuardadas.css';
 
+const SALDO_EPSILON = 0.01;
+
+const toNumber = (value) => {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : 0;
+};
+
+const sameFacturaId = (abonoFacturaId, facturaId) => String(abonoFacturaId) === String(facturaId);
+
+const PAGE_SIZE = 1000;
+
+const cargarTodasLasFacturas = async () => {
+  let desde = 0;
+  let todasLasFacturas = [];
+
+  while (true) {
+    const { data, error } = await supabase
+      .from('facturas')
+      .select('*')
+      .order('fecha', { ascending: false })
+      .range(desde, desde + PAGE_SIZE - 1);
+
+    if (error) throw error;
+
+    const lote = data || [];
+    todasLasFacturas = [...todasLasFacturas, ...lote];
+
+    if (lote.length < PAGE_SIZE) break;
+    desde += PAGE_SIZE;
+  }
+
+  return todasLasFacturas;
+};
+
+const cargarTodosLosAbonos = async () => {
+  let desde = 0;
+  let todosLosAbonos = [];
+
+  while (true) {
+    const { data, error } = await supabase
+      .from('abonos')
+      .select('*')
+      .order('id', { ascending: true })
+      .range(desde, desde + PAGE_SIZE - 1);
+
+    if (error) throw error;
+
+    const lote = data || [];
+    todosLosAbonos = [...todosLosAbonos, ...lote];
+
+    if (lote.length < PAGE_SIZE) break;
+    desde += PAGE_SIZE;
+  }
+
+  return todosLosAbonos;
+};
+
 const FacturasGuardadas = () => {
   const navigate = useNavigate();
   const [facturas, setFacturas] = useState([]);
@@ -30,18 +87,9 @@ const FacturasGuardadas = () => {
       try {
         setCargando(true);
         
-        const { data: facturasData, error: facturasError } = await supabase
-          .from('facturas')
-          .select('*')
-          .order('fecha', { ascending: false });
+        const facturasData = await cargarTodasLasFacturas();
         
-        if (facturasError) throw facturasError;
-        
-        const { data: abonosData, error: abonosError } = await supabase
-          .from('abonos')
-          .select('*');
-        
-        if (abonosError) throw abonosError;
+        const abonosData = await cargarTodosLosAbonos();
         
         setFacturas(facturasData || []);
         setAbonos(abonosData || []);
@@ -66,15 +114,18 @@ const FacturasGuardadas = () => {
   // Calcular saldos para cada factura
   const calcularSaldos = (facturas, abonos) => {
     return facturas.map(factura => {
-      const abonosFactura = abonos.filter(abono => abono.factura_id === factura.id);
-      const totalAbonado = abonosFactura.reduce((sum, abono) => sum + (abono.monto || 0), 0);
-      const saldo = factura.total - totalAbonado;
+      const abonosFactura = abonos.filter(abono => sameFacturaId(abono.factura_id, factura.id));
+      const totalFactura = toNumber(factura.total);
+      const totalAbonado = abonosFactura.reduce((sum, abono) => sum + toNumber(abono.monto), 0);
+      const saldoCalculado = totalFactura - totalAbonado;
+      const saldo = Math.abs(saldoCalculado) < SALDO_EPSILON ? 0 : saldoCalculado;
       
       return {
         ...factura,
+        total: totalFactura,
         totalAbonado,
         saldo,
-        estado: saldo <= 0 ? 'Pagada' : (totalAbonado > 0 ? 'Parcial' : 'Pendiente')
+        estado: saldo <= SALDO_EPSILON ? 'Pagada' : (totalAbonado > 0 ? 'Parcial' : 'Pendiente')
       };
     });
   };
@@ -96,10 +147,11 @@ const FacturasGuardadas = () => {
       
       const coincideVendedor = busquedaVendedor === '' || factura.vendedor === busquedaVendedor;
       
-      const abonosFactura = abonos.filter(abono => abono.factura_id === factura.id);
-      const totalAbonado = abonosFactura.reduce((sum, abono) => sum + (abono.monto || 0), 0);
-      const saldo = factura.total - totalAbonado;
-      const estaPagada = saldo <= 0;
+      const abonosFactura = abonos.filter(abono => sameFacturaId(abono.factura_id, factura.id));
+      const totalAbonado = abonosFactura.reduce((sum, abono) => sum + toNumber(abono.monto), 0);
+      const saldoCalculado = toNumber(factura.total) - totalAbonado;
+      const saldo = Math.abs(saldoCalculado) < SALDO_EPSILON ? 0 : saldoCalculado;
+      const estaPagada = saldo <= SALDO_EPSILON;
       
       // FILTRO MEJORADO: Por defecto mostrar solo pendientes y parciales, excluir pagadas
       const mostrarPorEstado = mostrarPagadas ? true : !estaPagada;
@@ -127,7 +179,7 @@ const FacturasGuardadas = () => {
     const facturasConSaldo = calcularSaldos(facturas, abonos);
     
     // Filtrar solo facturas pendientes y parciales para los cálculos
-    const facturasPendientesParciales = facturasConSaldo.filter(f => f.saldo > 0);
+    const facturasPendientesParciales = facturasConSaldo.filter(f => f.saldo > SALDO_EPSILON);
     
     const stats = {
       totalGeneral: 0,
@@ -214,11 +266,12 @@ const FacturasGuardadas = () => {
 
   // Función para determinar la clase de prioridad del cliente
   const getClientePriorityClass = (saldo, total) => {
-    const porcentajeSaldo = (saldo / total) * 100;
+    const saldoNormalizado = Math.abs(saldo) < SALDO_EPSILON ? 0 : saldo;
+    const porcentajeSaldo = total > 0 ? (saldoNormalizado / total) * 100 : 0;
     
-    if (saldo === 0) return 'saldo-cero';
-    if (saldo > 5000000 || porcentajeSaldo > 70) return 'alto-saldo';
-    if (saldo > 2000000 || porcentajeSaldo > 40) return 'medio-saldo';
+    if (saldoNormalizado <= SALDO_EPSILON) return 'saldo-cero';
+    if (saldoNormalizado > 5000000 || porcentajeSaldo > 70) return 'alto-saldo';
+    if (saldoNormalizado > 2000000 || porcentajeSaldo > 40) return 'medio-saldo';
     return 'bajo-saldo';
   };
 
@@ -231,7 +284,7 @@ const FacturasGuardadas = () => {
     
     const facturaAEliminar = facturas.find(f => f.id === id);
     const facturasConSaldo = calcularSaldos([facturaAEliminar], abonos);
-    const tieneSaldoPendiente = facturasConSaldo[0]?.saldo > 0;
+    const tieneSaldoPendiente = (facturasConSaldo[0]?.saldo || 0) > SALDO_EPSILON;
     
     if (tieneSaldoPendiente) {
       if (!window.confirm('¿Estás seguro de eliminar esta factura con saldo pendiente? Esta acción no se puede deshacer.')) return;

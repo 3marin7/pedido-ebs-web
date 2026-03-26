@@ -1,0 +1,15 @@
+Escenario;Clientes;Precio_por_cliente_COP;Ingresos_Mensuales_COP;Costo_Infra_Mensual_COP;Margen_Infra_pct;Utilidad_Mensual_COP;Ingresos_Anuales_COP;Costo_Infra_Anual_COP;Utilidad_Anual_COP;Meta
+Conservador_10;10;100000;=B2*C2;200000;=E2/D2;=D2-E2;=D2*12;=E2*12;=G2*12;Validar punto de equilibrio
+Base_20;20;100000;=B3*C3;350000;=E3/D3;=D3-E3;=D3*12;=E3*12;=G3*12;Escala con costos controlados
+Agresivo_30;30;100000;=B4*C4;500000;=E4/D4;=D4-E4;=D4*12;=E4*12;=G4*12;Preparar contratacion/soporte
+
+Parametro;Valor;Notas
+Rango_Infra_Saludable_min_pct;0,20;20%
+Rango_Infra_Saludable_max_pct;0,30;30%
+Alerta_Amarilla_max_pct;0,40;40%
+
+Resumen;Valor
+Ingresos_Mensuales_Promedio;=AVERAGE(D2:D4)
+Costo_Infra_Mensual_Promedio;=AVERAGE(E2:E4)
+Utilidad_Mensual_Promedio;=AVERAGE(G2:G4)
+Margen_Infra_Promedio_pct;=AVERAGE(F2:F4)

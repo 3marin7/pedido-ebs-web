@@ -3,6 +3,24 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from './supabaseClient';
 import './RutasCobro.css';
 
+const RC_PAGE_SIZE = 1000;
+
+const fetchAllRows = async (tabla, opciones = {}) => {
+  let desde = 0;
+  let todos = [];
+  while (true) {
+    let query = supabase.from(tabla).select('*').range(desde, desde + RC_PAGE_SIZE - 1);
+    if (opciones.order) query = query.order(opciones.order.column, { ascending: opciones.order.ascending ?? true });
+    const { data, error } = await query;
+    if (error) throw error;
+    const lote = data || [];
+    todos = [...todos, ...lote];
+    if (lote.length < RC_PAGE_SIZE) break;
+    desde += RC_PAGE_SIZE;
+  }
+  return todos;
+};
+
 const RutasCobro = () => {
   const navigate = useNavigate();
   const [clientesConDeuda, setClientesConDeuda] = useState([]);
@@ -15,7 +33,7 @@ const RutasCobro = () => {
   const [mostrarMapa, setMostrarMapa] = useState(false);
   const [mostrarRecordatorios, setMostrarRecordatorios] = useState(false);
   const [reporteDiario, setReporteDiario] = useState(null);
-  const [mostrarListaClientes, setMostrarListaClientes] = useState(true);
+  const [mostrarListaClientes, setMostrarListaClientes] = useState(false);
   const [analisisOpen, setAnalisisOpen] = useState(false);
 
   // Nuevos estados para historial
@@ -57,25 +75,15 @@ const RutasCobro = () => {
       let abonosData = [];
       
       // Intentar cargar desde Supabase
-      const { data: facturas, error: facturasError } = await supabase
-        .from('facturas')
-        .select('*');
-
-      const { data: abonos, error: abonosError } = await supabase
-        .from('abonos')
-        .select('*');
-
-      if (!facturasError && facturas) {
-        facturasData = facturas;
-      } else {
-        // Fallback a localStorage
+      try {
+        facturasData = await fetchAllRows('facturas');
+      } catch (e) {
         facturasData = JSON.parse(localStorage.getItem('facturas') || '[]');
       }
 
-      if (!abonosError && abonos) {
-        abonosData = abonos;
-      } else {
-        // Fallback a localStorage
+      try {
+        abonosData = await fetchAllRows('abonos');
+      } catch (e) {
         abonosData = JSON.parse(localStorage.getItem('abonos') || '[]');
       }
 
@@ -350,19 +358,11 @@ const RutasCobro = () => {
 
   const cargarClientesConDeuda = async () => {
     try {
-      // Cargar facturas
-      const { data: facturas, error: facturasError } = await supabase
-        .from('facturas')
-        .select('*');
-      
-      if (facturasError) throw facturasError;
-      
-      // Cargar abonos
-      const { data: abonos, error: abonosError } = await supabase
-        .from('abonos')
-        .select('*');
-      
-      if (abonosError) throw abonosError;
+      // Cargar facturas (paginado, sin límite de 1000)
+      const facturas = await fetchAllRows('facturas');
+
+      // Cargar abonos (paginado, sin límite de 1000)
+      const abonos = await fetchAllRows('abonos');
 
       // Cargar visitas desde Supabase
       const { data: visitas, error: visitasError } = await supabase
@@ -879,6 +879,12 @@ const RutasCobro = () => {
   const irAFacturasDesdeDetalles = () => {
     cerrarDetallesDeuda();
     verFacturasCliente(clienteSeleccionado);
+  };
+
+  const irAFacturaPorId = (facturaId) => {
+    if (!facturaId) return;
+    cerrarDetallesDeuda();
+    navigate(`/factura/${facturaId}`);
   };
 
   const irARutaGenerada = () => {
@@ -2044,6 +2050,7 @@ const RutasCobro = () => {
                         <th>Total</th>
                         <th>Saldo Pendiente</th>
                         <th>Antigüedad</th>
+                        <th>Acción</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -2063,6 +2070,15 @@ const RutasCobro = () => {
                                 {dias} días
                               </span>
                             </td>
+                            <td>
+                              <button
+                                type="button"
+                                className="button micro-button info-button"
+                                onClick={() => irAFacturaPorId(factura.id)}
+                              >
+                                <i className="fas fa-external-link-alt"></i> Ver factura
+                              </button>
+                            </td>
                           </tr>
                         );
                       })}
@@ -2072,6 +2088,7 @@ const RutasCobro = () => {
                         <td colSpan="2">TOTAL</td>
                         <td>{formatMoneda(clienteSeleccionado.facturasPendientes.reduce((sum, f) => sum + f.total, 0))}</td>
                         <td className="total-saldo">{formatMoneda(clienteSeleccionado.totalDeuda)}</td>
+                        <td></td>
                         <td></td>
                       </tr>
                     </tfoot>
@@ -2117,6 +2134,7 @@ const RutasCobro = () => {
                           <th>Fecha</th>
                           <th>ID Factura</th>
                           <th>Monto</th>
+                          <th>Acción</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -2127,6 +2145,15 @@ const RutasCobro = () => {
                               <td>{abono.fecha ? formatFecha(abono.fecha) : 'Sin fecha'}</td>
                               <td className="factura-id">#{abono.facturaId}</td>
                               <td>{formatMoneda(abono.monto)}</td>
+                              <td>
+                                <button
+                                  type="button"
+                                  className="button micro-button info-button"
+                                  onClick={() => irAFacturaPorId(abono.facturaId)}
+                                >
+                                  <i className="fas fa-external-link-alt"></i> Ver factura
+                                </button>
+                              </td>
                             </tr>
                           ))}
                       </tbody>

@@ -2,6 +2,17 @@ import React, { useState, useEffect } from 'react';
 import './GastosEmpresa.css';
 import { supabase } from '../lib/supabase';
 
+const getInitialFormGasto = () => ({
+  fecha: new Date().toISOString().split('T')[0],
+  categoria: 'Servicios',
+  empleado: 'Edwin Marín',
+  descripcion: '',
+  monto: '',
+  metodo_pago: 'transferencia',
+  referencia: '',
+  notas: ''
+});
+
 const GastosEmpresa = () => {
   // Estados principales
   const [vistaActual, setVistaActual] = useState('dashboard'); // dashboard, nuevo, historial, reportes
@@ -18,16 +29,7 @@ const GastosEmpresa = () => {
   // Modal de nuevo gasto
   const [mostrarModal, setMostrarModal] = useState(false);
   const [gastoEditando, setGastoEditando] = useState(null);
-  const [formGasto, setFormGasto] = useState({
-    fecha: new Date().toISOString().split('T')[0],
-    categoria: 'Servicios',
-    empleado: 'Edwin Marín',
-    descripcion: '',
-    monto: '',
-    metodo_pago: 'transferencia',
-    referencia: '',
-    notas: ''
-  });
+  const [formGasto, setFormGasto] = useState(getInitialFormGasto());
 
   // Datos de ejemplo
   const datosEjemplo = {
@@ -195,7 +197,8 @@ const GastosEmpresa = () => {
       }
 
       await cargarGastos();
-      cerrarModal();
+      setGastoEditando(null);
+      setFormGasto(getInitialFormGasto());
     } catch (error) {
       console.error('Error al guardar gasto:', error);
       alert('Error al guardar gasto: ' + error.message);
@@ -228,16 +231,7 @@ const GastosEmpresa = () => {
       setFormGasto(gasto);
     } else {
       setGastoEditando(null);
-      setFormGasto({
-        fecha: new Date().toISOString().split('T')[0],
-        categoria: 'Servicios',
-        empleado: 'Edwin Marín',
-        descripcion: '',
-        monto: '',
-        metodo_pago: 'transferencia',
-        referencia: '',
-        notas: ''
-      });
+      setFormGasto(getInitialFormGasto());
     }
     setMostrarModal(true);
   };

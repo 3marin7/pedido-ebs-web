@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Modelos de Calidad de Software</title>
+  <style>
+    :root {
+      --primary: #1e3a5f;
+      --accent: #2563eb;
+      --accent2: #0ea5e9;
+      --success: #16a34a;
+      --warning: #d97706;
+      --danger: #dc2626;
+      --light: #f0f6ff;
+      --text: #1e293b;
+      --muted: #64748b;
+      --border: #cbd5e1;
+      --white: #ffffff;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #0f172a;
+      color: var(--text);
+      overflow: hidden;
+      height: 100vh;
+    }
+
+    /* ─── SLIDES CONTAINER ─── */
+    .slides-wrapper {
+      width: 100vw;
+      height: 100vh;
+      position: relative;
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 40px 60px;
+      opacity: 0;
+      transform: translateX(60px);
+      transition: all 0.5s cubic-bezier(0.4,0,0.2,1);
+      pointer-events: none;
+    }
+
+    .slide.active {
+      opacity: 1;
+      transform: translateX(0);
+      pointer-events: all;
+    }
+
+    .slide.exit {
+      opacity: 0;
+      transform: translateX(-60px);
+    }
+
+    /* ─── SLIDE BACKGROUNDS ─── */
+    .slide-portada     { background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0f172a 100%); }
+    .slide-iso25010    { background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 60%, #0c2a4a 100%); }
+    .slide-iso9126     { background: linear-gradient(135deg, #0f172a 0%, #1a3550 60%, #0f172a 100%); }
+    .slide-cmmi        { background: linear-gradient(135deg, #0f172a 0%, #1e2a5f 60%, #0f172a 100%); }
+    .slide-mccall      { background: linear-gradient(135deg, #0f172a 0%, #1a1a4f 60%, #0f172a 100%); }
+    .slide-boehm       { background: linear-gradient(135deg, #0f172a 0%, #1a2040 60%, #0f172a 100%); }
+    .slide-furps       { background: linear-gradient(135deg, #0f172a 0%, #1a3040 60%, #0f172a 100%); }
+    .slide-ieee        { background: linear-gradient(135deg, #0f172a 0%, #1e1a4f 60%, #0f172a 100%); }
+    .slide-cuando      { background: linear-gradient(135deg, #0f172a 0%, #1a3050 60%, #0f172a 100%); }
+    .slide-proyecto    { background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 60%, #163050 100%); }
+    .slide-cierre      { background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0f172a 100%); }
+
+    /* ─── BADGE ─── */
+    .badge {
+      display: inline-block;
+      padding: 6px 18px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 18px;
+    }
+    .badge-blue   { background: rgba(37,99,235,0.25); color: #93c5fd; border: 1px solid rgba(37,99,235,0.4); }
+    .badge-green  { background: rgba(22,163,74,0.2);  color: #86efac; border: 1px solid rgba(22,163,74,0.35); }
+    .badge-yellow { background: rgba(217,119,6,0.2);  color: #fcd34d; border: 1px solid rgba(217,119,6,0.35); }
+    .badge-purple { background: rgba(124,58,237,0.2); color: #c4b5fd; border: 1px solid rgba(124,58,237,0.35); }
+    .badge-cyan   { background: rgba(14,165,233,0.2); color: #7dd3fc; border: 1px solid rgba(14,165,233,0.35); }
+    .badge-red    { background: rgba(220,38,38,0.2);  color: #fca5a5; border: 1px solid rgba(220,38,38,0.35); }
+    .badge-gray   { background: rgba(100,116,139,0.2);color: #cbd5e1; border: 1px solid rgba(100,116,139,0.35); }
+
+    /* ─── HEADINGS ─── */
+    h1.slide-title {
+      font-size: 3rem;
+      font-weight: 800;
+      color: #f1f5f9;
+      text-align: center;
+      line-height: 1.15;
+      margin-bottom: 14px;
+    }
+    h1.slide-title span { color: #60a5fa; }
+
+    h2.slide-heading {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #f1f5f9;
+      text-align: center;
+      margin-bottom: 6px;
+    }
+    h2.slide-heading span { color: #60a5fa; }
+
+    .slide-subtitle {
+      font-size: 1.1rem;
+      color: #94a3b8;
+      text-align: center;
+      margin-bottom: 30px;
+      max-width: 700px;
+    }
+
+    /* ─── GRID CARDS ─── */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; width: 100%; max-width: 900px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; width: 100%; max-width: 960px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; width: 100%; max-width: 960px; }
+
+    .card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 14px;
+      padding: 18px 20px;
+      transition: transform 0.2s, background 0.2s;
+    }
+    .card:hover { transform: translateY(-3px); background: rgba(255,255,255,0.08); }
+
+    .card-icon {
+      font-size: 1.8rem;
+      margin-bottom: 8px;
+    }
+    .card-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #e2e8f0;
+      margin-bottom: 4px;
+    }
+    .card-desc {
+      font-size: 0.82rem;
+      color: #94a3b8;
+      line-height: 1.45;
+    }
+
+    /* ─── TABLE ─── */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+      max-width: 900px;
+    }
+    th {
+      background: rgba(37,99,235,0.3);
+      color: #e2e8f0;
+      padding: 10px 16px;
+      text-align: left;
+      font-weight: 700;
+      font-size: 0.82rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    td {
+      padding: 10px 16px;
+      color: #cbd5e1;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    tr:hover td { background: rgba(255,255,255,0.04); }
+    td:first-child { font-weight: 600; color: #93c5fd; }
+
+    /* ─── CMMI LEVELS ─── */
+    .cmmi-levels { display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 820px; }
+    .cmmi-level {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 10px;
+      padding: 12px 20px;
+    }
+    .cmmi-num {
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 1.1rem; flex-shrink: 0;
+    }
+    .cmmi-info { flex: 1; }
+    .cmmi-name { font-weight: 700; color: #e2e8f0; font-size: 0.95rem; }
+    .cmmi-desc { font-size: 0.82rem; color: #94a3b8; }
+    .cmmi-bar {
+      height: 6px; border-radius: 3px; width: 0;
+      animation: growBar 1s ease forwards;
+      animation-delay: 0.3s;
+    }
+    @keyframes growBar { to { width: var(--w); } }
+
+    /* ─── HIGHLIGHT BOX ─── */
+    .highlight-box {
+      background: rgba(37,99,235,0.15);
+      border: 1px solid rgba(37,99,235,0.4);
+      border-radius: 12px;
+      padding: 18px 24px;
+      max-width: 860px;
+      width: 100%;
+      text-align: center;
+    }
+    .highlight-box p { color: #bfdbfe; font-size: 0.95rem; line-height: 1.6; }
+    .highlight-box strong { color: #93c5fd; }
+
+    /* ─── PILLARS ─── */
+    .pillars { display: flex; gap: 16px; width: 100%; max-width: 900px; }
+    .pillar {
+      flex: 1;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 14px;
+      padding: 20px 16px;
+      text-align: center;
+    }
+    .pillar-letter {
+      font-size: 2.2rem;
+      font-weight: 900;
+      color: #60a5fa;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .pillar-word { font-size: 0.9rem; font-weight: 700; color: #e2e8f0; margin-bottom: 4px; }
+    .pillar-desc { font-size: 0.78rem; color: #94a3b8; }
+
+    /* ─── STATUS PILLS ─── */
+    .status-ok  { color: #86efac; font-weight: 600; }
+    .status-ref { color: #fcd34d; font-weight: 600; }
+    .status-mid { color: #7dd3fc; font-weight: 600; }
+
+    /* ─── NAVIGATION ─── */
+    nav {
+      position: fixed;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: rgba(15,23,42,0.85);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 999px;
+      padding: 10px 24px;
+      backdrop-filter: blur(12px);
+      z-index: 100;
+    }
+    .btn-nav {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+      color: #e2e8f0;
+      padding: 8px 20px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 0.88rem;
+      font-weight: 600;
+      transition: background 0.2s;
+    }
+    .btn-nav:hover { background: rgba(37,99,235,0.4); }
+    .btn-nav:disabled { opacity: 0.3; cursor: not-allowed; }
+
+    .slide-counter {
+      font-size: 0.85rem;
+      color: #94a3b8;
+      min-width: 60px;
+      text-align: center;
+    }
+
+    /* ─── DOTS ─── */
+    .dots {
+      position: fixed;
+      right: 28px;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 100;
+    }
+    .dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.2);
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .dot.active { background: #60a5fa; transform: scale(1.5); }
+
+    /* ─── LOGO/HEADER ─── */
+    .slide-header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      padding: 14px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(15,23,42,0.6);
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      backdrop-filter: blur(10px);
+      z-index: 99;
+    }
+    .header-brand { display: flex; align-items: center; gap: 10px; }
+    .header-logo {
+      width: 30px; height: 30px;
+      background: linear-gradient(135deg, #2563eb, #0ea5e9);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem;
+    }
+    .header-name { font-size: 0.88rem; font-weight: 700; color: #93c5fd; }
+    .header-sub  { font-size: 0.75rem; color: #64748b; }
+
+    /* ─── PORTADA SPECIAL ─── */
+    .portada-icon {
+      font-size: 4.5rem;
+      margin-bottom: 20px;
+      animation: float 3s ease-in-out infinite;
+    }
+    @keyframes float {
+      0%,100% { transform: translateY(0); }
+      50%      { transform: translateY(-10px); }
+    }
+
+    /* ─── TIMELINE ─── */
+    .timeline { display: flex; align-items: center; gap: 0; width: 100%; max-width: 860px; }
+    .tl-item { flex: 1; text-align: center; position: relative; }
+    .tl-item:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      top: 20px; right: -50%;
+      width: 100%; height: 2px;
+      background: linear-gradient(to right, #2563eb, #0ea5e9);
+    }
+    .tl-circle {
+      width: 42px; height: 42px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #2563eb, #0ea5e9);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; color: white; font-size: 1rem;
+      margin: 0 auto 8px;
+      position: relative; z-index: 1;
+    }
+    .tl-year { font-size: 0.75rem; color: #64748b; font-weight: 600; }
+    .tl-name { font-size: 0.82rem; color: #e2e8f0; font-weight: 700; margin-top: 2px; }
+
+    /* ─── CHECK LIST ─── */
+    .checklist { list-style: none; width: 100%; max-width: 800px; }
+    .checklist li {
+      display: flex; align-items: flex-start; gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      color: #cbd5e1;
+      font-size: 0.92rem;
+    }
+    .checklist li .ck-icon { color: #86efac; font-size: 1.1rem; flex-shrink: 0; margin-top: 1px; }
+    .checklist li strong { color: #e2e8f0; }
+
+    /* Scrollable content on small slides */
+    .scrollable { overflow-y: auto; max-height: 55vh; width: 100%; display: flex; flex-direction: column; align-items: center; }
+    .scrollable::-webkit-scrollbar { width: 4px; }
+    .scrollable::-webkit-scrollbar-track { background: transparent; }
+    .scrollable::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 2px; }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="slide-header">
+  <div class="header-brand">
+    <div class="header-logo">🏆</div>
+    <div>
+      <div class="header-name">pedido-ebs-web</div>
+      <div class="header-sub">Aseguramiento de Calidad · 2026</div>
+    </div>
+  </div>
+  <div style="font-size:0.8rem;color:#475569;">ISO/IEC 25010 · CMMI · IEEE · FURPS+</div>
+</header>
+
+<!-- SLIDES -->
+<div class="slides-wrapper">
+
+  <!-- SLIDE 1: PORTADA -->
+  <section class="slide slide-portada active" id="slide-1">
+    <div class="portada-icon">🏆</div>
+    <div class="badge badge-blue">Presentación Técnica · 17 Marzo 2026</div>
+    <h1 class="slide-title">Modelos de <span>Calidad</span><br>de Software</h1>
+    <p class="slide-subtitle">Estándares internacionales aplicados al proyecto <strong style="color:#60a5fa">pedido-ebs-web</strong></p>
+    <div style="display:flex;gap:12px;margin-top:16px;flex-wrap:wrap;justify-content:center;">
+      <span class="badge badge-blue">ISO/IEC 25010</span>
+      <span class="badge badge-green">CMMI</span>
+      <span class="badge badge-yellow">McCall</span>
+      <span class="badge badge-purple">Boehm</span>
+      <span class="badge badge-cyan">FURPS+</span>
+      <span class="badge badge-gray">IEEE 730</span>
+    </div>
+  </section>
+
+  <!-- SLIDE 2: LÍNEA DE TIEMPO -->
+  <section class="slide slide-iso9126" id="slide-2">
+    <div class="badge badge-gray">Evolución Histórica</div>
+    <h2 class="slide-heading">Evolución de los <span>Modelos de Calidad</span></h2>
+    <p class="slide-subtitle">Del modelo primitivo al estándar moderno internacional</p>
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-circle">1</div>
+        <div class="tl-year">1977</div>
+        <div class="tl-name">McCall</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-circle">2</div>
+        <div class="tl-year">1978</div>
+        <div class="tl-name">Boehm</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-circle">3</div>
+        <div class="tl-year">1987</div>
+        <div class="tl-name">FURPS+</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-circle">4</div>
+        <div class="tl-year">1991</div>
+        <div class="tl-name">ISO 9126</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-circle">5</div>
+        <div class="tl-year">1993</div>
+        <div class="tl-name">CMMI</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-circle">6</div>
+        <div class="tl-year">2011</div>
+        <div class="tl-name">ISO 25010</div>
+      </div>
+    </div>
+    <div class="highlight-box" style="margin-top:28px;">
+      <p>Cada modelo nació para resolver las limitaciones del anterior. <strong>ISO/IEC 25010</strong> es el estándar vigente y reemplazó al ISO 9126 en 2011.</p>
+    </div>
+  </section>
+
+  <!-- SLIDE 3: ISO 25010 INTRO -->
+  <section class="slide slide-iso25010" id="slide-3">
+    <div class="badge badge-blue">Estándar Vigente · El más usado</div>
+    <h2 class="slide-heading"><span>ISO/IEC 25010</span> — SQuaRE</h2>
+    <p class="slide-subtitle">Software Quality Requirements and Evaluation · Define 8 características de calidad del producto</p>
+    <div class="grid-4">
+      <div class="card">
+        <div class="card-icon">✅</div>
+        <div class="card-title">Adecuación Funcional</div>
+        <div class="card-desc">¿El software hace lo que debe hacer?</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">⚡</div>
+        <div class="card-title">Eficiencia de Desempeño</div>
+        <div class="card-desc">Velocidad, uso de recursos y capacidad</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔗</div>
+        <div class="card-title">Compatibilidad</div>
+        <div class="card-desc">Coexistencia con otros sistemas</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">👤</div>
+        <div class="card-title">Usabilidad</div>
+        <div class="card-desc">Facilidad de uso y accesibilidad</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">🛡️</div>
+        <div class="card-title">Confiabilidad</div>
+        <div class="card-desc">Disponibilidad y tolerancia a fallos</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔒</div>
+        <div class="card-title">Seguridad</div>
+        <div class="card-desc">Confidencialidad e integridad</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔧</div>
+        <div class="card-title">Mantenibilidad</div>
+        <div class="card-desc">Modularidad y capacidad de prueba</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">📦</div>
+        <div class="card-title">Portabilidad</div>
+        <div class="card-desc">Adaptabilidad e instalabilidad</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 4: ISO 25010 EN EL PROYECTO -->
+  <section class="slide slide-iso25010" id="slide-4">
+    <div class="badge badge-blue">ISO/IEC 25010 · Aplicación al Proyecto</div>
+    <h2 class="slide-heading"><span>pedido-ebs-web</span> vs ISO 25010</h2>
+    <p class="slide-subtitle">Cómo cada característica se mapea en el proyecto actual</p>
+    <div class="scrollable">
+      <table>
+        <thead>
+          <tr><th>Característica</th><th>Evidencia en el proyecto</th><th>Estado</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Adecuación Funcional</td><td>Catálogo, pedidos, ventas, cargas de pago</td><td class="status-ok">✅ Implementado</td></tr>
+          <tr><td>Eficiencia de Desempeño</td><td>Supabase como backend en la nube</td><td class="status-ok">✅ Implementado</td></tr>
+          <tr><td>Compatibilidad</td><td>React + Supabase APIs externas</td><td class="status-ok">✅ Implementado</td></tr>
+          <tr><td>Usabilidad</td><td>Análisis de responsividad documentado</td><td class="status-ok">✅ Documentado</td></tr>
+          <tr><td>Confiabilidad</td><td>76 tests unitarios con Jest</td><td class="status-ok">✅ Implementado</td></tr>
+          <tr><td>Seguridad</td><td>Roles configurados (CONFIGURACION_ROLES.md)</td><td class="status-ok">✅ Implementado</td></tr>
+          <tr><td>Mantenibilidad</td><td>ESLint + estructura modular React</td><td class="status-ok">✅ Implementado</td></tr>
+          <tr><td>Portabilidad</td><td>Vite + guía de despliegue documentada</td><td class="status-ok">✅ Implementado</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- SLIDE 5: ISO 9126 -->
+  <section class="slide slide-iso9126" id="slide-5">
+    <div class="badge badge-gray">Modelo Histórico · 1991–2011</div>
+    <h2 class="slide-heading"><span>ISO/IEC 9126</span></h2>
+    <p class="slide-subtitle">Predecesor del 25010. Fue el estándar dominante durante 20 años. Define 6 características fundamentales.</p>
+    <div class="grid-3" style="max-width:820px;">
+      <div class="card">
+        <div class="card-icon">⚙️</div>
+        <div class="card-title">Funcionalidad</div>
+        <div class="card-desc">Idoneidad, exactitud, interoperabilidad, seguridad, conformidad</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">💪</div>
+        <div class="card-title">Confiabilidad</div>
+        <div class="card-desc">Madurez, tolerancia a fallos, capacidad de recuperación</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">👁️</div>
+        <div class="card-title">Usabilidad</div>
+        <div class="card-desc">Comprensibilidad, aprendizaje, operabilidad, atracción</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">🚀</div>
+        <div class="card-title">Eficiencia</div>
+        <div class="card-desc">Comportamiento temporal y utilización de recursos</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">🛠️</div>
+        <div class="card-title">Mantenibilidad</div>
+        <div class="card-desc">Analizabilidad, cambiabilidad, estabilidad, evaluabilidad</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">🌍</div>
+        <div class="card-title">Portabilidad</div>
+        <div class="card-desc">Adaptabilidad, instalabilidad, coexistencia, reemplazabilidad</div>
+      </div>
+    </div>
+    <div class="highlight-box" style="margin-top:20px;padding:12px 24px;">
+      <p>El ISO 9126 fue <strong>reemplazado por ISO/IEC 25010 en 2011</strong>, que agrega Seguridad y Compatibilidad como características independientes.</p>
+    </div>
+  </section>
+
+  <!-- SLIDE 6: CMMI -->
+  <section class="slide slide-cmmi" id="slide-6">
+    <div class="badge badge-green">Madurez del Proceso · CMMI</div>
+    <h2 class="slide-heading"><span>CMMI</span> — Capability Maturity Model</h2>
+    <p class="slide-subtitle">Mide la madurez del <strong style="color:#86efac">proceso de desarrollo</strong>, no el producto. Evalúa la organización en 5 niveles.</p>
+    <div class="cmmi-levels">
+      <div class="cmmi-level">
+        <div class="cmmi-num" style="background:rgba(220,38,38,0.3);color:#fca5a5;">1</div>
+        <div class="cmmi-info">
+          <div class="cmmi-name">Inicial — Caótico</div>
+          <div class="cmmi-desc">Procesos sin documentar, éxito depende de personas individuales</div>
+        </div>
+        <div class="cmmi-bar" style="--w:20%;background:#ef4444;"></div>
+      </div>
+      <div class="cmmi-level">
+        <div class="cmmi-num" style="background:rgba(217,119,6,0.3);color:#fcd34d;">2</div>
+        <div class="cmmi-info">
+          <div class="cmmi-name">Gestionado — Planificado</div>
+          <div class="cmmi-desc">Procesos planificados, controlados y con métricas básicas</div>
+        </div>
+        <div class="cmmi-bar" style="--w:40%;background:#f59e0b;"></div>
+      </div>
+      <div class="cmmi-level" style="border-color:rgba(37,99,235,0.5);background:rgba(37,99,235,0.1);">
+        <div class="cmmi-num" style="background:rgba(37,99,235,0.4);color:#93c5fd;">3</div>
+        <div class="cmmi-info">
+          <div class="cmmi-name">Definido — Estandarizado ← Tu proyecto apunta aquí</div>
+          <div class="cmmi-desc">Procesos documentados y estandarizados en toda la organización</div>
+        </div>
+        <div class="cmmi-bar" style="--w:60%;background:#3b82f6;"></div>
+      </div>
+      <div class="cmmi-level">
+        <div class="cmmi-num" style="background:rgba(124,58,237,0.3);color:#c4b5fd;">4</div>
+        <div class="cmmi-info">
+          <div class="cmmi-name">Cuantitativamente Gestionado</div>
+          <div class="cmmi-desc">Medición y control estadístico de calidad y rendimiento</div>
+        </div>
+        <div class="cmmi-bar" style="--w:80%;background:#7c3aed;"></div>
+      </div>
+      <div class="cmmi-level">
+        <div class="cmmi-num" style="background:rgba(22,163,74,0.3);color:#86efac;">5</div>
+        <div class="cmmi-info">
+          <div class="cmmi-name">En Optimización — Mejora Continua</div>
+          <div class="cmmi-desc">Mejora continua basada en análisis cuantitativo de datos</div>
+        </div>
+        <div class="cmmi-bar" style="--w:100%;background:#16a34a;"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 7: McCall -->
+  <section class="slide slide-mccall" id="slide-7">
+    <div class="badge badge-yellow">Modelo Histórico · 1977</div>
+    <h2 class="slide-heading">Modelo de <span>McCall</span></h2>
+    <p class="slide-subtitle">Uno de los primeros modelos formales de calidad. Define 3 perspectivas del producto.</p>
+    <div class="grid-3" style="max-width:860px;">
+      <div class="card" style="border-color:rgba(220,38,38,0.3);">
+        <div class="card-icon">🖥️</div>
+        <div class="card-title" style="color:#fca5a5;">Operación del Producto</div>
+        <ul style="margin-top:8px;padding-left:16px;color:#94a3b8;font-size:0.82rem;line-height:1.8;">
+          <li>Corrección</li>
+          <li>Confiabilidad</li>
+          <li>Eficiencia</li>
+          <li>Integridad</li>
+          <li>Usabilidad</li>
+        </ul>
+      </div>
+      <div class="card" style="border-color:rgba(217,119,6,0.3);">
+        <div class="card-icon">🔍</div>
+        <div class="card-title" style="color:#fcd34d;">Revisión del Producto</div>
+        <ul style="margin-top:8px;padding-left:16px;color:#94a3b8;font-size:0.82rem;line-height:1.8;">
+          <li>Mantenibilidad</li>
+          <li>Flexibilidad</li>
+          <li>Capacidad de prueba</li>
+        </ul>
+      </div>
+      <div class="card" style="border-color:rgba(22,163,74,0.3);">
+        <div class="card-icon">🚀</div>
+        <div class="card-title" style="color:#86efac;">Transición del Producto</div>
+        <ul style="margin-top:8px;padding-left:16px;color:#94a3b8;font-size:0.82rem;line-height:1.8;">
+          <li>Portabilidad</li>
+          <li>Reusabilidad</li>
+          <li>Interoperabilidad</li>
+        </ul>
+      </div>
+    </div>
+    <div class="highlight-box" style="margin-top:22px;">
+      <p>McCall fue revolucionario en 1977 por ser el primer modelo que <strong>clasificó la calidad en factores medibles</strong>, sentando las bases de todos los estándares posteriores.</p>
+    </div>
+  </section>
+
+  <!-- SLIDE 8: Boehm -->
+  <section class="slide slide-boehm" id="slide-8">
+    <div class="badge badge-purple">Modelo Histórico · 1978</div>
+    <h2 class="slide-heading">Modelo de <span>Boehm</span></h2>
+    <p class="slide-subtitle">Expande a McCall añadiendo consideraciones de hardware y una jerarquía más detallada.</p>
+    <div class="grid-3" style="max-width:860px;">
+      <div class="card" style="border-color:rgba(124,58,237,0.3);">
+        <div class="card-icon">🧑‍💻</div>
+        <div class="card-title" style="color:#c4b5fd;">Utilidad General</div>
+        <div class="card-desc" style="margin-top:8px;line-height:1.8;">
+          Portabilidad, confiabilidad, eficiencia, usabilidad
+        </div>
+      </div>
+      <div class="card" style="border-color:rgba(124,58,237,0.3);">
+        <div class="card-icon">🔧</div>
+        <div class="card-title" style="color:#c4b5fd;">Utilidad para Mantenimiento</div>
+        <div class="card-desc" style="margin-top:8px;line-height:1.8;">
+          Verificabilidad, comprensibilidad, modificabilidad
+        </div>
+      </div>
+      <div class="card" style="border-color:rgba(124,58,237,0.3);">
+        <div class="card-icon">🌐</div>
+        <div class="card-title" style="color:#c4b5fd;">Utilidad de Transición</div>
+        <div class="card-desc" style="margin-top:8px;line-height:1.8;">
+          Interoperabilidad, reusabilidad, portabilidad de dispositivo
+        </div>
+      </div>
+    </div>
+    <div class="highlight-box" style="margin-top:22px;">
+      <p>Boehm introdujo el concepto de <strong>utilidad primaria del usuario</strong> y fue el primero en incluir factores relacionados con el <strong>hardware</strong> en el modelo de calidad.</p>
+    </div>
+  </section>
+
+  <!-- SLIDE 9: FURPS+ -->
+  <section class="slide slide-furps" id="slide-9">
+    <div class="badge badge-cyan">Hewlett-Packard · RUP</div>
+    <h2 class="slide-heading"><span>FURPS+</span></h2>
+    <p class="slide-subtitle">Modelo de HP, muy usado en metodología RUP (Rational Unified Process). Clasifica requisitos de calidad en 5 dimensiones + restricciones.</p>
+    <div class="pillars">
+      <div class="pillar">
+        <div class="pillar-letter">F</div>
+        <div class="pillar-word">Functionality</div>
+        <div class="pillar-desc">Requisitos funcionales del sistema</div>
+      </div>
+      <div class="pillar">
+        <div class="pillar-letter">U</div>
+        <div class="pillar-word">Usability</div>
+        <div class="pillar-desc">Estética, consistencia, documentación</div>
+      </div>
+      <div class="pillar">
+        <div class="pillar-letter">R</div>
+        <div class="pillar-word">Reliability</div>
+        <div class="pillar-desc">Frecuencia de fallos, recuperación</div>
+      </div>
+      <div class="pillar">
+        <div class="pillar-letter">P</div>
+        <div class="pillar-word">Performance</div>
+        <div class="pillar-desc">Velocidad, exactitud, throughput</div>
+      </div>
+      <div class="pillar">
+        <div class="pillar-letter">S</div>
+        <div class="pillar-word">Supportability</div>
+        <div class="pillar-desc">Mantenibilidad, adaptabilidad, testabilidad</div>
+      </div>
+    </div>
+    <div class="highlight-box" style="margin-top:20px;">
+      <p>El <strong>+</strong> agrega 4 restricciones adicionales: <strong style="color:#7dd3fc">Diseño</strong> (restricciones arquitectónicas), <strong style="color:#7dd3fc">Implementación</strong> (lenguajes, BD), <strong style="color:#7dd3fc">Interfaz</strong> (integraciones), <strong style="color:#7dd3fc">Físicas</strong> (hardware, materiales).</p>
+    </div>
+  </section>
+
+  <!-- SLIDE 10: IEEE -->
+  <section class="slide slide-ieee" id="slide-10">
+    <div class="badge badge-purple">Estándares IEEE</div>
+    <h2 class="slide-heading">Estándares <span>IEEE</span></h2>
+    <p class="slide-subtitle">El Instituto de Ingenieros Eléctricos y Electrónicos define estándares de proceso para la industria del software.</p>
+    <div class="grid-2" style="max-width:820px;">
+      <div class="card" style="border-color:rgba(124,58,237,0.4);padding:24px;">
+        <div class="card-icon">📋</div>
+        <div class="card-title" style="font-size:1.05rem;color:#c4b5fd;margin-bottom:10px;">IEEE 730 — SQA Plan</div>
+        <div class="card-desc" style="line-height:1.7;">
+          Define los requisitos para un <strong style="color:#e2e8f0">Plan de Aseguramiento de Calidad de Software (SQA)</strong>.<br><br>
+          Cubre: documentación, revisiones, auditorías, gestión de problemas y herramientas.
+        </div>
+      </div>
+      <div class="card" style="border-color:rgba(124,58,237,0.4);padding:24px;">
+        <div class="card-icon">🔬</div>
+        <div class="card-title" style="font-size:1.05rem;color:#c4b5fd;margin-bottom:10px;">IEEE 1012 — V&V</div>
+        <div class="card-desc" style="line-height:1.7;">
+          Estándar para <strong style="color:#e2e8f0">Verificación y Validación</strong> de software.<br><br>
+          <strong style="color:#e2e8f0">Verificación:</strong> ¿Estamos construyendo el sistema correctamente?<br>
+          <strong style="color:#e2e8f0">Validación:</strong> ¿Estamos construyendo el sistema correcto?
+        </div>
+      </div>
+    </div>
+    <div class="highlight-box" style="margin-top:20px;">
+      <p>Tu proyecto <strong>QA/01_PLAN_ASEGURAMIENTO_CALIDAD.md</strong> ya implementa los requerimientos de <strong>IEEE 730</strong> al tener plan de QA con métricas, herramientas y actividades definidas.</p>
+    </div>
+  </section>
+
+  <!-- SLIDE 11: ¿CUÁL USAR? -->
+  <section class="slide slide-cuando" id="slide-11">
+    <div class="badge badge-cyan">Guía de Decisión</div>
+    <h2 class="slide-heading">¿Cuál modelo <span>usar</span>?</h2>
+    <p class="slide-subtitle">Cada modelo responde a una necesidad diferente. Aquí la guía rápida de selección.</p>
+    <div class="scrollable">
+      <table>
+        <thead>
+          <tr><th>Situación</th><th>Modelo recomendado</th><th>Por qué</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Evaluar calidad del <strong style="color:#e2e8f0">producto</strong> web/app</td>
+            <td><span class="badge badge-blue" style="margin:0;font-size:0.75rem;">ISO/IEC 25010</span></td>
+            <td>Estándar vigente más completo</td>
+          </tr>
+          <tr>
+            <td>Mejorar el <strong style="color:#e2e8f0">proceso</strong> de desarrollo</td>
+            <td><span class="badge badge-green" style="margin:0;font-size:0.75rem;">CMMI</span></td>
+            <td>Evalúa madurez organizacional</td>
+          </tr>
+          <tr>
+            <td>Proyecto <strong style="color:#e2e8f0">académico</strong> o institucional</td>
+            <td><span class="badge badge-blue" style="margin:0;font-size:0.75rem;">ISO 25010</span> + <span class="badge badge-purple" style="margin:0;font-size:0.75rem;">IEEE 730</span></td>
+            <td>Combinación reconocida formalmente</td>
+          </tr>
+          <tr>
+            <td>Empresa con <strong style="color:#e2e8f0">múltiples proyectos</strong></td>
+            <td><span class="badge badge-green" style="margin:0;font-size:0.75rem;">CMMI Nivel 3+</span></td>
+            <td>Estandarización entre proyectos</td>
+          </tr>
+          <tr>
+            <td>Documentar <strong style="color:#e2e8f0">requisitos no funcionales</strong></td>
+            <td><span class="badge badge-cyan" style="margin:0;font-size:0.75rem;">FURPS+</span></td>
+            <td>Estructura natural para RNF</td>
+          </tr>
+          <tr>
+            <td>Definir <strong style="color:#e2e8f0">V&V</strong> formalmente</td>
+            <td><span class="badge badge-purple" style="margin:0;font-size:0.75rem;">IEEE 1012</span></td>
+            <td>Estándar específico de V&V</td>
+          </tr>
+          <tr>
+            <td>Proyecto <strong style="color:#e2e8f0">legacy o mantenimiento</strong></td>
+            <td><span class="badge badge-gray" style="margin:0;font-size:0.75rem;">ISO 9126</span></td>
+            <td>Más sencillo, igual de válido</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- SLIDE 12: APLICACIÓN EN EL PROYECTO -->
+  <section class="slide slide-proyecto" id="slide-12">
+    <div class="badge badge-blue">Tu Proyecto · pedido-ebs-web</div>
+    <h2 class="slide-heading">Modelos aplicados en <span>tu proyecto</span></h2>
+    <p class="slide-subtitle">Evidencia concreta del cumplimiento de estándares en la documentación y código existente</p>
+    <ul class="checklist">
+      <li>
+        <span class="ck-icon">✅</span>
+        <div><strong>ISO/IEC 25010</strong> — Plan de QA con 7 características evaluadas en <code style="background:rgba(255,255,255,0.1);padding:2px 6px;border-radius:4px;font-size:0.82rem;">QA/01_PLAN_ASEGURAMIENTO_CALIDAD.md</code></div>
+      </li>
+      <li>
+        <span class="ck-icon">✅</span>
+        <div><strong>IEEE 730</strong> — Plan de Aseguramiento de Calidad con métricas, herramientas y actividades definidas</div>
+      </li>
+      <li>
+        <span class="ck-icon">✅</span>
+        <div><strong>IEEE 1012</strong> — Verificación y Validación con 76 tests unitarios Jest implementados</div>
+      </li>
+      <li>
+        <span class="ck-icon">✅</span>
+        <div><strong>CMMI Nivel 2→3</strong> — Procesos documentados, métricas definidas (80% cobertura objetivo), backups y versionado</div>
+      </li>
+      <li>
+        <span class="ck-icon">🔄</span>
+        <div><strong>CMMI Nivel 3</strong> — Para alcanzarlo: estandarizar procesos entre proyectos y formalizar revisiones técnicas</div>
+      </li>
+      <li>
+        <span class="ck-icon">✅</span>
+        <div><strong>FURPS+</strong> — Documentados implícitamente en: responsividad, roles de seguridad, pruebas y guía de despliegue</div>
+      </li>
+    </ul>
+  </section>
+
+  <!-- SLIDE 13: CIERRE -->
+  <section class="slide slide-cierre" id="slide-13">
+    <div class="portada-icon">🎯</div>
+    <div class="badge badge-blue">Conclusión</div>
+    <h1 class="slide-title" style="font-size:2.2rem;">El modelo correcto es<br><span>ISO/IEC 25010</span></h1>
+    <p class="slide-subtitle" style="max-width:640px;">Es el estándar internacional vigente, el más reconocido académica y profesionalmente, y tu proyecto ya lo implementa con documentación, pruebas y métricas definidas.</p>
+    <div class="grid-3" style="max-width:720px;margin-top:10px;">
+      <div class="card" style="text-align:center;">
+        <div style="font-size:2rem;font-weight:800;color:#60a5fa;">8</div>
+        <div class="card-desc">Características<br>evaluadas</div>
+      </div>
+      <div class="card" style="text-align:center;">
+        <div style="font-size:2rem;font-weight:800;color:#86efac;">76</div>
+        <div class="card-desc">Tests unitarios<br>implementados</div>
+      </div>
+      <div class="card" style="text-align:center;">
+        <div style="font-size:2rem;font-weight:800;color:#fcd34d;">80%</div>
+        <div class="card-desc">Cobertura de<br>código objetivo</div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- DOTS -->
+<div class="dots" id="dots"></div>
+
+<!-- NAVIGATION -->
+<nav>
+  <button class="btn-nav" id="prev" onclick="changeSlide(-1)">← Anterior</button>
+  <span class="slide-counter" id="counter">1 / 13</span>
+  <button class="btn-nav" id="next" onclick="changeSlide(1)">Siguiente →</button>
+</nav>
+
+<script>
+  let current = 0;
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  const dotsEl = document.getElementById('dots');
+  const counter = document.getElementById('counter');
+
+  // Build dots
+  slides.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i === 0 ? ' active' : '');
+    d.onclick = () => goTo(i);
+    dotsEl.appendChild(d);
+  });
+
+  function goTo(index) {
+    slides[current].classList.remove('active');
+    slides[current].classList.add('exit');
+    setTimeout(() => slides[current - (index > current ? -1 : 1) === current ? current : current].classList.remove('exit'), 500);
+
+    const prev = current;
+    current = index;
+    slides[prev].classList.remove('active');
+    setTimeout(() => slides[prev].classList.remove('exit'), 500);
+    slides[prev].classList.add('exit');
+    slides[current].classList.add('active');
+
+    document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === current));
+    counter.textContent = (current + 1) + ' / ' + total;
+    document.getElementById('prev').disabled = current === 0;
+    document.getElementById('next').disabled = current === total - 1;
+  }
+
+  function changeSlide(dir) {
+    const next = current + dir;
+    if (next < 0 || next >= total) return;
+    goTo(next);
+  }
+
+  // Keyboard navigation
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') changeSlide(1);
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') changeSlide(-1);
+  });
+
+  // Init
+  document.getElementById('prev').disabled = true;
+  counter.textContent = '1 / ' + total;
+</script>
+</body>
+</html>
