@@ -376,6 +376,22 @@
   cursor: not-allowed;
 }
 
+.success-button {
+  background: linear-gradient(135deg, #27ae60, #229954);
+  color: white;
+  margin-left: 0.5rem;
+}
+
+.success-button:hover:not(:disabled) {
+  background: linear-gradient(135deg, #229954, #1e8449);
+  transform: translateY(-1px);
+}
+
+.success-button.disabled {
+  background: #bdc3c7;
+  cursor: not-allowed;
+}
+
 /* Badge de conteo */
 .badge-count {
   background: rgba(255, 255, 255, 0.3);

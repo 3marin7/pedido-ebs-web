@@ -13,6 +13,7 @@ const InvoiceScreen = () => {
   
   // Estados principales
   const [cliente, setCliente] = useState('');
+  const [codigoCliente, setCodigoCliente] = useState('');
   const [fecha, setFecha] = useState(new Date().toISOString().split('T')[0]);
   const [direccion, setDireccion] = useState('');
   const [telefono, setTelefono] = useState('');
@@ -46,24 +47,83 @@ const InvoiceScreen = () => {
 
   const vendedores = ['Edwin Marin', 'Fredy Marin', 'Fabian Marin'];
 
+  const normalizarTexto = (valor = '') =>
+    valor
+      .toString()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .trim()
+      .toLowerCase();
+
+  const resolverCodigoCliente = async (nombreCliente) => {
+    const nombreLimpio = (nombreCliente || '').trim();
+    if (!nombreLimpio) return null;
+
+    const nombreNormalizado = normalizarTexto(nombreLimpio);
+
+    const clienteLocal = (clientes || []).find(c =>
+      normalizarTexto(c.nombre) === nombreNormalizado
+    );
+
+    if (clienteLocal?.codigo_cliente) {
+      return clienteLocal.codigo_cliente;
+    }
+
+    const { data: clienteExacto } = await supabase
+      .from('clientes')
+      .select('nombre, codigo_cliente')
+      .ilike('nombre', nombreLimpio)
+      .limit(1)
+      .maybeSingle();
+
+    if (clienteExacto?.codigo_cliente) {
+      return clienteExacto.codigo_cliente;
+    }
+
+    const { data: candidatos } = await supabase
+      .from('clientes')
+      .select('nombre, codigo_cliente')
+      .ilike('nombre', `%${nombreLimpio}%`)
+      .limit(20);
+
+    const coincidencia = (candidatos || []).find(c =>
+      normalizarTexto(c.nombre) === nombreNormalizado
+    );
+
+    return coincidencia?.codigo_cliente || null;
+  };
+
   // Cargar datos del pedido si vienen desde GestionPedidos
   useEffect(() => {
     if (location.state?.pedidoData) {
       const { pedidoData } = location.state;
-      setCliente(pedidoData.cliente || '');
-      setTelefono(pedidoData.telefono || '');
-      setDireccion(pedidoData.direccion || '');
-      setCorreo(pedidoData.correo || '');
-      setVendedorSeleccionado(pedidoData.vendedor || '');
-      setProductos(pedidoData.productos || []);
-      
-      // Limpiar el state para que no se recargue al volver
-      window.history.replaceState({}, document.title);
-      
-      // Mostrar mensaje de confirmación
-      setTimeout(() => {
-        alert('✅ Pedido cargado exitosamente\n\nPuedes modificar los datos antes de guardar la factura.');
-      }, 100);
+
+      const cargarPedidoConCodigo = async () => {
+        const codigoDesdePedido = pedidoData.codigo_cliente || pedidoData.codigoCliente || '';
+        let codigoResuelto = codigoDesdePedido;
+
+        if (!codigoResuelto && pedidoData.cliente) {
+          codigoResuelto = await resolverCodigoCliente(pedidoData.cliente);
+        }
+
+        setCliente(pedidoData.cliente || '');
+        setCodigoCliente(codigoResuelto || '');
+        setTelefono(pedidoData.telefono || '');
+        setDireccion(pedidoData.direccion || '');
+        setCorreo(pedidoData.correo || '');
+        setVendedorSeleccionado(pedidoData.vendedor || '');
+        setProductos(pedidoData.productos || []);
+
+        // Limpiar el state para que no se recargue al volver
+        window.history.replaceState({}, document.title);
+
+        // Mostrar mensaje de confirmación
+        setTimeout(() => {
+          alert('✅ Pedido cargado exitosamente\n\nPuedes modificar los datos antes de guardar la factura.');
+        }, 100);
+      };
+
+      cargarPedidoConCodigo();
     }
   }, [location.state]);
 
@@ -497,6 +557,7 @@ const InvoiceScreen = () => {
   // Función para limpiar el formulario
   const limpiarFormulario = () => {
     setCliente('');
+    setCodigoCliente('');
     setDireccion('');
     setTelefono('');
     setCorreo('');
@@ -509,11 +570,41 @@ const InvoiceScreen = () => {
   const guardarFactura = async () => {
     try {
       setCargando(true);
+
+      // Si no hay código, resolverlo contra tabla clientes
+      let codigoClienteFinal = codigoCliente || null;
+      if (!codigoClienteFinal && cliente) {
+        codigoClienteFinal = await resolverCodigoCliente(cliente);
+        if (codigoClienteFinal) {
+          setCodigoCliente(codigoClienteFinal);
+        }
+      }
+
+      // Bloquear guardado sin código para evitar facturas sin trazabilidad de cliente
+      if (!codigoClienteFinal) {
+        alert('No se encontró código para este cliente. Selecciónalo desde el catálogo de clientes o crea/actualiza el cliente primero.');
+        return;
+      }
+
+      // Buscar vendedor_id desde tabla usuarios por nombre
+      let vendedorId = null;
+      if (vendedorSeleccionado) {
+        const { data: usuarioData } = await supabase
+          .from('usuarios')
+          .select('id')
+          .ilike('nombre', vendedorSeleccionado.trim())
+          .maybeSingle();
+        if (usuarioData?.id) {
+          vendedorId = usuarioData.id;
+        }
+      }
       
       const facturaData = {
         cliente,
+        codigo_cliente: codigoClienteFinal,
         fecha,
         vendedor: vendedorSeleccionado,
+        vendedor_id: vendedorId,
         direccion: direccion || null,
         telefono: telefono || null,
         correo: correo || null,
@@ -525,8 +616,10 @@ const InvoiceScreen = () => {
         .from('facturas')
         .insert([{
           cliente: facturaData.cliente,
+          codigo_cliente: facturaData.codigo_cliente,
           fecha: facturaData.fecha,
           vendedor: facturaData.vendedor,
+          vendedor_id: facturaData.vendedor_id,
           direccion: facturaData.direccion,
           telefono: facturaData.telefono,
           correo: facturaData.correo,
@@ -570,6 +663,7 @@ const InvoiceScreen = () => {
   // Función para seleccionar cliente
   const seleccionarCliente = (cliente) => {
     setCliente(cliente.nombre);
+    setCodigoCliente(cliente.codigo_cliente || '');
     setDireccion(cliente.direccion || '');
     setTelefono(cliente.telefono || '');
     setCorreo(cliente.correo || '');
@@ -592,6 +686,7 @@ const InvoiceScreen = () => {
         <FacturaPreview
           factura={{
             cliente,
+            codigo_cliente: codigoCliente,
             fecha,
             vendedor: vendedorSeleccionado,
             direccion,

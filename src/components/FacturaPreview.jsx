@@ -2,6 +2,8 @@ import React from 'react';
 import './FacturaPreview.css';
 
 const FacturaPreview = ({ factura, onVolver, onGuardar, cargando }) => {
+  const codigoCliente = factura.codigo_cliente || factura.codigoCliente;
+
   return (
     <div className="factura-container">
       <h1>VISTA PREVIA</h1>
@@ -9,7 +11,13 @@ const FacturaPreview = ({ factura, onVolver, onGuardar, cargando }) => {
       <div className="datos-factura">
         <div className="fila-datos">
           <div className="columna-datos">
-            <p><b>Cliente:</b> {factura.cliente || "No especificado"}</p>
+            <p><b>Cliente:</b> {factura.cliente}
+              {codigoCliente && (
+                <span style={{ marginLeft: 8, color: '#888', fontWeight: 'bold', fontSize: '0.95em' }}>
+                  [Codigo: {codigoCliente}]
+                </span>
+              )}
+            </p>
             <p><b>Fecha:</b> {factura.fecha || "No especificada"}</p>
             <p><b>Vendedor:</b> {factura.vendedor || "No especificado"}</p>
           </div>

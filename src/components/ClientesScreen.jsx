@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './ClientesScreen.css';
 import { supabase } from './supabaseClient.js';
+import * as XLSX from 'xlsx';
 
 const ClientesScreen = ({ 
   onSeleccionarCliente, 
   onVolver,
   clientes: initialClientes 
 }) => {
+  const navigate = useNavigate();
   // Estados para clientes
   const [busquedaCliente, setBusquedaCliente] = useState('');
   const [nuevoCliente, setNuevoCliente] = useState({
@@ -246,53 +249,38 @@ const ClientesScreen = ({
     }
   };
 
-  // Función para exportar clientes
-  const exportarClientes = async () => {
+  // Función para exportar clientes en Excel
+  const exportarClientes = () => {
     setError(null);
     try {
-      const { data, error: supabaseError } = await supabase
-        .from('clientes')
-        .select('*');
-      
-      if (supabaseError) throw supabaseError;
-      
-      if (!data || data.length === 0) {
+      const clientesAExportar = clientesFiltrados.length > 0 ? clientesFiltrados : clientes;
+
+      if (!clientesAExportar || clientesAExportar.length === 0) {
         setError('No hay clientes para exportar');
         return;
       }
 
-      const datosExportacion = {
-        metadata: {
-          sistema: "EBS Facturación",
-          version: "1.0",
-          fechaExportacion: new Date().toISOString(),
-          totalClientes: data.length
-        },
-        clientes: data.map(cliente => ({
-          id: cliente.id,
-          nombre: cliente.nombre,
-          direccion: cliente.direccion || '',
-          telefono: cliente.telefono || '',
-          correo: cliente.correo || '',
-          clasificacion: cliente.clasificacion || 3,
-          fecha_registro: cliente.fecha_registro || new Date().toISOString()
-        }))
-      };
+      const filasExcel = clientesAExportar.map(cliente => ({
+        ID: cliente.id,
+        Codigo_Cliente: cliente.codigo_cliente || '',
+        Nombre: cliente.nombre || '',
+        Telefono: cliente.telefono || '',
+        Correo: cliente.correo || '',
+        Direccion: cliente.direccion || '',
+        Clasificacion: cliente.clasificacion || 3,
+        Fecha_Registro: cliente.fecha_registro || '',
+      }));
 
-      const dataStr = JSON.stringify(datosExportacion, null, 2);
-      const blob = new Blob([dataStr], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `clientes_ebs_${new Date().toISOString().slice(0, 10)}.json`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      
-      setTimeout(() => URL.revokeObjectURL(url), 100);
-      
-      alert(`✅ Se exportaron ${data.length} clientes correctamente`);
+      const workbook = XLSX.utils.book_new();
+      const worksheet = XLSX.utils.json_to_sheet(filasExcel);
+      XLSX.utils.book_append_sheet(workbook, worksheet, 'Clientes');
+
+      const fechaArchivo = new Date().toISOString().slice(0, 10);
+      XLSX.writeFile(workbook, `clientes_tabla_excel_${fechaArchivo}.xlsx`, {
+        bookType: 'xlsx',
+      });
+
+      alert(`✅ Se exportaron ${filasExcel.length} clientes a Excel`);
     } catch (error) {
       console.error('Error al exportar clientes:', error);
       setError(`Error al exportar clientes: ${error.message}`);
@@ -407,9 +395,10 @@ const ClientesScreen = ({
     const coincideNombre = cliente.nombre.toLowerCase().includes(busquedaCliente.toLowerCase());
     const coincideTelefono = cliente.telefono && cliente.telefono.includes(busquedaCliente);
     const coincideCorreo = cliente.correo && cliente.correo.toLowerCase().includes(busquedaCliente.toLowerCase());
+    const coincideCodigo = cliente.codigo_cliente && cliente.codigo_cliente.toLowerCase().includes(busquedaCliente.toLowerCase());
     const coincideClasificacion = filtroClasificacion === 0 || cliente.clasificacion === filtroClasificacion;
     
-    return (coincideNombre || coincideTelefono || coincideCorreo) && coincideClasificacion;
+    return (coincideNombre || coincideTelefono || coincideCorreo || coincideCodigo) && coincideClasificacion;
   });
 
   return (
@@ -435,7 +424,7 @@ const ClientesScreen = ({
         <div className="clientes-search">
           <input
             type="text"
-            placeholder="🔍 Buscar cliente..."
+            placeholder="🔍 Buscar por nombre, código, tel o email..."
             value={busquedaCliente}
             onChange={(e) => setBusquedaCliente(e.target.value)}
           />
@@ -503,6 +492,9 @@ const ClientesScreen = ({
                         onClick={() => seleccionarCliente(cliente)}
                       >
                         <h4>{cliente.nombre}</h4>
+                        {cliente.codigo_cliente && (
+                          <p style={{ fontWeight: 'bold', color: '#555', fontSize: '0.9rem' }}>🆔 Código: {cliente.codigo_cliente}</p>
+                        )}
                         <div className={`clasificacion-badge clasificacion-${cliente.clasificacion}`}>
                           {cliente.clasificacion} {'★'.repeat(cliente.clasificacion)}
                         </div>
@@ -519,6 +511,16 @@ const ClientesScreen = ({
                           }}
                         >
                           ✏️ Editar
+                        </button>
+                        <button
+                          className="button success-button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            // Navegar a CatalogoClientes con datos del cliente
+                            navigate(`/catalogo-clientes?cliente=${encodeURIComponent(cliente.nombre)}&telefono=${encodeURIComponent(cliente.telefono || '')}&direccion=${encodeURIComponent(cliente.direccion || '')}&clienteId=${cliente.id}`);
+                          }}
+                        >
+                          🛒 Hacer Pedido
                         </button>
                       </div>
                     </div>
@@ -624,7 +626,7 @@ const ClientesScreen = ({
             onClick={exportarClientes}
             disabled={clientes.length === 0 || importandoClientes || cargandoClientes}
           >
-            📤 Exportar Clientes
+            📤 Exportar Clientes (Excel)
             {clientes.length > 0 && (
               <span className="badge-count">{clientes.length}</span>
             )}

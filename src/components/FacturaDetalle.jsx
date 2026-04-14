@@ -20,6 +20,7 @@ const FacturaDetalle = () => {
   });
   const [editandoAbono, setEditandoAbono] = useState(null);
   const [mostrarFormAbono, setMostrarFormAbono] = useState(false);
+  const [codigoClienteResuelto, setCodigoClienteResuelto] = useState('');
 
   // Función para convertir números a letras
   const convertirNumeroALetras = (numero) => {
@@ -138,10 +139,48 @@ const FacturaDetalle = () => {
     cargarFacturaYAbonos();
   }, [id]);
 
+  // Resuelve codigo de cliente para facturas nuevas y antiguas.
+  useEffect(() => {
+    const resolverCodigoCliente = async () => {
+      if (!factura) {
+        setCodigoClienteResuelto('');
+        return;
+      }
+
+      const codigoDirecto = factura.codigo_cliente || factura.codigoCliente || '';
+      if (codigoDirecto) {
+        setCodigoClienteResuelto(codigoDirecto);
+        return;
+      }
+
+      if (!factura.cliente) {
+        setCodigoClienteResuelto('');
+        return;
+      }
+
+      try {
+        const { data, error } = await supabase
+          .from('clientes')
+          .select('codigo_cliente')
+          .eq('nombre', factura.cliente)
+          .limit(1)
+          .maybeSingle();
+
+        if (error) throw error;
+        setCodigoClienteResuelto(data?.codigo_cliente || '');
+      } catch (error) {
+        console.error('Error resolviendo codigo de cliente:', error);
+        setCodigoClienteResuelto('');
+      }
+    };
+
+    resolverCodigoCliente();
+  }, [factura]);
+
   const copiarDatos = () => {
     const datos = `
       Cuenta de Cobro #${factura.id}
-      Cliente: ${factura.cliente}
+      Cliente: ${factura.cliente} ${codigoClienteResuelto ? `[CODIGO: ${codigoClienteResuelto}]` : ''}
       Fecha: ${new Date(factura.fecha).toLocaleDateString()}
       Total: $${factura.total.toFixed(2)}
       Total en letras: ${convertirNumeroALetras(Math.round(factura.total))}
@@ -457,9 +496,9 @@ const FacturaDetalle = () => {
               <div class="info-cliente-vendedor">
                 <div class="info-item">
                   <h4>CLIENTE:</h4>
-                  <p class="cliente-nombre">${factura.cliente}</p>
-                  <h4>DIRECCIÓN:</h4>
-                  <p class="direccion-dato">${factura.direccion || 'NO ESPECIFICADO'}</p>
+                  <p class="cliente-nombre">${factura.cliente} ${codigoClienteResuelto ? `[CODIGO: ${codigoClienteResuelto}]` : ''}</p>
+                  ${factura.telefono ? `<p>Tel: ${factura.telefono}</p>` : ''}
+                  ${factura.correo ? `<p>Email: ${factura.correo}</p>` : ''}
                 </div>
                 <div class="info-item">
                   <h4>VENDEDOR:</h4>
@@ -545,9 +584,9 @@ const FacturaDetalle = () => {
               <div class="info-cliente-vendedor">
                 <div class="info-item">
                   <h4>CLIENTE:</h4>
-                  <p class="cliente-nombre">${factura.cliente}</p>
-                  <h4>DIRECCIÓN:</h4>
-                  <p class="direccion-dato">${factura.direccion || 'NO ESPECIFICADO'}</p>
+                  <p class="cliente-nombre">${factura.cliente} ${codigoClienteResuelto ? `[CODIGO: ${codigoClienteResuelto}]` : ''}</p>
+                  ${factura.telefono ? `<p>Tel: ${factura.telefono}</p>` : ''}
+                  ${factura.correo ? `<p>Email: ${factura.correo}</p>` : ''}
                 </div>
                 <div class="info-item">
                   <h4>VENDEDOR:</h4>
@@ -952,7 +991,7 @@ const FacturaDetalle = () => {
       <div className="factura-info-grid">
         <div className="info-card cliente-info">
           <h3>Cliente</h3>
-          <p>{factura.cliente}</p>
+          <p>{factura.cliente} {codigoClienteResuelto ? `[CODIGO: ${codigoClienteResuelto}]` : ''}</p>
           {factura.telefono && <p>Tel: {factura.telefono}</p>}
           {factura.correo && <p>Email: {factura.correo}</p>}
         </div>

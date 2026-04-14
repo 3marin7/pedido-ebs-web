@@ -9,10 +9,10 @@
 
 /* Navegación principal */
 .dashboard-nav {
-  background-color: #ffffff;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-  border-bottom: 1px solid #e2e8f0;
-  padding: 0;
+  background: transparent;
+  box-shadow: none;
+  border-bottom: none;
+  padding: 0.75rem 0 0.25rem;
 }
 
 .nav-container {
@@ -23,34 +23,50 @@
 
 .nav-buttons {
   display: flex;
-  gap: 0.5rem;
-  padding: 0.5rem 0;
+  gap: 0.85rem;
+  padding: 0.9rem;
+  background: #f8fafc;
+  border: 1px solid #e7edf6;
+  border-radius: 14px;
 }
 
-.nav-button {
-  padding: 0.75rem 1.5rem;
-  border-radius: 6px 6px 0 0;
-  font-weight: 500;
-  font-size: 0.875rem;
-  transition: all 0.2s ease;
-  border: none;
+.dashboard-nav .nav-button {
+  padding: 0.95rem 1.4rem;
+  border-radius: 14px;
+  font-weight: 700;
+  font-size: 0.96rem;
+  transition: all 0.25s ease;
+  border: 2px solid #cfd8e6;
   cursor: pointer;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 0.5rem;
+  min-width: 210px;
+  background: #ffffff;
+  color: #64748b;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
 }
 
-.nav-button.primary {
-  background-color: #3b82f6;
-  color: white;
+.dashboard-nav .nav-button:hover {
+  background: #f8fbff;
+  border-color: #b8c4d8;
+  transform: translateY(-1px);
 }
 
-.nav-button.primary:hover {
-  background-color: #2563eb;
+.dashboard-nav .nav-button.active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #ffffff;
+  border-color: #667eea;
+  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.35);
 }
 
-.nav-button.primary.active {
-  background-color: #1d4ed8;
+.dashboard-nav .nav-button:active {
+  background: #eef4ff;
+}
+
+.dashboard-nav .nav-button.active:active {
+  background: linear-gradient(135deg, #5d75e5 0%, #6e4699 100%);
 }
 
 /* Contenido principal */
@@ -339,7 +355,14 @@
 @media (max-width: 768px) {
   .nav-buttons {
     overflow-x: auto;
-    padding-bottom: 0.5rem;
+    padding-bottom: 0.7rem;
+    flex-wrap: nowrap;
+  }
+
+  .dashboard-nav .nav-button {
+    min-width: 185px;
+    padding: 0.8rem 1rem;
+    font-size: 0.88rem;
   }
   
   .filters-container {
@@ -379,8 +402,9 @@
     padding: 1rem;
   }
   
-  .nav-button {
-    padding: 0.5rem 1rem;
-    font-size: 0.8125rem;
+  .dashboard-nav .nav-button {
+    min-width: 170px;
+    padding: 0.75rem 0.9rem;
+    font-size: 0.82rem;
   }
 }

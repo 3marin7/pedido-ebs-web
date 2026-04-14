@@ -28,6 +28,7 @@ const CatalogoClientes = () => {
   const [ordenamiento, setOrdenamiento] = useState('ultimos-agregados');
   const [cantidadesRapidas] = useState([12, 24, 36, 48, 60, 72]);
   const [vistaActual, setVistaActual] = useState('grid'); // 'grid' o 'lista'
+  const [clienteSeleccionadoId, setClienteSeleccionadoId] = useState(null);
 
   const location = useLocation();
 
@@ -65,11 +66,23 @@ const CatalogoClientes = () => {
         // Cargar información del cliente desde URL si existe
         if (location.search) {
           const params = new URLSearchParams(location.search);
-          setClienteInfo(prev => ({
-            ...prev,
-            nombre: params.get('nombre') || '',
-            telefono: params.get('telefono') || ''
-          }));
+          const clienteNombre = params.get('cliente');
+          const clienteTelefono = params.get('telefono');
+          const clienteDireccion = params.get('direccion');
+          const clienteId = params.get('clienteId');
+          
+          if (clienteNombre || clienteTelefono || clienteDireccion) {
+            setClienteInfo(prev => ({
+              ...prev,
+              nombre: decodeURIComponent(clienteNombre || ''),
+              telefono: decodeURIComponent(clienteTelefono || ''),
+              direccion: decodeURIComponent(clienteDireccion || '')
+            }));
+            
+            if (clienteId) {
+              setClienteSeleccionadoId(clienteId);
+            }
+          }
         }
       } catch (error) {
         console.error("Error cargando productos:", error);
@@ -285,10 +298,10 @@ const CatalogoClientes = () => {
       return false;
     }
     
-    // ✅ FIX 2: Validación mejorada de teléfono - mínimo 10 dígitos
+    // ✅ FIX 2: Validación mejorada de teléfono - mínimo 9 dígitos (compatible con datos existentes)
     const soloDigitos = clienteInfo.telefono.replace(/\D/g, '');
-    if (soloDigitos.length < 10) {
-      setError(`❌ Teléfono inválido. Encontrados ${soloDigitos.length} dígitos, se requieren mínimo 10`);
+    if (soloDigitos.length < 9) {
+      setError(`❌ Teléfono inválido. Encontrados ${soloDigitos.length} dígitos, se requieren mínimo 9`);
       return false;
     }
     
@@ -852,7 +865,51 @@ const CatalogoClientes = () => {
                   
                   {/* Información del cliente */}
                   <div className="cliente-info-cart">
-                    <h3>Completa tus datos para enviar el pedido</h3>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+                      <h3>Completa tus datos para enviar el pedido</h3>
+                      {clienteSeleccionadoId && (
+                        <div style={{ 
+                          display: 'flex', 
+                          alignItems: 'center', 
+                          gap: '0.5rem',
+                          padding: '0.5rem 1rem',
+                          backgroundColor: '#d4edda',
+                          border: '1px solid #c3e6cb',
+                          borderRadius: '4px',
+                          fontSize: '0.85rem',
+                          color: '#155724',
+                          fontWeight: '500'
+                        }}>
+                          ✓ Cliente cargado desde BD
+                          <button
+                            onClick={() => {
+                              setClienteInfo({
+                                nombre: '',
+                                telefono: '',
+                                direccion: '',
+                                notas: '',
+                                vendedor: ''
+                              });
+                              setClienteSeleccionadoId(null);
+                              window.history.replaceState({}, document.title, '/catalogo-clientes');
+                            }}
+                            style={{
+                              marginLeft: '0.5rem',
+                              padding: '0.25rem 0.5rem',
+                              backgroundColor: 'transparent',
+                              border: '1px solid #155724',
+                              color: '#155724',
+                              borderRadius: '3px',
+                              cursor: 'pointer',
+                              fontSize: '0.75rem',
+                              fontWeight: 'bold'
+                            }}
+                          >
+                            Cambiar
+                          </button>
+                        </div>
+                      )}
+                    </div>
                     <div className="cliente-form">
                       <div className="form-group">
                         <label htmlFor="vendedor-cliente">Vendedor *</label>
@@ -895,7 +952,7 @@ const CatalogoClientes = () => {
                           className={!clienteInfo.telefono.trim() ? 'input-error' : ''}
                         />
                         {!clienteInfo.telefono.trim() && <span className="error-text">Campo obligatorio</span>}
-                        <small>El teléfono debe tener al menos 10 dígitos</small>
+                        <small>El teléfono debe tener al menos 9 dígitos</small>
                       </div>
                       <div className="form-group">
                         <label htmlFor="direccion-cliente">Dirección (Opcional)</label>
@@ -922,6 +979,22 @@ const CatalogoClientes = () => {
                       rows="3"
                     />
                   </div>
+
+                  {/* Mostrar error si existe */}
+                  {error && (
+                    <div style={{
+                      backgroundColor: '#fee',
+                      border: '1px solid #f99',
+                      borderRadius: '4px',
+                      padding: '0.75rem 1rem',
+                      marginBottom: '1rem',
+                      color: '#c00',
+                      fontSize: '0.9rem',
+                      fontWeight: '500'
+                    }}>
+                      {error}
+                    </div>
+                  )}
                   
                   <div className="cart-total">
                     <span>Total:</span>

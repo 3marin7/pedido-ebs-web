@@ -11,6 +11,10 @@ const toNumber = (value) => {
   return Number.isFinite(parsed) ? parsed : 0;
 };
 
+const getCodigoCliente = (factura) => {
+  return factura?.codigo_cliente || factura?.codigoCliente || factura?.codigo || '';
+};
+
 const sameFacturaId = (abonoFacturaId, facturaId) => String(abonoFacturaId) === String(facturaId);
 
 const PAGE_SIZE = 1000;
@@ -138,24 +142,34 @@ const FacturasGuardadas = () => {
   // Procesar facturas con filtros, orden y saldos
   const facturasProcesadas = calcularSaldos(
     facturas.filter(factura => {
-      const termino = busqueda.toLowerCase();
-      const coincideBusqueda = (
-        factura.cliente?.toLowerCase().includes(termino) ||
-        factura.id?.toString().includes(busqueda) ||
-        factura.fecha?.includes(busqueda)
-      );
-      
+      const termino = busqueda.trim().toLowerCase();
+      const codigoClienteFactura = getCodigoCliente(factura).toLowerCase();
+      // Permitir búsqueda por código de cliente o nombre
+      let coincideBusqueda = false;
+      if (termino) {
+        // Si el usuario ingresa un código de cliente exacto, buscar por ese campo
+        if (codigoClienteFactura && codigoClienteFactura === termino) {
+          coincideBusqueda = true;
+        } else if (factura.cliente?.toLowerCase().includes(termino)) {
+          coincideBusqueda = true;
+        } else if (codigoClienteFactura.includes(termino)) {
+          coincideBusqueda = true;
+        } else if (factura.id?.toString().includes(busqueda)) {
+          coincideBusqueda = true;
+        } else if (factura.fecha?.includes(busqueda)) {
+          coincideBusqueda = true;
+        }
+      } else {
+        coincideBusqueda = true; // Si no hay término, mostrar todo
+      }
       const coincideVendedor = busquedaVendedor === '' || factura.vendedor === busquedaVendedor;
-      
       const abonosFactura = abonos.filter(abono => sameFacturaId(abono.factura_id, factura.id));
       const totalAbonado = abonosFactura.reduce((sum, abono) => sum + toNumber(abono.monto), 0);
       const saldoCalculado = toNumber(factura.total) - totalAbonado;
       const saldo = Math.abs(saldoCalculado) < SALDO_EPSILON ? 0 : saldoCalculado;
       const estaPagada = saldo <= SALDO_EPSILON;
-      
       // FILTRO MEJORADO: Por defecto mostrar solo pendientes y parciales, excluir pagadas
       const mostrarPorEstado = mostrarPagadas ? true : !estaPagada;
-      
       return coincideBusqueda && coincideVendedor && mostrarPorEstado;
     }).sort((a, b) => {
       switch (orden) {
@@ -822,7 +836,7 @@ const FacturasGuardadas = () => {
         <div className="search-box">
           <input
             type="text"
-            placeholder="🔍 Buscar por cliente, ID o fecha..."
+            placeholder="🔍 Buscar por cliente, código, ID o fecha..."
             value={busqueda}
             onChange={(e) => setBusqueda(e.target.value)}
             disabled={importando || cargando}
@@ -1081,7 +1095,10 @@ const FacturasGuardadas = () => {
         </div>
       ) : (
         <div className="facturas-grid">
-          {facturasProcesadas.map((factura) => (
+          {facturasProcesadas.map((factura) => {
+            const codigoClienteFactura = getCodigoCliente(factura);
+
+            return (
             <article key={factura.id} className="factura-card">
               <header className="factura-card-header">
                 <div className="factura-header-top">
@@ -1098,6 +1115,11 @@ const FacturasGuardadas = () => {
                   <div className="info-line">
                     <strong>CLIENTE:</strong> {factura.cliente}
                   </div>
+                  {codigoClienteFactura && (
+                    <div className="info-line">
+                      <strong>CÓDIGO CLIENTE:</strong> {codigoClienteFactura}
+                    </div>
+                  )}
                   <div className="info-line">
                     <strong>VENDEDOR:</strong> {factura.vendedor}
                   </div>
@@ -1174,7 +1196,8 @@ const FacturasGuardadas = () => {
                 </button>
               </footer>
             </article>
-          ))}
+            );
+          })}
         </div>
       )}
       

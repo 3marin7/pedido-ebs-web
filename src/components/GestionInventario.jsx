@@ -7,37 +7,31 @@ export default function GestionInventario() {
   const [vistaActual, setVistaActual] = useState('movimientos');
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="dashboard-container">
       {/* Navegación con botones azules */}
-      <div className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col sm:flex-row gap-2 sm:space-x-2">
+      <div className="dashboard-nav">
+        <div className="nav-container">
+          <div className="nav-buttons">
             <button
               onClick={() => setVistaActual('movimientos')}
-              className={`w-full sm:w-auto py-3 px-4 sm:px-6 rounded-t-md font-medium text-xs sm:text-sm transition-colors ${
-                vistaActual === 'movimientos'
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-blue-500 text-white hover:bg-blue-600'
+              className={`nav-button ${
+                vistaActual === 'movimientos' ? 'active' : ''
               }`}
             >
               📥 Registrar Movimiento
             </button>
             <button
               onClick={() => setVistaActual('historial')}
-              className={`w-full sm:w-auto py-3 px-4 sm:px-6 rounded-t-md font-medium text-xs sm:text-sm transition-colors ${
-                vistaActual === 'historial'
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-blue-500 text-white hover:bg-blue-600'
+              className={`nav-button ${
+                vistaActual === 'historial' ? 'active' : ''
               }`}
             >
               📊 Ver Historial
             </button>
             <button
               onClick={() => setVistaActual('mejores')}
-              className={`w-full sm:w-auto py-3 px-4 sm:px-6 rounded-t-md font-medium text-xs sm:text-sm transition-colors ${
-                vistaActual === 'mejores'
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-blue-500 text-white hover:bg-blue-600'
+              className={`nav-button ${
+                vistaActual === 'mejores' ? 'active' : ''
               }`}
             >
               🏆 Mejores Productos
@@ -47,7 +41,7 @@ export default function GestionInventario() {
       </div>
 
       {/* Contenido */}
-      <div className="w-full py-4 sm:py-6 px-4 sm:px-6 lg:px-8">
+      <div className="dashboard-content">
         <div className="w-full">
           {vistaActual === 'movimientos' && <MovimientosInventario />}
           {vistaActual === 'historial' && <HistorialInventario />}
