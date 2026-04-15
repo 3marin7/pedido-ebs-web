@@ -20,7 +20,6 @@ const FacturaDetalle = () => {
   });
   const [editandoAbono, setEditandoAbono] = useState(null);
   const [mostrarFormAbono, setMostrarFormAbono] = useState(false);
-  const [codigoClienteResuelto, setCodigoClienteResuelto] = useState('');
 
   // Función para convertir números a letras
   const convertirNumeroALetras = (numero) => {
@@ -139,48 +138,10 @@ const FacturaDetalle = () => {
     cargarFacturaYAbonos();
   }, [id]);
 
-  // Resuelve codigo de cliente para facturas nuevas y antiguas.
-  useEffect(() => {
-    const resolverCodigoCliente = async () => {
-      if (!factura) {
-        setCodigoClienteResuelto('');
-        return;
-      }
-
-      const codigoDirecto = factura.codigo_cliente || factura.codigoCliente || '';
-      if (codigoDirecto) {
-        setCodigoClienteResuelto(codigoDirecto);
-        return;
-      }
-
-      if (!factura.cliente) {
-        setCodigoClienteResuelto('');
-        return;
-      }
-
-      try {
-        const { data, error } = await supabase
-          .from('clientes')
-          .select('codigo_cliente')
-          .eq('nombre', factura.cliente)
-          .limit(1)
-          .maybeSingle();
-
-        if (error) throw error;
-        setCodigoClienteResuelto(data?.codigo_cliente || '');
-      } catch (error) {
-        console.error('Error resolviendo codigo de cliente:', error);
-        setCodigoClienteResuelto('');
-      }
-    };
-
-    resolverCodigoCliente();
-  }, [factura]);
-
   const copiarDatos = () => {
     const datos = `
       Cuenta de Cobro #${factura.id}
-      Cliente: ${factura.cliente} ${codigoClienteResuelto ? `[CODIGO: ${codigoClienteResuelto}]` : ''}
+      Cliente: ${factura.cliente}
       Fecha: ${new Date(factura.fecha).toLocaleDateString()}
       Total: $${factura.total.toFixed(2)}
       Total en letras: ${convertirNumeroALetras(Math.round(factura.total))}
@@ -194,6 +155,11 @@ const FacturaDetalle = () => {
   };
 
   const imprimirFactura = () => {
+    // Validar datos antes de imprimir
+    if (!factura || !factura.productos || !Array.isArray(factura.productos) || factura.productos.length === 0) {
+      alert('La factura no está lista para imprimir.');
+      return;
+    }
     // Abrir ventana de impresión con el diseño específico para papel oficio horizontal
     const ventanaImpresion = window.open('', '_blank', 'width=1000,height=800');
     
@@ -496,9 +462,12 @@ const FacturaDetalle = () => {
               <div class="info-cliente-vendedor">
                 <div class="info-item">
                   <h4>CLIENTE:</h4>
-                  <p class="cliente-nombre">${factura.cliente} ${codigoClienteResuelto ? `[CODIGO: ${codigoClienteResuelto}]` : ''}</p>
-                  ${factura.telefono ? `<p>Tel: ${factura.telefono}</p>` : ''}
-                  ${factura.correo ? `<p>Email: ${factura.correo}</p>` : ''}
+                    <p class="cliente-nombre">${factura.cliente}${codigoClienteResuelto ? ` [CODIGO: ${codigoClienteResuelto}]` : ''}</p>
+                    ${factura.centro_comercial ? `<p class="telefono-cliente">CENTRO COMERCIAL: ${factura.centro_comercial}</p>` : ''}
+                    ${factura.direccion ? `<p class="telefono-cliente">Dirección: ${factura.direccion}</p>` : ''}
+                    ${factura.telefono ? `<p class="telefono-cliente">TEL: ${factura.telefono}</p>` : ''}
+                  <h4>DIRECCIÓN:</h4>
+                  <p class="direccion-dato">${factura.direccion || 'NO ESPECIFICADO'}</p>
                 </div>
                 <div class="info-item">
                   <h4>VENDEDOR:</h4>
@@ -584,9 +553,9 @@ const FacturaDetalle = () => {
               <div class="info-cliente-vendedor">
                 <div class="info-item">
                   <h4>CLIENTE:</h4>
-                  <p class="cliente-nombre">${factura.cliente} ${codigoClienteResuelto ? `[CODIGO: ${codigoClienteResuelto}]` : ''}</p>
-                  ${factura.telefono ? `<p>Tel: ${factura.telefono}</p>` : ''}
-                  ${factura.correo ? `<p>Email: ${factura.correo}</p>` : ''}
+                  <p class="cliente-nombre">${factura.cliente}</p>
+                  <h4>DIRECCIÓN:</h4>
+                  <p class="direccion-dato">${factura.direccion || 'NO ESPECIFICADO'}</p>
                 </div>
                 <div class="info-item">
                   <h4>VENDEDOR:</h4>
@@ -658,15 +627,12 @@ const FacturaDetalle = () => {
     
     ventanaImpresion.document.write(contenidoImpresion);
     ventanaImpresion.document.close();
-    
     // Esperar a que se cargue el contenido antes de imprimir
-    ventanaImpresion.onload = function() {
-      setTimeout(() => {
-        ventanaImpresion.print();
-        // Opcional: cerrar la ventana después de imprimir
-        // ventanaImpresion.close();
-      }, 500);
-    };
+    setTimeout(() => {
+      ventanaImpresion.print();
+      // Opcional: cerrar la ventana después de imprimir
+      // ventanaImpresion.close();
+    }, 500);
   };
 
   const calcularTotalAbonado = () => {
@@ -953,7 +919,9 @@ const FacturaDetalle = () => {
             {copiado ? '✓ Copiado' : '⎘ Copiar'}
           </button>
           <button 
-            className="button icon-button"
+            onClick={imprimirFactura}
+            title="Imprimir"
+            disabled={!factura || !factura.productos || factura.productos.length === 0}
             onClick={imprimirFactura}
             title="Imprimir"
           >
@@ -991,7 +959,7 @@ const FacturaDetalle = () => {
       <div className="factura-info-grid">
         <div className="info-card cliente-info">
           <h3>Cliente</h3>
-          <p>{factura.cliente} {codigoClienteResuelto ? `[CODIGO: ${codigoClienteResuelto}]` : ''}</p>
+          <p>{factura.cliente}</p>
           {factura.telefono && <p>Tel: {factura.telefono}</p>}
           {factura.correo && <p>Email: {factura.correo}</p>}
         </div>

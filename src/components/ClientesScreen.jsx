@@ -578,6 +578,15 @@ const ClientesScreen = ({
                 placeholder="Opcional"
               />
             </div>
+            <div className="form-group">
+              <label>Centro Comercial</label>
+              <input
+                type="text"
+                value={nuevoCliente.centro_comercial}
+                onChange={e => setNuevoCliente({ ...nuevoCliente, centro_comercial: e.target.value })}
+                placeholder="Ej: CC sabana, CC parque españa, etc."
+              />
+            </div>
           </div>
 
           <div className="form-row">
