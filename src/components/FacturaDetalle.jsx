@@ -12,6 +12,28 @@ const FacturaDetalle = () => {
   const [cargando, setCargando] = useState(true);
   const [copiado, setCopiado] = useState(false);
   const [abonos, setAbonos] = useState([]);
+  const [telefonoVendedor, setTelefonoVendedor] = useState('');
+    // Consultar teléfono del vendedor
+    useEffect(() => {
+      const obtenerTelefonoVendedor = async () => {
+        if (!factura || !factura.vendedor) {
+          setTelefonoVendedor('');
+          return;
+        }
+        try {
+          const { data, error } = await supabase
+            .from('usuarios')
+            .select('telefono')
+            .eq('nombre', factura.vendedor)
+            .maybeSingle();
+          if (error) throw error;
+          setTelefonoVendedor(data?.telefono || 'NO ESPECIFICADO');
+        } catch (error) {
+          setTelefonoVendedor('NO ESPECIFICADO');
+        }
+      };
+      obtenerTelefonoVendedor();
+    }, [factura]);
   const [nuevoAbono, setNuevoAbono] = useState({
     monto: '',
     fecha: new Date().toISOString().split('T')[0],
@@ -299,8 +321,10 @@ const FacturaDetalle = () => {
             .cliente-nombre,
             .vendedor-nombre,
             .direccion-dato,
-            .telefono-dato {
-              font-size: 12px !important;
+            .telefono-dato,
+            .telefono-cliente,
+            .centro-comercial-cliente {
+              font-size: 16px !important;
               font-weight: normal;
               text-transform: uppercase;
               line-height: 1.2;
@@ -497,14 +521,15 @@ const FacturaDetalle = () => {
                 <div class="info-item">
                   <h4>CLIENTE:</h4>
                   <p class="cliente-nombre">${factura.cliente} ${codigoClienteResuelto ? `[CODIGO: ${codigoClienteResuelto}]` : ''}</p>
-                  ${factura.telefono ? `<p>Tel: ${factura.telefono}</p>` : ''}
+                  ${factura.telefono ? `<p class="telefono-cliente">Tel: ${factura.telefono}</p>` : ''}
+                  ${factura.centro_comercial ? `<p class="centro-comercial-cliente">C.c: ${factura.centro_comercial}</p>` : ''}
                   ${factura.correo ? `<p>Email: ${factura.correo}</p>` : ''}
                 </div>
                 <div class="info-item">
                   <h4>VENDEDOR:</h4>
-                  <p class="vendedor-nombre">${factura.vendedor}</p>
+                 <p class="vendedor-nombre">${factura.vendedor}</p>
                   <h4>TELÉFONO:</h4>
-                  <p class="telefono-dato">${factura.telefono || 'NO ESPECIFICADO'}</p>
+                 <p class="telefono-dato">${telefonoVendedor || 'NO ESPECIFICADO'}</p>
                 </div>
               </div>
               
@@ -585,14 +610,15 @@ const FacturaDetalle = () => {
                 <div class="info-item">
                   <h4>CLIENTE:</h4>
                   <p class="cliente-nombre">${factura.cliente} ${codigoClienteResuelto ? `[CODIGO: ${codigoClienteResuelto}]` : ''}</p>
-                  ${factura.telefono ? `<p>Tel: ${factura.telefono}</p>` : ''}
+                  ${factura.telefono ? `<p class="telefono-cliente">Tel: ${factura.telefono}</p>` : ''}
+                  ${factura.centro_comercial ? `<p class="centro-comercial-cliente">C.C: ${factura.centro_comercial}</p>` : ''}
                   ${factura.correo ? `<p>Email: ${factura.correo}</p>` : ''}
                 </div>
                 <div class="info-item">
                   <h4>VENDEDOR:</h4>
                   <p class="vendedor-nombre">${factura.vendedor}</p>
                   <h4>TELÉFONO:</h4>
-                  <p class="telefono-dato">${factura.telefono || 'NO ESPECIFICADO'}</p>
+                  <p class="telefono-dato">${telefonoVendedor || 'NO ESPECIFICADO'}</p>
                 </div>
               </div>
               

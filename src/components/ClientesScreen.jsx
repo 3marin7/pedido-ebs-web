@@ -17,11 +17,13 @@ const ClientesScreen = ({
     direccion: '',
     telefono: '',
     correo: '',
-    clasificacion: 3
+    clasificacion: 3,
+    centro_comercial: ''
   });
   const [clientes, setClientes] = useState(initialClientes || []);
   const [importandoClientes, setImportandoClientes] = useState(false);
   const [filtroClasificacion, setFiltroClasificacion] = useState(0);
+  const [filtroCentroComercial, setFiltroCentroComercial] = useState('');
   const [clienteEditando, setClienteEditando] = useState(null);
   const [cargandoClientes, setCargandoClientes] = useState(true);
   const [error, setError] = useState(null);
@@ -134,7 +136,8 @@ const ClientesScreen = ({
       direccion: cliente.direccion,
       telefono: cliente.telefono,
       correo: cliente.correo,
-      clasificacion: cliente.clasificacion
+      clasificacion: cliente.clasificacion,
+      centro_comercial: cliente.centro_comercial || ''
     });
   };
 
@@ -145,7 +148,8 @@ const ClientesScreen = ({
       direccion: '',
       telefono: '',
       correo: '',
-      clasificacion: 3
+      clasificacion: 3,
+      centro_comercial: ''
     });
     setError(null);
   };
@@ -180,6 +184,7 @@ const ClientesScreen = ({
             telefono: telefonoLimpio,
             correo: nuevoCliente.correo,
             clasificacion: nuevoCliente.clasificacion,
+            centro_comercial: nuevoCliente.centro_comercial,
             actualizado_en: new Date().toISOString()
           })
           .eq('id', clienteEditando.id);
@@ -209,7 +214,8 @@ const ClientesScreen = ({
             direccion: nuevoCliente.direccion,
             telefono: telefonoLimpio,
             correo: nuevoCliente.correo,
-            clasificacion: clasificacion
+            clasificacion: clasificacion,
+            centro_comercial: nuevoCliente.centro_comercial
           }]);
         
         if (insertError) throw insertError;
@@ -234,8 +240,27 @@ const ClientesScreen = ({
     }
   };
 
-  const seleccionarCliente = (cliente) => {
-    onSeleccionarCliente(cliente);
+  const seleccionarCliente = async (cliente) => {
+    // Si ya tiene centro_comercial, pásalo directo
+    if (cliente.centro_comercial) {
+      onSeleccionarCliente(cliente);
+      return;
+    }
+    // Si no, consulta a la base de datos por código_cliente
+    if (cliente.codigo_cliente) {
+      const { data, error } = await supabase
+        .from('clientes')
+        .select('*')
+        .eq('codigo_cliente', cliente.codigo_cliente)
+        .maybeSingle();
+      if (data) {
+        onSeleccionarCliente({ ...cliente, ...data });
+      } else {
+        onSeleccionarCliente(cliente);
+      }
+    } else {
+      onSeleccionarCliente(cliente);
+    }
   };
 
   // Función para manejar el volver
@@ -333,7 +358,8 @@ const ClientesScreen = ({
             direccion: cliente.direccion ? cliente.direccion.toString().trim() : '',
             telefono: cliente.telefono ? cliente.telefono.toString().trim() : '',
             correo: cliente.correo ? cliente.correo.toString().trim() : '',
-            clasificacion: clasificacion
+            clasificacion: clasificacion,
+            centro_comercial: cliente.centro_comercial ? cliente.centro_comercial.toString().trim() : ''
           };
         });
         
@@ -397,8 +423,8 @@ const ClientesScreen = ({
     const coincideCorreo = cliente.correo && cliente.correo.toLowerCase().includes(busquedaCliente.toLowerCase());
     const coincideCodigo = cliente.codigo_cliente && cliente.codigo_cliente.toLowerCase().includes(busquedaCliente.toLowerCase());
     const coincideClasificacion = filtroClasificacion === 0 || cliente.clasificacion === filtroClasificacion;
-    
-    return (coincideNombre || coincideTelefono || coincideCorreo || coincideCodigo) && coincideClasificacion;
+    const coincideCentro = !filtroCentroComercial || (cliente.centro_comercial && cliente.centro_comercial === filtroCentroComercial);
+    return (coincideNombre || coincideTelefono || coincideCorreo || coincideCodigo) && coincideClasificacion && coincideCentro;
   });
 
   return (
@@ -430,19 +456,35 @@ const ClientesScreen = ({
           />
         </div>
 
-        <div className="clientes-filters">
-          <label>Filtrar por clasificación:</label>
-          <select 
-            value={filtroClasificacion} 
-            onChange={(e) => setFiltroClasificacion(Number(e.target.value))}
-          >
-            <option value={0}>Todas</option>
-            <option value={1}>1 ★</option>
-            <option value={2}>2 ★★</option>
-            <option value={3}>3 ★★★</option>
-            <option value={4}>4 ★★★★</option>
-            <option value={5}>5 ★★★★★</option>
-          </select>
+        <div className="clientes-filters" style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
+          <div>
+            <label>Filtrar por clasificación:</label>
+            <select 
+              value={filtroClasificacion} 
+              onChange={(e) => setFiltroClasificacion(Number(e.target.value))}
+            >
+              <option value={0}>Todas</option>
+              <option value={1}>1 ★</option>
+              <option value={2}>2 ★★</option>
+              <option value={3}>3 ★★★</option>
+              <option value={4}>4 ★★★★</option>
+              <option value={5}>5 ★★★★★</option>
+            </select>
+          </div>
+          <div>
+            <label>Filtrar por centro comercial:</label>
+            <select
+              value={filtroCentroComercial}
+              onChange={e => setFiltroCentroComercial(e.target.value)}
+            >
+              <option value="">Todos</option>
+              <option value="CC ferrocarril">CC ferrocarril</option>
+              <option value="CC sabana">CC sabana</option>
+              <option value="CC parque españa">CC parque españa</option>
+              <option value="T&T">T&T</option>
+              <option value="Droguerias">Droguerias</option>
+            </select>
+          </div>
         </div>
         
         {cargandoClientes ? (
@@ -499,6 +541,7 @@ const ClientesScreen = ({
                           {cliente.clasificacion} {'★'.repeat(cliente.clasificacion)}
                         </div>
                         {cliente.telefono && <p>📞 Tel: {cliente.telefono}</p>}
+                        {cliente.centro_comercial && <p>🏬 CC: {cliente.centro_comercial}</p>}
                         {cliente.correo && <p>📧 Email: {cliente.correo}</p>}
                         {cliente.direccion && <p>📍 Dir: {cliente.direccion}</p>}
                       </div>
@@ -577,6 +620,20 @@ const ClientesScreen = ({
                 onChange={(e) => setNuevoCliente({...nuevoCliente, direccion: e.target.value})}
                 placeholder="Opcional"
               />
+            </div>
+            <div className="form-group">
+              <label>Centro Comercial</label>
+              <select
+                value={nuevoCliente.centro_comercial}
+                onChange={e => setNuevoCliente({ ...nuevoCliente, centro_comercial: e.target.value })}
+              >
+                <option value="">Selecciona una opción</option>
+                <option value="CC ferrocarril">CC ferrocarril</option>
+                <option value="CC sabana">CC sabana</option>
+                <option value="CC parque españa">CC parque españa</option>
+                <option value="T&T">T&T</option>
+                <option value="Droguerias">Droguerias</option>
+              </select>
             </div>
           </div>
 

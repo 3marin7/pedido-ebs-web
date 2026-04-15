@@ -74,6 +74,9 @@ const FacturasGuardadas = () => {
   const [busquedaVendedor, setBusquedaVendedor] = useState('');
   const [vendedores, setVendedores] = useState([]);
   const [orden, setOrden] = useState('recientes');
+  const [busquedaCentroComercial, setBusquedaCentroComercial] = useState('');
+    // Obtener centros comerciales únicos de las facturas
+    const centrosComerciales = [...new Set(facturas.map(f => f.centro_comercial).filter(Boolean))];
   const [mostrarConfirmacion, setMostrarConfirmacion] = useState(null);
   const [mostrarResumen, setMostrarResumen] = useState(false);
   const [importando, setImportando] = useState(false);
@@ -147,7 +150,6 @@ const FacturasGuardadas = () => {
       // Permitir búsqueda por código de cliente o nombre
       let coincideBusqueda = false;
       if (termino) {
-        // Si el usuario ingresa un código de cliente exacto, buscar por ese campo
         if (codigoClienteFactura && codigoClienteFactura === termino) {
           coincideBusqueda = true;
         } else if (factura.cliente?.toLowerCase().includes(termino)) {
@@ -160,17 +162,17 @@ const FacturasGuardadas = () => {
           coincideBusqueda = true;
         }
       } else {
-        coincideBusqueda = true; // Si no hay término, mostrar todo
+        coincideBusqueda = true;
       }
       const coincideVendedor = busquedaVendedor === '' || factura.vendedor === busquedaVendedor;
+      const coincideCentroComercial = busquedaCentroComercial === '' || factura.centro_comercial === busquedaCentroComercial;
       const abonosFactura = abonos.filter(abono => sameFacturaId(abono.factura_id, factura.id));
       const totalAbonado = abonosFactura.reduce((sum, abono) => sum + toNumber(abono.monto), 0);
       const saldoCalculado = toNumber(factura.total) - totalAbonado;
       const saldo = Math.abs(saldoCalculado) < SALDO_EPSILON ? 0 : saldoCalculado;
       const estaPagada = saldo <= SALDO_EPSILON;
-      // FILTRO MEJORADO: Por defecto mostrar solo pendientes y parciales, excluir pagadas
       const mostrarPorEstado = mostrarPagadas ? true : !estaPagada;
-      return coincideBusqueda && coincideVendedor && mostrarPorEstado;
+      return coincideBusqueda && coincideVendedor && coincideCentroComercial && mostrarPorEstado;
     }).sort((a, b) => {
       switch (orden) {
         case 'antiguos': return new Date(a.fecha) - new Date(b.fecha);
@@ -855,7 +857,19 @@ const FacturasGuardadas = () => {
               <option key={vendedor} value={vendedor}>{vendedor}</option>
             ))}
           </select>
-          
+
+          <select
+            value={busquedaCentroComercial}
+            onChange={e => setBusquedaCentroComercial(e.target.value)}
+            className="centro-comercial-select"
+            disabled={importando || cargando}
+          >
+            <option value="">Todos los centros comerciales</option>
+            {centrosComerciales.map(cc => (
+              <option key={cc} value={cc}>{cc}</option>
+            ))}
+          </select>
+
           <select 
             value={orden} 
             onChange={(e) => setOrden(e.target.value)}
@@ -873,12 +887,13 @@ const FacturasGuardadas = () => {
             <option value="mayor-numero">Mayor número</option>
             <option value="menor-numero">Menor número</option>
           </select>
-          
+
           <span className="contador">
             {facturasProcesadas.length} de {facturas.length} facturas
             {!mostrarPagadas && ' (pendientes y parciales)'}
             {mostrarPagadas && ' (incluyendo pagadas)'}
             {busquedaVendedor && ` - Vendedor: ${busquedaVendedor}`}
+            {busquedaCentroComercial && ` - Centro Comercial: ${busquedaCentroComercial}`}
           </span>
 
           <button 

@@ -23,6 +23,7 @@ const InvoiceScreen = () => {
   const [cantidadProducto, setCantidadProducto] = useState('');
   const [precioProducto, setPrecioProducto] = useState('');
   const [vendedorSeleccionado, setVendedorSeleccionado] = useState('');
+  const [centroComercial, setCentroComercial] = useState('');
   
   // Estados para vistas modales
   const [mostrarVistaPrevia, setMostrarVistaPrevia] = useState(false);
@@ -98,12 +99,26 @@ const InvoiceScreen = () => {
     if (location.state?.pedidoData) {
       const { pedidoData } = location.state;
 
+
       const cargarPedidoConCodigo = async () => {
         const codigoDesdePedido = pedidoData.codigo_cliente || pedidoData.codigoCliente || '';
         let codigoResuelto = codigoDesdePedido;
+        let centroComercialDB = '';
 
         if (!codigoResuelto && pedidoData.cliente) {
           codigoResuelto = await resolverCodigoCliente(pedidoData.cliente);
+        }
+
+        // Consultar centro comercial desde la base de datos
+        if (codigoResuelto) {
+          const { data, error } = await supabase
+            .from('clientes')
+            .select('centro_comercial')
+            .eq('codigo_cliente', codigoResuelto)
+            .maybeSingle();
+          if (data && data.centro_comercial) {
+            centroComercialDB = data.centro_comercial;
+          }
         }
 
         setCliente(pedidoData.cliente || '');
@@ -113,6 +128,7 @@ const InvoiceScreen = () => {
         setCorreo(pedidoData.correo || '');
         setVendedorSeleccionado(pedidoData.vendedor || '');
         setProductos(pedidoData.productos || []);
+        setCentroComercial(centroComercialDB || '');
 
         // Limpiar el state para que no se recargue al volver
         window.history.replaceState({}, document.title);
@@ -610,6 +626,7 @@ const InvoiceScreen = () => {
         correo: correo || null,
         productos,
         total: productos.reduce((sum, p) => sum + (p.cantidad * p.precio), 0),
+        centro_comercial: centroComercial || null,
       };
 
       const { data, error } = await supabase
@@ -624,7 +641,8 @@ const InvoiceScreen = () => {
           telefono: facturaData.telefono,
           correo: facturaData.correo,
           productos: facturaData.productos,
-          total: facturaData.total
+          total: facturaData.total,
+          centro_comercial: facturaData.centro_comercial
         }])
         .select();
 
@@ -661,12 +679,26 @@ const InvoiceScreen = () => {
   };
 
   // Función para seleccionar cliente
-  const seleccionarCliente = (cliente) => {
+  const seleccionarCliente = async (cliente) => {
     setCliente(cliente.nombre);
     setCodigoCliente(cliente.codigo_cliente || '');
     setDireccion(cliente.direccion || '');
     setTelefono(cliente.telefono || '');
     setCorreo(cliente.correo || '');
+    // Si el centro comercial viene en el objeto, úsalo; si no, consúltalo por código_cliente
+    if (cliente.centro_comercial) {
+      setCentroComercial(cliente.centro_comercial);
+    } else if (cliente.codigo_cliente) {
+      // Consultar a la tabla clientes por código_cliente
+      const { data, error } = await supabase
+        .from('clientes')
+        .select('centro_comercial')
+        .eq('codigo_cliente', cliente.codigo_cliente)
+        .maybeSingle();
+      setCentroComercial(data?.centro_comercial || '');
+    } else {
+      setCentroComercial('');
+    }
     setMostrarClientes(false);
   };
 
@@ -858,6 +890,28 @@ const InvoiceScreen = () => {
                   ))}
                 </select>
               </div>
+            </div>
+
+            <div className="form-row">
+              {centroComercial ? (
+                <div className="form-group" style={{flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                  <span style={{fontWeight: 'bold', color: '#1a237e', fontSize: '1.1em'}}>Centro Comercial:</span>
+                  <span style={{marginTop: 4, textTransform: 'uppercase', fontSize: '1.1em'}}>{centroComercial}</span>
+                </div>
+              ) : (
+                <div className="form-group" style={{flex: 1}}>
+                  <select
+                    value={centroComercial}
+                    onChange={e => setCentroComercial(e.target.value)}
+                  >
+                    <option value="">Centro Comercial (opcional)</option>
+                    <option value="Sanandresito">Sanandresito</option>
+                    <option value="GranSan">GranSan</option>
+                    <option value="VistoBueno">VistoBueno</option>
+                    <option value="Otro">Otro</option>
+                  </select>
+                </div>
+              )}
             </div>
           </div>
 
