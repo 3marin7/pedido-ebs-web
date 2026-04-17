@@ -27,6 +27,7 @@ const RutasCobro = () => {
   const [cargando, setCargando] = useState(true);
   const [filtroZona, setFiltroZona] = useState('');
   const [filtroVendedor, setFiltroVendedor] = useState('');
+  const [filtroCentroComercial, setFiltroCentroComercial] = useState('');
   const [busquedaCliente, setBusquedaCliente] = useState('');
   const [ordenamiento, setOrdenamiento] = useState('prioridad');
   const [rutaGenerada, setRutaGenerada] = useState([]);
@@ -129,7 +130,8 @@ const RutasCobro = () => {
             totalDeuda: 0,
             diasMaximo: 0,
             totalFacturas: 0,
-            vendedor: factura.vendedor || 'Sin vendedor'
+            vendedor: factura.vendedor || 'Sin vendedor',
+            centro_comercial: factura.centro_comercial || ''
           };
         }
         
@@ -396,7 +398,8 @@ const RutasCobro = () => {
               ultimaFactura: factura.fecha,
               zona: extraerZona(factura.direccion),
               vendedor: factura.vendedor || 'Sin vendedor',
-              clienteId: factura.cliente_id || factura.id.toString()
+              clienteId: factura.cliente_id || factura.id.toString(),
+              centro_comercial: factura.centro_comercial || ''
             };
           }
           
@@ -521,7 +524,8 @@ const RutasCobro = () => {
               ultimaFactura: factura.fecha,
               zona: extraerZona(factura.direccion),
               vendedor: factura.vendedor || 'Sin vendedor',
-              clienteId: factura.id.toString()
+              clienteId: factura.cliente_id || factura.id.toString(),
+              centro_comercial: factura.centro_comercial || ''
             };
           }
           
@@ -553,6 +557,14 @@ const RutasCobro = () => {
               }
             }
           });
+          
+          // Actualizar fechas
+          if (new Date(factura.fecha) < new Date(deudasPorCliente[factura.cliente].facturaMasAntigua)) {
+            deudasPorCliente[factura.cliente].facturaMasAntigua = factura.fecha;
+          }
+          if (new Date(factura.fecha) > new Date(deudasPorCliente[factura.cliente].ultimaFactura)) {
+            deudasPorCliente[factura.cliente].ultimaFactura = factura.fecha;
+          }
         }
       });
 
@@ -903,7 +915,8 @@ const RutasCobro = () => {
   const clientesFiltrados = buscarCliente(busquedaCliente)
     .filter(cliente => 
       (filtroZona === '' || cliente.zona === filtroZona) &&
-      (filtroVendedor === '' || cliente.vendedor === filtroVendedor)
+      (filtroVendedor === '' || cliente.vendedor === filtroVendedor) &&
+      (filtroCentroComercial === '' || cliente.centro_comercial === filtroCentroComercial)
     )
     .sort((a, b) => {
       switch (ordenamiento) {
@@ -1063,6 +1076,9 @@ const RutasCobro = () => {
   // Obtener vendedores únicos
   const vendedoresUnicos = [...new Set(clientesConDeuda.map(c => c.vendedor))].sort();
 
+  // Obtener centros comerciales únicos
+  const centrosComercialesUnicos = [...new Set(clientesConDeuda.map(c => c.centro_comercial).filter(Boolean))].sort();
+
   // Clientes que necesitan recordatorio
   const clientesRecordatorio = generarRecordatorios();
 
@@ -1167,6 +1183,19 @@ const RutasCobro = () => {
                 <option value="">Todos los vendedores</option>
                 {vendedoresUnicos.map(vendedor => (
                   <option key={vendedor} value={vendedor}>{vendedor}</option>
+                ))}
+              </select>
+            </div>
+            
+            <div className="filtro-item">
+              <label>Filtrar por Centro Comercial:</label>
+              <select 
+                value={filtroCentroComercial} 
+                onChange={(e) => setFiltroCentroComercial(e.target.value)}
+              >
+                <option value="">Todos los centros comerciales</option>
+                {centrosComercialesUnicos.map(cc => (
+                  <option key={cc} value={cc}>{cc}</option>
                 ))}
               </select>
             </div>
