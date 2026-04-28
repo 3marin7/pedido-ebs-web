@@ -218,6 +218,7 @@ const FacturaDetalle = () => {
   const imprimirFactura = () => {
     // Abrir ventana de impresión con el diseño específico para papel oficio horizontal
     const ventanaImpresion = window.open('', '_blank', 'width=1000,height=800');
+    const logoEmpresaUrl = `${window.location.origin}/logo-ebs.png`;
     
     const contenidoImpresion = `
       <!DOCTYPE html>
@@ -473,15 +474,55 @@ const FacturaDetalle = () => {
               font-size: 7px;
             }
             .empresa-info {
-              text-align: left;
+              text-align: center;
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              min-width: 5.4cm;
             }
-            .empresa-info div {
-              font-size: 16px !important;
+            .empresa-logo-wrap {
+              min-height: 2.2cm;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              width: 100%;
+            }
+            .empresa-logo {
+              max-width: 4.8cm;
+              max-height: 2.2cm;
+              width: auto;
+              height: auto;
+              object-fit: contain;
+            }
+            .empresa-logo-fallback {
+              font-size: 16px;
               font-weight: 700;
               line-height: 1.1;
             }
-            .empresa-info strong {
-              font-size: 16px !important;
+            .empresa-contacto {
+              margin-top: 0.06cm;
+              font-size: 6.7px;
+              font-weight: 600;
+              letter-spacing: 0.15px;
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              gap: 0.02cm;
+              line-height: 1.2;
+              width: 100%;
+            }
+            .empresa-contacto-label {
+              text-transform: uppercase;
+              font-weight: 700;
+            }
+            .empresa-contacto-num {
+              font-weight: 700;
+            }
+            .empresa-contacto-line {
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              gap: 0.08cm;
             }
             @media print {
               body {
@@ -505,8 +546,21 @@ const FacturaDetalle = () => {
               <div class="titulo-seccion">ORIGINAL - PARA EL ARCHIVO</div>
               <div class="encabezado">
                 <div class="empresa-info">
-                  <div><strong>SAMARITANO EBS</strong></div>
-                  <div>REMISIÓN</div>
+                  <div class="empresa-logo-wrap">
+                    <img class="empresa-logo" src="${logoEmpresaUrl}" alt="Logo El Buen Samaritano EBS" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+                    <div class="empresa-logo-fallback" style="display:none;"><strong>SAMARITANO EBS</strong><br />REMISIÓN</div>
+                  </div>
+                  <div class="empresa-contacto">
+                    <div class="empresa-contacto-line">
+                      <span class="empresa-contacto-label">Tel:</span>
+                      <span class="empresa-contacto-num">3004583117</span>
+                      <span>|</span>
+                      <span class="empresa-contacto-num">3024528329</span>
+                    </div>
+                    <div class="empresa-contacto-line">
+                      <span class="empresa-contacto-num">3002945058</span>
+                    </div>
+                  </div>
                 </div>
                 <div class="fecha-wrapper">
                   <div class="fecha">${formatearFecha(factura.fecha)}</div>
@@ -521,14 +575,14 @@ const FacturaDetalle = () => {
                 <div class="info-item">
                   <h4>CLIENTE:</h4>
                   <p class="cliente-nombre">${factura.cliente} ${codigoClienteResuelto ? `[CODIGO: ${codigoClienteResuelto}]` : ''}</p>
-                  ${factura.telefono ? `<p class="telefono-cliente">Tel: ${factura.telefono}</p>` : ''}
+                  ${factura.telefono ? `<p class="telefono-cliente">TEL. CLIENTE: ${factura.telefono}</p>` : ''}
                   ${factura.centro_comercial ? `<p class="centro-comercial-cliente">C.c: ${factura.centro_comercial}</p>` : ''}
                   ${factura.correo ? `<p>Email: ${factura.correo}</p>` : ''}
                 </div>
                 <div class="info-item">
                   <h4>VENDEDOR:</h4>
                  <p class="vendedor-nombre">${factura.vendedor}</p>
-                  <h4>TELÉFONO:</h4>
+                  <h4>TEL. VENDEDOR:</h4>
                  <p class="telefono-dato">${telefonoVendedor || 'NO ESPECIFICADO'}</p>
                 </div>
               </div>
@@ -594,8 +648,21 @@ const FacturaDetalle = () => {
               <div class="titulo-seccion">COPIA - PARA EL CLIENTE</div>
               <div class="encabezado">
                 <div class="empresa-info">
-                  <div><strong>SAMARITANO EBS</strong></div>
-                  <div>REMISIÓN</div>
+                  <div class="empresa-logo-wrap">
+                    <img class="empresa-logo" src="${logoEmpresaUrl}" alt="Logo El Buen Samaritano EBS" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+                    <div class="empresa-logo-fallback" style="display:none;"><strong>SAMARITANO EBS</strong><br />REMISIÓN</div>
+                  </div>
+                  <div class="empresa-contacto">
+                    <div class="empresa-contacto-line">
+                      <span class="empresa-contacto-label">Tel:</span>
+                      <span class="empresa-contacto-num">3004583117</span>
+                      <span>|</span>
+                      <span class="empresa-contacto-num">3024528329</span>
+                    </div>
+                    <div class="empresa-contacto-line">
+                      <span class="empresa-contacto-num">3002945058</span>
+                    </div>
+                  </div>
                 </div>
                 <div class="fecha-wrapper">
                   <div class="fecha">${formatearFecha(factura.fecha)}</div>
@@ -610,14 +677,14 @@ const FacturaDetalle = () => {
                 <div class="info-item">
                   <h4>CLIENTE:</h4>
                   <p class="cliente-nombre">${factura.cliente} ${codigoClienteResuelto ? `[CODIGO: ${codigoClienteResuelto}]` : ''}</p>
-                  ${factura.telefono ? `<p class="telefono-cliente">Tel: ${factura.telefono}</p>` : ''}
+                  ${factura.telefono ? `<p class="telefono-cliente">TEL. CLIENTE: ${factura.telefono}</p>` : ''}
                   ${factura.centro_comercial ? `<p class="centro-comercial-cliente">C.C: ${factura.centro_comercial}</p>` : ''}
                   ${factura.correo ? `<p>Email: ${factura.correo}</p>` : ''}
                 </div>
                 <div class="info-item">
                   <h4>VENDEDOR:</h4>
                   <p class="vendedor-nombre">${factura.vendedor}</p>
-                  <h4>TELÉFONO:</h4>
+                  <h4>TEL. VENDEDOR:</h4>
                   <p class="telefono-dato">${telefonoVendedor || 'NO ESPECIFICADO'}</p>
                 </div>
               </div>
@@ -1025,6 +1092,7 @@ const FacturaDetalle = () => {
         <div className="info-card vendedor-info">
           <h3>Vendedor</h3>
           <p>{factura.vendedor}</p>
+          <p>Tel. vendedor: {telefonoVendedor || 'NO ESPECIFICADO'}</p>
           {factura.direccion && (
             <div className="direccion-info">
               <h4>Dirección</h4>

@@ -1,0 +1,1487 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tutorial: Código de las APIs - EBS</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .nav {
+            background: #f0f0f0;
+            padding: 20px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            border-bottom: 3px solid #2a5298;
+        }
+
+        .nav-btn {
+            background: white;
+            border: 2px solid #2a5298;
+            color: #2a5298;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+
+        .nav-btn:hover {
+            background: #2a5298;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .nav-btn.active {
+            background: #2a5298;
+            color: white;
+        }
+
+        .content {
+            padding: 40px;
+            display: none;
+        }
+
+        .content.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .section h2 {
+            color: #2a5298;
+            font-size: 2em;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #2a5298;
+            padding-bottom: 15px;
+        }
+
+        .subsection {
+            margin: 30px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-left: 5px solid #2a5298;
+            border-radius: 8px;
+        }
+
+        .subsection h3 {
+            color: #2a5298;
+            font-size: 1.5em;
+            margin-bottom: 15px;
+        }
+
+        .code-container {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 20px 0;
+            line-height: 1.6;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95em;
+            border: 2px solid #2a5298;
+        }
+
+        .code-line {
+            display: flex;
+            margin: 5px 0;
+        }
+
+        .line-number {
+            color: #6a9955;
+            margin-right: 15px;
+            min-width: 40px;
+            text-align: right;
+            user-select: none;
+        }
+
+        .keyword { color: #569cd6; }
+        .string { color: #ce9178; }
+        .function { color: #dcdcaa; }
+        .comment { color: #6a9955; opacity: 0.8; }
+        .operator { color: #d4d4d4; }
+        .variable { color: #9cdcfe; }
+
+        .explanation {
+            background: #e8f4f8;
+            border-left: 5px solid #2196F3;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 8px;
+            line-height: 1.8;
+        }
+
+        .explanation strong {
+            color: #2196F3;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .highlight-yellow {
+            background: #fff9c4;
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+
+        .highlight-blue {
+            background: #e3f2fd;
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+
+        .step {
+            background: white;
+            border: 2px solid #2a5298;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            display: grid;
+            grid-template-columns: 80px 1fr;
+            gap: 20px;
+            align-items: flex-start;
+        }
+
+        .step-number {
+            background: #2a5298;
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+
+        .step-content h4 {
+            color: #2a5298;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .step p {
+            line-height: 1.7;
+            margin: 5px 0;
+        }
+
+        .example-box {
+            background: #fff3e0;
+            border: 2px dashed #ff9800;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .example-box strong {
+            color: #ff9800;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table th {
+            background: #2a5298;
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+
+        table td {
+            padding: 12px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        table tr:hover {
+            background: #f5f5f5;
+        }
+
+        .flow-box {
+            background: #e8f5e9;
+            border: 2px solid #4CAF50;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            line-height: 1.8;
+        }
+
+        .flow-box strong {
+            color: #2e7d32;
+            display: block;
+            margin: 10px 0;
+        }
+
+        .warning {
+            background: #ffebee;
+            border: 2px solid #f44336;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .warning strong {
+            color: #f44336;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .tips {
+            background: #f3e5f5;
+            border: 2px solid #9c27b0;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .tips strong {
+            color: #7b1fa2;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .footer {
+            background: #f8f9fa;
+            padding: 30px;
+            text-align: center;
+            border-top: 2px solid #e0e0e0;
+            color: #666;
+        }
+
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .comparison-box {
+            border: 2px solid #2a5298;
+            padding: 20px;
+            border-radius: 8px;
+            background: #f8f9fa;
+        }
+
+        .comparison-box h4 {
+            color: #2a5298;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 { font-size: 1.8em; }
+            .nav { flex-direction: column; }
+            .nav-btn { width: 100%; }
+            .step { grid-template-columns: 1fr; }
+            .comparison { grid-template-columns: 1fr; }
+            .content { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- HEADER -->
+        <div class="header">
+            <h1>💻 Tutorial: Código de las APIs</h1>
+            <p>Paso a paso: Supabase, Cloudinary y WhatsApp</p>
+            <p style="font-size: 0.9em; margin-top: 10px;">Para alumnos - Aprende cómo funciona cada API internamente</p>
+        </div>
+
+        <!-- NAVEGACIÓN -->
+        <div class="nav">
+            <button class="nav-btn active" onclick="mostrarSeccion('supabase')">🗄️ Supabase (CRUD)</button>
+            <button class="nav-btn" onclick="mostrarSeccion('cloudinary')">🖼️ Cloudinary (Upload)</button>
+            <button class="nav-btn" onclick="mostrarSeccion('whatsapp')">💬 WhatsApp (Mensajes)</button>
+            <button class="nav-btn" onclick="mostrarSeccion('resumen')">📋 Resumen Completo</button>
+        </div>
+
+        <!-- SECCIÓN 1: SUPABASE -->
+        <div id="supabase" class="content active">
+            <section class="section">
+                <h2>🗄️ SUPABASE: Operaciones CRUD</h2>
+
+                <div class="subsection">
+                    <h3>¿Qué significa CRUD?</h3>
+                    <p><strong>C</strong>reate (Crear) • <strong>R</strong>ead (Leer) • <strong>U</strong>pdate (Actualizar) • <strong>D</strong>elete (Eliminar)</p>
+                </div>
+
+                <!-- OPERACIÓN 1: READ (SELECT) -->
+                <div class="subsection" style="margin-top: 40px;">
+                    <h3>1️⃣ READ - Obtener Clientes (SELECT)</h3>
+                    <p style="margin-bottom: 20px;"><strong>Objetivo:</strong> Traer todos los clientes activos desde la base de datos</p>
+
+                    <div class="code-container">
+                        <div class="code-line">
+                            <span class="line-number">1</span>
+                            <span><span class="comment">// Archivo: src/lib/supabaseApi.js</span></span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">2</span>
+                            <span></span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">3</span>
+                            <span><span class="keyword">async</span> <span class="function">obtenerClientes</span>() {</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">4</span>
+                            <span>  <span class="keyword">try</span> {</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">5</span>
+                            <span>    <span class="keyword">const</span> { <span class="variable">data</span>, <span class="variable">error</span> } = <span class="keyword">await</span> supabase</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">6</span>
+                            <span>      .<span class="function">from</span>(<span class="string">'clientes'</span>)  <span class="comment">// ← Tabla a consultar</span></span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">7</span>
+                            <span>      .<span class="function">select</span>(<span class="string">'*'</span>)  <span class="comment">// ← Seleccionar todas las columnas</span></span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">8</span>
+                            <span>      .<span class="function">eq</span>(<span class="string">'activo'</span>, <span class="keyword">true</span>)  <span class="comment">// ← Filtro: solo activos</span></span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">9</span>
+                            <span>      .<span class="function">order</span>(<span class="string">'nombre'</span>)  <span class="comment">// ← Ordenar alfabéticamente</span></span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">10</span>
+                            <span>    </span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">11</span>
+                            <span>    <span class="keyword">if</span> (error) <span class="keyword">throw</span> error  <span class="comment">// ← Si hay error, lanzarlo</span></span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">12</span>
+                            <span>    <span class="keyword">return</span> <span class="variable">data</span>  <span class="comment">// ← Devolver los datos</span></span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">13</span>
+                            <span>  } <span class="keyword">catch</span> (error) {</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">14</span>
+                            <span>    console.<span class="function">error</span>(<span class="string">'Error:'</span>, error)</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">15</span>
+                            <span>    <span class="keyword">throw</span> error</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">16</span>
+                            <span>  }</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">17</span>
+                            <span>}</span>
+                        </div>
+                    </div>
+
+                    <div class="explanation">
+                        <strong>🔍 Explicación línea por línea:</strong>
+                        <p><strong>Línea 3:</strong> <span class="highlight-yellow">async</span> = esperará respuesta de API | <span class="highlight-yellow">function obtenerClientes()</span> = nombre de la función</p>
+                        <p><strong>Línea 5:</strong> <span class="highlight-yellow">await supabase</span> = espera a que Supabase responda</p>
+                        <p><strong>Línea 6:</strong> <span class="highlight-yellow">.from('clientes')</span> = accede a la tabla "clientes"</p>
+                        <p><strong>Línea 7:</strong> <span class="highlight-yellow">.select('*')</span> = trae todas las columnas (el * = "todas")</p>
+                        <p><strong>Línea 8:</strong> <span class="highlight-yellow">.eq('activo', true)</span> = solo clientes donde activo = true</p>
+                        <p><strong>Línea 9:</strong> <span class="highlight-yellow">.order('nombre')</span> = ordena alfabéticamente por nombre</p>
+                        <p><strong>Línea 11:</strong> <span class="highlight-yellow">if (error) throw error</span> = si falla, lanza el error</p>
+                        <p><strong>Línea 12:</strong> <span class="highlight-yellow">return data</span> = devuelve los datos al componente</p>
+                    </div>
+
+                    <div class="flow-box">
+                        <strong>🔄 Flujo de ejecución:</strong>
+                        App llama: <code style="background: #1e1e1e; color: #d4d4d4; padding: 5px;">await obtenerClientes()</code><br>
+                        ↓ Envía solicitud HTTP GET<br>
+                        ↓ Supabase busca en tabla "clientes"<br>
+                        ↓ Filtra por activo = true<br>
+                        ↓ Ordena por nombre<br>
+                        ↓ Devuelve array de clientes<br>
+                        ↓ App recibe: <code style="background: #1e1e1e; color: #d4d4d4; padding: 5px;">[{id: 1, nombre: "Juan", ...}, ...]</code>
+                    </div>
+
+                    <div class="example-box">
+                        <strong>📱 Ejemplo real en pantalla:</strong>
+                        Usuario abre "Crear Factura" → App llama obtenerClientes() → Supabase devuelve lista → Dropdown se llena con nombres de clientes
+                    </div>
+                </div>
+
+                <!-- OPERACIÓN 2: CREATE (INSERT) -->
+                <div class="subsection" style="margin-top: 40px;">
+                    <h3>2️⃣ CREATE - Crear Nueva Factura (INSERT)</h3>
+                    <p style="margin-bottom: 20px;"><strong>Objetivo:</strong> Guardar una nueva factura en la base de datos</p>
+
+                    <div class="code-container">
+                        <div class="code-line">
+                            <span class="line-number">1</span>
+                            <span><span class="keyword">async</span> <span class="function">crearFactura</span>(factura) {</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">2</span>
+                            <span>  <span class="keyword">try</span> {</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">3</span>
+                            <span>    <span class="keyword">const</span> { <span class="variable">data</span>, <span class="variable">error</span> } = <span class="keyword">await</span> supabase</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">4</span>
+                            <span>      .<span class="function">from</span>(<span class="string">'facturas'</span>)  <span class="comment">// ← Tabla destino</span></span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">5</span>
+                            <span>      .<span class="function">insert</span>([{  <span class="comment">// ← Insertar nuevo registro</span></span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">6</span>
+                            <span>        cliente_id: factura.cliente_id,</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">7</span>
+                            <span>        fecha: factura.fecha,</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">8</span>
+                            <span>        vendedor_id: factura.vendedor_id,</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">9</span>
+                            <span>        total: <span class="function">parseFloat</span>(factura.total),  <span class="comment">// ← Convertir a número</span></span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">10</span>
+                            <span>      }])</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">11</span>
+                            <span>      .<span class="function">select</span>()  <span class="comment">// ← Devolver el registro creado</span></span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">12</span>
+                            <span>    </span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">13</span>
+                            <span>    <span class="keyword">if</span> (error) <span class="keyword">throw</span> error</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">14</span>
+                            <span>    <span class="keyword">return</span> <span class="variable">data</span>[0]  <span class="comment">// ← Devolver primer registro (el creado)</span></span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">15</span>
+                            <span>  } <span class="keyword">catch</span> (error) {</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">16</span>
+                            <span>    console.<span class="function">error</span>(<span class="string">'Error creando factura:'</span>, error)</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">17</span>
+                            <span>    <span class="keyword">throw</span> error</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">18</span>
+                            <span>  }</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">19</span>
+                            <span>}</span>
+                        </div>
+                    </div>
+
+                    <div class="explanation">
+                        <strong>🔍 Explicación:</strong>
+                        <p><strong>Línea 5:</strong> <span class="highlight-yellow">.insert([{...}])</span> = crea un nuevo registro EN la tabla</p>
+                        <p><strong>Línea 6-9:</strong> <span class="highlight-yellow">Datos a guardar</span> = id del cliente, fecha, vendedor, total</p>
+                        <p><strong>Línea 11:</strong> <span class="highlight-yellow">.select()</span> = devuelve el registro recién creado con su ID</p>
+                        <p><strong>Línea 14:</strong> <span class="highlight-yellow">data[0]</span> = obtiene el primer (y único) registro del array devuelto</p>
+                    </div>
+
+                    <div class="flow-box">
+                        <strong>🔄 Flujo:</strong>
+                        Usuario click "Guardar Factura"<br>
+                        ↓ App recolecta datos (cliente_id, fecha, vendedor_id, total)<br>
+                        ↓ Llama: <code style="background: #1e1e1e; color: #d4d4d4; padding: 5px;">await crearFactura({...})</code><br>
+                        ↓ Supabase INSERT en tabla "facturas"<br>
+                        ↓ BD genera ID automático (ej: 12345)<br>
+                        ↓ Devuelve: <code style="background: #1e1e1e; color: #d4d4d4; padding: 5px;">{id: 12345, cliente_id: 5, fecha: "2026-04-28", ...}</code><br>
+                        ↓ App muestra "Factura guardada: #12345"
+                    </div>
+                </div>
+
+                <!-- OPERACIÓN 3: UPDATE -->
+                <div class="subsection" style="margin-top: 40px;">
+                    <h3>3️⃣ UPDATE - Actualizar Cliente (UPDATE)</h3>
+                    <p style="margin-bottom: 20px;"><strong>Objetivo:</strong> Modificar un cliente existente</p>
+
+                    <div class="code-container">
+                        <div class="code-line">
+                            <span class="line-number">1</span>
+                            <span><span class="keyword">async</span> <span class="function">actualizarCliente</span>(id, cliente) {</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">2</span>
+                            <span>  <span class="keyword">try</span> {</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">3</span>
+                            <span>    <span class="keyword">const</span> { <span class="variable">data</span>, <span class="variable">error</span> } = <span class="keyword">await</span> supabase</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">4</span>
+                            <span>      .<span class="function">from</span>(<span class="string">'clientes'</span>)</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">5</span>
+                            <span>      .<span class="function">update</span>(cliente)  <span class="comment">// ← Los nuevos datos</span></span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">6</span>
+                            <span>      .<span class="function">eq</span>(<span class="string">'id'</span>, id)  <span class="comment">// ← Actualizar SOLO donde id = [este id]</span></span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">7</span>
+                            <span>      .<span class="function">select</span>()</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">8</span>
+                            <span>    </span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">9</span>
+                            <span>    <span class="keyword">if</span> (error) <span class="keyword">throw</span> error</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">10</span>
+                            <span>    <span class="keyword">return</span> <span class="variable">data</span>[0]</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">11</span>
+                            <span>  } <span class="keyword">catch</span> (error) { ... }</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">12</span>
+                            <span>}</span>
+                        </div>
+                    </div>
+
+                    <div class="explanation">
+                        <strong>🔍 Puntos clave:</strong>
+                        <p><strong>Línea 5:</strong> <span class="highlight-yellow">.update(cliente)</span> = el objeto con los nuevos datos</p>
+                        <p><strong>Línea 6:</strong> <span class="highlight-yellow">.eq('id', id)</span> = IMPORTANTE: especifica CUÁL actualizar (por ID)</p>
+                        <p><strong>⚠️ Sin el .eq(), actualizarías TODOS los clientes!</strong></p>
+                    </div>
+                </div>
+
+                <!-- OPERACIÓN 4: DELETE -->
+                <div class="subsection" style="margin-top: 40px;">
+                    <h3>4️⃣ DELETE - Eliminar Registro (DELETE)</h3>
+
+                    <div class="code-container">
+                        <div class="code-line">
+                            <span class="line-number">1</span>
+                            <span><span class="keyword">async</span> <span class="function">eliminarFactura</span>(id) {</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">2</span>
+                            <span>  <span class="keyword">const</span> { <span class="variable">error</span> } = <span class="keyword">await</span> supabase</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">3</span>
+                            <span>    .<span class="function">from</span>(<span class="string">'facturas'</span>)</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">4</span>
+                            <span>    .<span class="function">delete</span>()  <span class="comment">// ← Eliminar</span></span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">5</span>
+                            <span>    .<span class="function">eq</span>(<span class="string">'id'</span>, id)  <span class="comment">// ← DONDE id = [este]</span></span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">6</span>
+                            <span>  <span class="keyword">if</span> (error) <span class="keyword">throw</span> error</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">7</span>
+                            <span>  <span class="keyword">return</span> <span class="string">'Eliminado correctamente'</span></span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">8</span>
+                            <span>}</span>
+                        </div>
+                    </div>
+
+                    <div class="warning">
+                        <strong>⚠️ CUIDADO:</strong> Especifica siempre .eq() o .where() para no eliminar TODO. Si ejecutas .delete() sin filtro, borrarás toda la tabla.
+                    </div>
+                </div>
+
+                <!-- TABLA RESUMEN -->
+                <div class="subsection" style="margin-top: 40px;">
+                    <h3>Resumen: Los 4 CRUD</h3>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Operación</th>
+                                    <th>Método HTTP</th>
+                                    <th>Código</th>
+                                    <th>Ejemplo</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>CREATE</strong></td>
+                                    <td>POST</td>
+                                    <td><code>.insert([...])</code></td>
+                                    <td>Guardar factura nueva</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>READ</strong></td>
+                                    <td>GET</td>
+                                    <td><code>.select()</code></td>
+                                    <td>Cargar lista de clientes</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>UPDATE</strong></td>
+                                    <td>PUT</td>
+                                    <td><code>.update({...})</code></td>
+                                    <td>Cambiar teléfono de cliente</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>DELETE</strong></td>
+                                    <td>DELETE</td>
+                                    <td><code>.delete()</code></td>
+                                    <td>Borrar factura</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- SECCIÓN 2: CLOUDINARY -->
+        <div id="cloudinary" class="content">
+            <section class="section">
+                <h2>🖼️ CLOUDINARY: Subida de Imágenes</h2>
+
+                <div class="subsection">
+                    <h3>¿Cómo funciona?</h3>
+                    <p>Cloudinary es un servicio para <strong>alojar imágenes en la nube</strong>. En lugar de guardar imágenes en tu servidor, las subes a Cloudinary y él devuelve una URL.</p>
+                </div>
+
+                <div class="subsection" style="margin-top: 40px;">
+                    <h3>Paso 1: Configuración</h3>
+                    <p><strong>Primero necesitas:</strong></p>
+                    <ol style="margin-left: 20px; line-height: 2;">
+                        <li>Crear cuenta en Cloudinary.com</li>
+                        <li>Obtener tu Cloud Name: <code style="background: #f0f0f0; padding: 3px;">dstnroimw</code></li>
+                        <li>Obtener upload_preset: <code style="background: #f0f0f0; padding: 3px;">catalogo_productos_web</code></li>
+                    </ol>
+                </div>
+
+                <div class="subsection" style="margin-top: 40px;">
+                    <h3>Paso 2: Código del Upload</h3>
+                    <p style="margin-bottom: 20px;"><strong>Ubicación:</strong> src/components/CatalogoProductos.jsx (línea 32)</p>
+
+                    <div class="code-container">
+                        <div class="code-line">
+                            <span class="line-number">1</span>
+                            <span><span class="comment">// Componente CloudinaryUpload</span></span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">2</span>
+                            <span><span class="keyword">const</span> <span class="function">handleFileUpload</span> = <span class="keyword">async</span> (e) => {</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">3</span>
+                            <span>  <span class="keyword">const</span> file = e.target.files[0]  <span class="comment">// ← Obtener archivo seleccionado</span></span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">4</span>
+                            <span>  <span class="keyword">if</span> (!file) <span class="keyword">return</span></span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">5</span>
+                            <span></span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">6</span>
+                            <span>  <span class="comment">// Validación 1: Verificar que es imagen</span></span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">7</span>
+                            <span>  <span class="keyword">if</span> (!file.type.<span class="function">match</span>(<span class="string">'image.*'</span>)) {</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">8</span>
+                            <span>    <span class="function">alert</span>(<span class="string">'Por favor, selecciona un archivo de imagen'</span>)</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">9</span>
+                            <span>    <span class="keyword">return</span></span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">10</span>
+                            <span>  }</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">11</span>
+                            <span></span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">12</span>
+                            <span>  <span class="comment">// Validación 2: Tamaño máximo 5MB</span></span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">13</span>
+                            <span>  <span class="keyword">if</span> (file.size > 5 * 1024 * 1024) {</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">14</span>
+                            <span>    <span class="function">alert</span>(<span class="string">'Imagen muy grande (máximo 5MB)'</span>)</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">15</span>
+                            <span>    <span class="keyword">return</span></span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">16</span>
+                            <span>  }</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">17</span>
+                            <span></span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">18</span>
+                            <span>  <span class="comment">// Crear FormData para enviar archivo</span></span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">19</span>
+                            <span>  <span class="keyword">const</span> formData = <span class="keyword">new</span> <span class="function">FormData</span>()</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">20</span>
+                            <span>  formData.<span class="function">append</span>(<span class="string">'file'</span>, file)  <span class="comment">// ← El archivo</span></span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">21</span>
+                            <span>  formData.<span class="function">append</span>(<span class="string">'upload_preset'</span>, <span class="string">'catalogo_productos_web'</span>)  <span class="comment">// ← Credencial</span></span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">22</span>
+                            <span></span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">23</span>
+                            <span>  <span class="keyword">try</span> {</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">24</span>
+                            <span>    <span class="function">setUploading</span>(<span class="keyword">true</span>)  <span class="comment">// ← Mostrar "Subiendo..."</span></span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">25</span>
+                            <span></span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">26</span>
+                            <span>    <span class="comment">// ✅ ENVÍO A CLOUDINARY</span></span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">27</span>
+                            <span>    <span class="keyword">const</span> response = <span class="keyword">await</span> <span class="function">fetch</span>(</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">28</span>
+                            <span>      <span class="string">'https://api.cloudinary.com/v1_1/dstnroimw/image/upload'</span>,  <span class="comment">// ← URL de Cloudinary</span></span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">29</span>
+                            <span>      {</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">30</span>
+                            <span>        method: <span class="string">'POST'</span>,  <span class="comment">// ← Método POST</span></span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">31</span>
+                            <span>        body: formData  <span class="comment">// ← El archivo empaquetado</span></span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">32</span>
+                            <span>      }</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">33</span>
+                            <span>    )</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">34</span>
+                            <span></span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">35</span>
+                            <span>    <span class="comment">// Convertir respuesta a JSON</span></span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">36</span>
+                            <span>    <span class="keyword">const</span> data = <span class="keyword">await</span> response.<span class="function">json</span>()</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">37</span>
+                            <span></span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">38</span>
+                            <span>    <span class="comment">// Devolver URLs de la imagen</span></span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">39</span>
+                            <span>    <span class="function">onImageUpload</span>({</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">40</span>
+                            <span>      imagenUrl: data.secure_url,  <span class="comment">// ← URL de la imagen guardada</span></span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">41</span>
+                            <span>      imagenPublicId: data.public_id  <span class="comment">// ← ID para futuras operaciones</span></span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">42</span>
+                            <span>    })</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">43</span>
+                            <span>  } <span class="keyword">catch</span> (error) {</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">44</span>
+                            <span>    console.<span class="function">error</span>(<span class="string">'Error subiendo imagen:'</span>, error)</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">45</span>
+                            <span>    <span class="function">alert</span>(<span class="string">'Error al subir la imagen'</span>)</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">46</span>
+                            <span>  } <span class="keyword">finally</span> {</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">47</span>
+                            <span>    <span class="function">setUploading</span>(<span class="keyword">false</span>)  <span class="comment">// ← Ocultar "Subiendo..."</span></span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">48</span>
+                            <span>  }</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">49</span>
+                            <span>}</span>
+                        </div>
+                    </div>
+
+                    <div class="explanation">
+                        <strong>🔍 Desglose:</strong>
+                        <p><strong>Línea 3:</strong> <span class="highlight-yellow">e.target.files[0]</span> = obtiene el archivo que el usuario seleccionó</p>
+                        <p><strong>Línea 7:</strong> <span class="highlight-yellow">file.type.match('image.*')</span> = valida que sea imagen</p>
+                        <p><strong>Línea 13:</strong> <span class="highlight-yellow">file.size > 5 * 1024 * 1024</span> = máximo 5MB</p>
+                        <p><strong>Línea 19:</strong> <span class="highlight-yellow">new FormData()</span> = contenedor para enviar archivos</p>
+                        <p><strong>Línea 20-21:</strong> <span class="highlight-yellow">formData.append()</span> = agrega datos al contenedor</p>
+                        <p><strong>Línea 27-33:</strong> <span class="highlight-yellow">fetch() POST</span> = envía a Cloudinary</p>
+                        <p><strong>Línea 40:</strong> <span class="highlight-yellow">data.secure_url</span> = URL HTTPS de la imagen</p>
+                        <p><strong>Línea 41:</strong> <span class="highlight-yellow">data.public_id</span> = ID para borrar o modificar después</p>
+                    </div>
+
+                    <div class="flow-box">
+                        <strong>🔄 Flujo completo:</strong>
+                        Usuario click input file<br>
+                        ↓ Selecciona imagen (ej: "producto.jpg") <br>
+                        ↓ handleFileUpload() se ejecuta<br>
+                        ↓ Valida: ¿es imagen? ¿menos de 5MB?<br>
+                        ↓ Crea FormData con archivo<br>
+                        ↓ fetch() POST a Cloudinary<br>
+                        ↓ Cloudinary procesa imagen<br>
+                        ↓ Devuelve: <code style="background: #1e1e1e; color: #d4d4d4; padding: 5px;">{ secure_url: "https://res.cloudinary.com/...", public_id: "xyz123" }</code><br>
+                        ↓ App guarda URL en Supabase<br>
+                        ↓ Imagen aparece en pantalla 🖼️
+                    </div>
+                </div>
+
+                <div class="subsection" style="margin-top: 40px;">
+                    <h3>Paso 3: Guardar en Supabase</h3>
+                    <p>Después de uploadear a Cloudinary, guardamos la URL en Supabase:</p>
+
+                    <div class="code-container">
+                        <div class="code-line">
+                            <span class="line-number">1</span>
+                            <span><span class="comment">// En CatalogoProductos.jsx - cuando se hace click "Guardar Producto"</span></span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">2</span>
+                            <span><span class="keyword">await</span> supabaseApi.<span class="function">crearProducto</span>({</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">3</span>
+                            <span>  nombre: <span class="string">'Producto XYZ'</span>,</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">4</span>
+                            <span>  precio: 15000,</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">5</span>
+                            <span>  imagenUrl: responseCloudinary.secure_url,  <span class="comment">// ← URL de Cloudinary</span></span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">6</span>
+                            <span>  imagenPublicId: responseCloudinary.public_id  <span class="comment">// ← ID Cloudinary</span></span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">7</span>
+                            <span>})</span>
+                        </div>
+                    </div>
+
+                    <div class="example-box">
+                        <strong>📱 Usuario ve:</strong>
+                        Foto del producto aparece en pantalla inmediatamente. Si recarga la página, la foto aún está porque está guardada en Cloudinary + URL en Supabase.
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- SECCIÓN 3: WHATSAPP -->
+        <div id="whatsapp" class="content">
+            <section class="section">
+                <h2>💬 WHATSAPP: Compartir Pedidos</h2>
+
+                <div class="subsection">
+                    <h3>¿Cómo funciona?</h3>
+                    <p>WhatsApp tiene un "URL Scheme" que permite <strong>abrir un chat con un mensaje predefinido</strong>. No usamos API oficial (eso requiere pagar), usamos el método gratis.</p>
+                </div>
+
+                <div class="subsection" style="margin-top: 40px;">
+                    <h3>Paso 1: Generar el Mensaje</h3>
+                    <p><strong>Ubicación:</strong> src/components/CatalogoClientes.jsx (línea 420)</p>
+
+                    <div class="code-container">
+                        <div class="code-line">
+                            <span class="line-number">1</span>
+                            <span><span class="keyword">const</span> <span class="function">enviarPedidoWhatsApp</span> = <span class="keyword">async</span> () => {</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">2</span>
+                            <span>  <span class="comment">// Validar que hay productos</span></span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">3</span>
+                            <span>  <span class="keyword">if</span> (productosSeleccionados.length === 0) {</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">4</span>
+                            <span>    <span class="function">alert</span>(<span class="string">'Selecciona al menos un producto'</span>)</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">5</span>
+                            <span>    <span class="keyword">return</span></span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">6</span>
+                            <span>  }</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">7</span>
+                            <span></span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">8</span>
+                            <span>  <span class="comment">// Número de WhatsApp (sin + ni espacios)</span></span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">9</span>
+                            <span>  <span class="keyword">const</span> numero = <span class="string">'573002945085'</span>  <span class="comment">// ← Número destino</span></span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">10</span>
+                            <span></span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">11</span>
+                            <span>  <span class="comment">// Comenzar a construir el mensaje</span></span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">12</span>
+                            <span>  <span class="keyword">let</span> mensaje = <span class="string">`*¡NUEVO PEDIDO!*%0A%0A`</span>  <span class="comment">// ← %0A = salto de línea</span></span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">13</span>
+                            <span>  mensaje += <span class="string">`*Cliente:* ${clienteInfo.nombre}%0A`</span></span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">14</span>
+                            <span>  mensaje += <span class="string">`*Teléfono:* ${clienteInfo.telefono}%0A`</span></span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">15</span>
+                            <span></span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">16</span>
+                            <span>  <span class="comment">// Agregar productos al mensaje</span></span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">17</span>
+                            <span>  mensaje += <span class="string">`%0A*📦 PRODUCTOS:*%0A%0A`</span></span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">18</span>
+                            <span>  productosSeleccionados.<span class="function">forEach</span>(p => {</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">19</span>
+                            <span>    mensaje += <span class="string">`✔️ ${p.nombre}%0A`</span></span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">20</span>
+                            <span>    mensaje += <span class="string">`   Cantidad: ${p.cantidad}%0A`</span></span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">21</span>
+                            <span>    mensaje += <span class="string">`   Precio: $${p.precio}%0A`</span></span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">22</span>
+                            <span>    mensaje += <span class="string">`   Subtotal: $${p.precio * p.cantidad}%0A%0A`</span></span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">23</span>
+                            <span>  })</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">24</span>
+                            <span></span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">25</span>
+                            <span>  <span class="comment">// Total</span></span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">26</span>
+                            <span>  mensaje += <span class="string">`*TOTAL: $${calcularTotal()}*`</span></span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">27</span>
+                            <span></span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">28</span>
+                            <span>  <span class="comment">// Codificar mensaje para URL</span></span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">29</span>
+                            <span>  <span class="keyword">const</span> mensajeCodificado = <span class="function">encodeURIComponent</span>(mensaje)</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">30</span>
+                            <span></span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">31</span>
+                            <span>  <span class="comment">// Generar URL de WhatsApp</span></span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">32</span>
+                            <span>  <span class="keyword">const</span> url = <span class="string">`https://wa.me/${numero}?text=${mensajeCodificado}`</span></span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">33</span>
+                            <span></span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">34</span>
+                            <span>  <span class="comment">// Abrir WhatsApp</span></span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">35</span>
+                            <span>  window.<span class="function">open</span>(url)</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">36</span>
+                            <span>}</span>
+                        </div>
+                    </div>
+
+                    <div class="explanation">
+                        <strong>🔍 Desglose:</strong>
+                        <p><strong>Línea 9:</strong> <span class="highlight-yellow">Número sin + ni espacios</span> = 573002945085 (no +57 +57 30029)</p>
+                        <p><strong>Línea 12:</strong> <span class="highlight-yellow">%0A = salto de línea</span> | <span class="highlight-yellow">* = negrita</span> en WhatsApp</p>
+                        <p><strong>Línea 18-23:</strong> <span class="highlight-yellow">.forEach()</span> = itera productos y agrega cada uno al mensaje</p>
+                        <p><strong>Línea 29:</strong> <span class="highlight-yellow">encodeURIComponent()</span> = convierte caracteres especiales a URL-safe</p>
+                        <p><strong>Línea 32:</strong> <span class="highlight-yellow">Template string</span> = construye URL de WhatsApp</p>
+                        <p><strong>Línea 35:</strong> <span class="highlight-yellow">window.open()</span> = abre URL en ventana nueva</p>
+                    </div>
+
+                    <div class="warning">
+                        <strong>⚠️ Importante:</strong> El mensaje usa %0A (codificado) internamente pero encodeURIComponent lo convierte automáticamente. Los saltos de línea se ven correctamente en WhatsApp.
+                    </div>
+                </div>
+
+                <div class="subsection" style="margin-top: 40px;">
+                    <h3>Paso 2: URL de WhatsApp</h3>
+                    <p>La URL generada se ve así (aunque larga y codificada):</p>
+
+                    <div class="code-container">
+                        <div class="code-line">
+                            <span class="line-number">1</span>
+                            <span>https://wa.me/573002945085?text=*%21NUEVO%20PEDIDO%21*%0A%0A*Cliente*%3A%20Juan%0A*Tel%C3%A9fono*%3A%203004583117%0A...</span>
+                        </div>
+                    </div>
+
+                    <div class="explanation">
+                        <strong>Decodificado se ve así:</strong>
+                        <code style="display: block; background: #f0f0f0; padding: 10px; margin: 10px 0; border-radius: 5px;">
+https://wa.me/573002945085?text=*¡NUEVO PEDIDO!*%0ACli ente: Juan%0ATeléfono: 3004583117...
+                        </code>
+                    </div>
+                </div>
+
+                <div class="subsection" style="margin-top: 40px;">
+                    <h3>Paso 3: Lo que ve el usuario</h3>
+
+                    <div class="step">
+                        <div class="step-number">1️⃣</div>
+                        <div class="step-content">
+                            <h4>Usuario selecciona productos</h4>
+                            <p>En el carrito: 3 productos seleccionados</p>
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-number">2️⃣</div>
+                        <div class="step-content">
+                            <h4>Click en "📤 Enviar por WhatsApp"</h4>
+                            <p>Se ejecuta enviarPedidoWhatsApp()</p>
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-number">3️⃣</div>
+                        <div class="step-content">
+                            <h4>Se abre WhatsApp automáticamente</h4>
+                            <p>window.open() abre nueva pestaña con WhatsApp Web o app</p>
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-number">4️⃣</div>
+                        <div class="step-content">
+                            <h4>Mensaje prefilled aparece</h4>
+                            <p>El mensaje con todos los productos ya está listo para enviar</p>
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-number">5️⃣</div>
+                        <div class="step-content">
+                            <h4>Usuario revisa y envía</h4>
+                            <p>Presiona Enter/Send en WhatsApp</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="example-box">
+                    <strong>📱 Ejemplo del mensaje que se envía:</strong>
+                    <code style="display: block; background: #1e1e1e; color: #d4d4d4; padding: 10px; margin: 10px 0; border-radius: 5px; white-space: pre-wrap;">
+*¡NUEVO PEDIDO!*
+
+*Cliente:* Juan López
+*Teléfono:* 3004583117
+
+*📦 PRODUCTOS:*
+
+✔️ Arroz 500g
+   Cantidad: 12
+   Precio: $2.500
+   Subtotal: $30.000
+
+✔️ Frijoles Rojo 1kg
+   Cantidad: 5
+   Precio: $5.000
+   Subtotal: $25.000
+
+✔️ Aceite Girasol
+   Cantidad: 2
+   Precio: $8.500
+   Subtotal: $17.000
+
+*TOTAL: $72.000*
+                    </code>
+                </div>
+
+                <div class="tips">
+                    <strong>💡 Tips:</strong>
+                    <ul style="margin-left: 20px;">
+                        <li>Funciona en <strong>cualquier dispositivo</strong> (web, mobile, desktop)</li>
+                        <li><strong>Gratis</strong> - no requiere credenciales de API pagada</li>
+                        <li>El usuario puede <strong>editar el mensaje</strong> antes de enviar</li>
+                        <li>Works offline - genera URL sin necesidad de conexión</li>
+                        <li>Es un <strong>"URL Scheme"</strong> - no es una API real</li>
+                    </ul>
+                </div>
+            </section>
+        </div>
+
+        <!-- SECCIÓN 4: RESUMEN COMPLETO -->
+        <div id="resumen" class="content">
+            <section class="section">
+                <h2>📋 Resumen: Las 3 APIs Comparadas</h2>
+
+                <div class="comparison">
+                    <div class="comparison-box">
+                        <h4>🗄️ SUPABASE</h4>
+                        <p><strong>Tipo:</strong> REST API</p>
+                        <p><strong>Para:</strong> Guardar/traer datos</p>
+                        <p><strong>Método:</strong> HTTP (GET, POST, PUT, DELETE)</p>
+                        <p><strong>Autenticación:</strong> API Key requerida</p>
+                        <p><strong>Coste:</strong> Freemium</p>
+                    </div>
+
+                    <div class="comparison-box">
+                        <h4>🖼️ CLOUDINARY</h4>
+                        <p><strong>Tipo:</strong> REST API</p>
+                        <p><strong>Para:</strong> Subir/guardar imágenes</p>
+                        <p><strong>Método:</strong> HTTP POST (FormData)</p>
+                        <p><strong>Autenticación:</strong> Upload preset</p>
+                        <p><strong>Coste:</strong> Freemium</p>
+                    </div>
+
+                    <div class="comparison-box">
+                        <h4>💬 WHATSAPP</h4>
+                        <p><strong>Tipo:</strong> URL Scheme</p>
+                        <p><strong>Para:</strong> Abrir WhatsApp con mensaje</p>
+                        <p><strong>Método:</strong> URL deeplink</p>
+                        <p><strong>Autenticación:</strong> No requiere</p>
+                        <p><strong>Coste:</strong> Gratis ✅</p>
+                    </div>
+                </div>
+
+                <div class="subsection" style="margin-top: 40px;">
+                    <h3>Tabla: Operaciones Comunes</h3>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Tarea</th>
+                                    <th>API a usar</th>
+                                    <th>Método</th>
+                                    <th>Archivo</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Cargar productos</td>
+                                    <td>Supabase</td>
+                                    <td>await supabase.from('products').select()</td>
+                                    <td>supabaseApi.js</td>
+                                </tr>
+                                <tr>
+                                    <td>Crear factura</td>
+                                    <td>Supabase</td>
+                                    <td>await supabase.from('facturas').insert()</td>
+                                    <td>supabaseApi.js</td>
+                                </tr>
+                                <tr>
+                                    <td>Subir imagen</td>
+                                    <td>Cloudinary</td>
+                                    <td>fetch() POST con FormData</td>
+                                    <td>CatalogoProductos.jsx</td>
+                                </tr>
+                                <tr>
+                                    <td>Compartir pedido</td>
+                                    <td>WhatsApp</td>
+                                    <td>window.open('https://wa.me/...')</td>
+                                    <td>CatalogoClientes.jsx</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="subsection" style="margin-top: 40px;">
+                    <h3>Reglas de Oro al Usar APIs</h3>
+
+                    <div style="background: #e8f5e9; padding: 20px; border-radius: 8px; margin: 15px 0;">
+                        <h4 style="color: #2e7d32; margin-bottom: 15px;">✅ SIEMPRE HAZ ESTO</h4>
+                        <ul style="margin-left: 20px; line-height: 2;">
+                            <li>Usa <strong>try/catch</strong> para manejar errores</li>
+                            <li>Valida datos <strong>antes</strong> de enviar</li>
+                            <li>Guarda credenciales en <strong>.env</strong>, nunca en código</li>
+                            <li>Verifica <strong>condiciones</strong> en DELETE/UPDATE (.eq(), .where())</li>
+                            <li>Documenta qué hace cada función</li>
+                            <li>Testea con datos reales antes de producción</li>
+                        </ul>
+                    </div>
+
+                    <div style="background: #ffebee; padding: 20px; border-radius: 8px; margin: 15px 0;">
+                        <h4 style="color: #c62828; margin-bottom: 15px;">❌ NUNCA HAGAS ESTO</h4>
+                        <ul style="margin-left: 20px; line-height: 2;">
+                            <li>Credenciales en el código frontend (visibles a todos)</li>
+                            <li>DELETE sin filtros (.delete() sin .eq())</li>
+                            <li>UPDATE sin condiciones (actualiza TODO)</li>
+                            <li>Confiar en validación frontend solamente</li>
+                            <li>Ignorar errores de API</li>
+                            <li>Hacer llamadas sin async/await</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="subsection" style="margin-top: 40px;">
+                    <h3>🎓 Ejercicios Finales para Alumnos</h3>
+
+                    <div class="exercise" style="background: #fff3e0; border: 2px dashed #ff9800; padding: 20px; border-radius: 8px; margin: 15px 0;">
+                        <h4>🔧 Ejercicio 1: Modifica el upload</h4>
+                        <p>Cambia el tamaño máximo de 5MB a 10MB en Cloudinary. ¿Dónde está la línea?</p>
+                        <details style="margin-top: 10px; cursor: pointer;">
+                            <summary style="background: #2a5298; color: white; padding: 10px; border-radius: 5px;">Respuesta</summary>
+                            <code style="display: block; background: #1e1e1e; color: #d4d4d4; padding: 10px; margin-top: 10px; border-radius: 5px;">
+if (file.size > 10 * 1024 * 1024) {  // Cambiar el 10
+                            </code>
+                        </details>
+                    </div>
+
+                    <div class="exercise" style="background: #fff3e0; border: 2px dashed #ff9800; padding: 20px; border-radius: 8px; margin: 15px 0;">
+                        <h4>🔧 Ejercicio 2: Escribe una función DELETE</h4>
+                        <p>Crea una función que elimine una factura por ID. Incluye try/catch y validación.</p>
+                        <details style="margin-top: 10px; cursor: pointer;">
+                            <summary style="background: #2a5298; color: white; padding: 10px; border-radius: 5px;">Solución</summary>
+                            <code style="display: block; background: #1e1e1e; color: #d4d4d4; padding: 10px; margin-top: 10px; border-radius: 5px; white-space: pre-wrap;">
+async eliminarFactura(id) {
+  if (!id) throw new Error('ID requerido')
+  try {
+    const { error } = await supabase
+      .from('facturas')
+      .delete()
+      .eq('id', id)  // ← IMPORTANTE sin esto, borra TODO
+    if (error) throw error
+    return 'Eliminado'
+  } catch (err) {
+    console.error('Error:', err)
+    throw err
+  }
+}
+                            </code>
+                        </details>
+                    </div>
+
+                    <div class="exercise" style="background: #fff3e0; border: 2px dashed #ff9800; padding: 20px; border-radius: 8px; margin: 15px 0;">
+                        <h4>🔧 Ejercicio 3: Agrega un emoji al mensaje WhatsApp</h4>
+                        <p>En el mensaje de WhatsApp, cambia "Cliente:" a "👤 Cliente:" en la línea 13</p>
+                        <details style="margin-top: 10px; cursor: pointer;">
+                            <summary style="background: #2a5298; color: white; padding: 10px; border-radius: 5px;">Solución</summary>
+                            <code style="display: block; background: #1e1e1e; color: #d4d4d4; padding: 10px; margin-top: 10px; border-radius: 5px;">
+mensaje += `*👤 Cliente:* ${clienteInfo.nombre}%0A`
+                            </code>
+                        </details>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- FOOTER -->
+        <div class="footer">
+            <h3>💻 Tutorial: Código de las APIs</h3>
+            <p>Proyecto EBS Hermanos Marín - Guía Técnica para Alumnos</p>
+            <p style="margin-top: 20px; font-size: 0.9em;">
+                📚 Usa esta guía como referencia cuando programes. Cada línea es importante.
+            </p>
+            <p style="margin-top: 10px; color: #999;">Fecha: 28 de Abril de 2026</p>
+        </div>
+    </div>
+
+    <script>
+        function mostrarSeccion(seccion) {
+            // Ocultar todas las secciones
+            document.querySelectorAll('.content').forEach(el => {
+                el.classList.remove('active');
+            });
+            
+            // Desactivar todos los botones
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Mostrar sección seleccionada
+            document.getElementById(seccion).classList.add('active');
+            
+            // Activar botón
+            event.target.classList.add('active');
+            
+            // Scroll al top
+            window.scrollTo(0, 0);
+        }
+    </script>
+</body>
+</html>

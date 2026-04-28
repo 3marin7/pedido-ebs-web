@@ -173,6 +173,40 @@ const Navigation = () => {
       ];
     }
 
+
+    // Vendedor - Acceso a reportes y ventas
+    if (user.role === 'vendedor') {
+      return [
+        // INICIO & VENTAS - Grupo
+        {
+          path: '#ventas',
+          label: 'Inicio & Ventas',
+          icon: '🏠',
+          tipo: 'grupo',
+          submenu: [
+            { path: '/nueva-factura', label: 'Nueva Factura', icon: '➕' },
+            { path: '/facturas', label: 'Facturas Guardadas', icon: '📄' },
+            { path: '/catalogo-clientes', label: 'Enviar Catálogo', icon: '📤' },
+            { path: '/clientes', label: 'Gestión Clientes', icon: '👤' }
+          ]
+        },
+        // REPORTES - Grupo
+        {
+          path: '#informes',
+          label: 'Reportes',
+          icon: '📊',
+          tipo: 'grupo',
+          submenu: [
+            { path: '/auditoria-productos', label: 'Auditoría de Productos', icon: '📋' },
+            { path: '/movimientos', label: 'Historial Movimientos', icon: '📊' },
+            { path: '/dashboard-ventas', label: 'Dashboard Ventas', icon: '📈' },
+            { path: '/reporte-clientes-producto', label: 'Clientes por Producto', icon: '👥' },
+            { path: '/reportes-cobros', label: 'Reportes de Cobros', icon: '💰' }
+          ]
+        }
+      ];
+    }
+
     // Contabilidad (caro) - Ver facturas, reportes, gestión de pedidos, catálogo (lectura)
     if (user.role === 'contabilidad') {
       return [
