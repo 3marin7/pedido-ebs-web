@@ -262,17 +262,19 @@ const FacturaDetalle = () => {
               font-size: 10px;
             }
             .encabezado {
-              display: flex;
-              justify-content: space-between;
+              display: grid;
+              grid-template-columns: 1fr 1fr 1fr;
+              column-gap: 0.2cm;
               margin-bottom: 0.15cm;
-              align-items: flex-start;
+              align-items: start;
             }
             .numero-cuenta {
               font-weight: bold;
               font-size: 15px !important;
-              margin-bottom: 0.2cm;
+              margin-bottom: 0;
               text-align: center;
-              margin-top: -0.05cm;
+              margin-top: 0;
+              align-self: center;
             }
             .fecha {
               font-size: 9px;
@@ -304,20 +306,38 @@ const FacturaDetalle = () => {
             .info-cliente-vendedor {
               display: grid;
               grid-template-columns: 1fr 1fr;
-              gap: 0.15cm;
+              gap: 0.25cm;
               margin-bottom: 0.35cm;
             }
+            .info-item {
+              padding: 0.2cm;
+              padding-left: 0.15cm;
+              border-left: 0.2cm solid #ddd;
+              background-color: #f8f8f8;
+            }
+            .info-item.cliente {
+              border-left-color: #0066cc;
+              background-color: #f0f7ff;
+            }
+            .info-item.vendedor {
+              border-left-color: #a020f0;
+              background-color: #f8f0ff;
+            }
             .info-item h4 {
-              margin: 0 0 0.02cm 0;
-              font-size: 13px !important;
-              font-weight: normal;
+              margin: 0 0 0.1cm 0;
+              font-size: 14px !important;
+              font-weight: 700;
+              text-transform: capitalize;
+              color: #333;
             }
             .info-item p {
-              margin: 0;
-              border-bottom: 1px solid #ddd;
-              padding-bottom: 0.02cm;
-              min-height: 0.3cm;
-              font-size: 7px;
+              margin: 0.04cm 0;
+              border-bottom: none;
+              padding-bottom: 0;
+              min-height: auto;
+              font-size: 9px !important;
+              line-height: 1.3;
+              color: #555;
             }
             .cliente-nombre,
             .vendedor-nombre,
@@ -325,10 +345,11 @@ const FacturaDetalle = () => {
             .telefono-dato,
             .telefono-cliente,
             .centro-comercial-cliente {
-              font-size: 16px !important;
-              font-weight: normal;
+              font-size: 11px !important;
+              font-weight: 600;
               text-transform: uppercase;
               line-height: 1.2;
+              color: #222;
             }
             .numero-cuenta {
               font-size: 15px !important;
@@ -478,7 +499,7 @@ const FacturaDetalle = () => {
               display: flex;
               flex-direction: column;
               align-items: center;
-              min-width: 5.4cm;
+              min-width: 0;
             }
             .empresa-logo-wrap {
               min-height: 2.2cm;
@@ -562,6 +583,7 @@ const FacturaDetalle = () => {
                     </div>
                   </div>
                 </div>
+                <div class="numero-cuenta">REMISIÓN #${factura.id.toString().padStart(6, '0')}</div>
                 <div class="fecha-wrapper">
                   <div class="fecha">${formatearFecha(factura.fecha)}</div>
                   <div class="plazo">Plazo a 30 dias<span class="check-box"></span></div>
@@ -569,21 +591,19 @@ const FacturaDetalle = () => {
                 </div>
               </div>
               
-              <div class="numero-cuenta">REMISIÓN #${factura.id.toString().padStart(6, '0')}</div>
-              
               <div class="info-cliente-vendedor">
-                <div class="info-item">
-                  <h4>CLIENTE:</h4>
+                <div class="info-item cliente">
+                  <h4>Cliente</h4>
                   <p class="cliente-nombre">${factura.cliente} ${codigoClienteResuelto ? `[CODIGO: ${codigoClienteResuelto}]` : ''}</p>
-                  ${factura.telefono ? `<p class="telefono-cliente">TEL. CLIENTE: ${factura.telefono}</p>` : ''}
-                  ${factura.centro_comercial ? `<p class="centro-comercial-cliente">C.c: ${factura.centro_comercial}</p>` : ''}
-                  ${factura.correo ? `<p>Email: ${factura.correo}</p>` : ''}
+                  ${factura.telefono ? `<p class="telefono-cliente">Tel: ${factura.telefono}</p>` : ''}
+                  ${factura.direccion ? `<p class="direccion-dato">Dirección: ${factura.direccion}</p>` : ''}
+                  ${factura.centro_comercial ? `<p class="centro-comercial-cliente">C.C: ${factura.centro_comercial}</p>` : ''}
+                  ${factura.correo ? `<p class="correo-cliente">Email: ${factura.correo}</p>` : ''}
                 </div>
-                <div class="info-item">
-                  <h4>VENDEDOR:</h4>
-                 <p class="vendedor-nombre">${factura.vendedor}</p>
-                  <h4>TEL. VENDEDOR:</h4>
-                 <p class="telefono-dato">${telefonoVendedor || 'NO ESPECIFICADO'}</p>
+                <div class="info-item vendedor">
+                  <h4>Vendedor</h4>
+                  <p class="vendedor-nombre">${factura.vendedor}</p>
+                  <p class="telefono-dato">Tel. vendedor: ${telefonoVendedor || 'NO ESPECIFICADO'}</p>
                 </div>
               </div>
               
@@ -664,6 +684,7 @@ const FacturaDetalle = () => {
                     </div>
                   </div>
                 </div>
+                <div class="numero-cuenta">REMISIÓN #${factura.id.toString().padStart(6, '0')}</div>
                 <div class="fecha-wrapper">
                   <div class="fecha">${formatearFecha(factura.fecha)}</div>
                   <div class="plazo">Plazo a 30 dias<span class="check-box"></span></div>
@@ -671,21 +692,19 @@ const FacturaDetalle = () => {
                 </div>
               </div>
               
-              <div class="numero-cuenta">REMISIÓN #${factura.id.toString().padStart(6, '0')}</div>
-              
               <div class="info-cliente-vendedor">
-                <div class="info-item">
-                  <h4>CLIENTE:</h4>
+                <div class="info-item cliente">
+                  <h4>Cliente</h4>
                   <p class="cliente-nombre">${factura.cliente} ${codigoClienteResuelto ? `[CODIGO: ${codigoClienteResuelto}]` : ''}</p>
-                  ${factura.telefono ? `<p class="telefono-cliente">TEL. CLIENTE: ${factura.telefono}</p>` : ''}
+                  ${factura.telefono ? `<p class="telefono-cliente">Tel: ${factura.telefono}</p>` : ''}
+                  ${factura.direccion ? `<p class="direccion-dato">Dirección: ${factura.direccion}</p>` : ''}
                   ${factura.centro_comercial ? `<p class="centro-comercial-cliente">C.C: ${factura.centro_comercial}</p>` : ''}
-                  ${factura.correo ? `<p>Email: ${factura.correo}</p>` : ''}
+                  ${factura.correo ? `<p class="correo-cliente">Email: ${factura.correo}</p>` : ''}
                 </div>
-                <div class="info-item">
-                  <h4>VENDEDOR:</h4>
+                <div class="info-item vendedor">
+                  <h4>Vendedor</h4>
                   <p class="vendedor-nombre">${factura.vendedor}</p>
-                  <h4>TEL. VENDEDOR:</h4>
-                  <p class="telefono-dato">${telefonoVendedor || 'NO ESPECIFICADO'}</p>
+                  <p class="telefono-dato">Tel. vendedor: ${telefonoVendedor || 'NO ESPECIFICADO'}</p>
                 </div>
               </div>
               
