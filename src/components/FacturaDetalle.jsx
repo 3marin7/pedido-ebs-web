@@ -313,15 +313,13 @@ const FacturaDetalle = () => {
               padding: 0.2cm;
               padding-left: 0.15cm;
               border-left: 0.2cm solid #ddd;
-              background-color: #f8f8f8;
+              background-color: transparent;
             }
             .info-item.cliente {
               border-left-color: #0066cc;
-              background-color: #f0f7ff;
             }
             .info-item.vendedor {
               border-left-color: #a020f0;
-              background-color: #f8f0ff;
             }
             .info-item h4 {
               margin: 0 0 0.1cm 0;
@@ -573,13 +571,13 @@ const FacturaDetalle = () => {
                   </div>
                   <div class="empresa-contacto">
                     <div class="empresa-contacto-line">
-                      <span class="empresa-contacto-label">Tel:</span>
-                      <span class="empresa-contacto-num">3004583117</span>
-                      <span>|</span>
-                      <span class="empresa-contacto-num">3024528329</span>
+                      <span class="empresa-contacto-label"></span>
+                      <span class="empresa-contacto-num"></span>
+                      <span></span>
+                      <span class="empresa-contacto-num"></span>
                     </div>
                     <div class="empresa-contacto-line">
-                      <span class="empresa-contacto-num">3002945058</span>
+                      <span class="empresa-contacto-num"></span>
                     </div>
                   </div>
                 </div>
@@ -674,13 +672,13 @@ const FacturaDetalle = () => {
                   </div>
                   <div class="empresa-contacto">
                     <div class="empresa-contacto-line">
-                      <span class="empresa-contacto-label">Tel:</span>
-                      <span class="empresa-contacto-num">3004583117</span>
-                      <span>|</span>
-                      <span class="empresa-contacto-num">3024528329</span>
+                      <span class="empresa-contacto-label"></span>
+                      <span class="empresa-contacto-num"></span>
+                      <span></span>
+                      <span class="empresa-contacto-num"></span>
                     </div>
                     <div class="empresa-contacto-line">
-                      <span class="empresa-contacto-num">3002945058</span>
+                      <span class="empresa-contacto-num"></span>
                     </div>
                   </div>
                 </div>
