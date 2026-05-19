@@ -89,6 +89,43 @@ body {
 }
 
 /* Botón del carrito más compacto */
+/* Contenedor de botones del header */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Botón descargar PDF */
+.pdf-button {
+  position: relative;
+  background: linear-gradient(145deg, #e74c3c, #c0392b);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(192, 57, 43, 0.35);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  min-width: 40px;
+}
+
+.pdf-button:hover:not(:disabled) {
+  transform: scale(1.1);
+  box-shadow: 0 6px 18px rgba(192, 57, 43, 0.45);
+}
+
+.pdf-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .cart-button {
   position: relative;
   background: linear-gradient(145deg, #25d366, #128c7e);

@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom';
 import { supabase } from './supabaseClient';
 import './CatalogoClientes.css';
 
-const CatalogoClientes = () => {
+const CatalogoClientes = ({ priceMultiplier = 1, variantTitle = 'Catálogo de Productos' }) => {
   const [productos, setProductos] = useState([]);
   const [productosSeleccionados, setProductosSeleccionados] = useState([]);
   const [cargando, setCargando] = useState(true);
@@ -29,8 +29,14 @@ const CatalogoClientes = () => {
   const [cantidadesRapidas] = useState([12, 24, 36, 48, 60, 72]);
   const [vistaActual, setVistaActual] = useState('grid'); // 'grid' o 'lista'
   const [clienteSeleccionadoId, setClienteSeleccionadoId] = useState(null);
+  const [generandoPDF, setGenerandoPDF] = useState(false);
 
   const location = useLocation();
+
+  const calcularPrecioVista = useCallback((precioBase) => {
+    const precio = Number(precioBase) || 0;
+    return Math.round(precio * (Number(priceMultiplier) || 1));
+  }, [priceMultiplier]);
 
   // Cargar productos desde Supabase
   useEffect(() => {
@@ -151,11 +157,13 @@ const CatalogoClientes = () => {
 
     // Aplicar ordenamiento
     productosFiltrados.sort((a, b) => {
+      const precioA = calcularPrecioVista(a.precio);
+      const precioB = calcularPrecioVista(b.precio);
       switch (ordenamiento) {
         case 'precio-asc':
-          return (a.precio || 0) - (b.precio || 0);
+          return precioA - precioB;
         case 'precio-desc':
-          return (b.precio || 0) - (a.precio || 0);
+          return precioB - precioA;
         case 'nombre-asc':
           return a.nombre.localeCompare(b.nombre);
         case 'nombre-desc':
@@ -171,7 +179,7 @@ const CatalogoClientes = () => {
     });
 
     return productosFiltrados;
-  }, [productos, busqueda, categoriaFiltro, ordenamiento]);
+  }, [productos, busqueda, categoriaFiltro, ordenamiento, calcularPrecioVista]);
 
   // Formatear precio
   const formatPrecio = (precio) => {
@@ -180,6 +188,104 @@ const CatalogoClientes = () => {
       currency: 'COP',
       minimumFractionDigits: 0
     }).format(precio || 0);
+  };
+
+  // Generar y descargar PDF del catálogo
+  const descargarCatalogoPDF = async () => {
+    try {
+      setGenerandoPDF(true);
+
+      const { jsPDF } = await import('jspdf');
+      const { default: autoTable } = await import('jspdf-autotable');
+
+      const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+      const listaProductos = productosFiltrados();
+      const fecha = new Date().toLocaleDateString('es-CO', {
+        year: 'numeric', month: 'long', day: 'numeric'
+      });
+
+      // ── Encabezado coloreado ──
+      doc.setFillColor(0, 82, 164);
+      doc.rect(0, 0, 210, 30, 'F');
+      doc.setTextColor(255, 255, 255);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(17);
+      doc.text('EBS Hermanos Marín', 14, 13);
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'normal');
+      doc.text(variantTitle, 14, 22);
+      doc.setFontSize(9);
+      doc.text(fecha, 196, 13, { align: 'right' });
+      if (priceMultiplier > 1) {
+        doc.text(
+          `Precios con incremento del ${Math.round((priceMultiplier - 1) * 100)}%`,
+          196, 22, { align: 'right' }
+        );
+      }
+
+      // ── Línea de resumen ──
+      doc.setTextColor(80, 80, 80);
+      doc.setFontSize(8);
+      const resumen = `Total de productos: ${listaProductos.length}${
+        categoriaFiltro !== 'Todas' ? ` | Categoría: ${categoriaFiltro}` : ''
+      }${busqueda ? ` | Búsqueda: "${busqueda}"` : ''}`;
+      doc.text(resumen, 14, 38);
+
+      // ── Tabla de productos ──
+      const filas = listaProductos.map(p => [
+        p.codigo || '-',
+        p.nombre || '-',
+        p.categoria || '-',
+        p.descripcion
+          ? (p.descripcion.length > 55 ? p.descripcion.substring(0, 55) + '…' : p.descripcion)
+          : '-',
+        formatPrecio(calcularPrecioVista(p.precio))
+      ]);
+
+      autoTable(doc, {
+        startY: 42,
+        head: [['Código', 'Producto', 'Categoría', 'Descripción', 'Precio']],
+        body: filas,
+        styles: { fontSize: 7.5, cellPadding: 2.2, overflow: 'linebreak' },
+        headStyles: {
+          fillColor: [0, 82, 164],
+          textColor: 255,
+          fontStyle: 'bold',
+          fontSize: 8,
+        },
+        columnStyles: {
+          0: { cellWidth: 22 },
+          1: { cellWidth: 48 },
+          2: { cellWidth: 28 },
+          3: { cellWidth: 64 },
+          4: { cellWidth: 28, halign: 'right' },
+        },
+        alternateRowStyles: { fillColor: [243, 247, 255] },
+        didDrawPage: (data) => {
+          const totalPaginas = doc.internal.getNumberOfPages();
+          doc.setFontSize(7.5);
+          doc.setTextColor(160, 160, 160);
+          doc.text(
+            `Página ${data.pageNumber} de ${totalPaginas}  |  EBS Hermanos Marín  |  ${fecha}`,
+            105,
+            doc.internal.pageSize.height - 6,
+            { align: 'center' }
+          );
+        },
+      });
+
+      const catSlug = categoriaFiltro !== 'Todas'
+        ? `-${categoriaFiltro.toLowerCase().replace(/\s+/g, '-')}`
+        : '';
+      const nombreArchivo = `catalogo-ebs${catSlug}-${new Date().toISOString().slice(0, 10)}.pdf`;
+      doc.save(nombreArchivo);
+
+    } catch (err) {
+      console.error('Error generando PDF:', err);
+      setError('No se pudo generar el PDF. Intenta nuevamente.');
+    } finally {
+      setGenerandoPDF(false);
+    }
   };
 
   // Determinar si un producto es nuevo (últimos 30 días)
@@ -203,7 +309,7 @@ const CatalogoClientes = () => {
       const nuevoProducto = { 
         ...producto, 
         cantidad: 1,
-        precio: producto.precio || 0,
+        precio: calcularPrecioVista(producto.precio),
         fechaAgregado: new Date() // Para mantener el orden
       };
       // Agregar al inicio del array
@@ -451,15 +557,34 @@ const CatalogoClientes = () => {
       {/* Barra superior fija */}
       <header className="app-header">
         <div className="header-content">
-          <h1><i className="fas fa-store"></i> Catálogo de Productos</h1>
-          <button className="cart-button" onClick={toggleMostrarCarrito}>
+          <h1><i className="fas fa-store"></i> {variantTitle}</h1>
+          <div className="header-actions">
+            <button
+              className="pdf-button"
+              onClick={descargarCatalogoPDF}
+              disabled={generandoPDF || cargando}
+              title="Descargar catálogo en PDF"
+            >
+              {generandoPDF
+                ? <i className="fas fa-spinner fa-spin"></i>
+                : <i className="fas fa-file-pdf"></i>
+              }
+            </button>
+            <button className="cart-button" onClick={toggleMostrarCarrito}>
             <i className="fas fa-shopping-cart"></i>
             {productosSeleccionados.length > 0 && (
               <span className="cart-badge">{productosSeleccionados.length}</span>
             )}
-          </button>
+            </button>
+          </div>
         </div>
-        
+
+        {priceMultiplier > 1 && (
+          <div className="error-message" style={{ marginTop: '0.5rem' }}>
+            <i className="fas fa-tag"></i> Vista de detalle con incremento del {Math.round((priceMultiplier - 1) * 100)}%
+          </div>
+        )}
+
         {/* Filtros en barra pegajosa */}
         <div className="sticky-filters">
           <div className="search-container">
@@ -599,7 +724,7 @@ const CatalogoClientes = () => {
                   {producto.descripcion && (
                     <p className="product-description">{producto.descripcion}</p>
                   )}
-                  <p className="product-price">{formatPrecio(producto.precio)}</p>
+                  <p className="product-price">{formatPrecio(calcularPrecioVista(producto.precio))}</p>
                   {producto.categoria && (
                     <span className="product-category">{producto.categoria}</span>
                   )}
@@ -647,7 +772,7 @@ const CatalogoClientes = () => {
             <div className="modal-product-info">
               <h3>{imagenAmpliada.nombre}</h3>
               {imagenAmpliada.codigo && <p>Ref: {imagenAmpliada.codigo}</p>}
-              <p className="modal-price">{formatPrecio(imagenAmpliada.precio)}</p>
+              <p className="modal-price">{formatPrecio(calcularPrecioVista(imagenAmpliada.precio))}</p>
               {imagenAmpliada.descripcion && (
                 <p className="modal-description">{imagenAmpliada.descripcion}</p>
               )}

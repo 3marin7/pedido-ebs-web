@@ -1,0 +1,340 @@
+/* ConsultaCoopidrogas.css */
+
+.coop-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 1.25rem 1rem 2rem;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+/* Encabezado */
+.coop-header {
+  margin-bottom: 1.5rem;
+}
+
+.coop-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 0.25rem;
+}
+
+.coop-subtitle {
+  font-size: 0.9rem;
+  color: #64748b;
+  margin: 0;
+}
+
+/* Formulario */
+.coop-form {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.coop-modo-selector {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.coop-modo-btn {
+  padding: 0.45rem 1rem;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+  background: #fff;
+  color: #475569;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.coop-modo-btn.activo {
+  background: #0ea5e9;
+  border-color: #0ea5e9;
+  color: #fff;
+  font-weight: 600;
+}
+
+.coop-modo-btn:not(.activo):hover {
+  background: #e0f2fe;
+  border-color: #7dd3fc;
+}
+
+.coop-input-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.coop-input {
+  flex: 1;
+  padding: 0.65rem 1rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 1rem;
+  color: #1e293b;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.coop-input:focus {
+  border-color: #0ea5e9;
+  box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.18);
+}
+
+.coop-btn-limpiar {
+  padding: 0.5rem 0.7rem;
+  background: transparent;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  color: #94a3b8;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.1s;
+}
+
+.coop-btn-limpiar:hover {
+  background: #fee2e2;
+  color: #dc2626;
+  border-color: #fca5a5;
+}
+
+.coop-btn-buscar {
+  padding: 0.65rem 1.4rem;
+  background: #0ea5e9;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  min-width: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  transition: background 0.15s;
+}
+
+.coop-btn-buscar:hover:not(:disabled) {
+  background: #0284c7;
+}
+
+.coop-btn-buscar:disabled {
+  background: #94a3b8;
+  cursor: not-allowed;
+}
+
+.coop-btn-scan {
+  padding: 0.65rem 1rem;
+  background: #0f766e;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+  min-width: 135px;
+  transition: background 0.15s;
+}
+
+.coop-btn-scan:hover {
+  background: #0d9488;
+}
+
+.coop-scanner-box {
+  margin-top: 0.9rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  background: #fff;
+  padding: 0.9rem;
+}
+
+.coop-scanner-help {
+  margin: 0 0 0.7rem;
+  font-size: 0.86rem;
+  color: #475569;
+}
+
+.coop-scanner-reader {
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.coop-escaneo-error {
+  margin-top: 0.75rem;
+  font-size: 0.86rem;
+  color: #b91c1c;
+}
+
+/* Spinner */
+.coop-spinner {
+  width: 18px;
+  height: 18px;
+  border: 2.5px solid rgba(255, 255, 255, 0.4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: coop-spin 0.7s linear infinite;
+}
+
+@keyframes coop-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Avisos y mensajes */
+.coop-aviso-config {
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  font-size: 0.875rem;
+  color: #92400e;
+  margin-bottom: 1rem;
+  line-height: 1.7;
+}
+
+.coop-aviso-config code {
+  background: #fef3c7;
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  font-size: 0.82rem;
+}
+
+.coop-error {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  padding: 0.8rem 1.25rem;
+  color: #dc2626;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.coop-sin-resultados {
+  text-align: center;
+  padding: 2.5rem 1rem;
+  color: #94a3b8;
+  font-size: 1rem;
+}
+
+/* Tabla */
+.coop-tabla-wrapper {
+  margin-top: 0.5rem;
+}
+
+.coop-conteo {
+  font-size: 0.82rem;
+  color: #64748b;
+  margin: 0 0 0.6rem;
+}
+
+.coop-tabla-scroll {
+  overflow-x: auto;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+.coop-tabla {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+  white-space: nowrap;
+}
+
+.coop-tabla thead tr {
+  background: #0ea5e9;
+  color: #fff;
+}
+
+.coop-tabla th {
+  padding: 0.65rem 0.9rem;
+  text-align: left;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  user-select: none;
+}
+
+.coop-tabla tbody tr.par {
+  background: #fff;
+}
+
+.coop-tabla tbody tr.impar {
+  background: #f0f9ff;
+}
+
+.coop-tabla tbody tr:hover {
+  background: #e0f2fe;
+}
+
+.coop-tabla td {
+  padding: 0.55rem 0.9rem;
+  border-bottom: 1px solid #e2e8f0;
+  color: #334155;
+}
+
+.coop-tabla tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Celdas especiales */
+.coop-ean {
+  font-family: 'Courier New', monospace;
+  font-size: 0.8rem;
+  color: #0369a1;
+  font-weight: 600;
+}
+
+.coop-denom {
+  white-space: normal;
+  min-width: 200px;
+  max-width: 320px;
+  font-weight: 500;
+  color: #1e293b;
+}
+
+.coop-precio {
+  text-align: right;
+  color: #047857;
+  font-weight: 600;
+}
+
+.coop-num {
+  text-align: right;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .coop-title {
+    font-size: 1.2rem;
+  }
+
+  .coop-input-row {
+    flex-wrap: wrap;
+  }
+
+  .coop-input {
+    font-size: 0.95rem;
+  }
+
+  .coop-btn-buscar {
+    width: 100%;
+  }
+
+  .coop-btn-scan {
+    width: 100%;
+  }
+
+  .coop-tabla {
+    font-size: 0.75rem;
+  }
+
+  .coop-tabla th,
+  .coop-tabla td {
+    padding: 0.45rem 0.6rem;
+  }
+}

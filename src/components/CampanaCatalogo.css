@@ -1,0 +1,431 @@
+.campana-catalogo-page {
+  min-height: calc(100vh - 60px);
+  background:
+    radial-gradient(circle at top left, rgba(59, 130, 246, 0.14), transparent 30%),
+    radial-gradient(circle at top right, rgba(34, 197, 94, 0.16), transparent 28%),
+    linear-gradient(180deg, #f8fbff 0%, #eef5f0 100%);
+  padding: 24px;
+}
+
+.campana-catalogo-shell {
+  max-width: 1360px;
+  margin: 0 auto;
+  display: grid;
+  gap: 20px;
+}
+
+.campana-hero,
+.recordatorio-banner,
+.criterios-panel,
+.clientes-section,
+.campana-feedback,
+.campana-error,
+.stat-card {
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 22px;
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+  backdrop-filter: blur(10px);
+}
+
+.campana-hero {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  align-items: flex-start;
+  padding: 28px;
+}
+
+.campana-eyebrow {
+  display: inline-flex;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: #dbeafe;
+  color: #1d4ed8;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.campana-hero h1 {
+  margin: 12px 0 10px;
+  font-size: clamp(1.8rem, 3vw, 2.8rem);
+  color: #0f172a;
+}
+
+.campana-hero p,
+.panel-header p,
+.recordatorio-banner p,
+.stat-card p,
+.campaign-card p {
+  margin: 0;
+  color: #475569;
+  line-height: 1.6;
+}
+
+.campana-hero-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.campaign-btn {
+  border: none;
+  border-radius: 14px;
+  padding: 12px 18px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.campaign-btn:hover {
+  transform: translateY(-1px);
+}
+
+.campaign-btn-primary {
+  background: linear-gradient(135deg, #16a34a, #15803d);
+  color: #fff;
+  box-shadow: 0 10px 24px rgba(21, 128, 61, 0.24);
+}
+
+.campaign-btn-secondary {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+.recordatorio-banner {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  align-items: center;
+  padding: 20px 24px;
+  border-left: 8px solid #22c55e;
+}
+
+.recordatorio-banner strong {
+  display: block;
+  margin-bottom: 6px;
+  color: #14532d;
+}
+
+.recordatorio-meta {
+  display: grid;
+  gap: 8px;
+  font-size: 0.92rem;
+  color: #334155;
+}
+
+.recordatorio-meta label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.campana-feedback,
+.campana-error {
+  padding: 14px 18px;
+  font-weight: 600;
+}
+
+.campana-feedback {
+  color: #166534;
+  border-left: 6px solid #22c55e;
+}
+
+.campana-error {
+  color: #991b1b;
+  border-left: 6px solid #ef4444;
+}
+
+.criterios-panel,
+.clientes-section {
+  padding: 24px;
+}
+
+.panel-header {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 18px;
+}
+
+.panel-header-inline {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.panel-header h2 {
+  margin: 0;
+  color: #0f172a;
+}
+
+.criterios-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 14px;
+}
+
+.url-config-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 14px;
+  align-items: end;
+}
+
+.url-config-field {
+  display: grid;
+  gap: 8px;
+  color: #334155;
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+.url-config-field input {
+  border: 1px solid #cbd5e1;
+  border-radius: 14px;
+  padding: 12px 14px;
+  font-size: 1rem;
+}
+
+.url-helper-block {
+  margin-top: 14px;
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  display: grid;
+  gap: 6px;
+}
+
+.url-helper-label {
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #1d4ed8;
+}
+
+.url-helper-block strong {
+  color: #0f172a;
+  word-break: break-all;
+}
+
+.url-warning {
+  margin-top: 14px;
+  padding: 14px 16px;
+  border-left: 6px solid #f97316;
+  border-radius: 14px;
+  background: #fff7ed;
+  color: #9a3412;
+  font-weight: 600;
+}
+
+.criterios-grid label {
+  display: grid;
+  gap: 8px;
+  color: #334155;
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+.criterios-grid input {
+  border: 1px solid #cbd5e1;
+  border-radius: 14px;
+  padding: 12px 14px;
+  font-size: 1rem;
+}
+
+.campana-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.stat-card {
+  padding: 20px;
+}
+
+.stat-label {
+  display: block;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #64748b;
+}
+
+.stat-card strong {
+  display: block;
+  margin: 10px 0 8px;
+  font-size: 2rem;
+  color: #0f172a;
+}
+
+.stat-card.eligible {
+  border-top: 6px solid #22c55e;
+}
+
+.stat-card.blocked {
+  border-top: 6px solid #f97316;
+}
+
+.stat-card.total {
+  border-top: 6px solid #3b82f6;
+}
+
+.campaign-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+  gap: 16px;
+}
+
+.campaign-card {
+  border-radius: 20px;
+  padding: 20px;
+  border: 1px solid rgba(148, 163, 184, 0.26);
+  display: grid;
+  gap: 16px;
+}
+
+.eligible-card {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(240, 253, 244, 0.96));
+}
+
+.blocked-card {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(255, 247, 237, 0.98));
+}
+
+.campaign-card-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.campaign-card-top h3 {
+  margin: 0 0 4px;
+  color: #0f172a;
+}
+
+.score-chip,
+.blocked-chip {
+  align-self: flex-start;
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.score-chip {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.blocked-chip {
+  background: #fed7aa;
+  color: #9a3412;
+}
+
+.campaign-metrics {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.campaign-metrics div {
+  padding: 12px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(203, 213, 225, 0.7);
+}
+
+.campaign-metrics span,
+.campaign-details span {
+  display: block;
+  font-size: 0.84rem;
+  color: #64748b;
+}
+
+.campaign-metrics strong,
+.campaign-details strong {
+  color: #0f172a;
+}
+
+.campaign-details {
+  display: grid;
+  gap: 8px;
+}
+
+.campaign-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.blocked-reasons {
+  margin: 0;
+  padding-left: 18px;
+  color: #7c2d12;
+  display: grid;
+  gap: 8px;
+}
+
+.empty-state {
+  padding: 26px;
+  border-radius: 18px;
+  background: #f8fafc;
+  color: #475569;
+  text-align: center;
+}
+
+.muted-section {
+  border-top: 6px solid #f97316;
+}
+
+@media (max-width: 900px) {
+  .campana-catalogo-page {
+    padding: 16px;
+  }
+
+  .campana-hero,
+  .recordatorio-banner,
+  .panel-header-inline {
+    grid-template-columns: 1fr;
+    display: grid;
+  }
+
+  .campana-hero-actions,
+  .campaign-actions {
+    width: 100%;
+  }
+
+  .url-config-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .campaign-btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 640px) {
+  .campana-catalogo-page {
+    padding: 12px;
+  }
+
+  .campana-hero,
+  .recordatorio-banner,
+  .criterios-panel,
+  .clientes-section {
+    padding: 18px;
+  }
+
+  .campaign-metrics {
+    grid-template-columns: 1fr;
+  }
+}

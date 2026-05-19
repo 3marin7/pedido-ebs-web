@@ -7,7 +7,10 @@ import FacturaDetalle from './components/FacturaDetalle';
 import ReportesCobros from './components/ReportesCobros';
 import CatalogoProductos from './components/CatalogoProductos';
 import CatalogoClientes from './components/CatalogoClientes';
+import CatalogoClientesDetalle from './components/CatalogoClientesDetalle';
 import ClientesScreen from './components/ClientesScreen';
+import CampanaCatalogo from './components/CampanaCatalogo';
+import CampanaCatalogoApi from './components/CampanaCatalogoApi';
 import GestionPedidos from './components/GestionPedidos';
 import Login from './components/Login';
 import NotFound from './components/NotFound';
@@ -23,6 +26,7 @@ import ContabilidadScreen from './components/ContabilidadScreen';
 import HistorialMovimientos from './components/HistorialMovimientos';
 import AuditoriaProductos from './components/AuditoriaProductos';
 import ReporteClientesPorProducto from './components/ReporteClientesPorProducto';
+import ConsultaCoopidrogas from './components/ConsultaCoopidrogas';
 
 // Contexto de autenticación
 const AuthContext = createContext();
@@ -204,6 +208,17 @@ function App() {
                   description="Catálogo digital de productos EBS Hermanos Marín. Ing. Edwin Marín 3004583117"
                 />
                 <CatalogoClientes />
+              </>
+            } />
+
+            {/* Ruta pública para catálogo de detalle (+30%) */}
+            <Route path="/catalogo-detalle" element={
+              <>
+                <PageMeta
+                  title="Catálogo Detalle - EBS Hermanos Marín"
+                  description="Catálogo de productos con precio detalle para clientes específicos"
+                />
+                <CatalogoClientesDetalle />
               </>
             } />
             
@@ -418,6 +433,42 @@ function App() {
                 </>
               </ProtectedRoute>
             } />
+
+                        <Route path="/campana-catalogo" element={
+                          <ProtectedRoute requiredRoles={['superadmin', 'admin', 'vendedor', 'contabilidad']}>
+                            <>
+                              <PageMeta
+                                title="Campaña de Catálogo - EBS"
+                                description="Clientes aptos para compartir el catálogo según reglas de cartera y seguimiento"
+                              />
+                              <CampanaCatalogo />
+                            </>
+                          </ProtectedRoute>
+                        } />
+
+                    <Route path="/campana-catalogo-api" element={
+                      <ProtectedRoute requiredRoles={['superadmin', 'admin', 'vendedor', 'contabilidad']}>
+                        <>
+                          <PageMeta
+                            title="Campaña de Catálogo API - EBS"
+                            description="Vista alternativa de la campaña de catálogo basada en una API propia"
+                          />
+                          <CampanaCatalogoApi />
+                        </>
+                      </ProtectedRoute>
+                    } />
+
+                    <Route path="/consulta-coopidrogas" element={
+                      <ProtectedRoute requiredRoles={['superadmin', 'admin', 'vendedor', 'contabilidad', 'inventario']}>
+                        <>
+                          <PageMeta
+                            title="Consulta Coopidrogas - EBS"
+                            description="Consulta de precios y catálogo Coopidrogas por nombre o código EAN"
+                          />
+                          <ConsultaCoopidrogas />
+                        </>
+                      </ProtectedRoute>
+                    } />
             
             {/* Ruta para cliente */}
             <Route path="/catalogo-cliente" element={
