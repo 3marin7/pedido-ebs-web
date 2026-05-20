@@ -124,9 +124,17 @@ const ConsultaCoopidrogas = () => {
     setEscaneoError('');
     setError('');
     setModoEan(true);
+    setEscaneando(true);
 
     try {
       const { Html5Qrcode, Html5QrcodeSupportedFormats } = await import('html5-qrcode');
+      await new Promise((resolve) => setTimeout(resolve, 0));
+
+      const contenedorScanner = document.getElementById(SCANNER_ELEMENT_ID);
+      if (!contenedorScanner) {
+        throw new Error('El contenedor del escáner todavía no está listo.');
+      }
+
       const scanner = new Html5Qrcode(SCANNER_ELEMENT_ID);
       const cams = await Html5Qrcode.getCameras();
       const camaraTrasera = cams.find((cam) => /back|rear|environment|trasera/i.test(cam.label));
@@ -162,8 +170,6 @@ const ConsultaCoopidrogas = () => {
           // Ignora errores intermitentes de deteccion para evitar ruido en UI.
         }
       );
-
-      setEscaneando(true);
     } catch (scannerError) {
       console.error('[ConsultaCoopidrogas] Error iniciando escaner:', scannerError);
       setEscaneoError(`No se pudo iniciar la camara: ${scannerError?.message || 'Error desconocido'}`);

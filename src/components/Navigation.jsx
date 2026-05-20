@@ -67,11 +67,11 @@ const Navigation = () => {
           submenu: [
             { path: '/nueva-factura', label: 'Nueva Factura', icon: '➕' },
             { path: '/facturas', label: 'Facturas Guardadas', icon: '📄' },
+            { path: '/clientes', label: 'Ver Clientes', icon: '👥' },
             { path: '/catalogo-clientes', label: 'Enviar Catálogo', icon: '📤' },
             { path: '/campana-catalogo', label: 'Campaña Catálogo', icon: '🎯' },
             { path: '/campana-catalogo-api', label: 'Campaña Catálogo API', icon: '🧪' },
             { path: '/catalogo-detalle', label: 'Catálogo Precios Clientes', icon: '🏷️' },
-            { path: '/clientes', label: 'Gestión Clientes', icon: '👤' },
             { path: '/mapa-locales', label: 'Mapa de Locales', icon: '🗺️' },
             { path: '/rutas-cobro', label: 'Rutas de Cobro', icon: '🚗' }
           ]
@@ -131,11 +131,11 @@ const Navigation = () => {
           submenu: [
             { path: '/nueva-factura', label: 'Nueva Factura', icon: '➕' },
             { path: '/facturas', label: 'Facturas Guardadas', icon: '📄' },
+            { path: '/clientes', label: 'Ver Clientes', icon: '👥' },
             { path: '/catalogo-clientes', label: 'Enviar Catálogo', icon: '📤' },
             { path: '/campana-catalogo', label: 'Campaña Catálogo', icon: '🎯' },
             { path: '/campana-catalogo-api', label: 'Campaña Catálogo API', icon: '🧪' },
             { path: '/catalogo-detalle', label: 'Catálogo Precios Clientes', icon: '🏷️' },
-            { path: '/clientes', label: 'Gestión Clientes', icon: '👤' },
             { path: '/mapa-locales', label: 'Mapa de Locales', icon: '🗺️' },
             { path: '/rutas-cobro', label: 'Rutas de Cobro', icon: '🚗' }
           ]
@@ -195,11 +195,11 @@ const Navigation = () => {
           submenu: [
             { path: '/nueva-factura', label: 'Nueva Factura', icon: '➕' },
             { path: '/facturas', label: 'Facturas Guardadas', icon: '📄' },
+            { path: '/clientes', label: 'Ver Clientes', icon: '👥' },
             { path: '/catalogo-clientes', label: 'Enviar Catálogo', icon: '📤' },
             { path: '/campana-catalogo', label: 'Campaña Catálogo', icon: '🎯' },
             { path: '/campana-catalogo-api', label: 'Campaña Catálogo API', icon: '🧪' },
             { path: '/catalogo-detalle', label: 'Catálogo Precios Clientes', icon: '🏷️' },
-            { path: '/clientes', label: 'Gestión Clientes', icon: '👤' },
             { path: '/consulta-coopidrogas', label: 'Consulta Coopidrogas', icon: '🔍' }
           ]
         },
