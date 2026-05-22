@@ -2,6 +2,14 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { supabase } from './supabaseClient';
 import './CalculadorSueldoVendedor.css';
 
+const chunkArray = (array, size = 200) => {
+  const chunks = [];
+  for (let i = 0; i < array.length; i += size) {
+    chunks.push(array.slice(i, i + size));
+  }
+  return chunks;
+};
+
 const CalculadorSueldoVendedor = () => {
   const [vendedores, setVendedores] = useState([]);
   const [vendedorSeleccionado, setVendedorSeleccionado] = useState(null);
@@ -19,11 +27,19 @@ const CalculadorSueldoVendedor = () => {
   const [datosVendedor, setDatosVendedor] = useState({
     nombre: '',
     ventasTotal: 0,
+    cobrosTotal: 0,
+    saldoTotal: 0,
     cantidadFacturas: 0,
+    cantidadAbonos: 0,
     ticketPromedio: 0,
     comision: 0,
     sueldoTotal: 0,
-    facturas: []
+    facturas: [],
+    abonosPeriodo: [],
+    abonosHistoricos: [],
+    abonosPorFacturaPeriodo: {},
+    abonosPorFacturaHistorico: {},
+    ultimaFechaAbonoPorFactura: {}
   });
 
   // Cargar lista de vendedores únicos
@@ -83,35 +99,135 @@ const CalculadorSueldoVendedor = () => {
       const inicio = new Date(fechaInicio);
       const fin = new Date(fechaFin);
       fin.setHours(23, 59, 59, 999);
+      const inicioFecha = fechaInicio;
+      const finFecha = fechaFin;
 
-      // Obtener todas las facturas del vendedor en el período
+      // Obtener todas las facturas del vendedor en el sistema.
       const { data, error: queryError } = await supabase
         .from('facturas')
         .select('id, fecha, total, cliente, productos')
         .eq('vendedor', vendedorSeleccionado)
-        .gte('fecha', inicio.toISOString())
-        .lte('fecha', fin.toISOString())
         .order('fecha', { ascending: false });
 
       if (queryError) throw queryError;
 
-      const facturas = data || [];
+      const facturasSistema = data || [];
+      const facturaIdsSistema = facturasSistema.map(f => f.id).filter(Boolean);
+
+      // Para métricas de ventas mantenemos solo facturas emitidas en el período.
+      const facturasPeriodo = facturasSistema.filter((factura) => {
+        const fechaFactura = new Date(factura.fecha);
+        if (Number.isNaN(fechaFactura.getTime())) return false;
+        return fechaFactura >= inicio && fechaFactura <= fin;
+      });
+
+      let abonosPeriodo = [];
+      let abonosHistoricos = [];
+      if (facturaIdsSistema.length > 0) {
+        const consultasAbonosPeriodo = chunkArray(facturaIdsSistema, 200).map((idsChunk) =>
+          supabase
+            .from('abonos')
+            .select('id, factura_id, fecha, monto, metodo')
+            .in('factura_id', idsChunk)
+            .gte('fecha', inicioFecha)
+            .lte('fecha', finFecha)
+        );
+
+        const consultasAbonosHistoricos = chunkArray(facturaIdsSistema, 200).map((idsChunk) =>
+          supabase
+            .from('abonos')
+            .select('id, factura_id, fecha, monto, metodo')
+            .in('factura_id', idsChunk)
+        );
+
+        const [respuestasPeriodo, respuestasHistoricas] = await Promise.all([
+          Promise.all(consultasAbonosPeriodo),
+          Promise.all(consultasAbonosHistoricos)
+        ]);
+
+        abonosPeriodo = respuestasPeriodo.flatMap(({ data: abonosData, error: abonosError }) => {
+          if (abonosError) {
+            throw abonosError;
+          }
+          return abonosData || [];
+        });
+
+        abonosHistoricos = respuestasHistoricas.flatMap(({ data: abonosData, error: abonosError }) => {
+          if (abonosError) {
+            throw abonosError;
+          }
+          return abonosData || [];
+        });
+
+        abonosPeriodo.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+        abonosHistoricos.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+      }
+
+      // Mostrar facturas del período y también facturas antiguas con abonos en el período.
+      const facturaIdsConAbonos = new Set(abonosPeriodo.map((abono) => String(abono.factura_id)));
+      const facturasConAbonosPeriodo = facturasSistema.filter((factura) =>
+        facturaIdsConAbonos.has(String(factura.id))
+      );
+      const facturasParaMostrar = Array.from(
+        new Map([...facturasPeriodo, ...facturasConAbonosPeriodo].map((factura) => [String(factura.id), factura])).values()
+      ).sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
       
       // Calcular totales
-      const ventasTotal = facturas.reduce((sum, f) => sum + (parseFloat(f.total) || 0), 0);
-      const cantidadFacturas = facturas.length;
+      const ventasTotal = facturasPeriodo.reduce((sum, f) => sum + (parseFloat(f.total) || 0), 0);
+      const cobrosTotal = abonosPeriodo.reduce((sum, a) => sum + (parseFloat(a.monto) || 0), 0);
+      const abonosPorFacturaPeriodo = abonosPeriodo.reduce((acc, abono) => {
+        const facturaId = abono.factura_id;
+        if (!facturaId) return acc;
+        acc[facturaId] = (acc[facturaId] || 0) + (parseFloat(abono.monto) || 0);
+        return acc;
+      }, {});
+      const abonosPorFacturaHistorico = abonosHistoricos.reduce((acc, abono) => {
+        const facturaId = abono.factura_id;
+        if (!facturaId) return acc;
+        acc[facturaId] = (acc[facturaId] || 0) + (parseFloat(abono.monto) || 0);
+        return acc;
+      }, {});
+      const saldoTotal = facturasParaMostrar.reduce((sum, factura) => {
+        const totalFactura = parseFloat(factura.total) || 0;
+        const abonoFactura = abonosPorFacturaHistorico[factura.id] || 0;
+        return sum + Math.max(0, totalFactura - abonoFactura);
+      }, 0);
+      const cantidadFacturas = facturasPeriodo.length;
+      const cantidadAbonos = abonosPeriodo.length;
       const ticketPromedio = cantidadFacturas > 0 ? ventasTotal / cantidadFacturas : 0;
-      const comision = ventasTotal * (porcentajeComision / 100);
+      const comision = cobrosTotal * (porcentajeComision / 100);
       const sueldoTotal = sueldoBase + comision;
+
+      const ultimaFechaAbonoPorFactura = abonosHistoricos.reduce((acc, abono) => {
+        const facturaId = abono.factura_id;
+        if (!facturaId || !abono.fecha) return acc;
+
+        const fechaActual = new Date(abono.fecha);
+        if (Number.isNaN(fechaActual.getTime())) return acc;
+
+        const fechaGuardada = acc[facturaId] ? new Date(acc[facturaId]) : null;
+        if (!fechaGuardada || fechaActual > fechaGuardada) {
+          acc[facturaId] = abono.fecha;
+        }
+        return acc;
+      }, {});
 
       setDatosVendedor({
         nombre: vendedorSeleccionado,
         ventasTotal,
+        cobrosTotal,
+        saldoTotal,
         cantidadFacturas,
+        cantidadAbonos,
         ticketPromedio,
         comision,
         sueldoTotal,
-        facturas
+        facturas: facturasParaMostrar,
+        abonosPeriodo,
+        abonosHistoricos,
+        abonosPorFacturaPeriodo,
+        abonosPorFacturaHistorico,
+        ultimaFechaAbonoPorFactura
       });
     } catch (err) {
       console.error('Error cargando datos:', err);
@@ -171,7 +287,12 @@ const CalculadorSueldoVendedor = () => {
   };
 
   const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('es-CO', {
+    const parsedDate = new Date(dateString);
+    if (Number.isNaN(parsedDate.getTime())) {
+      return 'Fecha no valida';
+    }
+
+    return parsedDate.toLocaleDateString('es-CO', {
       year: 'numeric',
       month: 'short',
       day: 'numeric'
@@ -183,16 +304,18 @@ const CalculadorSueldoVendedor = () => {
       sueldoBase,
       porcentajeComision,
       ventasTotal: datosVendedor.ventasTotal,
-      comisionCalculada: datosVendedor.ventasTotal * (porcentajeComision / 100),
-      sueldoMensual: sueldoBase + (datosVendedor.ventasTotal * (porcentajeComision / 100))
+      cobrosTotal: datosVendedor.cobrosTotal,
+      saldoTotal: datosVendedor.saldoTotal,
+      comisionCalculada: datosVendedor.cobrosTotal * (porcentajeComision / 100),
+      sueldoMensual: sueldoBase + (datosVendedor.cobrosTotal * (porcentajeComision / 100))
     };
-  }, [sueldoBase, porcentajeComision, datosVendedor.ventasTotal]);
+  }, [sueldoBase, porcentajeComision, datosVendedor.ventasTotal, datosVendedor.cobrosTotal, datosVendedor.saldoTotal]);
 
   return (
     <div className="calculador-sueldo">
       <div className="calculador-header">
         <h1>💰 Calculador de Sueldo Vendedor</h1>
-        <p className="subtitle">Calcula ingresos mensuales: Sueldo Base + Comisión en Ventas</p>
+        <p className="subtitle">Calcula ingresos: Sueldo Base + Comisión sobre cobros (abonos) del período</p>
       </div>
 
       {error && (
@@ -232,7 +355,13 @@ const CalculadorSueldoVendedor = () => {
                 <button
                   key={p.id}
                   className={`periodo-btn ${periodo === p.id ? 'active' : ''}`}
-                  onClick={() => periodo !== 'personalizado' && handlePeriodoChange(p.id)}
+                  onClick={() => {
+                    if (p.id === 'personalizado') {
+                      setPeriodo('personalizado');
+                    } else {
+                      handlePeriodoChange(p.id);
+                    }
+                  }}
                   disabled={cargando}
                 >
                   {p.label}
@@ -322,8 +451,24 @@ const CalculadorSueldoVendedor = () => {
               <div className="resumen-card">
                 <div className="card-icon">📈</div>
                 <div className="card-content">
-                  <span className="label">Total de Ventas:</span>
+                  <span className="label">Total Facturado:</span>
                   <span className="valor">{formatCurrency(resumenCalculos.ventasTotal)}</span>
+                </div>
+              </div>
+
+              <div className="resumen-card">
+                <div className="card-icon">💵</div>
+                <div className="card-content">
+                  <span className="label">Total Cobrado (Abonos):</span>
+                  <span className="valor">{formatCurrency(resumenCalculos.cobrosTotal)}</span>
+                </div>
+              </div>
+
+              <div className="resumen-card highlight-card">
+                <div className="card-icon">💰</div>
+                <div className="card-content">
+                  <span className="label">Comisión del Período:</span>
+                  <span className="valor comision">{formatCurrency(resumenCalculos.comisionCalculada)}</span>
                 </div>
               </div>
 
@@ -332,6 +477,22 @@ const CalculadorSueldoVendedor = () => {
                 <div className="card-content">
                   <span className="label">Cantidad de Facturas:</span>
                   <span className="valor">{datosVendedor.cantidadFacturas}</span>
+                </div>
+              </div>
+
+              <div className="resumen-card">
+                <div className="card-icon">🧾</div>
+                <div className="card-content">
+                  <span className="label">Cantidad de Abonos:</span>
+                  <span className="valor">{datosVendedor.cantidadAbonos}</span>
+                </div>
+              </div>
+
+              <div className="resumen-card">
+                <div className="card-icon">⚖️</div>
+                <div className="card-content">
+                  <span className="label">Saldo Pendiente:</span>
+                  <span className="valor">{formatCurrency(resumenCalculos.saldoTotal)}</span>
                 </div>
               </div>
 
@@ -355,7 +516,7 @@ const CalculadorSueldoVendedor = () => {
                 </div>
                 <div className="formula-operator">+</div>
                 <div className="formula-item">
-                  <span className="label">Comisión ({resumenCalculos.porcentajeComision}% de {formatCurrency(resumenCalculos.ventasTotal)}):</span>
+                  <span className="label">Comisión ({resumenCalculos.porcentajeComision}% de cobros {formatCurrency(resumenCalculos.cobrosTotal)}):</span>
                   <span className="valor comision">{formatCurrency(resumenCalculos.comisionCalculada)}</span>
                 </div>
                 <div className="formula-operator">=</div>
@@ -370,13 +531,17 @@ const CalculadorSueldoVendedor = () => {
                 <div className="desglose-item">
                   <span className="label">% Sueldo Base:</span>
                   <span className="valor">
-                    {((resumenCalculos.sueldoBase / resumenCalculos.sueldoMensual) * 100).toFixed(1)}%
+                    {resumenCalculos.sueldoMensual > 0
+                      ? ((resumenCalculos.sueldoBase / resumenCalculos.sueldoMensual) * 100).toFixed(1)
+                      : '0.0'}%
                   </span>
                 </div>
                 <div className="desglose-item">
                   <span className="label">% Comisión:</span>
                   <span className="valor comision">
-                    {((resumenCalculos.comisionCalculada / resumenCalculos.sueldoMensual) * 100).toFixed(1)}%
+                    {resumenCalculos.sueldoMensual > 0
+                      ? ((resumenCalculos.comisionCalculada / resumenCalculos.sueldoMensual) * 100).toFixed(1)
+                      : '0.0'}%
                   </span>
                 </div>
               </div>
@@ -392,9 +557,9 @@ const CalculadorSueldoVendedor = () => {
                     </span>
                   </div>
                   <div className="proyeccion-card">
-                    <span className="label">Ventas Anuales Estimadas:</span>
+                    <span className="label">Cobros Anuales Estimados:</span>
                     <span className="valor">
-                      {formatCurrency(resumenCalculos.ventasTotal * 12)}
+                      {formatCurrency(resumenCalculos.cobrosTotal * 12)}
                     </span>
                   </div>
                 </div>
@@ -409,32 +574,34 @@ const CalculadorSueldoVendedor = () => {
                   <table>
                     <thead>
                       <tr>
-                        <th>Fecha</th>
+                        <th>Fecha Factura</th>
                         <th>ID Factura</th>
                         <th>Cliente</th>
-                        <th>Total Venta</th>
+                        <th>Valores</th>
+                        <th>Fecha Último Abono</th>
                         <th>Comisión ({porcentajeComision}%)</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {datosVendedor.facturas.slice(0, 20).map((factura) => (
+                      {datosVendedor.facturas.map((factura) => (
                         <tr key={factura.id}>
-                          <td>{formatDate(factura.fecha)}</td>
-                          <td className="id-factura">{factura.id.substring(0, 8)}...</td>
-                          <td>{factura.cliente}</td>
-                          <td className="cantidad">{formatCurrency(factura.total)}</td>
-                          <td className="comision">
-                            {formatCurrency(factura.total * (porcentajeComision / 100))}
+                          <td data-label="Fecha factura">{formatDate(factura.fecha)}</td>
+                          <td data-label="ID factura" className="id-factura">{String(factura.id || '').slice(0, 8)}...</td>
+                          <td data-label="Cliente">{factura.cliente}</td>
+                          <td data-label="Valores" className="monto-stack">
+                            <div><span>Total:</span> {formatCurrency(factura.total)}</div>
+                            <div><span>Abono período:</span> {formatCurrency(datosVendedor.abonosPorFacturaPeriodo[factura.id] || 0)}</div>
+                            <div><span>Abono histórico:</span> {formatCurrency(datosVendedor.abonosPorFacturaHistorico[factura.id] || 0)}</div>
+                            <div><span>Saldo:</span> {formatCurrency(Math.max(0, (parseFloat(factura.total) || 0) - (datosVendedor.abonosPorFacturaHistorico[factura.id] || 0)))}</div>
+                          </td>
+                          <td data-label="Fecha último abono">{datosVendedor.ultimaFechaAbonoPorFactura[factura.id] ? formatDate(datosVendedor.ultimaFechaAbonoPorFactura[factura.id]) : 'Sin abono'}</td>
+                          <td data-label="Comisión" className="comision comision-col">
+                            {formatCurrency((datosVendedor.abonosPorFacturaPeriodo[factura.id] || 0) * (porcentajeComision / 100))}
                           </td>
                         </tr>
                       ))}
                     </tbody>
                   </table>
-                  {datosVendedor.facturas.length > 20 && (
-                    <p className="nota">
-                      Mostrando 20 de {datosVendedor.facturas.length} facturas
-                    </p>
-                  )}
                 </div>
               </div>
             )}

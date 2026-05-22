@@ -1,0 +1,391 @@
+.calculador-sueldo {
+  padding: 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.calculador-header h1 {
+  margin: 0;
+  font-size: 1.6rem;
+}
+
+.subtitle {
+  margin-top: 0.4rem;
+  color: #475569;
+}
+
+.error-message {
+  background: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  padding: 0.75rem;
+  margin: 0.75rem 0;
+}
+
+.calculador-content {
+  display: grid;
+  gap: 1rem;
+}
+
+.control-panel,
+.calculo-sueldo,
+.facturas-detalle,
+.sin-facturas,
+.sin-datos,
+.loading {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 1rem;
+}
+
+.control-group {
+  margin-bottom: 0.9rem;
+}
+
+.control-group label,
+.config-group label,
+.fecha-group label {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+select,
+input[type='number'],
+input[type='date'],
+input[type='text'] {
+  width: 100%;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 0.55rem 0.65rem;
+}
+
+.periodo-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.periodo-btn {
+  border: 1px solid #cbd5e1;
+  background: #f8fafc;
+  border-radius: 8px;
+  padding: 0.45rem 0.7rem;
+  cursor: pointer;
+  color: #334155;
+  font-weight: 600;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.periodo-btn:hover:not(:disabled) {
+  background: #eef2ff;
+  border-color: #93c5fd;
+}
+
+.periodo-btn.active {
+  background: #2563eb;
+  border-color: #2563eb;
+  color: #fff;
+}
+
+.periodo-btn:disabled {
+  opacity: 1;
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  color: #64748b;
+  cursor: not-allowed;
+  -webkit-text-fill-color: #64748b;
+}
+
+.periodo-btn.active:disabled {
+  background: #2563eb;
+  border-color: #2563eb;
+  color: #fff;
+  -webkit-text-fill-color: #fff;
+}
+
+select:disabled,
+input:disabled {
+  opacity: 1;
+  background: #f8fafc;
+  color: #334155;
+  -webkit-text-fill-color: #334155;
+}
+
+.fecha-inputs,
+.config-row,
+.proyeccion-grid,
+.campaign-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.sueldo-config h3,
+.calculo-sueldo h2,
+.proyecciones h3,
+.facturas-detalle h2 {
+  margin-top: 0;
+}
+
+.resumen-principal {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 0.75rem;
+}
+
+.resumen-card {
+  display: flex;
+  gap: 0.65rem;
+  align-items: center;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 0.75rem;
+}
+
+.highlight-card {
+  border-color: #93c5fd;
+  background: linear-gradient(180deg, #eff6ff 0%, #ffffff 100%);
+}
+
+.card-icon {
+  font-size: 1.2rem;
+}
+
+.label {
+  display: block;
+  font-size: 0.85rem;
+  color: #64748b;
+}
+
+.valor {
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.valor.comision {
+  color: #065f46;
+}
+
+.formula {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.formula-item,
+.formula-total {
+  border: 1px dashed #cbd5e1;
+  border-radius: 8px;
+  padding: 0.6rem;
+}
+
+.formula-operator {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #334155;
+}
+
+.desglose {
+  margin-top: 0.9rem;
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.desglose-item {
+  min-width: 190px;
+}
+
+.facturas-table {
+  overflow-x: auto;
+  position: relative;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  min-width: 920px;
+}
+
+th,
+td {
+  border-bottom: 1px solid #e2e8f0;
+  text-align: left;
+  padding: 0.45rem 0.5rem;
+  white-space: normal;
+  word-break: break-word;
+  vertical-align: top;
+}
+
+th {
+  font-size: 0.88rem;
+  line-height: 1.2;
+}
+
+td {
+  font-size: 0.94rem;
+}
+
+.id-factura {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, Courier New, monospace;
+}
+
+.facturas-table th:nth-child(1),
+.facturas-table td:nth-child(1) {
+  width: 130px;
+}
+
+.facturas-table th:nth-child(2),
+.facturas-table td:nth-child(2) {
+  width: 95px;
+}
+
+.facturas-table th:nth-child(3),
+.facturas-table td:nth-child(3) {
+  width: 250px;
+}
+
+.facturas-table th:nth-child(4),
+.facturas-table td:nth-child(4),
+.facturas-table th:nth-child(5),
+.facturas-table td:nth-child(5),
+.facturas-table th:nth-child(6),
+.facturas-table td:nth-child(6) {
+  width: 140px;
+}
+
+.cantidad,
+.comision {
+  text-align: right;
+}
+
+.facturas-table th:nth-child(6),
+.facturas-table td:nth-child(6) {
+  width: 150px;
+  text-align: right;
+}
+
+.facturas-table th:nth-child(6),
+.facturas-table td:nth-child(6) {
+  position: sticky;
+  right: 0;
+  background: #fff;
+  z-index: 2;
+  box-shadow: -8px 0 12px rgba(15, 23, 42, 0.06);
+}
+
+.facturas-table th:nth-child(6) {
+  z-index: 3;
+}
+
+.monto-stack {
+  font-size: 0.9rem;
+  line-height: 1.35;
+}
+
+.monto-stack div {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.monto-stack span {
+  color: #64748b;
+  font-weight: 600;
+}
+
+.nota {
+  margin-top: 0.6rem;
+  color: #64748b;
+  font-size: 0.85rem;
+}
+
+.spinner {
+  width: 22px;
+  height: 22px;
+  border: 3px solid #cbd5e1;
+  border-top-color: #2563eb;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 768px) {
+  .fecha-inputs,
+  .config-row,
+  .proyeccion-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .calculador-header h1 {
+    font-size: 1.3rem;
+  }
+
+  .facturas-table {
+    overflow-x: visible;
+  }
+
+  .facturas-table table,
+  .facturas-table thead,
+  .facturas-table tbody,
+  .facturas-table tr,
+  .facturas-table th,
+  .facturas-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .facturas-table thead {
+    display: none;
+  }
+
+  .facturas-table tr {
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+    margin-bottom: 0.75rem;
+    padding: 0.6rem;
+    background: #fff;
+  }
+
+  .facturas-table td {
+    border-bottom: 1px dashed #e2e8f0;
+    padding: 0.45rem 0;
+    text-align: left;
+    position: static;
+    box-shadow: none;
+    white-space: normal;
+  }
+
+  .facturas-table td:last-child {
+    border-bottom: none;
+  }
+
+  .facturas-table td::before {
+    content: attr(data-label);
+    display: block;
+    font-size: 0.78rem;
+    color: #64748b;
+    font-weight: 700;
+    margin-bottom: 0.2rem;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+
+  .monto-stack div {
+    justify-content: space-between;
+  }
+
+  .comision-col {
+    font-weight: 700;
+    color: #065f46;
+  }
+}

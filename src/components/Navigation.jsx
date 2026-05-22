@@ -86,6 +86,7 @@ const Navigation = () => {
             { path: '/auditoria-productos', label: 'Auditoría de Productos', icon: '📋' },
             { path: '/movimientos', label: 'Historial Movimientos', icon: '📊' },
             { path: '/dashboard-ventas', label: 'Dashboard Ventas', icon: '📈' },
+            { path: '/calculador-sueldo-vendedor', label: 'Calculador Sueldo Vendedor', icon: '💰' },
             { path: '/reporte-clientes-producto', label: 'Clientes por Producto', icon: '👥' },
             { path: '/reportes-cobros', label: 'Reportes de Cobros', icon: '💰' }
           ]
@@ -150,6 +151,7 @@ const Navigation = () => {
             { path: '/auditoria-productos', label: 'Auditoría de Productos', icon: '📋' },
             { path: '/movimientos', label: 'Historial Movimientos', icon: '📊' },
             { path: '/dashboard-ventas', label: 'Dashboard Ventas', icon: '📈' },
+            { path: '/calculador-sueldo-vendedor', label: 'Calculador Sueldo Vendedor', icon: '💰' },
             { path: '/rutas-cobro', label: 'Rutas de Cobro', icon: '🚗' }
           ]
         },
@@ -213,6 +215,7 @@ const Navigation = () => {
             { path: '/auditoria-productos', label: 'Auditoría de Productos', icon: '📋' },
             { path: '/movimientos', label: 'Historial Movimientos', icon: '📊' },
             { path: '/dashboard-ventas', label: 'Dashboard Ventas', icon: '📈' },
+            { path: '/calculador-sueldo-vendedor', label: 'Calculador Sueldo Vendedor', icon: '💰' },
             { path: '/reporte-clientes-producto', label: 'Clientes por Producto', icon: '👥' },
             { path: '/reportes-cobros', label: 'Reportes de Cobros', icon: '💰' }
           ]
@@ -230,6 +233,7 @@ const Navigation = () => {
         { path: '/campana-catalogo-api', label: 'Campaña Catálogo API', icon: '🧪', tipo: 'simple' },
         { path: '/catalogo-detalle', label: 'Catálogo Precios Clientes', icon: '🏷️', tipo: 'simple' },
         { path: '/reportes-cobros', label: 'Reportes de Cobros', icon: '📈', tipo: 'simple' },
+        { path: '/calculador-sueldo-vendedor', label: 'Calculador Sueldo Vendedor', icon: '💰', tipo: 'simple' },
         { path: '/gastos', label: 'Gestión de Gastos', icon: '💰', tipo: 'simple' },
         { path: '/gastos-empresa', label: 'Gastos de la Empresa', icon: '💸', tipo: 'simple' },
         { path: '/cuentas-por-pagar', label: 'Gastos Empresa (Proveedores)', icon: '📊', tipo: 'simple' },

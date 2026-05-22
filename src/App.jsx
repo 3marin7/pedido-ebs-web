@@ -27,6 +27,7 @@ import HistorialMovimientos from './components/HistorialMovimientos';
 import AuditoriaProductos from './components/AuditoriaProductos';
 import ReporteClientesPorProducto from './components/ReporteClientesPorProducto';
 import ConsultaCoopidrogas from './components/ConsultaCoopidrogas';
+import CalculadorSueldoVendedor from './components/CalculadorSueldoVendedor';
 
 // Contexto de autenticación
 const AuthContext = createContext();
@@ -320,6 +321,18 @@ function App() {
                 <>
                   <PageMeta title="Reportes de Cobros - EBS" description="Reportes y análisis de cobros" />
                   <ReportesCobros />
+                </>
+              </ProtectedRoute>
+            } />
+
+            <Route path="/calculador-sueldo-vendedor" element={
+              <ProtectedRoute requiredRoles={['superadmin', 'admin', 'contabilidad', 'vendedor']}>
+                <>
+                  <PageMeta
+                    title="Calculador de Sueldo Vendedor - EBS"
+                    description="Cálculo de sueldo base y comisión por ventas de vendedores"
+                  />
+                  <CalculadorSueldoVendedor />
                 </>
               </ProtectedRoute>
             } />
