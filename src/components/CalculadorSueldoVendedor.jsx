@@ -10,6 +10,31 @@ const chunkArray = (array, size = 200) => {
   return chunks;
 };
 
+const parseDateLocal = (value, endOfDay = false) => {
+  if (!value) return null;
+
+  if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    const [y, m, d] = value.split('-').map(Number);
+    return endOfDay
+      ? new Date(y, m - 1, d, 23, 59, 59, 999)
+      : new Date(y, m - 1, d, 0, 0, 0, 0);
+  }
+
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) return null;
+  return parsed;
+};
+
+const formatInputDate = (dateValue) => {
+  const date = parseDateLocal(dateValue);
+  if (!date) return '';
+
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
 const CalculadorSueldoVendedor = () => {
   const [vendedores, setVendedores] = useState([]);
   const [vendedorSeleccionado, setVendedorSeleccionado] = useState(null);
@@ -60,8 +85,8 @@ const CalculadorSueldoVendedor = () => {
     const primerDiaMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
     const ultimoDiaMes = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0);
 
-    setFechaInicio(primerDiaMes.toISOString().split('T')[0]);
-    setFechaFin(ultimoDiaMes.toISOString().split('T')[0]);
+    setFechaInicio(formatInputDate(primerDiaMes));
+    setFechaFin(formatInputDate(ultimoDiaMes));
   };
 
   const cargarVendedores = async () => {
@@ -96,9 +121,6 @@ const CalculadorSueldoVendedor = () => {
       setCargando(true);
       setError(null);
 
-      const inicio = new Date(fechaInicio);
-      const fin = new Date(fechaFin);
-      fin.setHours(23, 59, 59, 999);
       const inicioFecha = fechaInicio;
       const finFecha = fechaFin;
 
@@ -113,13 +135,6 @@ const CalculadorSueldoVendedor = () => {
 
       const facturasSistema = data || [];
       const facturaIdsSistema = facturasSistema.map(f => f.id).filter(Boolean);
-
-      // Para métricas de ventas mantenemos solo facturas emitidas en el período.
-      const facturasPeriodo = facturasSistema.filter((factura) => {
-        const fechaFactura = new Date(factura.fecha);
-        if (Number.isNaN(fechaFactura.getTime())) return false;
-        return fechaFactura >= inicio && fechaFactura <= fin;
-      });
 
       let abonosPeriodo = [];
       let abonosHistoricos = [];
@@ -159,21 +174,44 @@ const CalculadorSueldoVendedor = () => {
           return abonosData || [];
         });
 
-        abonosPeriodo.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
-        abonosHistoricos.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+        abonosPeriodo.sort((a, b) => {
+          const fechaA = parseDateLocal(a.fecha) || new Date(0);
+          const fechaB = parseDateLocal(b.fecha) || new Date(0);
+          return fechaB - fechaA;
+        });
+        abonosHistoricos.sort((a, b) => {
+          const fechaA = parseDateLocal(a.fecha) || new Date(0);
+          const fechaB = parseDateLocal(b.fecha) || new Date(0);
+          return fechaB - fechaA;
+        });
       }
 
-      // Mostrar facturas del período y también facturas antiguas con abonos en el período.
+      const ultimaFechaAbonoPorFactura = abonosPeriodo.reduce((acc, abono) => {
+        const facturaId = abono.factura_id;
+        if (!facturaId || !abono.fecha) return acc;
+
+        const fechaActual = parseDateLocal(abono.fecha);
+        if (!fechaActual) return acc;
+
+        const fechaGuardada = acc[facturaId] ? parseDateLocal(acc[facturaId]) : null;
+        if (!fechaGuardada || fechaActual > fechaGuardada) {
+          acc[facturaId] = abono.fecha;
+        }
+        return acc;
+      }, {});
+
+      // Mostrar unicamente facturas con abonos en el periodo, ordenadas por fecha de abono.
       const facturaIdsConAbonos = new Set(abonosPeriodo.map((abono) => String(abono.factura_id)));
-      const facturasConAbonosPeriodo = facturasSistema.filter((factura) =>
+      const facturasParaMostrar = facturasSistema.filter((factura) =>
         facturaIdsConAbonos.has(String(factura.id))
-      );
-      const facturasParaMostrar = Array.from(
-        new Map([...facturasPeriodo, ...facturasConAbonosPeriodo].map((factura) => [String(factura.id), factura])).values()
-      ).sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+      ).sort((a, b) => {
+        const fechaAbonoB = new Date(ultimaFechaAbonoPorFactura[b.id] || '1970-01-01');
+        const fechaAbonoA = new Date(ultimaFechaAbonoPorFactura[a.id] || '1970-01-01');
+        return fechaAbonoB - fechaAbonoA;
+      });
       
-      // Calcular totales
-      const ventasTotal = facturasPeriodo.reduce((sum, f) => sum + (parseFloat(f.total) || 0), 0);
+      // Calcular totales sobre facturas que si tuvieron abonos en el periodo.
+      const ventasTotal = facturasParaMostrar.reduce((sum, f) => sum + (parseFloat(f.total) || 0), 0);
       const cobrosTotal = abonosPeriodo.reduce((sum, a) => sum + (parseFloat(a.monto) || 0), 0);
       const abonosPorFacturaPeriodo = abonosPeriodo.reduce((acc, abono) => {
         const facturaId = abono.factura_id;
@@ -192,25 +230,11 @@ const CalculadorSueldoVendedor = () => {
         const abonoFactura = abonosPorFacturaHistorico[factura.id] || 0;
         return sum + Math.max(0, totalFactura - abonoFactura);
       }, 0);
-      const cantidadFacturas = facturasPeriodo.length;
+      const cantidadFacturas = facturasParaMostrar.length;
       const cantidadAbonos = abonosPeriodo.length;
-      const ticketPromedio = cantidadFacturas > 0 ? ventasTotal / cantidadFacturas : 0;
+      const ticketPromedio = cantidadAbonos > 0 ? cobrosTotal / cantidadAbonos : 0;
       const comision = cobrosTotal * (porcentajeComision / 100);
       const sueldoTotal = sueldoBase + comision;
-
-      const ultimaFechaAbonoPorFactura = abonosHistoricos.reduce((acc, abono) => {
-        const facturaId = abono.factura_id;
-        if (!facturaId || !abono.fecha) return acc;
-
-        const fechaActual = new Date(abono.fecha);
-        if (Number.isNaN(fechaActual.getTime())) return acc;
-
-        const fechaGuardada = acc[facturaId] ? new Date(acc[facturaId]) : null;
-        if (!fechaGuardada || fechaActual > fechaGuardada) {
-          acc[facturaId] = abono.fecha;
-        }
-        return acc;
-      }, {});
 
       setDatosVendedor({
         nombre: vendedorSeleccionado,
@@ -287,8 +311,8 @@ const CalculadorSueldoVendedor = () => {
   };
 
   const formatDate = (dateString) => {
-    const parsedDate = new Date(dateString);
-    if (Number.isNaN(parsedDate.getTime())) {
+    const parsedDate = parseDateLocal(dateString);
+    if (!parsedDate) {
       return 'Fecha no valida';
     }
 
@@ -449,14 +473,6 @@ const CalculadorSueldoVendedor = () => {
               </div>
 
               <div className="resumen-card">
-                <div className="card-icon">📈</div>
-                <div className="card-content">
-                  <span className="label">Total Facturado:</span>
-                  <span className="valor">{formatCurrency(resumenCalculos.ventasTotal)}</span>
-                </div>
-              </div>
-
-              <div className="resumen-card">
                 <div className="card-icon">💵</div>
                 <div className="card-content">
                   <span className="label">Total Cobrado (Abonos):</span>
@@ -473,14 +489,6 @@ const CalculadorSueldoVendedor = () => {
               </div>
 
               <div className="resumen-card">
-                <div className="card-icon">📋</div>
-                <div className="card-content">
-                  <span className="label">Cantidad de Facturas:</span>
-                  <span className="valor">{datosVendedor.cantidadFacturas}</span>
-                </div>
-              </div>
-
-              <div className="resumen-card">
                 <div className="card-icon">🧾</div>
                 <div className="card-content">
                   <span className="label">Cantidad de Abonos:</span>
@@ -488,18 +496,10 @@ const CalculadorSueldoVendedor = () => {
                 </div>
               </div>
 
-              <div className="resumen-card">
-                <div className="card-icon">⚖️</div>
-                <div className="card-content">
-                  <span className="label">Saldo Pendiente:</span>
-                  <span className="valor">{formatCurrency(resumenCalculos.saldoTotal)}</span>
-                </div>
-              </div>
-
               <div className="resumen-card average">
                 <div className="card-icon">🎯</div>
                 <div className="card-content">
-                  <span className="label">Ticket Promedio:</span>
+                  <span className="label">Promedio por Abono:</span>
                   <span className="valor">{formatCurrency(datosVendedor.ticketPromedio)}</span>
                 </div>
               </div>
@@ -574,18 +574,16 @@ const CalculadorSueldoVendedor = () => {
                   <table>
                     <thead>
                       <tr>
-                        <th>Fecha Factura</th>
                         <th>ID Factura</th>
                         <th>Cliente</th>
                         <th>Valores</th>
-                        <th>Fecha Último Abono</th>
+                        <th>Fecha Abono</th>
                         <th>Comisión ({porcentajeComision}%)</th>
                       </tr>
                     </thead>
                     <tbody>
                       {datosVendedor.facturas.map((factura) => (
                         <tr key={factura.id}>
-                          <td data-label="Fecha factura">{formatDate(factura.fecha)}</td>
                           <td data-label="ID factura" className="id-factura">{String(factura.id || '').slice(0, 8)}...</td>
                           <td data-label="Cliente">{factura.cliente}</td>
                           <td data-label="Valores" className="monto-stack">
@@ -594,7 +592,7 @@ const CalculadorSueldoVendedor = () => {
                             <div><span>Abono histórico:</span> {formatCurrency(datosVendedor.abonosPorFacturaHistorico[factura.id] || 0)}</div>
                             <div><span>Saldo:</span> {formatCurrency(Math.max(0, (parseFloat(factura.total) || 0) - (datosVendedor.abonosPorFacturaHistorico[factura.id] || 0)))}</div>
                           </td>
-                          <td data-label="Fecha último abono">{datosVendedor.ultimaFechaAbonoPorFactura[factura.id] ? formatDate(datosVendedor.ultimaFechaAbonoPorFactura[factura.id]) : 'Sin abono'}</td>
+                          <td data-label="Fecha abono">{datosVendedor.ultimaFechaAbonoPorFactura[factura.id] ? formatDate(datosVendedor.ultimaFechaAbonoPorFactura[factura.id]) : 'Sin abono'}</td>
                           <td data-label="Comisión" className="comision comision-col">
                             {formatCurrency((datosVendedor.abonosPorFacturaPeriodo[factura.id] || 0) * (porcentajeComision / 100))}
                           </td>
@@ -608,7 +606,7 @@ const CalculadorSueldoVendedor = () => {
 
             {datosVendedor.cantidadFacturas === 0 && (
               <div className="sin-facturas">
-                <p>📭 No hay facturas para este vendedor en el período seleccionado</p>
+                <p>📭 No hay facturas con abonos para este vendedor en el período seleccionado</p>
               </div>
             )}
           </div>

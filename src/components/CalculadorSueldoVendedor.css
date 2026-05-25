@@ -236,25 +236,23 @@ td {
 
 .facturas-table th:nth-child(1),
 .facturas-table td:nth-child(1) {
-  width: 130px;
+  width: 95px;
 }
 
 .facturas-table th:nth-child(2),
 .facturas-table td:nth-child(2) {
-  width: 95px;
+  width: 250px;
 }
 
 .facturas-table th:nth-child(3),
 .facturas-table td:nth-child(3) {
-  width: 250px;
+  width: 140px;
 }
 
 .facturas-table th:nth-child(4),
 .facturas-table td:nth-child(4),
 .facturas-table th:nth-child(5),
-.facturas-table td:nth-child(5),
-.facturas-table th:nth-child(6),
-.facturas-table td:nth-child(6) {
+.facturas-table td:nth-child(5) {
   width: 140px;
 }
 
@@ -263,14 +261,14 @@ td {
   text-align: right;
 }
 
-.facturas-table th:nth-child(6),
-.facturas-table td:nth-child(6) {
+.facturas-table th:nth-child(5),
+.facturas-table td:nth-child(5) {
   width: 150px;
   text-align: right;
 }
 
-.facturas-table th:nth-child(6),
-.facturas-table td:nth-child(6) {
+.facturas-table th:nth-child(5),
+.facturas-table td:nth-child(5) {
   position: sticky;
   right: 0;
   background: #fff;
@@ -278,7 +276,7 @@ td {
   box-shadow: -8px 0 12px rgba(15, 23, 42, 0.06);
 }
 
-.facturas-table th:nth-child(6) {
+.facturas-table th:nth-child(5) {
   z-index: 3;
 }
 

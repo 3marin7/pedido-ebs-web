@@ -102,6 +102,53 @@
   font-size: 0.95rem;
 }
 
+.resumen-deuda-busqueda {
+  margin-bottom: 14px;
+  padding: 12px;
+  border: 1px solid #dbeafe;
+  border-radius: 8px;
+  background: linear-gradient(180deg, #f8fbff 0%, #eef6ff 100%);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+}
+
+.deuda-item {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.deuda-item span {
+  color: #64748b;
+  font-size: 0.82rem;
+}
+
+.deuda-item strong {
+  color: #1e293b;
+  font-size: 1rem;
+}
+
+.deuda-item.deuda-principal {
+  border-left: 4px solid #ef4444;
+}
+
+.deuda-item.deuda-principal strong {
+  color: #b91c1c;
+  font-size: 1.15rem;
+}
+
+.deuda-clientes {
+  grid-column: 1 / -1;
+  color: #334155;
+  font-size: 0.9rem;
+  padding: 4px 2px 0;
+}
+
 .filtros-avanzados {
   display: flex;
   align-items: center;

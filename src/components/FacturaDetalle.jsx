@@ -4,6 +4,33 @@ import { supabase } from './supabaseClient';
 import { useAuth } from '../App';
 import './FacturaDetalle.css';
 
+const parseDateLocal = (valor) => {
+  if (!valor) return null;
+
+  if (typeof valor === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(valor)) {
+    const [y, m, d] = valor.split('-').map(Number);
+    return new Date(y, m - 1, d, 0, 0, 0, 0);
+  }
+
+  const fecha = new Date(valor);
+  if (Number.isNaN(fecha.getTime())) return null;
+  return fecha;
+};
+
+const getTodayLocalISO = () => {
+  const hoy = new Date();
+  const y = hoy.getFullYear();
+  const m = String(hoy.getMonth() + 1).padStart(2, '0');
+  const d = String(hoy.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+};
+
+const formatDateLocal = (valor, locale = 'es-ES', options = {}) => {
+  const fecha = parseDateLocal(valor);
+  if (!fecha) return 'Fecha invalida';
+  return fecha.toLocaleDateString(locale, options);
+};
+
 const FacturaDetalle = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -36,7 +63,7 @@ const FacturaDetalle = () => {
     }, [factura]);
   const [nuevoAbono, setNuevoAbono] = useState({
     monto: '',
-    fecha: new Date().toISOString().split('T')[0],
+    fecha: getTodayLocalISO(),
     metodo: 'Efectivo',
     nota: ''
   });
@@ -203,12 +230,12 @@ const FacturaDetalle = () => {
     const datos = `
       Cuenta de Cobro #${factura.id}
       Cliente: ${factura.cliente} ${codigoClienteResuelto ? `[CODIGO: ${codigoClienteResuelto}]` : ''}
-      Fecha: ${new Date(factura.fecha).toLocaleDateString()}
+      Fecha: ${formatDateLocal(factura.fecha)}
       Total: $${factura.total.toFixed(2)}
       Total en letras: ${convertirNumeroALetras(Math.round(factura.total))}
       Saldo Pendiente: $${(factura.total - calcularTotalAbonado()).toFixed(2)}
       Productos: ${factura.productos.map(p => `\n  - ${p.nombre} (${p.cantidad} x $${p.precio.toFixed(2)})`).join('')}
-      Abonos: ${abonos.length > 0 ? abonos.map(a => `\n  - $${a.monto.toFixed(2)} (${new Date(a.fecha).toLocaleDateString()})`).join('') : ' Ninguno'}
+      Abonos: ${abonos.length > 0 ? abonos.map(a => `\n  - $${a.monto.toFixed(2)} (${formatDateLocal(a.fecha)})`).join('') : ' Ninguno'}
     `;
     navigator.clipboard.writeText(datos);
     setCopiado(true);
@@ -822,7 +849,7 @@ const FacturaDetalle = () => {
       const abonoData = {
         factura_id: Number(id),
         monto: nuevoAbono.monto,
-        fecha: nuevoAbono.fecha || new Date().toISOString().split('T')[0],
+        fecha: nuevoAbono.fecha || getTodayLocalISO(),
         metodo: nuevoAbono.metodo,
         nota: nuevoAbono.nota || null
       };
@@ -849,7 +876,7 @@ const FacturaDetalle = () => {
       mensaje += `Cliente: ${factura.cliente}\n`;
       mensaje += `Total Factura: ${formatearMoneda(factura.total)}\n\n`;
       mensaje += `Abono Agregado: ${formatearMoneda(data[0].monto)}\n`;
-      mensaje += `Fecha Abono: ${new Date(data[0].fecha).toLocaleDateString('es-CO')}\n`;
+      mensaje += `Fecha Abono: ${formatDateLocal(data[0].fecha, 'es-CO')}\n`;
       mensaje += `Método: ${data[0].metodo}\n`;
       if (data[0].nota) {
         mensaje += `Nota: ${data[0].nota}\n`;
@@ -876,7 +903,7 @@ const FacturaDetalle = () => {
       // Resetear formulario
       setNuevoAbono({
         monto: '',
-        fecha: new Date().toISOString().split('T')[0],
+        fecha: getTodayLocalISO(),
         metodo: 'Efectivo',
         nota: ''
       });
@@ -927,7 +954,7 @@ const FacturaDetalle = () => {
       setEditandoAbono(null);
       setNuevoAbono({
         monto: '',
-        fecha: new Date().toISOString().split('T')[0],
+        fecha: getTodayLocalISO(),
         metodo: 'Efectivo',
         nota: ''
       });
@@ -987,7 +1014,7 @@ const FacturaDetalle = () => {
     setEditandoAbono(null);
     setNuevoAbono({
       monto: '',
-      fecha: new Date().toISOString().split('T')[0],
+      fecha: getTodayLocalISO(),
       metodo: 'Efectivo',
       nota: ''
     });
@@ -1009,7 +1036,7 @@ const FacturaDetalle = () => {
   };
 
   const formatearFecha = (fecha) => {
-    return new Date(fecha).toLocaleDateString('es-ES', {
+    return formatDateLocal(fecha, 'es-ES', {
       year: 'numeric',
       month: 'long',
       day: 'numeric'
@@ -1076,7 +1103,7 @@ const FacturaDetalle = () => {
         <div className="header-info">
           <h1>Cuenta de Cobro #{factura.id.toString().padStart(6, '0')}</h1>
           <p className="fecha-emision">
-            Emitida el {new Date(factura.fecha).toLocaleDateString('es-ES', { 
+            Emitida el {formatDateLocal(factura.fecha, 'es-ES', { 
               weekday: 'long', 
               year: 'numeric', 
               month: 'long', 

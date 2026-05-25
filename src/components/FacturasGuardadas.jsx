@@ -190,6 +190,48 @@ const FacturasGuardadas = () => {
     abonos
   );
 
+  const terminoBusqueda = busqueda.trim().toLowerCase();
+
+  const resumenDeudaBusqueda = (() => {
+    if (!terminoBusqueda) return null;
+
+    const facturasConSaldo = calcularSaldos(facturas, abonos);
+    const facturasCoincidentes = facturasConSaldo.filter((factura) => {
+      const codigoClienteFactura = getCodigoCliente(factura).toLowerCase();
+      const clienteFactura = (factura.cliente || '').toLowerCase();
+
+      const coincideClienteOCodigo =
+        clienteFactura.includes(terminoBusqueda) ||
+        (codigoClienteFactura && codigoClienteFactura === terminoBusqueda) ||
+        codigoClienteFactura.includes(terminoBusqueda);
+
+      const coincideVendedor = busquedaVendedor === '' || factura.vendedor === busquedaVendedor;
+      const coincideCentroComercial =
+        busquedaCentroComercial === '' || factura.centro_comercial === busquedaCentroComercial;
+
+      return coincideClienteOCodigo && coincideVendedor && coincideCentroComercial;
+    });
+
+    if (facturasCoincidentes.length === 0) return null;
+
+    const deudaTotal = facturasCoincidentes.reduce(
+      (sum, factura) => sum + (factura.saldo > SALDO_EPSILON ? factura.saldo : 0),
+      0
+    );
+
+    const totalFacturado = facturasCoincidentes.reduce((sum, factura) => sum + (factura.total || 0), 0);
+    const totalAbonado = facturasCoincidentes.reduce((sum, factura) => sum + (factura.totalAbonado || 0), 0);
+    const clientes = [...new Set(facturasCoincidentes.map((f) => f.cliente).filter(Boolean))];
+
+    return {
+      deudaTotal,
+      totalFacturado,
+      totalAbonado,
+      cantidadFacturas: facturasCoincidentes.length,
+      clientes,
+    };
+  })();
+
   // Calcular estadísticas - CORREGIDO: Solo sumar pendientes y parciales
   const calcularEstadisticas = () => {
     const facturasConSaldo = calcularSaldos(facturas, abonos);
@@ -844,6 +886,30 @@ const FacturasGuardadas = () => {
             disabled={importando || cargando}
           />
         </div>
+
+        {resumenDeudaBusqueda && (
+          <div className="resumen-deuda-busqueda">
+            <div className="deuda-item deuda-principal">
+              <span>Deuda total del cliente buscado</span>
+              <strong>{formatMoneda(resumenDeudaBusqueda.deudaTotal)}</strong>
+            </div>
+            <div className="deuda-item">
+              <span>Facturas coincidentes</span>
+              <strong>{resumenDeudaBusqueda.cantidadFacturas}</strong>
+            </div>
+            <div className="deuda-item">
+              <span>Total facturado</span>
+              <strong>{formatMoneda(resumenDeudaBusqueda.totalFacturado)}</strong>
+            </div>
+            <div className="deuda-item">
+              <span>Total abonado</span>
+              <strong>{formatMoneda(resumenDeudaBusqueda.totalAbonado)}</strong>
+            </div>
+            <div className="deuda-clientes">
+              Coincide con: {resumenDeudaBusqueda.clientes.join(', ')}
+            </div>
+          </div>
+        )}
         
         <div className="filtros-avanzados">
           <select 

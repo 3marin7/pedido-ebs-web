@@ -3,6 +3,54 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from './supabaseClient';
 import './ReportesCobros.css';
 
+const parseDateLocal = (valor) => {
+  if (!valor) return null;
+
+  if (typeof valor === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(valor)) {
+    const [y, m, d] = valor.split('-').map(Number);
+    return new Date(y, m - 1, d, 0, 0, 0, 0);
+  }
+
+  const fecha = new Date(valor);
+  if (Number.isNaN(fecha.getTime())) return null;
+  return fecha;
+};
+
+const formatInputDate = (valor) => {
+  const fecha = parseDateLocal(valor);
+  if (!fecha) return '';
+
+  const anio = fecha.getFullYear();
+  const mes = String(fecha.getMonth() + 1).padStart(2, '0');
+  const dia = String(fecha.getDate()).padStart(2, '0');
+  return `${anio}-${mes}-${dia}`;
+};
+
+const PAGE_SIZE = 1000;
+
+const fetchAllRows = async (table, orderColumn = 'id', ascending = true) => {
+  let from = 0;
+  const allRows = [];
+
+  while (true) {
+    const { data, error } = await supabase
+      .from(table)
+      .select('*')
+      .order(orderColumn, { ascending })
+      .range(from, from + PAGE_SIZE - 1);
+
+    if (error) throw error;
+
+    const rows = data || [];
+    allRows.push(...rows);
+
+    if (rows.length < PAGE_SIZE) break;
+    from += PAGE_SIZE;
+  }
+
+  return allRows;
+};
+
 const ReportesCobros = () => {
   const navigate = useNavigate();
   const [cargando, setCargando] = useState(true);
@@ -23,6 +71,22 @@ const ReportesCobros = () => {
   const [clienteSeleccionado, setClienteSeleccionado] = useState(null);
   const [clientesSugeridos, setClientesSugeridos] = useState([]);
   const [resumenCliente, setResumenCliente] = useState(null);
+
+  const normalizarFechaISO = (valor) => {
+    if (!valor) return '';
+
+    if (typeof valor === 'string' && /^\d{4}-\d{2}-\d{2}/.test(valor)) {
+      return valor.slice(0, 10);
+    }
+
+    const fecha = parseDateLocal(valor);
+    if (!fecha) return '';
+
+    const anio = fecha.getFullYear();
+    const mes = String(fecha.getMonth() + 1).padStart(2, '0');
+    const dia = String(fecha.getDate()).padStart(2, '0');
+    return `${anio}-${mes}-${dia}`;
+  };
 
   // Obtener vendedores únicos de las facturas
   const obtenerVendedores = () => {
@@ -76,8 +140,8 @@ const ReportesCobros = () => {
       totalAbonos: totalAbonos,
       cantidadAbonos: abonosCliente.length,
       saldoDeuda: saldoDeuda,
-      facturasCliente: facturasCliente.sort((a, b) => new Date(b.fecha) - new Date(a.fecha)),
-      abonosCliente: abonosCliente.sort((a, b) => new Date(b.fecha) - new Date(a.fecha))
+      facturasCliente: facturasCliente.sort((a, b) => (parseDateLocal(b.fecha) || new Date(0)) - (parseDateLocal(a.fecha) || new Date(0))),
+      abonosCliente: abonosCliente.sort((a, b) => (parseDateLocal(b.fecha) || new Date(0)) - (parseDateLocal(a.fecha) || new Date(0)))
     });
   };
 
@@ -94,26 +158,20 @@ const ReportesCobros = () => {
       try {
         setCargando(true);
         
-        // Cargar facturas desde Supabase
-        const { data: facturasData, error: facturasError } = await supabase
-          .from('facturas')
-          .select('*')
-          .order('fecha', { ascending: false });
-        
-        if (facturasError) throw facturasError;
+        // Cargar todas las facturas (sin limite de 1000 filas)
+        const facturasData = await fetchAllRows('facturas', 'fecha', false);
         setFacturas(facturasData || []);
+
+        const facturasPorId = new Map(
+          (facturasData || []).map((factura) => [String(factura.id), factura])
+        );
         
-        // Cargar abonos desde Supabase
-        const { data: abonosData, error: abonosError } = await supabase
-          .from('abonos')
-          .select('*')
-          .order('fecha', { ascending: false });
-        
-        if (abonosError) throw abonosError;
+        // Cargar todos los abonos (sin limite de 1000 filas)
+        const abonosData = await fetchAllRows('abonos', 'fecha', false);
         
         // Enriquecer abonos con información de la factura
         const abonosEnriquecidos = (abonosData || []).map(abono => {
-          const facturaRelacionada = facturasData.find(f => f.id === abono.factura_id);
+          const facturaRelacionada = facturasPorId.get(String(abono.factura_id));
           return {
             ...abono,
             vendedor: facturaRelacionada?.vendedor || 'Sin asignar',
@@ -124,13 +182,13 @@ const ReportesCobros = () => {
         
         setAbonos(abonosEnriquecidos);
         
-        // Establecer fechas por defecto (últimos 30 días)
+        // Establecer fechas por defecto (mes actual), igual que el calculador.
         const hoy = new Date();
-        const hace30Dias = new Date();
-        hace30Dias.setDate(hoy.getDate() - 30);
-        
-        setFechaInicio(hace30Dias.toISOString().split('T')[0]);
-        setFechaFin(hoy.toISOString().split('T')[0]);
+        const primerDiaMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
+        const ultimoDiaMes = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0);
+
+        setFechaInicio(formatInputDate(primerDiaMes));
+        setFechaFin(formatInputDate(ultimoDiaMes));
       } catch (error) {
         console.error("Error cargando datos desde Supabase:", error);
         alert('Error al cargar datos desde la base de datos');
@@ -155,17 +213,17 @@ const ReportesCobros = () => {
     
     // Filtrar por rango de fechas
     abonosFiltrados = abonosFiltrados.filter(abono => {
-      const fechaAbono = new Date(abono.fecha);
-      const fechaInicioObj = fechaInicio ? new Date(fechaInicio) : null;
-      const fechaFinObj = fechaFin ? new Date(fechaFin) : null;
-      
-      return (!fechaInicioObj || fechaAbono >= fechaInicioObj) && 
-             (!fechaFinObj || fechaAbono <= fechaFinObj);
+      const fechaAbono = normalizarFechaISO(abono.fecha);
+      if (!fechaAbono) return false;
+
+      return (!fechaInicio || fechaAbono >= fechaInicio) &&
+             (!fechaFin || fechaAbono <= fechaFin);
     });
     
     // Abonos por día
     const abonosPorDia = abonosFiltrados.reduce((acum, abono) => {
-      const fecha = abono.fecha;
+      const fecha = normalizarFechaISO(abono.fecha);
+      if (!fecha) return acum;
       if (!acum[fecha]) {
         acum[fecha] = {
           fecha,
@@ -182,7 +240,9 @@ const ReportesCobros = () => {
     
     // Abonos por mes
     const abonosPorMes = abonosFiltrados.reduce((acum, abono) => {
-      const fecha = new Date(abono.fecha);
+      const fechaIso = normalizarFechaISO(abono.fecha);
+      if (!fechaIso) return acum;
+      const fecha = new Date(`${fechaIso}T00:00:00`);
       const mes = `${fecha.getFullYear()}-${(fecha.getMonth() + 1).toString().padStart(2, '0')}`;
       const mesNombre = fecha.toLocaleString('es-ES', { month: 'long', year: 'numeric' });
       
@@ -195,7 +255,7 @@ const ReportesCobros = () => {
           abonos: []
         };
       }
-      acum[mes].total += parseFloat(abono.monto);
+      acum[mes].total += parseFloat(abono.monto) || 0;
       acum[mes].cantidad += 1;
       acum[mes].abonos.push(abono);
       return acum;
@@ -212,7 +272,7 @@ const ReportesCobros = () => {
           abonos: []
         };
       }
-      acum[vendedor].total += parseFloat(abono.monto);
+      acum[vendedor].total += parseFloat(abono.monto) || 0;
       acum[vendedor].cantidad += 1;
       acum[vendedor].abonos.push(abono);
       return acum;
@@ -220,17 +280,19 @@ const ReportesCobros = () => {
     
     // Abonos por vendedor y día
     const abonosPorVendedorDia = abonosFiltrados.reduce((acum, abono) => {
-      const key = `${abono.vendedor}-${abono.fecha}`;
+      const fechaIso = normalizarFechaISO(abono.fecha);
+      if (!fechaIso) return acum;
+      const key = `${abono.vendedor}-${fechaIso}`;
       if (!acum[key]) {
         acum[key] = {
           vendedor: abono.vendedor,
-          fecha: abono.fecha,
+          fecha: fechaIso,
           total: 0,
           cantidad: 0,
           abonos: []
         };
       }
-      acum[key].total += parseFloat(abono.monto);
+      acum[key].total += parseFloat(abono.monto) || 0;
       acum[key].cantidad += 1;
       acum[key].abonos.push(abono);
       return acum;
@@ -238,7 +300,9 @@ const ReportesCobros = () => {
     
     // Abonos por vendedor y mes
     const abonosPorVendedorMes = abonosFiltrados.reduce((acum, abono) => {
-      const fecha = new Date(abono.fecha);
+      const fechaIso = normalizarFechaISO(abono.fecha);
+      if (!fechaIso) return acum;
+      const fecha = new Date(`${fechaIso}T00:00:00`);
       const mes = `${fecha.getFullYear()}-${(fecha.getMonth() + 1).toString().padStart(2, '0')}`;
       const mesNombre = fecha.toLocaleString('es-ES', { month: 'long', year: 'numeric' });
       const key = `${abono.vendedor}-${mes}`;
@@ -253,7 +317,7 @@ const ReportesCobros = () => {
           abonos: []
         };
       }
-      acum[key].total += parseFloat(abono.monto);
+      acum[key].total += parseFloat(abono.monto) || 0;
       acum[key].cantidad += 1;
       acum[key].abonos.push(abono);
       return acum;
@@ -270,7 +334,11 @@ const ReportesCobros = () => {
     });
     
     return {
-      porDia: Object.values(abonosPorDia).sort((a, b) => new Date(a.fecha) - new Date(b.fecha)),
+      porDia: Object.values(abonosPorDia).sort((a, b) => {
+        const fechaA = parseDateLocal(a.fecha) || new Date(0);
+        const fechaB = parseDateLocal(b.fecha) || new Date(0);
+        return fechaA - fechaB;
+      }),
       porMes: Object.values(abonosPorMes).sort((a, b) => a.mes.localeCompare(b.mes)),
       porVendedor: vendedoresConTotales.sort((a, b) => b.total - a.total),
       porVendedorDia: Object.values(abonosPorVendedorDia),
@@ -285,12 +353,12 @@ const ReportesCobros = () => {
             abonos: []
           };
         }
-        acum[cliente].total += parseFloat(abono.monto);
+        acum[cliente].total += parseFloat(abono.monto) || 0;
         acum[cliente].cantidad += 1;
         acum[cliente].abonos.push(abono);
         return acum;
       }, {}),
-      totalGeneral: abonosFiltrados.reduce((sum, abono) => sum + parseFloat(abono.monto), 0),
+      totalGeneral: abonosFiltrados.reduce((sum, abono) => sum + (parseFloat(abono.monto) || 0), 0),
       cantidadGeneral: abonosFiltrados.length,
       abonosFiltrados
     };
@@ -310,7 +378,9 @@ const ReportesCobros = () => {
   // Formatear fecha
   const formatFechaLegible = (fecha) => {
     const opciones = { year: 'numeric', month: 'short', day: 'numeric' };
-    return new Date(fecha).toLocaleDateString('es-ES', opciones);
+    const fechaLocal = parseDateLocal(fecha);
+    if (!fechaLocal) return 'Fecha invalida';
+    return fechaLocal.toLocaleDateString('es-ES', opciones);
   };
 
   // Calcular porcentaje para gráfico circular
