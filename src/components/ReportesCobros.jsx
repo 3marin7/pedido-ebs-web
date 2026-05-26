@@ -63,7 +63,7 @@ const ReportesCobros = () => {
   const [mostrarModalImportar, setMostrarModalImportar] = useState(false);
   const [archivoCSV, setArchivoCSV] = useState(null);
   const [errorImportacion, setErrorImportacion] = useState('');
-  const [vistaActual, setVistaActual] = useState('resumen'); // 'resumen', 'diario', 'mensual', 'buscar-cliente'
+  const [vistaActual, setVistaActual] = useState('resumen'); // 'resumen', 'diario', 'mensual', 'por-vendedor', 'buscar-cliente'
   const [periodoActual, setPeriodoActual] = useState(''); // Para vista detallada
   
   // Estados para búsqueda de cliente
@@ -984,6 +984,174 @@ const ReportesCobros = () => {
     );
   };
 
+  const renderVistaPorVendedor = () => {
+    const topVendedores = reportes.porVendedor.slice(0, 8);
+    const maxTotalVendedor = topVendedores.length > 0
+      ? Math.max(...topVendedores.map((item) => item.total || 0))
+      : 0;
+
+    const porVendedorDiaOrdenado = [...reportes.porVendedorDia].sort((a, b) => {
+      if (a.vendedor !== b.vendedor) return a.vendedor.localeCompare(b.vendedor);
+      return (parseDateLocal(b.fecha) || new Date(0)) - (parseDateLocal(a.fecha) || new Date(0));
+    });
+
+    const porVendedorMesOrdenado = [...reportes.porVendedorMes].sort((a, b) => {
+      if (a.vendedor !== b.vendedor) return a.vendedor.localeCompare(b.vendedor);
+      return b.mes.localeCompare(a.mes);
+    });
+
+    return (
+      <div className="vista-detallada">
+        <div className="vista-header">
+          <button
+            className="button secondary-button"
+            onClick={() => setVistaActual('resumen')}
+          >
+            <i className="fas fa-arrow-left"></i> Volver al resumen
+          </button>
+          <h2>Cobros por vendedor</h2>
+          <div className="resumen-mes">
+            <span>Vendedores: {reportes.porVendedor.length}</span>
+            <span>Total: {formatMoneda(reportes.totalGeneral)}</span>
+          </div>
+        </div>
+
+        <div className="tabla-container">
+          <h3>Mini gráfico de cobros por vendedor</h3>
+          <div className="mini-chart-vendedores">
+            {topVendedores.map((item, index) => {
+              const porcentajeRelativo = maxTotalVendedor > 0
+                ? ((item.total / maxTotalVendedor) * 100).toFixed(1)
+                : '0';
+
+              return (
+                <div className="mini-chart-row" key={`${item.vendedor}-mini-${index}`}>
+                  <div className="mini-chart-label">
+                    <span
+                      className="vendedor-tag"
+                      style={{ backgroundColor: obtenerColorVendedor(item.vendedor) }}
+                    >
+                      {item.vendedor}
+                    </span>
+                  </div>
+                  <div className="mini-chart-bar-track">
+                    <div
+                      className="mini-chart-bar-fill"
+                      style={{
+                        width: `${porcentajeRelativo}%`,
+                        backgroundColor: obtenerColorVendedor(item.vendedor)
+                      }}
+                    ></div>
+                  </div>
+                  <div className="mini-chart-value">{formatMoneda(item.total)}</div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        <div className="tabla-container" style={{ marginTop: '20px' }}>
+          <h3>Consolidado por vendedor</h3>
+          <table className="tabla-abonos">
+            <thead>
+              <tr>
+                <th>Vendedor</th>
+                <th>Cantidad</th>
+                <th>Total</th>
+                <th>Promedio</th>
+                <th>% del total</th>
+              </tr>
+            </thead>
+            <tbody>
+              {reportes.porVendedor.map((item, index) => (
+                <tr key={`${item.vendedor}-${index}`}>
+                  <td>
+                    <span
+                      className="vendedor-tag"
+                      style={{ backgroundColor: obtenerColorVendedor(item.vendedor) }}
+                    >
+                      {item.vendedor}
+                    </span>
+                  </td>
+                  <td>{item.cantidad}</td>
+                  <td className="total">{formatMoneda(item.total)}</td>
+                  <td>{item.cantidad > 0 ? formatMoneda(item.total / item.cantidad) : formatMoneda(0)}</td>
+                  <td>{calcularPorcentaje(item.total)}%</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <div className="tabla-container" style={{ marginTop: '20px' }}>
+          <h3>Detalle diario por vendedor</h3>
+          <table className="tabla-abonos">
+            <thead>
+              <tr>
+                <th>Vendedor</th>
+                <th>Fecha</th>
+                <th>Cantidad</th>
+                <th>Total</th>
+                <th>Promedio</th>
+              </tr>
+            </thead>
+            <tbody>
+              {porVendedorDiaOrdenado.map((item, index) => (
+                <tr key={`${item.vendedor}-${item.fecha}-${index}`}>
+                  <td>
+                    <span
+                      className="vendedor-tag"
+                      style={{ backgroundColor: obtenerColorVendedor(item.vendedor) }}
+                    >
+                      {item.vendedor}
+                    </span>
+                  </td>
+                  <td>{formatFechaLegible(item.fecha)}</td>
+                  <td>{item.cantidad}</td>
+                  <td className="total">{formatMoneda(item.total)}</td>
+                  <td>{item.cantidad > 0 ? formatMoneda(item.total / item.cantidad) : formatMoneda(0)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <div className="tabla-container" style={{ marginTop: '20px' }}>
+          <h3>Detalle mensual por vendedor</h3>
+          <table className="tabla-abonos">
+            <thead>
+              <tr>
+                <th>Vendedor</th>
+                <th>Mes</th>
+                <th>Cantidad</th>
+                <th>Total</th>
+                <th>Promedio</th>
+              </tr>
+            </thead>
+            <tbody>
+              {porVendedorMesOrdenado.map((item, index) => (
+                <tr key={`${item.vendedor}-${item.mes}-${index}`}>
+                  <td>
+                    <span
+                      className="vendedor-tag"
+                      style={{ backgroundColor: obtenerColorVendedor(item.vendedor) }}
+                    >
+                      {item.vendedor}
+                    </span>
+                  </td>
+                  <td>{item.mesNombre}</td>
+                  <td>{item.cantidad}</td>
+                  <td className="total">{formatMoneda(item.total)}</td>
+                  <td>{item.cantidad > 0 ? formatMoneda(item.total / item.cantidad) : formatMoneda(0)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="reportes-container">
       <header className="reportes-header">
@@ -992,7 +1160,8 @@ const ReportesCobros = () => {
           {vistaActual !== 'resumen' && (
             <small className="subtitle">
               {vistaActual === 'diario' ? `Vista diaria - ${formatFechaLegible(periodoActual)}` : 
-               vistaActual === 'mensual' ? `Vista mensual - ${reportes.porMes.find(m => m.mes === periodoActual)?.mesNombre}` : ''}
+               vistaActual === 'mensual' ? `Vista mensual - ${reportes.porMes.find(m => m.mes === periodoActual)?.mesNombre}` :
+               vistaActual === 'por-vendedor' ? 'Vista por vendedor' : ''}
             </small>
           )}
         </h1>
@@ -1011,6 +1180,13 @@ const ReportesCobros = () => {
                 onClick={() => setVistaActual('buscar-cliente')}
               >
                 <i className="fas fa-search"></i> Buscar Cliente
+              </button>
+
+              <button
+                className="button info-button"
+                onClick={() => setVistaActual('por-vendedor')}
+              >
+                <i className="fas fa-user-tie"></i> Cobros por Vendedor
               </button>
               
               {/* Menú de exportación */}
@@ -1074,7 +1250,7 @@ const ReportesCobros = () => {
       </header>
 
       {/* Filtros (solo en vista resumen) */}
-      {vistaActual === 'resumen' && (
+      {(vistaActual === 'resumen' || vistaActual === 'por-vendedor') && (
         <div className="filtros-container">
           <div className="filtro-row">
             <div className="filtro-group">
@@ -1160,6 +1336,7 @@ const ReportesCobros = () => {
       {vistaActual === 'resumen' && renderResumenGeneral()}
       {vistaActual === 'diario' && renderVistaDiaria()}
       {vistaActual === 'mensual' && renderVistaMensual()}
+      {vistaActual === 'por-vendedor' && renderVistaPorVendedor()}
 
       {/* Vista de búsqueda de cliente */}
       {vistaActual === 'buscar-cliente' && (

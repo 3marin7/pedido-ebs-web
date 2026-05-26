@@ -573,6 +573,43 @@
   background: #bdc3c7;
   cursor: not-allowed;
 }
+
+.tabla-cobros-vendedor-wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.tabla-cobros-vendedor {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+}
+
+.tabla-cobros-vendedor thead {
+  background: #f1f5f9;
+}
+
+.tabla-cobros-vendedor th,
+.tabla-cobros-vendedor td {
+  padding: 12px;
+  border-bottom: 1px solid #e2e8f0;
+  text-align: left;
+}
+
+.tabla-cobros-vendedor th {
+  color: #334155;
+  font-weight: 700;
+}
+
+.tabla-cobros-vendedor tbody tr:hover {
+  background: #f8fafc;
+}
+
+.tabla-cobros-vendedor td:nth-child(2),
+.tabla-cobros-vendedor td:nth-child(3),
+.tabla-cobros-vendedor td:nth-child(4) {
+  text-align: right;
+}
 /* Estilos para estados de pago */
 .estado {
   display: inline-block;

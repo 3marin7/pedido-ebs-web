@@ -3,6 +3,126 @@ import { supabase } from '../lib/supabase';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell, Legend, AreaChart, Area } from 'recharts';
 import './DashboardVentas.css';
 
+const PAGE_SIZE = 1000;
+
+const parseDateLocal = (value) => {
+  if (!value) return null;
+
+  if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    const [y, m, d] = value.split('-').map(Number);
+    return new Date(y, m - 1, d, 0, 0, 0, 0);
+  }
+
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) return null;
+  return parsed;
+};
+
+const formatDateInputLocal = (value) => {
+  const date = parseDateLocal(value);
+  if (!date) return '';
+
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
+const todayLocalISO = () => formatDateInputLocal(new Date());
+
+const addDaysLocalISO = (days) => {
+  const date = new Date();
+  date.setDate(date.getDate() + days);
+  return formatDateInputLocal(date);
+};
+
+const formatDateLocal = (value, locale = 'es-CO', options = { year: 'numeric', month: 'short', day: 'numeric' }) => {
+  const date = parseDateLocal(value);
+  return date ? date.toLocaleDateString(locale, options) : 'Fecha invalida';
+};
+
+const chunkArray = (arr, size = 500) => {
+  const chunks = [];
+  for (let i = 0; i < arr.length; i += size) chunks.push(arr.slice(i, i + size));
+  return chunks;
+};
+
+const fetchAllRowsPaged = async (buildQuery) => {
+  let from = 0;
+  const rows = [];
+
+  while (true) {
+    const { data, error } = await buildQuery(from, from + PAGE_SIZE - 1);
+    if (error) throw error;
+
+    const batch = data || [];
+    rows.push(...batch);
+
+    if (batch.length < PAGE_SIZE) break;
+    from += PAGE_SIZE;
+  }
+
+  return rows;
+};
+
+const fetchFacturasPaged = async ({ select = '*', fromDate, toDate, vendedor, orderBy = 'fecha', ascending = true, notNullVendedor = false } = {}) => {
+  return fetchAllRowsPaged((from, to) => {
+    let query = supabase
+      .from('facturas')
+      .select(select)
+      .order(orderBy, { ascending })
+      .range(from, to);
+
+    if (fromDate) query = query.gte('fecha', fromDate);
+    if (toDate) query = query.lte('fecha', toDate);
+    if (vendedor && vendedor !== 'todos') query = query.eq('vendedor', vendedor);
+    if (notNullVendedor) query = query.not('vendedor', 'is', null);
+
+    return query;
+  });
+};
+
+const fetchAbonosPaged = async ({ select = '*', fromDate, toDate, orderBy = 'fecha', ascending = true } = {}) => {
+  return fetchAllRowsPaged((from, to) => {
+    let query = supabase
+      .from('abonos')
+      .select(select)
+      .order(orderBy, { ascending })
+      .range(from, to);
+
+    if (fromDate) query = query.gte('fecha', fromDate);
+    if (toDate) query = query.lte('fecha', toDate);
+
+    return query;
+  });
+};
+
+const fetchFacturasByIds = async (ids) => {
+  if (!ids?.length) return [];
+  const rows = [];
+
+  for (const chunk of chunkArray(ids, 500)) {
+    const { data, error } = await supabase
+      .from('facturas')
+      .select('id, vendedor')
+      .in('id', chunk);
+
+    if (error) throw error;
+    rows.push(...(data || []));
+  }
+
+  return rows;
+};
+
+const buildAbonosByFactura = (abonosRows) => {
+  return (abonosRows || []).reduce((acc, abono) => {
+    const facturaId = String(abono.factura_id);
+    if (!facturaId || facturaId === 'undefined' || facturaId === 'null') return acc;
+    acc[facturaId] = (acc[facturaId] || 0) + (parseFloat(abono.monto) || 0);
+    return acc;
+  }, {});
+};
+
 const DashboardVentas = () => {
   const [facturasUltimos30Dias, setFacturasUltimos30Dias] = useState([]);
   const [ventasMesActual, setVentasMesActual] = useState(0);
@@ -16,6 +136,7 @@ const DashboardVentas = () => {
   const [totalCobradoAnual, setTotalCobradoAnual] = useState(0);
   const [cobrosUltimos30Dias, setCobrosUltimos30Dias] = useState(0);
   const [cobrosDiariosVendedor, setCobrosDiariosVendedor] = useState([]);
+  const [cobrosResumenVendedor, setCobrosResumenVendedor] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('general');
   // Nuevos estados para análisis detallado
@@ -25,12 +146,8 @@ const DashboardVentas = () => {
   const [vendedorSeleccionadoAnalisis, setVendedorSeleccionadoAnalisis] = useState('');
   const [variacionesPorcentuales, setVariacionesPorcentuales] = useState([]);
   // Estados para Reportes
-  const [fechaInicio, setFechaInicio] = useState(() => {
-    const d = new Date();
-    d.setDate(d.getDate() - 30);
-    return d.toISOString().split('T')[0];
-  });
-  const [fechaFin, setFechaFin] = useState(() => new Date().toISOString().split('T')[0]);
+  const [fechaInicio, setFechaInicio] = useState(() => addDaysLocalISO(-30));
+  const [fechaFin, setFechaFin] = useState(() => todayLocalISO());
   const [vendedorSeleccionado, setVendedorSeleccionado] = useState('todos');
   const [estadoPagoSeleccionado, setEstadoPagoSeleccionado] = useState('todas');
   const [vendedoresLista, setVendedoresLista] = useState([]);
@@ -40,20 +157,12 @@ const DashboardVentas = () => {
   // Estados para Productos
   const [productosMasVendidos, setProductosMasVendidos] = useState([]);
   const [productosLoading, setProductosLoading] = useState(false);
-  const [fechaInicioProductos, setFechaInicioProductos] = useState(() => {
-    const d = new Date();
-    d.setDate(d.getDate() - 30);
-    return d.toISOString().split('T')[0];
-  });
-  const [fechaFinProductos, setFechaFinProductos] = useState(() => new Date().toISOString().split('T')[0]);
+  const [fechaInicioProductos, setFechaInicioProductos] = useState(() => addDaysLocalISO(-30));
+  const [fechaFinProductos, setFechaFinProductos] = useState(() => todayLocalISO());
   const [busquedaProducto, setBusquedaProducto] = useState('');
   // Nuevos estados para filtros globales de fechas
-  const [filtroFechaInicio, setFiltroFechaInicio] = useState(() => {
-    const d = new Date();
-    d.setDate(d.getDate() - 30);
-    return d.toISOString().split('T')[0];
-  });
-  const [filtroFechaFin, setFiltroFechaFin] = useState(() => new Date().toISOString().split('T')[0]);
+  const [filtroFechaInicio, setFiltroFechaInicio] = useState(() => addDaysLocalISO(-30));
+  const [filtroFechaFin, setFiltroFechaFin] = useState(() => todayLocalISO());
   const [mostrarFiltroFechas, setMostrarFiltroFechas] = useState(false);
 
   useEffect(() => {
@@ -68,39 +177,39 @@ const DashboardVentas = () => {
       const fechaInicioFiltro = filtroFechaInicio;
       const fechaFinFiltro = filtroFechaFin;
       const hoy = new Date();
+      const hoyISO = todayLocalISO();
 
       // 1. Facturas en el rango de fechas filtrado
-      const { data: facturasData, error: facturasError } = await supabase
-        .from('facturas')
-        .select('fecha, total, cliente, vendedor')
-        .gte('fecha', fechaInicioFiltro)
-        .lte('fecha', fechaFinFiltro)
-        .order('fecha', { ascending: true });
-
-      if (facturasError) throw facturasError;
+      const facturasData = await fetchFacturasPaged({
+        select: 'fecha, total, cliente, vendedor',
+        fromDate: fechaInicioFiltro,
+        toDate: fechaFinFiltro,
+        orderBy: 'fecha',
+        ascending: true,
+      });
       setFacturasUltimos30Dias(facturasData || []);
 
       // 2. Ventas del mes actual (siempre del mes actual, no del filtro)
       const primerDiaMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
-      const { data: ventasMesData, error: ventasMesError } = await supabase
-        .from('facturas')
-        .select('total')
-        .gte('fecha', primerDiaMes.toISOString().split('T')[0])
-        .lte('fecha', hoy.toISOString().split('T')[0]);
-
-      if (ventasMesError) throw ventasMesError;
+      const ventasMesData = await fetchFacturasPaged({
+        select: 'total',
+        fromDate: formatDateInputLocal(primerDiaMes),
+        toDate: hoyISO,
+        orderBy: 'fecha',
+        ascending: true,
+      });
       const totalVentasMes = ventasMesData.reduce((sum, venta) => sum + (parseFloat(venta.total) || 0), 0);
       setVentasMesActual(totalVentasMes);
 
       // 3. Total ventas anual (siempre del año actual)
       const primerDiaAnio = new Date(hoy.getFullYear(), 0, 1);
-      const { data: ventasAnualData, error: ventasAnualError } = await supabase
-        .from('facturas')
-        .select('total')
-        .gte('fecha', primerDiaAnio.toISOString().split('T')[0])
-        .lte('fecha', hoy.toISOString().split('T')[0]);
-
-      if (ventasAnualError) throw ventasAnualError;
+      const ventasAnualData = await fetchFacturasPaged({
+        select: 'total',
+        fromDate: formatDateInputLocal(primerDiaAnio),
+        toDate: hoyISO,
+        orderBy: 'fecha',
+        ascending: true,
+      });
       const totalVentasAnual = ventasAnualData.reduce((sum, venta) => sum + (parseFloat(venta.total) || 0), 0);
       setTotalVentasAnual(totalVentasAnual);
 
@@ -126,11 +235,12 @@ const DashboardVentas = () => {
 
   const fetchVendedoresLista = async () => {
     try {
-      const { data, error } = await supabase
-        .from('facturas')
-        .select('vendedor')
-        .not('vendedor', 'is', null);
-      if (error) throw error;
+      const data = await fetchFacturasPaged({
+        select: 'vendedor',
+        orderBy: 'fecha',
+        ascending: false,
+        notNullVendedor: true,
+      });
       const unicos = Array.from(new Set((data || []).map(f => f.vendedor))).sort();
       setVendedoresLista(unicos);
     } catch (e) {
@@ -141,29 +251,26 @@ const DashboardVentas = () => {
   const generarReporteVentas = async () => {
     try {
       setReporteLoading(true);
-      const query = supabase
-        .from('facturas')
-        .select('id, fecha, total, cliente, vendedor')
-        .gte('fecha', fechaInicio)
-        .lte('fecha', fechaFin)
-        .order('fecha');
-      if (vendedorSeleccionado && vendedorSeleccionado !== 'todos') {
-        query.eq('vendedor', vendedorSeleccionado);
-      }
-      const { data, error } = await query;
-      if (error) throw error;
-      
-      // Obtener todos los abonos
-      const { data: abonosData, error: abonosError } = await supabase
-        .from('abonos')
-        .select('factura_id, monto');
-      
-      if (abonosError) throw abonosError;
+      const data = await fetchFacturasPaged({
+        select: 'id, fecha, total, cliente, vendedor',
+        fromDate: fechaInicio,
+        toDate: fechaFin,
+        vendedor: vendedorSeleccionado,
+        orderBy: 'fecha',
+        ascending: true,
+      });
+
+      const abonosData = await fetchAbonosPaged({
+        select: 'factura_id, monto',
+        orderBy: 'id',
+        ascending: true,
+      });
+
+      const abonosPorFactura = buildAbonosByFactura(abonosData);
       
       // Calcular saldo y estado para cada factura
       const ventas = (data || []).map(f => {
-        const abonosFactura = (abonosData || []).filter(a => a.factura_id === f.id);
-        const totalAbonado = abonosFactura.reduce((sum, abono) => sum + (parseFloat(abono.monto) || 0), 0);
+        const totalAbonado = abonosPorFactura[String(f.id)] || 0;
         const total = parseFloat(f.total) || 0;
         const saldo = total - totalAbonado;
         const estado = saldo <= 0 ? 'Pagada' : (totalAbonado > 0 ? 'Parcial' : 'Pendiente');
@@ -327,9 +434,9 @@ const DashboardVentas = () => {
 
   const imprimirReporteFormato = () => {
     const ventanaImpresion = window.open('', '_blank', 'width=900,height=700');
-    const hoy = new Date().toLocaleDateString('es-CO');
-    const fechaDesde = new Date(fechaInicio).toLocaleDateString('es-CO');
-    const fechaHasta = new Date(fechaFin).toLocaleDateString('es-CO');
+    const hoy = formatDateLocal(todayLocalISO(), 'es-CO');
+    const fechaDesde = formatDateLocal(fechaInicio, 'es-CO');
+    const fechaHasta = formatDateLocal(fechaFin, 'es-CO');
     const vendedorFiltro = vendedorSeleccionado === 'todos' ? 'Todos los vendedores' : vendedorSeleccionado;
     const estadoFiltro = estadoPagoSeleccionado === 'todas' ? 'Todas' : (estadoPagoSeleccionado === 'pagadas' ? 'Pagadas' : 'Pendientes');
     const totalFilas = reporteVentas.length;
@@ -343,7 +450,7 @@ const DashboardVentas = () => {
       return `
         <tr>
           <td class="col-id">#${String(r.id).padStart(6, '0')}</td>
-          <td>${new Date(r.fecha).toLocaleDateString('es-CO')}</td>
+          <td>${formatDateLocal(r.fecha, 'es-CO')}</td>
           <td>${r.cliente}</td>
           <td>${r.vendedor}</td>
           <td class="col-total">${formatCurrency(r.total)}</td>
@@ -615,15 +722,14 @@ const DashboardVentas = () => {
   const loadVendedorData = async (fechaInicio, fechaFin) => {
     try {
       // Ventas totales por vendedor
-      const { data: vendedoresData, error } = await supabase
-        .from('facturas')
-        .select('vendedor, total')
-        .gte('fecha', fechaInicio)
-        .lte('fecha', fechaFin)
-        .not('vendedor', 'is', null)
-        .order('vendedor');
-
-      if (error) throw error;
+      const vendedoresData = await fetchFacturasPaged({
+        select: 'vendedor, total',
+        fromDate: fechaInicio,
+        toDate: fechaFin,
+        orderBy: 'vendedor',
+        ascending: true,
+        notNullVendedor: true,
+      });
 
       const ventasPorVendedorMap = {};
       vendedoresData.forEach(factura => {
@@ -648,20 +754,21 @@ const DashboardVentas = () => {
       const currentYear = hoy.getFullYear();
 
       // 1. COBROS MENSUALES DEL AÑO ACTUAL (desde tabla abonos)
-      const { data: cobrosAnualData, error: cobrosError } = await supabase
-        .from('abonos')
-        .select('fecha, monto, metodo, factura_id')
-        .gte('fecha', `${currentYear}-01-01`)
-        .lte('fecha', `${currentYear}-12-31`)
-        .order('fecha');
-
-      if (cobrosError) throw cobrosError;
+      const cobrosAnualData = await fetchAbonosPaged({
+        select: 'fecha, monto, metodo, factura_id',
+        fromDate: `${currentYear}-01-01`,
+        toDate: `${currentYear}-12-31`,
+        orderBy: 'fecha',
+        ascending: true,
+      });
 
       // Procesar cobros mensuales
       const cobrosPorMesMap = Array(12).fill(0);
       if (cobrosAnualData) {
         cobrosAnualData.forEach(abono => {
-          const mes = new Date(abono.fecha).getMonth();
+          const fechaAbono = parseDateLocal(abono.fecha);
+          if (!fechaAbono) return;
+          const mes = fechaAbono.getMonth();
           cobrosPorMesMap[mes] += parseFloat(abono.monto) || 0;
         });
       }
@@ -681,16 +788,19 @@ const DashboardVentas = () => {
       const seisMesesAtras = new Date();
       seisMesesAtras.setMonth(seisMesesAtras.getMonth() - 6);
       
-      const { data: cobrosRecientesData } = await supabase
-        .from('abonos')
-        .select('fecha, monto')
-        .gte('fecha', seisMesesAtras.toISOString().split('T')[0])
-        .order('fecha');
+      const cobrosRecientesData = await fetchAbonosPaged({
+        select: 'fecha, monto',
+        fromDate: formatDateInputLocal(seisMesesAtras),
+        toDate: todayLocalISO(),
+        orderBy: 'fecha',
+        ascending: true,
+      });
 
       const cobrosPorMesReciente = {};
       if (cobrosRecientesData) {
         cobrosRecientesData.forEach(abono => {
-          const fecha = new Date(abono.fecha);
+          const fecha = parseDateLocal(abono.fecha);
+          if (!fecha) return;
           const mesKey = `${fecha.getFullYear()}-${fecha.getMonth()}`;
           cobrosPorMesReciente[mesKey] = (cobrosPorMesReciente[mesKey] || 0) + (parseFloat(abono.monto) || 0);
         });
@@ -705,11 +815,13 @@ const DashboardVentas = () => {
       }
 
       // 3. COBROS EN EL RANGO DE FECHAS FILTRADO
-      const { data: cobrosRangoData } = await supabase
-        .from('abonos')
-        .select('monto')
-        .gte('fecha', fechaInicio)
-        .lte('fecha', fechaFin);
+      const cobrosRangoData = await fetchAbonosPaged({
+        select: 'monto',
+        fromDate: fechaInicio,
+        toDate: fechaFin,
+        orderBy: 'id',
+        ascending: true,
+      });
 
       const totalRango = cobrosRangoData ? 
         cobrosRangoData.reduce((sum, abono) => sum + (parseFloat(abono.monto) || 0), 0) : 0;
@@ -744,29 +856,23 @@ const DashboardVentas = () => {
   const loadCobrosDiariosVendedor = async (fechaInicio, fechaFin) => {
     try {
       // Obtener abonos en el rango de fechas
-      const { data: abonosData, error: abonosError } = await supabase
-        .from('abonos')
-        .select('fecha, monto, factura_id')
-        .gte('fecha', fechaInicio)
-        .lte('fecha', fechaFin)
-        .order('fecha');
-
-      if (abonosError) throw abonosError;
+      const abonosData = await fetchAbonosPaged({
+        select: 'fecha, monto, factura_id',
+        fromDate: fechaInicio,
+        toDate: fechaFin,
+        orderBy: 'fecha',
+        ascending: true,
+      });
 
       if (!abonosData || abonosData.length === 0) {
         setCobrosDiariosVendedor([]);
+        setCobrosResumenVendedor([]);
         return;
       }
 
       // Obtener facturas relacionadas con estos abonos
       const facturaIds = [...new Set(abonosData.map(abono => abono.factura_id))];
-      
-      const { data: facturasData, error: facturasError } = await supabase
-        .from('facturas')
-        .select('id, vendedor')
-        .in('id', facturaIds);
-
-      if (facturasError) throw facturasError;
+      const facturasData = await fetchFacturasByIds(facturaIds);
 
       // Crear un mapa de factura_id a vendedor
       const facturaVendedorMap = {};
@@ -780,6 +886,32 @@ const DashboardVentas = () => {
         vendedor: facturaVendedorMap[abono.factura_id] || 'Sin vendedor',
         monto: parseFloat(abono.monto) || 0
       }));
+
+      // Resumen total por vendedor para la vista de cobros.
+      const resumenPorVendedor = {};
+      cobrosConVendedor.forEach((cobro) => {
+        const vendedor = cobro.vendedor;
+        if (!resumenPorVendedor[vendedor]) {
+          resumenPorVendedor[vendedor] = {
+            vendedor,
+            totalCobrado: 0,
+            cantidadAbonos: 0
+          };
+        }
+
+        resumenPorVendedor[vendedor].totalCobrado += cobro.monto;
+        resumenPorVendedor[vendedor].cantidadAbonos += 1;
+      });
+
+      const totalCobrosRango = cobrosConVendedor.reduce((sum, item) => sum + item.monto, 0);
+      const resumenOrdenado = Object.values(resumenPorVendedor)
+        .map((item) => ({
+          ...item,
+          participacion: totalCobrosRango > 0 ? (item.totalCobrado / totalCobrosRango) * 100 : 0
+        }))
+        .sort((a, b) => b.totalCobrado - a.totalCobrado);
+
+      setCobrosResumenVendedor(resumenOrdenado);
 
       // Agrupar por fecha y vendedor
       const cobrosPorDiaVendedor = {};
@@ -804,7 +936,11 @@ const DashboardVentas = () => {
       
       // Convertir a formato para gráfico de áreas apiladas
       const datosGrafico = Object.entries(cobrosPorDiaVendedor).map(([fecha, vendedores]) => {
+        const fechaLocal = parseDateLocal(fecha);
         const dato = { fecha: fecha.split('-').reverse().join('/').slice(0, 5) };
+        if (fechaLocal) {
+          dato.fecha = formatDateInputLocal(fechaLocal).slice(5).split('-').reverse().join('/');
+        }
         
         todosVendedores.forEach(vendedor => {
           dato[vendedor] = vendedores[vendedor] || 0;
@@ -826,19 +962,20 @@ const DashboardVentas = () => {
   // Función para obtener ventas mensuales
   const getVentasMensuales = async (fechaInicio, fechaFin) => {
     try {
-      const { data, error } = await supabase
-        .from('facturas')
-        .select('fecha, total')
-        .gte('fecha', fechaInicio)
-        .lte('fecha', fechaFin)
-        .order('fecha');
-
-      if (error) throw error;
+      const data = await fetchFacturasPaged({
+        select: 'fecha, total',
+        fromDate: fechaInicio,
+        toDate: fechaFin,
+        orderBy: 'fecha',
+        ascending: true,
+      });
 
       const ventasPorMes = Array(12).fill(0);
       if (data) {
         data.forEach(factura => {
-          const mes = new Date(factura.fecha).getMonth();
+          const fechaFactura = parseDateLocal(factura.fecha);
+          if (!fechaFactura) return;
+          const mes = fechaFactura.getMonth();
           ventasPorMes[mes] += parseFloat(factura.total) || 0;
         });
       }
@@ -855,14 +992,13 @@ const DashboardVentas = () => {
   // Función para obtener ingresos diarios
   const getIngresosDiarios = async (fechaInicio, fechaFin) => {
     try {
-      const { data, error } = await supabase
-        .from('facturas')
-        .select('fecha, total')
-        .gte('fecha', fechaInicio)
-        .lte('fecha', fechaFin)
-        .order('fecha');
-
-      if (error) throw error;
+      const data = await fetchFacturasPaged({
+        select: 'fecha, total',
+        fromDate: fechaInicio,
+        toDate: fechaFin,
+        orderBy: 'fecha',
+        ascending: true,
+      });
 
       const ingresosPorDia = {};
       if (data) {
@@ -886,21 +1022,21 @@ const DashboardVentas = () => {
   // Nueva función: Obtener comparativa mensual (últimos 3 años)
   const getComparativaMensual = async (fechaInicio, fechaFin) => {
     try {
-      const { data, error } = await supabase
-        .from('facturas')
-        .select('fecha, total')
-        .gte('fecha', fechaInicio)
-        .lte('fecha', fechaFin)
-        .order('fecha');
-
-      if (error) throw error;
+      const data = await fetchFacturasPaged({
+        select: 'fecha, total',
+        fromDate: fechaInicio,
+        toDate: fechaFin,
+        orderBy: 'fecha',
+        ascending: true,
+      });
 
       const meses = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
       const comparativaPorMes = {};
 
       if (data) {
         data.forEach(factura => {
-          const fecha = new Date(factura.fecha);
+          const fecha = parseDateLocal(factura.fecha);
+          if (!fecha) return;
           const mes = fecha.getMonth();
           const anio = fecha.getFullYear();
           const clave = `${meses[mes]}-${anio}`;
@@ -928,26 +1064,22 @@ const DashboardVentas = () => {
   // Nueva función: Obtener ventas mensuales detalladas por vendedor
   const getVentasMensualesPorVendedor = async (vendedor = null, fechaInicio, fechaFin) => {
     try {
-      let query = supabase
-        .from('facturas')
-        .select('fecha, total, vendedor')
-        .gte('fecha', fechaInicio)
-        .lte('fecha', fechaFin);
-
-      if (vendedor && vendedor !== 'todos') {
-        query = query.eq('vendedor', vendedor);
-      }
-
-      const { data, error } = await query.order('fecha');
-
-      if (error) throw error;
+      const data = await fetchFacturasPaged({
+        select: 'fecha, total, vendedor',
+        fromDate: fechaInicio,
+        toDate: fechaFin,
+        vendedor,
+        orderBy: 'fecha',
+        ascending: true,
+      });
 
       const meses = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
       const ventasPorMesVendedor = {};
 
       if (data) {
         data.forEach(factura => {
-          const fecha = new Date(factura.fecha);
+          const fecha = parseDateLocal(factura.fecha);
+          if (!fecha) return;
           const mes = fecha.getMonth();
           const anio = fecha.getFullYear();
           const clave = `${meses[mes]}-${anio}`;
@@ -1010,31 +1142,37 @@ const DashboardVentas = () => {
       const anioActual = hoy.getFullYear();
       const anioAnterior = anioActual - 1;
 
-      const { data: datosActual, error: errorActual } = await supabase
-        .from('facturas')
-        .select('fecha, total')
-        .gte('fecha', fechaInicio)
-        .lte('fecha', fechaFin);
+      const datosActual = await fetchFacturasPaged({
+        select: 'fecha, total',
+        fromDate: fechaInicio,
+        toDate: fechaFin,
+        orderBy: 'fecha',
+        ascending: true,
+      });
 
-      const { data: datosAnterior, error: errorAnterior } = await supabase
-        .from('facturas')
-        .select('fecha, total')
-        .gte('fecha', `${anioAnterior}-01-01`)
-        .lte('fecha', `${anioAnterior}-12-31`);
-
-      if (errorActual || errorAnterior) throw new Error('Error loading data');
+      const datosAnterior = await fetchFacturasPaged({
+        select: 'fecha, total',
+        fromDate: `${anioAnterior}-01-01`,
+        toDate: `${anioAnterior}-12-31`,
+        orderBy: 'fecha',
+        ascending: true,
+      });
 
       const meses = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
       const ventasActual = Array(12).fill(0);
       const ventasAnterior = Array(12).fill(0);
 
       datosActual?.forEach(f => {
-        const mes = new Date(f.fecha).getMonth();
+        const fechaFactura = parseDateLocal(f.fecha);
+        if (!fechaFactura) return;
+        const mes = fechaFactura.getMonth();
         ventasActual[mes] += parseFloat(f.total) || 0;
       });
 
       datosAnterior?.forEach(f => {
-        const mes = new Date(f.fecha).getMonth();
+        const fechaFactura = parseDateLocal(f.fecha);
+        if (!fechaFactura) return;
+        const mes = fechaFactura.getMonth();
         ventasAnterior[mes] += parseFloat(f.total) || 0;
       });
 
@@ -1066,9 +1204,20 @@ const DashboardVentas = () => {
     return `${value >= 0 ? '+' : ''}${value.toFixed(2)}%`;
   };
 
-  // Colores para los gráficos
-  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8', '#82CA9D'];
-  const COLORS_COBROS = ['#4CAF50', '#2196F3', '#FF9800', '#E91E63', '#9C27B0', '#607D8B'];
+  // Paleta semantica para mantener consistencia visual en todo el dashboard.
+  const CHART_COLORS = {
+    ventasPrincipal: '#2563EB',
+    ingresos: '#10B981',
+    comparativo: '#0EA5E9',
+    comparativoAnioPrevio: '#94A3B8',
+    comparativoAnioActual: '#2563EB',
+    vendedorLinea: '#F97316',
+    cobros: '#16A34A',
+    cobrosEvolucion: '#0284C7',
+    productos: '#22C55E',
+    pieVentas: ['#2563EB', '#0EA5E9', '#14B8A6', '#22C55E', '#F59E0B', '#F97316'],
+    pieCobros: ['#16A34A', '#0284C7', '#F59E0B', '#EC4899', '#7C3AED', '#64748B']
+  };
 
   if (loading) {
     return (
@@ -1133,16 +1282,16 @@ const DashboardVentas = () => {
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '15px' }}>
               <div style={{ padding: '10px', backgroundColor: 'white', borderRadius: '4px' }}>
                 <span style={{ fontSize: '0.9rem', color: '#666', display: 'block' }}>Desde:</span>
-                <strong style={{ fontSize: '1.1rem', color: '#2196F3' }}>{new Date(filtroFechaInicio).toLocaleDateString('es-CO')}</strong>
+                <strong style={{ fontSize: '1.1rem', color: '#2196F3' }}>{formatDateLocal(filtroFechaInicio, 'es-CO')}</strong>
               </div>
               <div style={{ padding: '10px', backgroundColor: 'white', borderRadius: '4px' }}>
                 <span style={{ fontSize: '0.9rem', color: '#666', display: 'block' }}>Hasta:</span>
-                <strong style={{ fontSize: '1.1rem', color: '#2196F3' }}>{new Date(filtroFechaFin).toLocaleDateString('es-CO')}</strong>
+                <strong style={{ fontSize: '1.1rem', color: '#2196F3' }}>{formatDateLocal(filtroFechaFin, 'es-CO')}</strong>
               </div>
               <div style={{ padding: '10px', backgroundColor: 'white', borderRadius: '4px' }}>
                 <span style={{ fontSize: '0.9rem', color: '#666', display: 'block' }}>Duración:</span>
                 <strong style={{ fontSize: '1.1rem', color: '#2196F3' }}>
-                  {Math.ceil((new Date(filtroFechaFin) - new Date(filtroFechaInicio)) / (1000 * 60 * 60 * 24))} días
+                  {Math.max(0, Math.ceil(((parseDateLocal(filtroFechaFin)?.getTime() || 0) - (parseDateLocal(filtroFechaInicio)?.getTime() || 0)) / (1000 * 60 * 60 * 24)))} días
                 </strong>
               </div>
             </div>
@@ -1188,7 +1337,7 @@ const DashboardVentas = () => {
                   <XAxis dataKey="mes" />
                   <YAxis tickFormatter={value => `$${value/1000000}M`} />
                   <Tooltip formatter={(value) => [formatCurrency(value), 'Ventas']} />
-                  <Bar dataKey="ventas" fill="#8884d8" />
+                  <Bar dataKey="ventas" fill={CHART_COLORS.ventasPrincipal} />
                 </BarChart>
               </ResponsiveContainer>
             ) : (
@@ -1206,7 +1355,7 @@ const DashboardVentas = () => {
                   <XAxis dataKey="fecha" />
                   <YAxis tickFormatter={value => `$${value/1000}K`} />
                   <Tooltip formatter={(value) => [formatCurrency(value), 'Ingresos']} />
-                  <Line type="monotone" dataKey="ingresos" stroke="#82ca9d" strokeWidth={2} />
+                  <Line type="monotone" dataKey="ingresos" stroke={CHART_COLORS.ingresos} strokeWidth={2} />
                 </LineChart>
               </ResponsiveContainer>
             ) : (
@@ -1253,7 +1402,7 @@ const DashboardVentas = () => {
                         }}
                       />
                       <Legend />
-                      <Line type="monotone" dataKey="total" stroke="#0088FE" strokeWidth={2} name="Ventas Totales" />
+                      <Line type="monotone" dataKey="total" stroke={CHART_COLORS.comparativo} strokeWidth={2} name="Ventas Totales" />
                     </LineChart>
                   </ResponsiveContainer>
                 </div>
@@ -1310,8 +1459,8 @@ const DashboardVentas = () => {
                         }}
                       />
                       <Legend />
-                      <Bar dataKey={new Date().getFullYear() - 1} fill="#8884d8" name={`${new Date().getFullYear() - 1}`} />
-                      <Bar dataKey={new Date().getFullYear()} fill="#82ca9d" name={`${new Date().getFullYear()}`} />
+                      <Bar dataKey={new Date().getFullYear() - 1} fill={CHART_COLORS.comparativoAnioPrevio} name={`${new Date().getFullYear() - 1}`} />
+                      <Bar dataKey={new Date().getFullYear()} fill={CHART_COLORS.comparativoAnioActual} name={`${new Date().getFullYear()}`} />
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
@@ -1458,7 +1607,7 @@ const DashboardVentas = () => {
                       <YAxis tickFormatter={value => `$${value/1000000}M`} />
                       <Tooltip formatter={(value) => formatCurrency(value)} />
                       <Legend />
-                      <Line type="monotone" dataKey="total" stroke="#FF6B6B" strokeWidth={2} name="Ventas Totales" />
+                      <Line type="monotone" dataKey="total" stroke={CHART_COLORS.vendedorLinea} strokeWidth={2} name="Ventas Totales" />
                     </LineChart>
                   </ResponsiveContainer>
                 </div>
@@ -1576,7 +1725,7 @@ const DashboardVentas = () => {
                     {reporteVentas.map(r => (
                       <tr key={r.id}>
                         <td>{String(r.id).padStart(6, '0')}</td>
-                        <td>{new Date(r.fecha).toLocaleDateString()}</td>
+                        <td>{formatDateLocal(r.fecha, 'es-CO')}</td>
                         <td>{r.cliente}</td>
                         <td>{r.vendedor}</td>
                         <td className="col-total">{formatCurrency(r.total)}</td>
@@ -1643,7 +1792,7 @@ const DashboardVentas = () => {
                   <XAxis dataKey="vendedor" />
                   <YAxis tickFormatter={value => `$${value/1000000}M`} />
                   <Tooltip formatter={(value) => formatCurrency(value)} />
-                  <Bar dataKey="ventas" fill="#8884d8" />
+                  <Bar dataKey="ventas" fill={CHART_COLORS.ventasPrincipal} />
                 </BarChart>
               </ResponsiveContainer>
             ) : (
@@ -1662,13 +1811,13 @@ const DashboardVentas = () => {
                     cx="50%"
                     cy="50%"
                     outerRadius={120}
-                    fill="#8884d8"
+                    fill={CHART_COLORS.ventasPrincipal}
                     dataKey="ventas"
                     nameKey="vendedor"
                     label={({ vendedor, ventas }) => `${vendedor}: ${formatCurrency(ventas)}`}
                   >
                     {ventasPorVendedor.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      <Cell key={`cell-${index}`} fill={CHART_COLORS.pieVentas[index % CHART_COLORS.pieVentas.length]} />
                     ))}
                   </Pie>
                   <Tooltip formatter={(value) => formatCurrency(value)} />
@@ -1840,7 +1989,7 @@ const DashboardVentas = () => {
                     }}
                   />
                   <Legend />
-                  <Bar dataKey="cantidadTotal" fill="#4CAF50" name="Unidades Vendidas" />
+                  <Bar dataKey="cantidadTotal" fill={CHART_COLORS.productos} name="Unidades Vendidas" />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -1878,6 +2027,20 @@ const DashboardVentas = () => {
                 <span className="metric-label">Últimos 30 días</span>
               </div>
             </div>
+
+              <div className="dashboard-card">
+                <h2>Top Vendedor por Cobros</h2>
+                <div className="metric">
+                  <span className="metric-value">
+                    {cobrosResumenVendedor.length > 0 ? cobrosResumenVendedor[0].vendedor : 'Sin datos'}
+                  </span>
+                  <span className="metric-label">
+                    {cobrosResumenVendedor.length > 0
+                      ? `${formatCurrency(cobrosResumenVendedor[0].totalCobrado)} (${cobrosResumenVendedor[0].participacion.toFixed(1)}%)`
+                      : 'Sin cobros en el rango'}
+                  </span>
+                </div>
+              </div>
           </div>
 
           {/* Gráfico de Cobros Mensuales */}
@@ -1890,7 +2053,7 @@ const DashboardVentas = () => {
                   <XAxis dataKey="mes" />
                   <YAxis tickFormatter={value => `$${value/1000000}M`} />
                   <Tooltip formatter={(value) => [formatCurrency(value), 'Cobros']} />
-                  <Bar dataKey="cobros" fill="#4CAF50" />
+                  <Bar dataKey="cobros" fill={CHART_COLORS.cobros} />
                 </BarChart>
               </ResponsiveContainer>
             ) : (
@@ -1911,7 +2074,7 @@ const DashboardVentas = () => {
                   <XAxis dataKey="periodo" />
                   <YAxis tickFormatter={value => `$${value/1000}K`} />
                   <Tooltip formatter={(value) => [formatCurrency(value), 'Cobros']} />
-                  <Line type="monotone" dataKey="cobros" stroke="#2196F3" strokeWidth={3} dot={{ fill: '#2196F3', r: 4 }} />
+                  <Line type="monotone" dataKey="cobros" stroke={CHART_COLORS.cobrosEvolucion} strokeWidth={3} dot={{ fill: CHART_COLORS.cobrosEvolucion, r: 4 }} />
                 </LineChart>
               </ResponsiveContainer>
             ) : (
@@ -1933,13 +2096,13 @@ const DashboardVentas = () => {
                     cx="50%"
                     cy="50%"
                     outerRadius={100}
-                    fill="#8884d8"
+                    fill={CHART_COLORS.cobros}
                     dataKey="count"
                     nameKey="metodo"
                     label={({ metodo, count }) => `${metodo}: ${count}`}
                   >
                     {estadoCobros.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS_COBROS[index % COLORS_COBROS.length]} />
+                      <Cell key={`cell-${index}`} fill={CHART_COLORS.pieCobros[index % CHART_COLORS.pieCobros.length]} />
                     ))}
                   </Pie>
                   <Tooltip formatter={(value, name, props) => [
@@ -1974,8 +2137,8 @@ const DashboardVentas = () => {
                       type="monotone" 
                       dataKey={vendedor} 
                       stackId="1" 
-                      stroke={COLORS_COBROS[index % COLORS_COBROS.length]} 
-                      fill={COLORS_COBROS[index % COLORS_COBROS.length]} 
+                      stroke={CHART_COLORS.pieCobros[index % CHART_COLORS.pieCobros.length]} 
+                      fill={CHART_COLORS.pieCobros[index % CHART_COLORS.pieCobros.length]} 
                       fillOpacity={0.6}
                     />
                   ))}
@@ -1985,6 +2148,39 @@ const DashboardVentas = () => {
               <div className="no-data">
                 <p>No hay datos de cobros por vendedor</p>
                 <small>Los cobros se registran en la tabla 'abonos' y se asocian a facturas con vendedores</small>
+              </div>
+            )}
+          </div>
+
+          <div className="dashboard-card full-width">
+            <h2>Resumen de Cobros por Vendedor</h2>
+            {cobrosResumenVendedor.length > 0 ? (
+              <div className="tabla-cobros-vendedor-wrap">
+                <table className="tabla-cobros-vendedor">
+                  <thead>
+                    <tr>
+                      <th>Vendedor</th>
+                      <th>Total Cobrado</th>
+                      <th>Abonos</th>
+                      <th>Participación</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {cobrosResumenVendedor.map((item) => (
+                      <tr key={item.vendedor}>
+                        <td>{item.vendedor}</td>
+                        <td>{formatCurrency(item.totalCobrado)}</td>
+                        <td>{item.cantidadAbonos}</td>
+                        <td>{item.participacion.toFixed(1)}%</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <div className="no-data">
+                <p>No hay cobros por vendedor para el rango seleccionado</p>
+                <small>Revisa el filtro de fechas o que las facturas tengan vendedor asignado</small>
               </div>
             )}
           </div>
@@ -2022,10 +2218,8 @@ const DashboardVentas = () => {
               <button 
                 className="btn" 
                 onClick={() => {
-                  const d = new Date();
-                  d.setDate(d.getDate() - 30);
-                  setFiltroFechaInicio(d.toISOString().split('T')[0]);
-                  setFiltroFechaFin(new Date().toISOString().split('T')[0]);
+                  setFiltroFechaInicio(addDaysLocalISO(-30));
+                  setFiltroFechaFin(todayLocalISO());
                 }}
               >
                 Últimos 30 días
@@ -2035,8 +2229,8 @@ const DashboardVentas = () => {
                 onClick={() => {
                   const hoy = new Date();
                   const primerDia = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
-                  setFiltroFechaInicio(primerDia.toISOString().split('T')[0]);
-                  setFiltroFechaFin(hoy.toISOString().split('T')[0]);
+                  setFiltroFechaInicio(formatDateInputLocal(primerDia));
+                  setFiltroFechaFin(formatDateInputLocal(hoy));
                 }}
               >
                 Mes Actual
@@ -2046,8 +2240,8 @@ const DashboardVentas = () => {
                 onClick={() => {
                   const hoy = new Date();
                   const primerDia = new Date(hoy.getFullYear(), 0, 1);
-                  setFiltroFechaInicio(primerDia.toISOString().split('T')[0]);
-                  setFiltroFechaFin(hoy.toISOString().split('T')[0]);
+                  setFiltroFechaInicio(formatDateInputLocal(primerDia));
+                  setFiltroFechaFin(formatDateInputLocal(hoy));
                 }}
               >
                 Año Actual
@@ -2062,7 +2256,7 @@ const DashboardVentas = () => {
         
         {mostrarFiltroFechas && (
           <p style={{ fontSize: '0.85rem', color: '#666', marginTop: '10px', textAlign: 'center' }}>
-            📅 Período seleccionado: <strong>{new Date(filtroFechaInicio).toLocaleDateString('es-CO')}</strong> a <strong>{new Date(filtroFechaFin).toLocaleDateString('es-CO')}</strong>
+            📅 Período seleccionado: <strong>{formatDateLocal(filtroFechaInicio, 'es-CO')}</strong> a <strong>{formatDateLocal(filtroFechaFin, 'es-CO')}</strong>
           </p>
         )}
       </div>

@@ -5,6 +5,7 @@ import InvoiceScreen from './components/InvoiceScreen';
 import FacturasGuardadas from './components/FacturasGuardadas';
 import FacturaDetalle from './components/FacturaDetalle';
 import ReportesCobros from './components/ReportesCobros';
+import ReportesVentas from './components/ReportesVentas';
 import CatalogoProductos from './components/CatalogoProductos';
 import CatalogoClientes from './components/CatalogoClientes';
 import CatalogoClientesDetalle from './components/CatalogoClientesDetalle';
@@ -321,6 +322,15 @@ function App() {
                 <>
                   <PageMeta title="Reportes de Cobros - EBS" description="Reportes y análisis de cobros" />
                   <ReportesCobros />
+                </>
+              </ProtectedRoute>
+            } />
+
+            <Route path="/reportes-ventas" element={
+              <ProtectedRoute requiredRoles={['superadmin', 'admin', 'contabilidad', 'vendedor']}>
+                <>
+                  <PageMeta title="Informe de Ventas - EBS" description="Informe diario y resumen de ventas" />
+                  <ReportesVentas />
                 </>
               </ProtectedRoute>
             } />

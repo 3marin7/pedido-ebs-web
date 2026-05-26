@@ -86,9 +86,10 @@ const Navigation = () => {
             { path: '/auditoria-productos', label: 'Auditoría de Productos', icon: '📋' },
             { path: '/movimientos', label: 'Historial Movimientos', icon: '📊' },
             { path: '/dashboard-ventas', label: 'Dashboard Ventas', icon: '📈' },
+            { path: '/reportes-ventas', label: 'Informe de Ventas', icon: '🧾' },
+            { path: '/reportes-cobros', label: 'Informe de Cobros', icon: '💰' },
             { path: '/calculador-sueldo-vendedor', label: 'Calculador Sueldo Vendedor', icon: '💰' },
-            { path: '/reporte-clientes-producto', label: 'Clientes por Producto', icon: '👥' },
-            { path: '/reportes-cobros', label: 'Reportes de Cobros', icon: '💰' }
+            { path: '/reporte-clientes-producto', label: 'Clientes por Producto', icon: '👥' }
           ]
         },
         // CONTABILIDAD - Grupo
@@ -151,6 +152,8 @@ const Navigation = () => {
             { path: '/auditoria-productos', label: 'Auditoría de Productos', icon: '📋' },
             { path: '/movimientos', label: 'Historial Movimientos', icon: '📊' },
             { path: '/dashboard-ventas', label: 'Dashboard Ventas', icon: '📈' },
+            { path: '/reportes-ventas', label: 'Informe de Ventas', icon: '🧾' },
+            { path: '/reportes-cobros', label: 'Informe de Cobros', icon: '💰' },
             { path: '/calculador-sueldo-vendedor', label: 'Calculador Sueldo Vendedor', icon: '💰' },
             { path: '/rutas-cobro', label: 'Rutas de Cobro', icon: '🚗' }
           ]
@@ -215,9 +218,10 @@ const Navigation = () => {
             { path: '/auditoria-productos', label: 'Auditoría de Productos', icon: '📋' },
             { path: '/movimientos', label: 'Historial Movimientos', icon: '📊' },
             { path: '/dashboard-ventas', label: 'Dashboard Ventas', icon: '📈' },
+            { path: '/reportes-ventas', label: 'Informe de Ventas', icon: '🧾' },
+            { path: '/reportes-cobros', label: 'Informe de Cobros', icon: '💰' },
             { path: '/calculador-sueldo-vendedor', label: 'Calculador Sueldo Vendedor', icon: '💰' },
-            { path: '/reporte-clientes-producto', label: 'Clientes por Producto', icon: '👥' },
-            { path: '/reportes-cobros', label: 'Reportes de Cobros', icon: '💰' }
+            { path: '/reporte-clientes-producto', label: 'Clientes por Producto', icon: '👥' }
           ]
         }
       ];
@@ -232,6 +236,7 @@ const Navigation = () => {
         { path: '/campana-catalogo', label: 'Campaña Catálogo', icon: '🎯', tipo: 'simple' },
         { path: '/campana-catalogo-api', label: 'Campaña Catálogo API', icon: '🧪', tipo: 'simple' },
         { path: '/catalogo-detalle', label: 'Catálogo Precios Clientes', icon: '🏷️', tipo: 'simple' },
+        { path: '/reportes-ventas', label: 'Informe de Ventas', icon: '🧾', tipo: 'simple' },
         { path: '/reportes-cobros', label: 'Reportes de Cobros', icon: '📈', tipo: 'simple' },
         { path: '/calculador-sueldo-vendedor', label: 'Calculador Sueldo Vendedor', icon: '💰', tipo: 'simple' },
         { path: '/gastos', label: 'Gestión de Gastos', icon: '💰', tipo: 'simple' },

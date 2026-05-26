@@ -333,6 +333,46 @@ td.total {
   height: 100%;
 }
 
+.mini-chart-vendedores {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.mini-chart-row {
+  display: grid;
+  grid-template-columns: minmax(160px, 220px) 1fr minmax(130px, 180px);
+  align-items: center;
+  gap: 12px;
+}
+
+.mini-chart-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mini-chart-bar-track {
+  height: 10px;
+  background-color: #e9ecef;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.mini-chart-bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.4s ease;
+}
+
+.mini-chart-value {
+  text-align: right;
+  font-weight: 600;
+  color: #2c3e50;
+  font-size: 13px;
+}
+
 .porcentaje-text {
   font-size: 12px;
   color: #6c757d;
@@ -888,6 +928,15 @@ td.total {
 @media (max-width: 768px) {
   .search-box {
     max-width: 100%;
+  }
+
+  .mini-chart-row {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .mini-chart-value {
+    text-align: left;
   }
 
   .clientes-sugeridos {
