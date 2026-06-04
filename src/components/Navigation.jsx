@@ -70,9 +70,9 @@ const Navigation = () => {
             { path: '/clientes', label: 'Ver Clientes', icon: '👥' },
             { path: '/catalogo-clientes', label: 'Enviar Catálogo', icon: '📤' },
             { path: '/campana-catalogo', label: 'Campaña Catálogo', icon: '🎯' },
-            { path: '/campana-catalogo-api', label: 'Campaña Catálogo API', icon: '🧪' },
+            { path: '/rutas-cobro', label: 'Rutas de Cobro', icon: '🚗' },
             { path: '/catalogo-detalle', label: 'Catálogo Precios Clientes', icon: '🏷️' },
-            { path: '/rutas-cobro', label: 'Rutas de Cobro', icon: '🚗' }
+            { path: '/consulta-coopidrogas', label: 'Consulta Coopidrogas', icon: '🔍' }
           ]
         },
         // REPORTES & ANÁLISIS - Grupo
@@ -136,9 +136,9 @@ const Navigation = () => {
             { path: '/clientes', label: 'Ver Clientes', icon: '👥' },
             { path: '/catalogo-clientes', label: 'Enviar Catálogo', icon: '📤' },
             { path: '/campana-catalogo', label: 'Campaña Catálogo', icon: '🎯' },
-            { path: '/campana-catalogo-api', label: 'Campaña Catálogo API', icon: '🧪' },
+            { path: '/rutas-cobro', label: 'Rutas de Cobro', icon: '🚗' },
             { path: '/catalogo-detalle', label: 'Catálogo Precios Clientes', icon: '🏷️' },
-            { path: '/rutas-cobro', label: 'Rutas de Cobro', icon: '🚗' }
+            { path: '/consulta-coopidrogas', label: 'Consulta Coopidrogas', icon: '🔍' }
           ]
         },
         // INFORMES - Grupo
@@ -203,7 +203,7 @@ const Navigation = () => {
             { path: '/clientes', label: 'Ver Clientes', icon: '👥' },
             { path: '/catalogo-clientes', label: 'Enviar Catálogo', icon: '📤' },
             { path: '/campana-catalogo', label: 'Campaña Catálogo', icon: '🎯' },
-            { path: '/campana-catalogo-api', label: 'Campaña Catálogo API', icon: '🧪' },
+            { path: '/rutas-cobro', label: 'Rutas de Cobro', icon: '🚗' },
             { path: '/catalogo-detalle', label: 'Catálogo Precios Clientes', icon: '🏷️' },
             { path: '/consulta-coopidrogas', label: 'Consulta Coopidrogas', icon: '🔍' }
           ]
@@ -235,7 +235,7 @@ const Navigation = () => {
         { path: '/facturas', label: 'Facturas Guardadas', icon: '📄', tipo: 'simple' },
         { path: '/catalogo-clientes', label: 'Enviar Catálogo', icon: '📤', tipo: 'simple' },
         { path: '/campana-catalogo', label: 'Campaña Catálogo', icon: '🎯', tipo: 'simple' },
-        { path: '/campana-catalogo-api', label: 'Campaña Catálogo API', icon: '🧪', tipo: 'simple' },
+        { path: '/rutas-cobro', label: 'Rutas de Cobro', icon: '🚗', tipo: 'simple' },
         { path: '/catalogo-detalle', label: 'Catálogo Precios Clientes', icon: '🏷️', tipo: 'simple' },
         { path: '/reportes-ventas', label: 'Informe de Ventas', icon: '🧾', tipo: 'simple' },
         { path: '/reportes-cobros', label: 'Reportes de Cobros', icon: '📈', tipo: 'simple' },
@@ -244,7 +244,6 @@ const Navigation = () => {
         { path: '/gastos', label: 'Gestión de Gastos', icon: '💰', tipo: 'simple' },
         { path: '/gastos-empresa', label: 'Gastos de la Empresa', icon: '💸', tipo: 'simple' },
         { path: '/cuentas-por-pagar', label: 'Gastos Empresa (Proveedores)', icon: '📊', tipo: 'simple' },
-        { path: '/rutas-cobro', label: 'Rutas de Cobro', icon: '🚗', tipo: 'simple' },
         { path: '/gestion-pedidos', label: 'Gestión Pedidos', icon: '🛒', tipo: 'simple' },
         { path: '/dashboard-ventas', label: 'Dashboard Ventas', icon: '📊', tipo: 'simple' },
         { path: '/catalogo', label: 'Catálogo Productos', icon: '📚', tipo: 'simple' },

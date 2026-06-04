@@ -462,7 +462,8 @@
   }
   
   .submenu-open {
-    max-height: 300px;
+    max-height: min(70vh, 560px);
+    overflow-y: auto;
     margin-top: 0;
   }
   
