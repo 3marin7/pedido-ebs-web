@@ -72,7 +72,6 @@ const Navigation = () => {
             { path: '/campana-catalogo', label: 'Campaña Catálogo', icon: '🎯' },
             { path: '/campana-catalogo-api', label: 'Campaña Catálogo API', icon: '🧪' },
             { path: '/catalogo-detalle', label: 'Catálogo Precios Clientes', icon: '🏷️' },
-            { path: '/mapa-locales', label: 'Mapa de Locales', icon: '🗺️' },
             { path: '/rutas-cobro', label: 'Rutas de Cobro', icon: '🚗' }
           ]
         },
@@ -139,7 +138,6 @@ const Navigation = () => {
             { path: '/campana-catalogo', label: 'Campaña Catálogo', icon: '🎯' },
             { path: '/campana-catalogo-api', label: 'Campaña Catálogo API', icon: '🧪' },
             { path: '/catalogo-detalle', label: 'Catálogo Precios Clientes', icon: '🏷️' },
-            { path: '/mapa-locales', label: 'Mapa de Locales', icon: '🗺️' },
             { path: '/rutas-cobro', label: 'Rutas de Cobro', icon: '🚗' }
           ]
         },

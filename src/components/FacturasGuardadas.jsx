@@ -816,16 +816,15 @@ const FacturasGuardadas = () => {
           >
             <i className="fas fa-plus"></i> Nueva Factura
           </button>
+          <button 
+            className="button primary-button"
+            onClick={() => navigate('/rutas-cobro')}
+            disabled={importando || cargando}
+          >
+            <i className="fas fa-route"></i> Rutas de Cobro
+          </button>
           {(facturas.length > 0 || abonos.length > 0) && (
             <>
-              <button 
-                className="button primary-button"
-                onClick={() => navigate('/rutas-cobro')}
-                disabled={importando || cargando}
-              >
-                <i className="fas fa-route"></i> Rutas de Cobro
-              </button>
-              
               <button 
                 className="button success-button"
                 onClick={exportarExcel}
