@@ -88,6 +88,7 @@ const Navigation = () => {
             { path: '/dashboard-ventas', label: 'Dashboard Ventas', icon: '📈' },
             { path: '/reportes-ventas', label: 'Informe de Ventas', icon: '🧾' },
             { path: '/reportes-cobros', label: 'Informe de Cobros', icon: '💰' },
+            { path: '/plan-seguimiento-ventas', label: 'Plan Seguimiento Ventas', icon: '🎯' },
             { path: '/calculador-sueldo-vendedor', label: 'Calculador Sueldo Vendedor', icon: '💰' },
             { path: '/reporte-clientes-producto', label: 'Clientes por Producto', icon: '👥' }
           ]
@@ -154,6 +155,7 @@ const Navigation = () => {
             { path: '/dashboard-ventas', label: 'Dashboard Ventas', icon: '📈' },
             { path: '/reportes-ventas', label: 'Informe de Ventas', icon: '🧾' },
             { path: '/reportes-cobros', label: 'Informe de Cobros', icon: '💰' },
+            { path: '/plan-seguimiento-ventas', label: 'Plan Seguimiento Ventas', icon: '🎯' },
             { path: '/calculador-sueldo-vendedor', label: 'Calculador Sueldo Vendedor', icon: '💰' },
             { path: '/rutas-cobro', label: 'Rutas de Cobro', icon: '🚗' }
           ]
@@ -220,6 +222,7 @@ const Navigation = () => {
             { path: '/dashboard-ventas', label: 'Dashboard Ventas', icon: '📈' },
             { path: '/reportes-ventas', label: 'Informe de Ventas', icon: '🧾' },
             { path: '/reportes-cobros', label: 'Informe de Cobros', icon: '💰' },
+            { path: '/plan-seguimiento-ventas', label: 'Plan Seguimiento Ventas', icon: '🎯' },
             { path: '/calculador-sueldo-vendedor', label: 'Calculador Sueldo Vendedor', icon: '💰' },
             { path: '/reporte-clientes-producto', label: 'Clientes por Producto', icon: '👥' }
           ]
@@ -238,6 +241,7 @@ const Navigation = () => {
         { path: '/catalogo-detalle', label: 'Catálogo Precios Clientes', icon: '🏷️', tipo: 'simple' },
         { path: '/reportes-ventas', label: 'Informe de Ventas', icon: '🧾', tipo: 'simple' },
         { path: '/reportes-cobros', label: 'Reportes de Cobros', icon: '📈', tipo: 'simple' },
+        { path: '/plan-seguimiento-ventas', label: 'Plan Seguimiento Ventas', icon: '🎯', tipo: 'simple' },
         { path: '/calculador-sueldo-vendedor', label: 'Calculador Sueldo Vendedor', icon: '💰', tipo: 'simple' },
         { path: '/gastos', label: 'Gestión de Gastos', icon: '💰', tipo: 'simple' },
         { path: '/gastos-empresa', label: 'Gastos de la Empresa', icon: '💸', tipo: 'simple' },

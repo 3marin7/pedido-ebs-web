@@ -27,7 +27,7 @@ const cargarTodasLasFacturas = async () => {
     const { data, error } = await supabase
       .from('facturas')
       .select('*')
-      .order('fecha', { ascending: false })
+      .order('id', { ascending: false })
       .range(desde, desde + PAGE_SIZE - 1);
 
     if (error) throw error;
@@ -82,6 +82,7 @@ const FacturasGuardadas = () => {
   const [importando, setImportando] = useState(false);
   const [errorImportacion, setErrorImportacion] = useState(null);
   const [mostrarPagadas, setMostrarPagadas] = useState(false);
+  const [vistaTabla, setVistaTabla] = useState(false);
   const [password, setPassword] = useState('');
   const [errorPassword, setErrorPassword] = useState('');
   const [resumenActivo, setResumenActivo] = useState('general');
@@ -760,6 +761,17 @@ const FacturasGuardadas = () => {
             {mostrarPagadas ? 'Mostrando Todas' : 'Solo Pendientes'}
           </button>
           <button 
+            className={`menu-btn ${vistaTabla ? 'active' : ''}`}
+            onClick={() => {
+              setVistaTabla(!vistaTabla);
+              setMenuAbierto(false);
+            }}
+            disabled={importando || cargando}
+          >
+            <i className={`fas fa-${vistaTabla ? 'th-large' : 'list'}`}></i> 
+            {vistaTabla ? 'Vista Tarjeta' : 'Vista Tabla'}
+          </button>
+          <button 
             className={`menu-btn ${mostrarResumen ? 'active' : ''}`}
             onClick={() => {
               setMostrarResumen(!mostrarResumen);
@@ -849,6 +861,13 @@ const FacturasGuardadas = () => {
               >
                 <i className={`fas fa-${mostrarPagadas ? 'eye' : 'eye-slash'}`}></i> 
                 {mostrarPagadas ? 'Mostrando Todas' : 'Solo Pendientes'}
+              </button>
+              <button 
+                className={`button ${vistaTabla ? 'success-button' : 'secondary-button'}`}
+                onClick={() => setVistaTabla(!vistaTabla)}
+                disabled={importando || cargando}
+              >
+                <i className={`fas fa-${vistaTabla ? 'th-large' : 'list'}`}></i> {vistaTabla ? 'Vista Tarjeta' : 'Vista Tabla'}
               </button>
               <button 
                 className="button secondary-button"
@@ -1175,111 +1194,162 @@ const FacturasGuardadas = () => {
           </p>
         </div>
       ) : (
-        <div className="facturas-grid">
-          {facturasProcesadas.map((factura) => {
-            const codigoClienteFactura = getCodigoCliente(factura);
+        vistaTabla ? (
+          <div className="tabla-container">
+            <div className="tabla-scroll">
+              <table className="facturas-table">
+                <thead>
+                  <tr>
+                    <th>Código</th>
+                    <th>Fecha</th>
+                    <th>Cliente</th>
+                    <th>Valor</th>
+                    <th>Saldo</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {facturasProcesadas.map((factura) => {
+                    return (
+                      <tr key={factura.id}>
+                        <td>#{factura.id.toString().padStart(6, '0')}</td>
+                        <td>{formatFecha(factura.fecha)}</td>
+                        <td>{factura.cliente}</td>
+                        <td>{formatMoneda(factura.total)}</td>
+                        <td>{formatMoneda(factura.saldo)}</td>
+                        <td className="accion-cell">
+                          <button
+                            className="button primary-button small-button"
+                            onClick={() => navigate(`/factura/${factura.id}`)}
+                            disabled={importando || cargando}
+                          >
+                            <i className="fas fa-eye"></i>
+                          </button>
+                          <button
+                            className="button danger-button small-button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setMostrarConfirmacion(factura.id);
+                            }}
+                            disabled={importando || cargando}
+                          >
+                            <i className="fas fa-trash"></i>
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        ) : (
+          <div className="facturas-grid">
+            {facturasProcesadas.map((factura) => {
+              const codigoClienteFactura = getCodigoCliente(factura);
 
-            return (
-            <article key={factura.id} className="factura-card">
-              <header className="factura-card-header">
-                <div className="factura-header-top">
-                  <span className="factura-id">#{factura.id.toString().padStart(6, '0')}</span>
-                  <time className="factura-fecha">
-                    {formatFecha(factura.fecha)}
-                  </time>
-                </div>
-                {formatEstado(factura.estado)}
-              </header>
-              
-              <div className="factura-card-body">
-                <div className="factura-info-cliente-vendedor">
-                  <div className="info-line">
-                    <strong>CLIENTE:</strong> {factura.cliente}
+              return (
+              <article key={factura.id} className="factura-card">
+                <header className="factura-card-header">
+                  <div className="factura-header-top">
+                    <span className="factura-id">#{factura.id.toString().padStart(6, '0')}</span>
+                    <time className="factura-fecha">
+                      {formatFecha(factura.fecha)}
+                    </time>
                   </div>
-                  {codigoClienteFactura && (
-                    <div className="info-line">
-                      <strong>CÓDIGO CLIENTE:</strong> {codigoClienteFactura}
-                    </div>
-                  )}
-                  <div className="info-line">
-                    <strong>VENDEDOR:</strong> {factura.vendedor}
-                  </div>
-                  {factura.direccion && (
-                    <div className="info-line">
-                      <strong>DIRECCIÓN:</strong> {truncarTexto(factura.direccion, 20)}
-                    </div>
-                  )}
-                  {factura.telefono && (
-                    <div className="info-line">
-                      <strong>TELÉFONO:</strong> {factura.telefono}
-                    </div>
-                  )}
-                </div>
+                  {formatEstado(factura.estado)}
+                </header>
                 
-                <div className="productos-section">
-                  <div className="productos-header">
-                    <strong>PRODUCTO</strong>
-                    <strong>CANT</strong>
-                  </div>
-                  <div className="productos-list">
-                    {factura.productos?.map((producto, index) => (
-                      <div key={index} className="producto-item">
-                        <span className="producto-nombre">
-                          {truncarTexto(producto.nombre, 30)}
-                        </span>
-                        <span className="producto-cantidad">
-                          {producto.cantidad}
-                        </span>
+                <div className="factura-card-body">
+                  <div className="factura-info-cliente-vendedor">
+                    <div className="info-line">
+                      <strong>CLIENTE:</strong> {factura.cliente}
+                    </div>
+                    {codigoClienteFactura && (
+                      <div className="info-line">
+                        <strong>CÓDIGO CLIENTE:</strong> {codigoClienteFactura}
                       </div>
-                    ))}
+                    )}
+                    <div className="info-line">
+                      <strong>VENDEDOR:</strong> {factura.vendedor}
+                    </div>
+                    {factura.direccion && (
+                      <div className="info-line">
+                        <strong>DIRECCIÓN:</strong> {truncarTexto(factura.direccion, 20)}
+                      </div>
+                    )}
+                    {factura.telefono && (
+                      <div className="info-line">
+                        <strong>TELÉFONO:</strong> {factura.telefono}
+                      </div>
+                    )}
+                  </div>
+                  
+                  <div className="productos-section">
+                    <div className="productos-header">
+                      <strong>PRODUCTO</strong>
+                      <strong>CANT</strong>
+                    </div>
+                    <div className="productos-list">
+                      {factura.productos?.map((producto, index) => (
+                        <div key={index} className="producto-item">
+                          <span className="producto-nombre">
+                            {truncarTexto(producto.nombre, 30)}
+                          </span>
+                          <span className="producto-cantidad">
+                            {producto.cantidad}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  <div className="factura-totales">
+                    <div className="total-line">
+                      <span>PRODUCTOS:</span>
+                      <span>{factura.productos?.length || 0}</span>
+                    </div>
+                    <div className="total-line">
+                      <span>TOTAL:</span>
+                      <strong>{formatMoneda(factura.total)}</strong>
+                    </div>
+                    <div className="total-line">
+                      <span>ABONADO:</span>
+                      <span>{formatMoneda(factura.totalAbonado)}</span>
+                    </div>
+                    <div className="total-line saldo">
+                      <span>SALDO:</span>
+                      <strong className={factura.saldo > 0 ? 'saldo-pendiente' : 'saldo-pagado'}>
+                        {formatMoneda(factura.saldo)}
+                      </strong>
+                    </div>
                   </div>
                 </div>
                 
-                <div className="factura-totales">
-                  <div className="total-line">
-                    <span>PRODUCTOS:</span>
-                    <span>{factura.productos?.length || 0}</span>
-                  </div>
-                  <div className="total-line">
-                    <span>TOTAL:</span>
-                    <strong>{formatMoneda(factura.total)}</strong>
-                  </div>
-                  <div className="total-line">
-                    <span>ABONADO:</span>
-                    <span>{formatMoneda(factura.totalAbonado)}</span>
-                  </div>
-                  <div className="total-line saldo">
-                    <span>SALDO:</span>
-                    <strong className={factura.saldo > 0 ? 'saldo-pendiente' : 'saldo-pagado'}>
-                      {formatMoneda(factura.saldo)}
-                    </strong>
-                  </div>
-                </div>
-              </div>
-              
-              <footer className="factura-card-footer">
-                <button
-                  className="button primary-button"
-                  onClick={() => navigate(`/factura/${factura.id}`)}
-                  disabled={importando || cargando}
-                >
-                  <i className="fas fa-eye"></i> Ver Detalle
-                </button>
-                <button
-                  className="button danger-button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setMostrarConfirmacion(factura.id);
-                  }}
-                  disabled={importando || cargando}
-                >
-                  <i className="fas fa-trash"></i> Eliminar
-                </button>
-              </footer>
-            </article>
-            );
-          })}
-        </div>
+                <footer className="factura-card-footer">
+                  <button
+                    className="button primary-button"
+                    onClick={() => navigate(`/factura/${factura.id}`)}
+                    disabled={importando || cargando}
+                  >
+                    <i className="fas fa-eye"></i> Ver Detalle
+                  </button>
+                  <button
+                    className="button danger-button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setMostrarConfirmacion(factura.id);
+                    }}
+                    disabled={importando || cargando}
+                  >
+                    <i className="fas fa-trash"></i> Eliminar
+                  </button>
+                </footer>
+              </article>
+              );
+            })}
+          </div>
+        )
       )}
       
       {/* Botón flotante para nueva factura en móvil */}

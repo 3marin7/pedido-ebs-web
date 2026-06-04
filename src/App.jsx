@@ -29,6 +29,7 @@ import AuditoriaProductos from './components/AuditoriaProductos';
 import ReporteClientesPorProducto from './components/ReporteClientesPorProducto';
 import ConsultaCoopidrogas from './components/ConsultaCoopidrogas';
 import CalculadorSueldoVendedor from './components/CalculadorSueldoVendedor';
+import PlanSeguimientoVentas from './components/PlanSeguimientoVentas';
 
 // Contexto de autenticación
 const AuthContext = createContext();
@@ -343,6 +344,18 @@ function App() {
                     description="Cálculo de sueldo base y comisión por ventas de vendedores"
                   />
                   <CalculadorSueldoVendedor />
+                </>
+              </ProtectedRoute>
+            } />
+
+            <Route path="/plan-seguimiento-ventas" element={
+              <ProtectedRoute requiredRoles={['superadmin', 'admin', 'contabilidad', 'vendedor']}>
+                <>
+                  <PageMeta
+                    title="Plan y Seguimiento de Ventas - EBS"
+                    description="Tablero operativo diario para seguimiento comercial e informes"
+                  />
+                  <PlanSeguimientoVentas />
                 </>
               </ProtectedRoute>
             } />

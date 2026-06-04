@@ -1,6 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from './supabaseClient';
+import {
+  ResponsiveContainer,
+  LineChart,
+  Line,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend
+} from 'recharts';
 import './ReportesCobros.css';
 
 const PAGE_SIZE = 1000;
@@ -148,6 +160,19 @@ const ReportesVentas = () => {
     }, {})
   ).sort((a, b) => b.total - a.total);
 
+  const ventasDiariasChartData = resumenPorDia
+    .slice()
+    .reverse()
+    .map((dia) => ({
+      fecha: dia.fecha,
+      total: Math.round(dia.total)
+    }));
+
+  const ventasPorVendedorChartData = resumenPorVendedor.slice(0, 8).map((item) => ({
+    vendedor: item.vendedor,
+    total: Math.round(item.total)
+  }));
+
   const totalGeneral = facturasFiltradas.reduce((sum, item) => sum + (parseFloat(item.total) || 0), 0);
   const cantidadGeneral = facturasFiltradas.length;
 
@@ -237,6 +262,44 @@ const ReportesVentas = () => {
               <strong>{cantidadGeneral > 0 ? formatMoneda(totalGeneral / cantidadGeneral) : formatMoneda(0)}</strong>
             </div>
           </div>
+        </div>
+      </div>
+
+      <div className="chart-row">
+        <div className="chart-card">
+          <h2><i className="fas fa-chart-line"></i> Tendencia diaria</h2>
+          {ventasDiariasChartData.length === 0 ? (
+            <div className="empty-state"><i className="fas fa-calendar-times"></i><p>No hay ventas en este rango</p></div>
+          ) : (
+            <ResponsiveContainer width="100%" height={260}>
+              <LineChart data={ventasDiariasChartData} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="fecha" tick={{ fontSize: 12 }} />
+                <YAxis tickFormatter={(value) => formatMoneda(value)} />
+                <Tooltip formatter={(value) => formatMoneda(value)} />
+                <Legend />
+                <Line type="monotone" dataKey="total" stroke="#2d99ff" strokeWidth={3} dot={{ r: 4 }} />
+              </LineChart>
+            </ResponsiveContainer>
+          )}
+        </div>
+
+        <div className="chart-card">
+          <h2><i className="fas fa-user-tie"></i> Top vendedores</h2>
+          {ventasPorVendedorChartData.length === 0 ? (
+            <div className="empty-state"><i className="fas fa-user-times"></i><p>No hay vendedores con ventas</p></div>
+          ) : (
+            <ResponsiveContainer width="100%" height={260}>
+              <BarChart data={ventasPorVendedorChartData} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="vendedor" tick={{ fontSize: 12 }} />
+                <YAxis tickFormatter={(value) => formatMoneda(value)} />
+                <Tooltip formatter={(value) => formatMoneda(value)} />
+                <Legend />
+                <Bar dataKey="total" fill="#50d3aa" />
+              </BarChart>
+            </ResponsiveContainer>
+          )}
         </div>
       </div>
 
