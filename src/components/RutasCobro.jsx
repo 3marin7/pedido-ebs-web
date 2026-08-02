@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from './supabaseClient';
+import { formatInputDateLocal } from '../lib/dateUtils';
 import './RutasCobro.css';
 
 const RC_PAGE_SIZE = 1000;
@@ -743,7 +744,7 @@ const RutasCobro = () => {
   // Cargar reporte diario
   const cargarReporteDiario = async () => {
     try {
-      const hoy = new Date().toISOString().split('T')[0];
+      const hoy = formatInputDateLocal(new Date());
       
       const { data: visitasHoy, error } = await supabase
         .from('visits_cobro')

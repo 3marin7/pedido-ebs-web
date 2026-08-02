@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import './ClientesScreen.css';
 import { supabase } from './supabaseClient.js';
 import * as XLSX from 'xlsx';
+import { formatInputDateLocal } from '../lib/dateUtils';
 
 const ClientesScreen = ({ 
   onSeleccionarCliente, 
@@ -300,7 +301,7 @@ const ClientesScreen = ({
       const worksheet = XLSX.utils.json_to_sheet(filasExcel);
       XLSX.utils.book_append_sheet(workbook, worksheet, 'Clientes');
 
-      const fechaArchivo = new Date().toISOString().slice(0, 10);
+      const fechaArchivo = formatInputDateLocal(new Date());
       XLSX.writeFile(workbook, `clientes_tabla_excel_${fechaArchivo}.xlsx`, {
         bookType: 'xlsx',
       });

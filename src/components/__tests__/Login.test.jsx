@@ -133,7 +133,7 @@ describe('Login', () => {
       )
     })
 
-    test('llama a login cuando credenciales de inventario son correctas', () => {
+    test('llama a login cuando las credenciales de Sharon son correctas', () => {
       const loginMock = jest.fn()
       useAuth.mockReturnValue({ login: loginMock })
       
@@ -143,14 +143,14 @@ describe('Login', () => {
       const passwordInput = screen.getByPlaceholderText(/contraseña/i)
       const submitButton = screen.getByRole('button', { name: /ingresar al sistema/i })
       
-      fireEvent.change(usernameInput, { target: { value: 'inv' } })
-      fireEvent.change(passwordInput, { target: { value: '1v3nt' } })
+      fireEvent.change(usernameInput, { target: { value: 'sharon' } })
+      fireEvent.change(passwordInput, { target: { value: 'sharon1310' } })
       fireEvent.click(submitButton)
       
       expect(loginMock).toHaveBeenCalled()
       expect(loginMock).toHaveBeenCalledWith(
         expect.objectContaining({
-          username: 'inv',
+          username: 'sharon',
           role: 'inventario'
         })
       )

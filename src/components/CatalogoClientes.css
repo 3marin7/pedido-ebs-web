@@ -328,6 +328,54 @@ body {
   transform: translateZ(0);
 }
 
+.product-card.promo-card {
+  border-color: #fb923c;
+  background: linear-gradient(180deg, #fff7ed 0%, #ffedd5 100%);
+}
+
+.product-card.promo-card .product-info {
+  background: transparent;
+}
+
+.promo-tag {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: #ea580c;
+  color: white;
+  padding: 4px 9px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  z-index: 5;
+  box-shadow: 0 4px 12px rgba(234, 88, 12, 0.18);
+}
+
+.product-price.promo-price {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin: 4px 0;
+}
+
+.original-price {
+  text-decoration: line-through;
+  color: #6b7280;
+  font-size: 0.78rem;
+}
+
+.discounted-price {
+  color: #047857;
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+.product-description.promo-description {
+  color: #b45309;
+}
+
 /* Estilos especiales para tarjetas en vista de lista */
 .product-card.list-card {
   flex-direction: row;

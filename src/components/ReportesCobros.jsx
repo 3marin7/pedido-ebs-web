@@ -75,10 +75,6 @@ const ReportesCobros = () => {
   const normalizarFechaISO = (valor) => {
     if (!valor) return '';
 
-    if (typeof valor === 'string' && /^\d{4}-\d{2}-\d{2}/.test(valor)) {
-      return valor.slice(0, 10);
-    }
-
     const fecha = parseDateLocal(valor);
     if (!fecha) return '';
 
@@ -437,7 +433,7 @@ const ReportesCobros = () => {
       abono.factura_id || abono.facturaId
     ]);
     
-    generarCSV(headers, rows, `reporte_cobros_${new Date().toISOString().slice(0, 10)}`);
+    generarCSV(headers, rows, `reporte_cobros_${formatInputDate(new Date())}`);
   };
 
   // 2. Exportar reporte por vendedores
@@ -451,7 +447,7 @@ const ReportesCobros = () => {
       calcularPorcentaje(vendedor.total)
     ]);
     
-    generarCSV(headers, rows, `reporte_vendedores_${new Date().toISOString().slice(0, 10)}`);
+    generarCSV(headers, rows, `reporte_vendedores_${formatInputDate(new Date())}`);
   };
 
   // 3. Exportar reporte diario
@@ -465,7 +461,7 @@ const ReportesCobros = () => {
       obtenerVendedorPrincipal(dia.abonos)
     ]);
     
-    generarCSV(headers, rows, `reporte_diario_${new Date().toISOString().slice(0, 10)}`);
+    generarCSV(headers, rows, `reporte_diario_${formatInputDate(new Date())}`);
   };
 
   // 4. Exportar reporte mensual
@@ -479,7 +475,7 @@ const ReportesCobros = () => {
       obtenerVendedorPrincipal(mes.abonos)
     ]);
     
-    generarCSV(headers, rows, `reporte_mensual_${new Date().toISOString().slice(0, 10)}`);
+    generarCSV(headers, rows, `reporte_mensual_${formatInputDate(new Date())}`);
   };
 
   // 5. Exportar reporte de clientes
@@ -494,7 +490,7 @@ const ReportesCobros = () => {
         [...new Set(cliente.abonos.map(a => a.vendedor))].join(', ')
       ]);
     
-    generarCSV(headers, rows, `reporte_clientes_${new Date().toISOString().slice(0, 10)}`);
+    generarCSV(headers, rows, `reporte_clientes_${formatInputDate(new Date())}`);
   };
 
   // 6. Exportar reporte diario por vendedor
@@ -508,7 +504,7 @@ const ReportesCobros = () => {
       (item.total / item.cantidad).toFixed(2)
     ]);
     
-    generarCSV(headers, rows, `reporte_diario_vendedor_${new Date().toISOString().slice(0, 10)}`);
+    generarCSV(headers, rows, `reporte_diario_vendedor_${formatInputDate(new Date())}`);
   };
 
   // 7. Exportar reporte mensual por vendedor
@@ -522,7 +518,7 @@ const ReportesCobros = () => {
       (item.total / item.cantidad).toFixed(2)
     ]);
     
-    generarCSV(headers, rows, `reporte_mensual_vendedor_${new Date().toISOString().slice(0, 10)}`);
+    generarCSV(headers, rows, `reporte_mensual_vendedor_${formatInputDate(new Date())}`);
   };
 
   // Renderizar vista de resumen general
@@ -758,11 +754,11 @@ const ReportesCobros = () => {
                           onClick={() => {
                             // Establecer el rango de fechas para el mes seleccionado
                             const [year, month] = mes.mes.split('-');
-                            const firstDay = new Date(year, month - 1, 1);
+                            const firstDay = parseDateLocal(`${year}-${String(month).padStart(2, '0')}-01`);
                             const lastDay = new Date(year, month, 0);
                             
-                            setFechaInicio(firstDay.toISOString().split('T')[0]);
-                            setFechaFin(lastDay.toISOString().split('T')[0]);
+                            setFechaInicio(formatInputDate(firstDay));
+                            setFechaFin(formatInputDate(lastDay));
                             setVistaActual('mensual');
                             setPeriodoActual(mes.mes);
                           }}
@@ -1260,7 +1256,7 @@ const ReportesCobros = () => {
                   type="date" 
                   value={fechaInicio}
                   onChange={e => setFechaInicio(e.target.value)}
-                  max={fechaFin || new Date().toISOString().split('T')[0]}
+                  max={fechaFin || formatInputDate(new Date())}
                 />
               </label>
               
@@ -1271,7 +1267,7 @@ const ReportesCobros = () => {
                   value={fechaFin}
                   onChange={e => setFechaFin(e.target.value)}
                   min={fechaInicio}
-                  max={new Date().toISOString().split('T')[0]}
+                  max={formatInputDate(new Date())}
                 />
               </label>
             </div>

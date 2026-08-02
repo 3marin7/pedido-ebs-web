@@ -1,0 +1,314 @@
+/* ASIGNAR TIPOS CLIENTES SCREEN STYLES */
+
+.asignar-tipos-screen {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  min-height: 100vh;
+}
+
+.asignar-tipos-screen.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 500px;
+  font-size: 24px;
+  color: #333;
+}
+
+/* HEADER */
+.asignar-tipos-screen .header {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.asignar-tipos-screen .header h1 {
+  margin: 0;
+  color: #2c3e50;
+  font-size: 28px;
+  margin-bottom: 10px;
+}
+
+.asignar-tipos-screen .header p {
+  margin: 0;
+  color: #7f8c8d;
+  font-size: 14px;
+}
+
+/* ALERTS */
+.asignar-tipos-screen .alert {
+  padding: 15px 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-size: 14px;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.asignar-tipos-screen .alert-error {
+  background: #fadbd8;
+  color: #c0392b;
+  border-left: 4px solid #c0392b;
+}
+
+.asignar-tipos-screen .alert-success {
+  background: #d5f4e6;
+  color: #27ae60;
+  border-left: 4px solid #27ae60;
+}
+
+/* CONTROLES */
+.asignar-tipos-screen .controles {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 25px;
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.asignar-tipos-screen .search-input {
+  flex: 1;
+  min-width: 250px;
+  padding: 12px 15px;
+  border: 2px solid #ecf0f1;
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: inherit;
+  transition: all 0.3s ease;
+}
+
+.asignar-tipos-screen .search-input:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.asignar-tipos-screen .contador {
+  color: #7f8c8d;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* TABLA */
+.asignar-tipos-screen .tabla-contenedor {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: auto;
+  margin-bottom: 30px;
+}
+
+.asignar-tipos-screen .tabla-clientes {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.asignar-tipos-screen .tabla-clientes thead {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.asignar-tipos-screen .tabla-clientes th {
+  padding: 15px;
+  text-align: left;
+  font-size: 12px;
+}
+
+.asignar-tipos-screen .tabla-clientes tbody tr {
+  border-bottom: 1px solid #ecf0f1;
+  transition: all 0.2s ease;
+}
+
+.asignar-tipos-screen .tabla-clientes tbody tr:hover {
+  background: #f8f9fa;
+}
+
+.asignar-tipos-screen .tabla-clientes tbody tr.con-tipo {
+  background: #f0f8ff;
+}
+
+.asignar-tipos-screen .tabla-clientes tbody tr.sin-tipo {
+  background: #fffbf0;
+}
+
+.asignar-tipos-screen .tabla-clientes td {
+  padding: 12px 15px;
+  vertical-align: middle;
+}
+
+.asignar-tipos-screen .tabla-clientes td.nombre {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.asignar-tipos-screen .tabla-clientes td.contacto {
+  font-size: 12px;
+  color: #7f8c8d;
+}
+
+.asignar-tipos-screen .circulo {
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+/* BADGES */
+.asignar-tipos-screen .badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.asignar-tipos-screen .badge-asignado {
+  background: #d5f4e6;
+  color: #27ae60;
+}
+
+.asignar-tipos-screen .badge-sin-asignar {
+  background: #ffe8cc;
+  color: #d68910;
+}
+
+/* SELECT */
+.asignar-tipos-screen .tipo-select {
+  padding: 8px 12px;
+  border: 2px solid #ecf0f1;
+  border-radius: 6px;
+  font-size: 13px;
+  font-family: inherit;
+  background: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 150px;
+}
+
+.asignar-tipos-screen .tipo-select:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.asignar-tipos-screen .tipo-select:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* TABLA VACÍA */
+.asignar-tipos-screen .tabla-clientes td.vacio {
+  text-align: center;
+  color: #95a5a6;
+  padding: 40px 15px;
+  font-style: italic;
+}
+
+/* INFO BOX */
+.asignar-tipos-screen .info-box {
+  background: white;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-left: 5px solid #3498db;
+}
+
+.asignar-tipos-screen .info-box h3 {
+  margin: 0 0 20px 0;
+  color: #2c3e50;
+  font-size: 16px;
+}
+
+.asignar-tipos-screen .tipos-info {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+}
+
+.asignar-tipos-screen .tipo-info {
+  padding: 12px;
+  background: #f8f9fa;
+  border-radius: 6px;
+  border-left: 3px solid #667eea;
+  color: #2c3e50;
+  font-size: 13px;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .asignar-tipos-screen {
+    padding: 15px;
+  }
+
+  .asignar-tipos-screen .header {
+    padding: 20px;
+  }
+
+  .asignar-tipos-screen .header h1 {
+    font-size: 22px;
+  }
+
+  .asignar-tipos-screen .controles {
+    flex-direction: column;
+  }
+
+  .asignar-tipos-screen .search-input {
+    min-width: auto;
+    width: 100%;
+  }
+
+  .asignar-tipos-screen .tabla-clientes th,
+  .asignar-tipos-screen .tabla-clientes td {
+    padding: 10px;
+    font-size: 11px;
+  }
+
+  .asignar-tipos-screen .tabla-clientes td.nombre {
+    flex-wrap: wrap;
+  }
+
+  .asignar-tipos-screen .tipo-select {
+    min-width: 120px;
+    font-size: 12px;
+  }
+
+  .asignar-tipos-screen .tipos-info {
+    grid-template-columns: 1fr;
+  }
+}

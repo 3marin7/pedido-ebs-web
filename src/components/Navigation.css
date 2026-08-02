@@ -124,6 +124,7 @@
   flex: 1;
   justify-content: flex-start;
   margin-left: 0.5rem;
+  overflow: visible;
 }
 
 /* Estilos para enlaces normales */
@@ -262,15 +263,16 @@
   opacity: 0;
   visibility: hidden;
   transition: all 0.3s ease;
-  z-index: 1000;
+  z-index: 1100;
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .submenu-open {
-  max-height: 400px;
+  max-height: min(65vh, 520px);
   opacity: 1;
   visibility: visible;
   margin-top: 0.25rem;
+  overflow-y: auto;
 }
 
 .submenu-link {

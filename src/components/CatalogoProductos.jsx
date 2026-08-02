@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from './supabaseClient';
 import './CatalogoProductos.css';
@@ -515,8 +515,255 @@ const CatalogoProductos = ({ mode = 'admin' }) => {
   const [notificacionesStock, setNotificacionesStock] = useState([]);
   const [mostrarNotificaciones, setMostrarNotificaciones] = useState(false);
   const [mostrarAccionesMobile, setMostrarAccionesMobile] = useState(false);
+  const [nuevaPromocion, setNuevaPromocion] = useState({
+    productoId: '',
+    descuento: 15,
+    tipoPromocion: 'Oferta especial',
+    descripcion: 'Descuento exclusivo por tiempo limitado'
+  });
+  const [reglaRapida, setReglaRapida] = useState('manual');
 
   const categorias = ['Toallas', 'Bloqueadores y Cuidado de la Piel', 'Pañales', 'Alimentos', 'Desodorantes', 'Medicamentos', 'Cuidado del Cabello','Jabones y Geles','Otros','Producto del Dia Promocion'];
+  const reglasPromocion = [
+    { value: 'manual', label: 'Regla manual', descuento: 15, tipoPromocion: 'Oferta especial', descripcion: 'Descuento exclusivo por tiempo limitado' },
+    { value: 'baja-rotacion', label: 'Baja rotación', descuento: 12, tipoPromocion: 'Baja rotación', descripcion: 'Ideal para mover inventario que lleva tiempo sin moverse.' },
+    { value: 'stock-alto', label: 'Muchas existencias', descuento: 15, tipoPromocion: 'Stock alto', descripcion: 'Descuento para aprovechar existencias acumuladas y acelerar ventas.' },
+    { value: 'limpieza', label: 'Limpieza de inventario', descuento: 18, tipoPromocion: 'Limpieza de stock', descripcion: 'Promoción para mover inventario antes de recibir nuevo producto.' },
+    { value: 'temporada', label: 'Fin de temporada', descuento: 20, tipoPromocion: 'Fin de temporada', descripcion: 'Descuento especial para cerrar stock de temporada.' }
+  ];
+
+  const buildPromoMarker = ({ descuento, tipoPromocion, descripcion }) => {
+    const cleanTipo = (tipoPromocion || 'Oferta especial').replace(/\|/g, ' ');
+    const cleanDescripcion = (descripcion || 'Descuento exclusivo por tiempo limitado').replace(/\|/g, ' ');
+    return `[PROMO|${descuento}|${cleanTipo}|${cleanDescripcion}]`;
+  };
+
+  const stripPromoMarker = (descripcion = '') => {
+    if (!descripcion.startsWith('[PROMO|')) return descripcion;
+    const endIndex = descripcion.indexOf(']');
+    if (endIndex === -1) return descripcion;
+    return descripcion.slice(endIndex + 1).trim();
+  };
+
+  const parsePromoMarker = (descripcion = '') => {
+    if (!descripcion.startsWith('[PROMO|')) return null;
+    const endIndex = descripcion.indexOf(']');
+    if (endIndex === -1) return null;
+
+    const payload = descripcion.slice(7, endIndex);
+    const [descuento = '0', tipoPromocion = 'Oferta especial', descripcionPromo = 'Descuento exclusivo por tiempo limitado'] = payload.split('|');
+    return {
+      descuento: Number(descuento) || 0,
+      tipoPromocion,
+      descripcionPromo,
+      textoNormal: descripcion.slice(endIndex + 1).trim()
+    };
+  };
+
+  const promocionesDefinidasFromProductos = useMemo(() => {
+    return productos
+      .map(producto => {
+        const promoMeta = parsePromoMarker(producto.descripcion || '');
+        if (!promoMeta) return null;
+
+        const precioOriginal = Number(producto.precio) || 0;
+        const precioFinal = Math.max(0, Math.round(precioOriginal * (1 - promoMeta.descuento / 100)));
+
+        return {
+          id: producto.id,
+          productoId: producto.id,
+          nombre: producto.nombre,
+          categoria: producto.categoria || 'General',
+          descuento: promoMeta.descuento,
+          precioOriginal,
+          precioFinal,
+          tipoPromocion: promoMeta.tipoPromocion,
+          descripcion: promoMeta.descripcionPromo
+        };
+      })
+      .filter(Boolean);
+  }, [productos]);
+
+  const productosActivos = productos.filter((producto) => producto.activo);
+
+  const promocionesSugeridas = useMemo(() => {
+    return productosActivos.slice(0, 6).map((producto, index) => {
+      const descuento = [10, 15, 20, 25][index % 4];
+      const precioOriginal = Number(producto.precio) || 0;
+      const precioFinal = Math.max(0, Math.round(precioOriginal * (1 - descuento / 100)));
+
+      return {
+        id: producto.id,
+        nombre: producto.nombre,
+        categoria: producto.categoria || 'General',
+        descuento,
+        precioOriginal,
+        precioFinal,
+        tipoPromocion: index % 2 === 0 ? 'Oferta relámpago' : 'Descuento extra',
+        descripcion: 'Ideal para mover stock con un descuento adicional y captar más pedidos.'
+      };
+    });
+  }, [productosActivos]);
+
+  const sugerenciasAutomaticas = useMemo(() => {
+    const productosDisponibles = productosActivos.filter((producto) => !parsePromoMarker(producto.descripcion || ''));
+    if (productosDisponibles.length === 0) return [];
+
+    const stockPromedio = productosDisponibles.reduce((sum, producto) => sum + (Number(producto.stock) || 0), 0) / productosDisponibles.length;
+    const now = Date.now();
+    const umbralStock = Math.max(20, Math.round(stockPromedio * 1.4));
+
+    const sugerencias = [];
+
+    productosDisponibles.forEach((producto) => {
+      const stock = Number(producto.stock) || 0;
+      const fechaCreacion = producto.created_at ? new Date(producto.created_at) : null;
+      const haceMasDe60Dias = fechaCreacion ? (now - fechaCreacion.getTime()) > (60 * 24 * 60 * 60 * 1000) : false;
+
+      if (haceMasDe60Dias && stock >= Math.max(10, Math.round(stockPromedio))) {
+        sugerencias.push({
+          id: `${producto.id}-baja-rotacion`,
+          productoId: producto.id,
+          nombre: producto.nombre,
+          categoria: producto.categoria || 'General',
+          descuento: 12,
+          tipoPromocion: 'Baja rotación',
+          descripcion: 'Ideal para mover inventario que lleva tiempo sin moverse.',
+          motivo: 'Baja rotación',
+          puntaje: 90 + stock
+        });
+      }
+
+      if (stock >= umbralStock) {
+        sugerencias.push({
+          id: `${producto.id}-stock-alto`,
+          productoId: producto.id,
+          nombre: producto.nombre,
+          categoria: producto.categoria || 'General',
+          descuento: 15,
+          tipoPromocion: 'Stock alto',
+          descripcion: 'Descuento para aprovechar existencias acumuladas y acelerar ventas.',
+          motivo: 'Muchas existencias',
+          puntaje: 80 + stock
+        });
+      }
+    });
+
+    return sugerencias
+      .filter((sugerencia, index, array) => array.findIndex((item) => item.productoId === sugerencia.productoId && item.motivo === sugerencia.motivo) === index)
+      .sort((a, b) => b.puntaje - a.puntaje)
+      .slice(0, 6);
+  }, [productosActivos]);
+
+  const promocionesActivas = promocionesDefinidasFromProductos.length > 0 ? promocionesDefinidasFromProductos : promocionesSugeridas;
+
+  const handlePromocionInputChange = (e) => {
+    const { name, value } = e.target;
+    setNuevaPromocion({
+      ...nuevaPromocion,
+      [name]: name === 'descuento'
+        ? Number(value)
+        : name === 'productoId'
+        ? value ? Number(value) : ''
+        : value
+    });
+  };
+
+  const aplicarSugerencia = (sugerencia) => {
+    setReglaRapida(sugerencia.motivo ? 'manual' : 'manual');
+    setNuevaPromocion(prev => ({
+      ...prev,
+      productoId: sugerencia.productoId || prev.productoId,
+      descuento: sugerencia.descuento,
+      tipoPromocion: sugerencia.tipoPromocion,
+      descripcion: sugerencia.descripcion
+    }));
+  };
+
+  const handleReglaRapidaChange = (e) => {
+    const seleccion = reglasPromocion.find((regla) => regla.value === e.target.value);
+    setReglaRapida(e.target.value);
+    setNuevaPromocion((prev) => ({
+      ...prev,
+      descuento: seleccion?.descuento ?? prev.descuento,
+      tipoPromocion: seleccion?.tipoPromocion ?? prev.tipoPromocion,
+      descripcion: seleccion?.descripcion ?? prev.descripcion
+    }));
+  };
+
+  const agregarPromocion = async () => {
+    if (!nuevaPromocion.productoId) {
+      alert('Selecciona un producto para la promoción.');
+      return;
+    }
+
+    const productoSeleccionado = productosActivos.find(p => p.id === nuevaPromocion.productoId || p.id === Number(nuevaPromocion.productoId));
+    if (!productoSeleccionado) {
+      alert('Producto no encontrado o no está activo.');
+      return;
+    }
+
+    const precioOriginal = Number(productoSeleccionado.precio) || 0;
+    const precioFinal = Math.max(0, Math.round(precioOriginal * (1 - nuevaPromocion.descuento / 100)));
+    const promoMarker = buildPromoMarker({
+      descuento: nuevaPromocion.descuento,
+      tipoPromocion: nuevaPromocion.tipoPromocion,
+      descripcion: nuevaPromocion.descripcion
+    });
+    const descripcionActualizada = `${promoMarker} ${stripPromoMarker(productoSeleccionado.descripcion || '')}`.trim();
+
+    try {
+      const { data: updatedProducto, error: updateError } = await supabase
+        .from('productos')
+        .update({
+          descripcion: descripcionActualizada,
+          categoria: 'Producto del Dia Promocion'
+        })
+        .eq('id', productoSeleccionado.id)
+        .select();
+
+      if (updateError) throw updateError;
+
+      const productoActualizado = updatedProducto[0];
+      setProductos(productos.map(p => p.id === productoSeleccionado.id ? productoActualizado : p));
+
+      setNuevaPromocion({
+        productoId: '',
+        descuento: 15,
+        tipoPromocion: 'Oferta especial',
+        descripcion: 'Descuento exclusivo por tiempo limitado'
+      });
+      setReglaRapida('manual');
+
+      alert('Promoción guardada y visible para clientes.');
+    } catch (error) {
+      console.error('Error guardando promoción:', error);
+      alert('No se pudo guardar la promoción. Intenta de nuevo.');
+    }
+  };
+
+  const eliminarPromocion = async (promoId) => {
+    const promo = promocionesDefinidasFromProductos.find(p => p.id === promoId);
+    if (!promo) return;
+
+    try {
+      const producto = productos.find(p => p.id === promo.productoId);
+      if (!producto) return;
+
+      const descripcionSinPromo = stripPromoMarker(producto.descripcion || '');
+      const { data: updatedProducto, error: updateError } = await supabase
+        .from('productos')
+        .update({ descripcion: descripcionSinPromo })
+        .eq('id', producto.id)
+        .select();
+
+      if (updateError) throw updateError;
+      setProductos(productos.map(p => p.id === producto.id ? updatedProducto[0] : p));
+    } catch (error) {
+      console.error('Error eliminando promoción:', error);
+      alert('No se pudo eliminar la promoción. Intenta de nuevo.');
+    }
+  };
 
   // Cargar productos desde Supabase
   useEffect(() => {
@@ -880,6 +1127,12 @@ const CatalogoProductos = ({ mode = 'admin' }) => {
             </button>
           )}
           <button 
+            className={`button ${vistaActual === 'promociones' ? 'primary-button' : 'secondary-button'}`}
+            onClick={() => setVistaActual('promociones')}
+          >
+            <i className="fas fa-tags"></i> Promociones
+          </button>
+          <button 
             className="button secondary-button"
             onClick={() => navigate('/')}
           >
@@ -888,8 +1141,192 @@ const CatalogoProductos = ({ mode = 'admin' }) => {
         </div>
       </header>
 
+      <div className="mobile-view-actions">
+        <button 
+          className={`button ${vistaActual === 'catalogo' ? 'primary-button' : 'secondary-button'}`}
+          onClick={() => setVistaActual('catalogo')}
+          type="button"
+        >
+          <i className="fas fa-boxes"></i> Catálogo
+        </button>
+        {user?.role !== 'inventario' && (
+          <button 
+            className={`button ${vistaActual === 'reporte' ? 'primary-button' : 'secondary-button'}`}
+            onClick={() => setVistaActual('reporte')}
+            type="button"
+          >
+            <i className="fas fa-file-alt"></i> Reporte
+          </button>
+        )}
+        <button 
+          className={`button ${vistaActual === 'promociones' ? 'primary-button' : 'secondary-button'}`}
+          onClick={() => setVistaActual('promociones')}
+          type="button"
+        >
+          <i className="fas fa-tags"></i> Promociones
+        </button>
+      </div>
+
       {vistaActual === 'reporte' ? (
         <ReporteInventario productos={productos} />
+      ) : vistaActual === 'promociones' ? (
+        <div className="promociones-view">
+          <div className="promociones-hero">
+            <div>
+              <p className="promociones-eyebrow">Campañas rápidas</p>
+              <h2>Promociones para mover más ventas</h2>
+              <p>Activa descuentos y ofertas atractivas para impulsar el ticket promedio como en una tienda de estilo Temu.</p>
+            </div>
+            <div className="promociones-stats">
+              <div className="promo-stat-card">
+                <span className="promo-stat-value">{promocionesActivas.length}</span>
+                <span className="promo-stat-label">Promociones activas</span>
+              </div>
+              <div className="promo-stat-card">
+                <span className="promo-stat-value">+15%</span>
+                <span className="promo-stat-label">Venta adicional</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="promociones-manager">
+            <h3>Define tus promociones</h3>
+
+            {sugerenciasAutomaticas.length > 0 && (
+              <div className="sugerencias-promociones">
+                <div className="sugerencias-header">
+                  <h4>Sugerencias automáticas</h4>
+                  <p>Recomendadas para productos con baja rotación o con exceso de stock.</p>
+                </div>
+                <div className="sugerencias-list">
+                  {sugerenciasAutomaticas.map((sugerencia) => (
+                    <div className="sugerencia-card" key={sugerencia.id}>
+                      <div>
+                        <p className="sugerencia-motivo">{sugerencia.motivo}</p>
+                        <h5>{sugerencia.nombre}</h5>
+                        <p>{sugerencia.descripcion}</p>
+                      </div>
+                      <div className="sugerencia-actions">
+                        <span>-{sugerencia.descuento}%</span>
+                        <button className="button secondary-button" type="button" onClick={() => aplicarSugerencia(sugerencia)}>
+                          <i className="fas fa-tag"></i> Usar
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <div className="promociones-form">
+              <select
+                name="reglaRapida"
+                value={reglaRapida}
+                onChange={handleReglaRapidaChange}
+              >
+                {reglasPromocion.map((regla) => (
+                  <option key={regla.value} value={regla.value}>{regla.label}</option>
+                ))}
+              </select>
+              <select
+                name="productoId"
+                value={nuevaPromocion.productoId}
+                onChange={handlePromocionInputChange}
+              >
+                <option value="">Selecciona un producto</option>
+                {productosActivos.map(producto => (
+                  <option key={producto.id} value={producto.id}>
+                    {producto.nombre} — {formatPrecio(producto.precio)}
+                  </option>
+                ))}
+              </select>
+              <input
+                type="number"
+                name="descuento"
+                min="5"
+                max="80"
+                value={nuevaPromocion.descuento}
+                onChange={handlePromocionInputChange}
+                placeholder="Descuento %"
+              />
+              <input
+                type="text"
+                name="tipoPromocion"
+                value={nuevaPromocion.tipoPromocion}
+                onChange={handlePromocionInputChange}
+                placeholder="Tipo de promoción"
+              />
+              <input
+                type="text"
+                name="descripcion"
+                value={nuevaPromocion.descripcion}
+                onChange={handlePromocionInputChange}
+                placeholder="Descripción breve"
+              />
+              <button className="button success-button" type="button" onClick={agregarPromocion}>
+                <i className="fas fa-plus-circle"></i> Agregar promoción
+              </button>
+            </div>
+
+            {promocionesDefinidasFromProductos.length > 0 && (
+              <div className="promociones-definidas">
+                <h4>Promociones definidas</h4>
+                <div className="promociones-definidas-list">
+                  {promocionesDefinidasFromProductos.map((promo) => (
+                    <div className="promo-definition-card" key={promo.id}>
+                      <div>
+                        <strong>{promo.nombre}</strong> • {promo.tipoPromocion}
+                        <p>{promo.descripcion}</p>
+                      </div>
+                      <div>
+                        <span>{promo.descuento}%</span>
+                        <button className="button secondary-button" type="button" onClick={() => eliminarPromocion(promo.id)}>
+                          <i className="fas fa-trash"></i>
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className="promociones-grid">
+            {promocionesActivas.length === 0 ? (
+              <div className="empty-state">
+                <i className="fas fa-tags"></i>
+                <h3>No hay promociones definidas</h3>
+                <p>Agrega una promoción para mostrarla aquí.</p>
+              </div>
+            ) : (
+              promocionesActivas.map((promo) => (
+                <div className="promo-card" key={promo.id}>
+                  <span className="promo-badge">-{promo.descuento}%</span>
+                  <div className="promo-content">
+                    <p className="promo-type">{promo.tipoPromocion}</p>
+                    <h3>{promo.nombre}</h3>
+                    <p className="promo-category">{promo.categoria}</p>
+                    <div className="promo-prices">
+                      <span className="promo-original">{formatPrecio(promo.precioOriginal)}</span>
+                      <span className="promo-final">{formatPrecio(promo.precioFinal)}</span>
+                    </div>
+                    <p className="promo-caption">{promo.descripcion}</p>
+                    <button
+                      className="promo-action"
+                      onClick={() => {
+                        setBusqueda(promo.nombre);
+                        setVistaActual('catalogo');
+                      }}
+                      type="button"
+                    >
+                      Ver producto
+                    </button>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
       ) : (
         <>
           <div className="resumen-productos">

@@ -138,7 +138,18 @@ export default function MovimientosInventario() {
         console.error('Error de Supabase:', error);
         setError('Error al registrar movimiento: ' + error.message);
       } else {
-        alert('✅ Movimiento registrado exitosamente');
+        const { error: updateError } = await supabase
+          .from('productos')
+          .update({ stock: stockNuevo })
+          .eq('id', movimiento.producto_id);
+
+        if (updateError) {
+          console.error('Error actualizando stock del producto:', updateError);
+          setError('El movimiento se registró, pero no se pudo actualizar el stock del producto. Intenta nuevamente.');
+        } else {
+          alert('✅ Movimiento registrado y stock actualizado exitosamente');
+        }
+
         setMovimiento({
           producto_id: '',
           tipo_movimiento: 'entrada',

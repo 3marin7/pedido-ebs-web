@@ -35,8 +35,8 @@ const Login = () => {
     },
     { 
       id: 3, 
-      username: 'paola', 
-      password: '1v3nt', 
+      username: 'sharon', 
+      password: 'sharon1310', 
       role: 'inventario',
       descripcion: 'Bodega (Inventario) - Crear facturas, catálogo, gestión de inventario, gestión de pedidos.'
     },

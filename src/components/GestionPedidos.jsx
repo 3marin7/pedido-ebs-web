@@ -435,11 +435,12 @@ ${pedido.cliente_notas && pedido.cliente_notas !== 'Ninguna' ? `• Notas: ${ped
 
     return pedidosData.filter(pedido => {
       if (tipoBusqueda === 'cliente') {
-        // Buscar por nombre de cliente
         const nombreCliente = (pedido.cliente_nombre || '').toLowerCase();
         return nombreCliente.includes(terminoBusqueda);
+      } else if (tipoBusqueda === 'vendedor') {
+        const nombreVendedor = (pedido.vendedor || '').toLowerCase();
+        return nombreVendedor.includes(terminoBusqueda);
       } else {
-        // Buscar por ID de pedido
         const idPedido = String(pedido.id || '');
         return idPedido.includes(terminoBusqueda);
       }
@@ -645,6 +646,7 @@ ${pedido.cliente_notas && pedido.cliente_notas !== 'Ninguna' ? `• Notas: ${ped
               className="select-tipo-busqueda"
             >
               <option value="cliente">👤 Cliente</option>
+              <option value="vendedor">🧑‍💼 Vendedor</option>
               <option value="pedido">🔢 ID Pedido</option>
             </select>
           </div>
@@ -652,7 +654,13 @@ ${pedido.cliente_notas && pedido.cliente_notas !== 'Ninguna' ? `• Notas: ${ped
           <div className="busqueda-input-container">
             <input
               type="text"
-              placeholder={tipoBusqueda === 'cliente' ? 'Buscar por nombre de cliente...' : 'Buscar por ID de pedido...'}
+              placeholder={
+                tipoBusqueda === 'cliente'
+                  ? 'Buscar por nombre de cliente...'
+                  : tipoBusqueda === 'vendedor'
+                    ? 'Buscar por vendedor...'
+                    : 'Buscar por ID de pedido...'
+              }
               value={busqueda}
               onChange={(e) => setBusqueda(e.target.value)}
               className="busqueda-input"

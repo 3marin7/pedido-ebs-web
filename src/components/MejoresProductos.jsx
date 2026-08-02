@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from './supabaseClient';
 import * as XLSX from 'xlsx';
 import { Bar, Pie } from 'react-chartjs-2';
+import { formatInputDateLocal, parseDateLocal } from '../lib/dateUtils';
 import './MejoresProductos.css';
 import {
   Chart as ChartJS,
@@ -40,8 +41,8 @@ export default function MejoresProductos() {
     const primerDiaMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
     const ultimoDiaMes = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0);
     
-    setFechaInicio(primerDiaMes.toISOString().split('T')[0]);
-    setFechaFin(ultimoDiaMes.toISOString().split('T')[0]);
+    setFechaInicio(formatInputDateLocal(primerDiaMes));
+    setFechaFin(formatInputDateLocal(ultimoDiaMes));
   }, []);
 
   useEffect(() => {
@@ -113,18 +114,18 @@ export default function MejoresProductos() {
       const diffTime = finDate - inicioDate;
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
       
-      const inicioAnterior = new Date(inicioDate);
-      inicioAnterior.setDate(inicioDate.getDate() - diffDays);
+      const inicioAnterior = parseDateLocal(fechaInicio);
+      inicioAnterior.setDate(inicioAnterior.getDate() - diffDays);
       
-      const finAnterior = new Date(inicioDate);
-      finAnterior.setDate(inicioDate.getDate() - 1);
+      const finAnterior = parseDateLocal(fechaInicio);
+      finAnterior.setDate(finAnterior.getDate() - 1);
       
       // Obtener facturas del período anterior
       const { data: facturasAnterior, error } = await supabase
         .from('facturas')
         .select('*')
-        .gte('fecha', inicioAnterior.toISOString().split('T')[0])
-        .lte('fecha', finAnterior.toISOString().split('T')[0]);
+        .gte('fecha', formatInputDateLocal(inicioAnterior))
+        .lte('fecha', formatInputDateLocal(finAnterior));
       
       if (error) throw error;
       

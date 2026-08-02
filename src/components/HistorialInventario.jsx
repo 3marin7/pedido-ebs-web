@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
+import { parseDateLocal, formatDateBogota, formatInputDateLocal } from '../lib/dateUtils';
 import './HistorialInventario.css';
 
 export default function HistorialInventario() {
@@ -58,17 +59,17 @@ export default function HistorialInventario() {
 
     // Filtrar por fecha
     if (busqueda.fechaInicio) {
-      const fechaInicio = new Date(busqueda.fechaInicio);
+      const fechaInicio = parseDateLocal(busqueda.fechaInicio);
       resultados = resultados.filter(mov => 
-        new Date(mov.fecha_movimiento) >= fechaInicio
+        parseDateLocal(mov.fecha_movimiento) >= fechaInicio
       );
     }
 
     if (busqueda.fechaFin) {
-      const fechaFin = new Date(busqueda.fechaFin);
+      const fechaFin = parseDateLocal(busqueda.fechaFin);
       fechaFin.setHours(23, 59, 59, 999); // Hasta el final del día
       resultados = resultados.filter(mov => 
-        new Date(mov.fecha_movimiento) <= fechaFin
+        parseDateLocal(mov.fecha_movimiento) <= fechaFin
       );
     }
 
@@ -125,7 +126,7 @@ export default function HistorialInventario() {
         mov.cantidad,
         mov.motivo,
         `"${mov.observaciones || ''}"`,
-        new Date(mov.fecha_movimiento).toLocaleDateString()
+        formatDateBogota(mov.fecha_movimiento)
       ].join(','))
     ].join('\n');
 
@@ -133,7 +134,7 @@ export default function HistorialInventario() {
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `historial_inventario_${new Date().toISOString().split('T')[0]}.csv`;
+    a.download = `historial_inventario_${formatInputDateLocal(new Date())}.csv`;
     a.click();
     window.URL.revokeObjectURL(url);
   };
@@ -296,7 +297,7 @@ export default function HistorialInventario() {
                     {mov.observaciones || '-'}
                   </td>
                   <td className="table-cell">
-                    {new Date(mov.fecha_movimiento).toLocaleDateString()}
+                    {formatDateBogota(mov.fecha_movimiento)}
                   </td>
                 </tr>
               ))}

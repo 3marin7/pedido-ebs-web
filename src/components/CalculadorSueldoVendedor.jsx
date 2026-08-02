@@ -297,8 +297,8 @@ const CalculadorSueldoVendedor = () => {
         return;
     }
 
-    setFechaInicio(inicio.toISOString().split('T')[0]);
-    setFechaFin(fin.toISOString().split('T')[0]);
+    setFechaInicio(formatInputDate(inicio));
+    setFechaFin(formatInputDate(fin));
   };
 
   const formatCurrency = (valor) => {

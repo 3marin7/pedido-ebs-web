@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import './GastosEmpresa.css';
 import { supabase } from '../lib/supabase';
+import { formatInputDateLocal } from '../lib/dateUtils';
 
 const getInitialFormGasto = () => ({
-  fecha: new Date().toISOString().split('T')[0],
+  fecha: formatInputDateLocal(new Date()),
   categoria: 'Servicios',
   empleado: 'Edwin Marín',
   descripcion: '',

@@ -1,5 +1,6 @@
 // src/lib/supabaseQueries.js
 import { supabase } from './supabase';
+import { formatInputDateLocal } from './dateUtils';
 
 /**
  * Obtiene las ventas agrupadas por mes para un año específico
@@ -54,7 +55,7 @@ export const getCobrosDiarios = async () => {
     // Calcular fecha de hace 30 días
     const hace30Dias = new Date();
     hace30Dias.setDate(hace30Dias.getDate() - 30);
-    const fechaInicio = hace30Dias.toISOString().split('T')[0];
+    const fechaInicio = formatInputDateLocal(hace30Dias);
 
     const { data, error } = await supabase
       .from('facturas')
@@ -102,7 +103,7 @@ export const getIngresosDiarios = async () => {
   try {
     const hace30Dias = new Date();
     hace30Dias.setDate(hace30Dias.getDate() - 30);
-    const fechaInicio = hace30Dias.toISOString().split('T')[0];
+    const fechaInicio = formatInputDateLocal(hace30Dias);
 
     const { data, error } = await supabase
       .from('facturas')
@@ -138,10 +139,8 @@ export const getIngresosDiarios = async () => {
 export const getVentasMesActual = async () => {
   try {
     const ahora = new Date();
-    const primerDiaMes = new Date(ahora.getFullYear(), ahora.getMonth(), 1)
-      .toISOString().split('T')[0];
-    const ultimoDiaMes = new Date(ahora.getFullYear(), ahora.getMonth() + 1, 0)
-      .toISOString().split('T')[0];
+    const primerDiaMes = formatInputDateLocal(new Date(ahora.getFullYear(), ahora.getMonth(), 1));
+    const ultimoDiaMes = formatInputDateLocal(new Date(ahora.getFullYear(), ahora.getMonth() + 1, 0));
 
     const { data, error } = await supabase
       .from('facturas')

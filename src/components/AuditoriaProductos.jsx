@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from './supabaseClient';
 import * as XLSX from 'xlsx';
+import { parseDateLocal, formatDateTimeBogota, nowLocalIsoDate } from '../lib/dateUtils';
 import './AuditoriaProductos.css';
 
 const AuditoriaProductos = () => {
@@ -72,13 +73,18 @@ const AuditoriaProductos = () => {
       }
 
       if (filtroFechaInicio) {
-        query = query.gte('created_at', new Date(filtroFechaInicio).toISOString());
+        const fechaInicio = parseDateLocal(filtroFechaInicio);
+        if (fechaInicio) {
+          query = query.gte('created_at', fechaInicio.toISOString());
+        }
       }
 
       if (filtroFechaFin) {
-        const fechaFin = new Date(filtroFechaFin);
-        fechaFin.setHours(23, 59, 59, 999);
-        query = query.lte('created_at', fechaFin.toISOString());
+        const fechaFin = parseDateLocal(filtroFechaFin);
+        if (fechaFin) {
+          fechaFin.setHours(23, 59, 59, 999);
+          query = query.lte('created_at', fechaFin.toISOString());
+        }
       }
 
       const { data, error: err } = await query.limit(500);
@@ -92,14 +98,7 @@ const AuditoriaProductos = () => {
   };
 
   const formatearFecha = (fecha) => {
-    return new Date(fecha).toLocaleString('es-CO', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit'
-    });
+    return formatDateTimeBogota(fecha);
   };
 
   const obtenerColorTipo = (tipo) => {
@@ -139,7 +138,7 @@ const AuditoriaProductos = () => {
     const link = document.createElement('a');
     const url = URL.createObjectURL(blob);
     link.setAttribute('href', url);
-    link.setAttribute('download', `auditoria_productos_${new Date().toISOString().split('T')[0]}.csv`);
+    link.setAttribute('download', `auditoria_productos_${nowLocalIsoDate()}.csv`);
     link.click();
   };
 
@@ -168,7 +167,7 @@ const AuditoriaProductos = () => {
       { wch: 40 }  // Cambios
     ];
 
-    const fileName = `auditoria_productos_${new Date().toISOString().split('T')[0]}.xlsx`;
+    const fileName = `auditoria_productos_${nowLocalIsoDate()}.xlsx`;
     XLSX.writeFile(wb, fileName);
   };
 

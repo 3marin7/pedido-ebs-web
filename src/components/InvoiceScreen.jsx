@@ -5,6 +5,7 @@ import ClientesScreen from './ClientesScreen';
 import { supabase } from './supabaseClient';
 import './InvoiceScreen.css';
 import { useAuth } from '../App';
+import { formatInputDateLocal } from '../lib/dateUtils';
 
 const InvoiceScreen = () => {
   const navigate = useNavigate();
@@ -14,7 +15,7 @@ const InvoiceScreen = () => {
   // Estados principales
   const [cliente, setCliente] = useState('');
   const [codigoCliente, setCodigoCliente] = useState('');
-  const [fecha, setFecha] = useState(new Date().toISOString().split('T')[0]);
+  const [fecha, setFecha] = useState(formatInputDateLocal(new Date()));
   const [direccion, setDireccion] = useState('');
   const [telefono, setTelefono] = useState('');
   const [correo, setCorreo] = useState('');

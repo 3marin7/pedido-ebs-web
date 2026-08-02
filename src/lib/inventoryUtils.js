@@ -1,11 +1,12 @@
 import { supabase } from './supabase'
+import { parseDateLocal, formatInputDateLocal } from './dateUtils'
 
 // Calcula ventas por producto en un periodo y devuelve score 1-5 y recomendaciones
 export async function getProductSalesAndRecommendations({ periodDays = 90, leadTimeDays = 14, safetyDays = 7 } = {}) {
   try {
     const start = new Date()
     start.setDate(start.getDate() - periodDays)
-    const fechaInicio = start.toISOString().split('T')[0]
+    const fechaInicio = formatInputDateLocal(start)
 
     const { data, error } = await supabase
       .from('detalles_factura')
@@ -14,7 +15,7 @@ export async function getProductSalesAndRecommendations({ periodDays = 90, leadT
     if (error) throw error
 
     // Filtrar por fecha del rango (siempre que exista la relación facturas)
-    const detalles = (data || []).filter(d => d.facturas && new Date(d.facturas.fecha) >= new Date(fechaInicio))
+    const detalles = (data || []).filter(d => d.facturas && parseDateLocal(d.facturas.fecha) >= parseDateLocal(fechaInicio))
 
     // Agregar ventas por producto
     const ventasMap = new Map()

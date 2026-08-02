@@ -1,0 +1,275 @@
+/* src/components/SeccionProductosNuevos.css */
+
+.seccion-productos-nuevos {
+  width: 100%;
+  padding: 40px 20px;
+  background: linear-gradient(135deg, #fef5ff 0%, #fff9fe 100%);
+  border-top: 3px solid #e8b4f8;
+  margin: 40px 0;
+}
+
+/* Header */
+.seccion-header {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.titulo-seccion {
+  text-align: center;
+}
+
+.titulo-seccion h2 {
+  margin: 0 0 12px 0;
+  font-size: 2rem;
+  color: #1a1a1a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.icono-titulo {
+  font-size: 2.5rem;
+  display: inline-block;
+}
+
+.subtitulo-seccion {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #666;
+  line-height: 1.5;
+}
+
+/* Controles */
+.controles-seccion {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+  align-items: center;
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(232, 180, 248, 0.1);
+}
+
+.control-grupo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.control-grupo label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.select-control {
+  padding: 10px 14px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  background: white;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+  min-width: 200px;
+}
+
+.select-control:hover {
+  border-color: #a855f7;
+}
+
+.select-control:focus {
+  outline: none;
+  border-color: #a855f7;
+  box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.1);
+}
+
+.cantidad-productos {
+  font-size: 0.9rem;
+  color: #888;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* Grid de productos */
+.grid-productos-nuevos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.sin-productos-nuevos {
+  text-align: center;
+  padding: 40px 20px;
+  color: #999;
+  font-size: 1.1rem;
+  background: white;
+  border-radius: 12px;
+  border: 2px dashed #e0e0e0;
+}
+
+/* Banner informativo */
+.banner-preventa {
+  background: linear-gradient(135deg, #a855f7 0%, #7c3aed 100%);
+  color: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(168, 85, 247, 0.3);
+  margin-top: 32px;
+}
+
+.banner-contenido h3 {
+  margin: 0 0 16px 0;
+  font-size: 1.3rem;
+}
+
+.lista-beneficios {
+  margin: 0;
+  padding-left: 20px;
+  list-style: none;
+}
+
+.lista-beneficios li {
+  padding: 8px 0;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.lista-beneficios li::before {
+  content: '';
+  display: inline-block;
+}
+
+/* Loading */
+.seccion-nuevos-loading {
+  text-align: center;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f0f0f0;
+  border-top: 4px solid #a855f7;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .grid-productos-nuevos {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 20px;
+  }
+
+  .titulo-seccion h2 {
+    font-size: 1.7rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .seccion-productos-nuevos {
+    padding: 30px 16px;
+  }
+
+  .seccion-header {
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .titulo-seccion h2 {
+    font-size: 1.5rem;
+  }
+
+  .icono-titulo {
+    font-size: 2rem;
+  }
+
+  .subtitulo-seccion {
+    font-size: 0.95rem;
+  }
+
+  .controles-seccion {
+    flex-direction: column;
+    padding: 16px;
+    gap: 12px;
+  }
+
+  .select-control {
+    width: 100%;
+    min-width: unset;
+  }
+
+  .cantidad-productos {
+    align-self: center;
+  }
+
+  .grid-productos-nuevos {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+  }
+
+  .banner-preventa {
+    padding: 20px;
+  }
+
+  .banner-contenido h3 {
+    font-size: 1.1rem;
+    margin-bottom: 12px;
+  }
+
+  .lista-beneficios li {
+    font-size: 0.9rem;
+    padding: 6px 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .seccion-productos-nuevos {
+    padding: 20px 12px;
+    margin: 20px 0;
+  }
+
+  .titulo-seccion h2 {
+    font-size: 1.3rem;
+  }
+
+  .icono-titulo {
+    font-size: 1.5rem;
+  }
+
+  .grid-productos-nuevos {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .banner-preventa {
+    padding: 16px;
+  }
+
+  .banner-contenido h3 {
+    font-size: 1rem;
+  }
+
+  .lista-beneficios li {
+    font-size: 0.85rem;
+  }
+}

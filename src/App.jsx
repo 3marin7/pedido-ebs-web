@@ -1,6 +1,7 @@
 import React, { useState, useEffect, createContext, useContext } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
+import { normalizeRole, isAdminRole } from './lib/roleUtils';
 import InvoiceScreen from './components/InvoiceScreen';
 import FacturasGuardadas from './components/FacturasGuardadas';
 import FacturaDetalle from './components/FacturaDetalle';
@@ -30,6 +31,8 @@ import ReporteClientesPorProducto from './components/ReporteClientesPorProducto'
 import ConsultaCoopidrogas from './components/ConsultaCoopidrogas';
 import CalculadorSueldoVendedor from './components/CalculadorSueldoVendedor';
 import PlanSeguimientoVentas from './components/PlanSeguimientoVentas';
+import MundialEBS from './components/MundialEBS';
+import AdminProductosPreventa from './components/AdminProductosPreventa';
 
 // Contexto de autenticación
 const AuthContext = createContext();
@@ -76,8 +79,10 @@ const ProtectedRoute = ({ children, requiredRoles = [] }) => {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
+  const userRole = normalizeRole(user.role);
+
   // Verificar roles si se especifican (admin siempre tiene acceso)
-  if (requiredRoles.length > 0 && user.role !== 'admin' && !requiredRoles.includes(user.role)) {
+  if (requiredRoles.length > 0 && !isAdminRole(user.role) && !requiredRoles.includes(userRole)) {
     return <Navigate to="/unauthorized" replace />;
   }
 
@@ -145,15 +150,17 @@ function App() {
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
-      setUser(JSON.parse(storedUser));
+      const parsedUser = JSON.parse(storedUser);
+      setUser({ ...parsedUser, role: normalizeRole(parsedUser.role) });
     }
     setIsLoading(false);
   }, []);
 
   // Función de login
   const login = (userData) => {
-    setUser(userData);
-    localStorage.setItem('user', JSON.stringify(userData));
+    const normalizedUser = { ...userData, role: normalizeRole(userData.role) };
+    setUser(normalizedUser);
+    localStorage.setItem('user', JSON.stringify(normalizedUser));
   };
 
   // Función de logout
@@ -362,7 +369,7 @@ function App() {
 
             {/* Ruta para Reporte de Clientes por Producto */}
             <Route path="/reporte-clientes-producto" element={
-              <ProtectedRoute requiredRoles={['superadmin', 'vendedor']}>
+              <ProtectedRoute requiredRoles={['superadmin', 'admin', 'vendedor']}>
                 <>
                   <PageMeta title="Clientes por Producto - EBS" description="Reporte de clientes que compraron cada producto" />
                   <ReporteClientesPorProducto />
@@ -418,6 +425,15 @@ function App() {
                   {user?.role === 'contabilidad' 
                     ? <CatalogoProductosWrapper mode="contabilidad" /> 
                     : <CatalogoProductosWrapper mode="admin" />}
+                </>
+              </ProtectedRoute>
+            } />
+
+            <Route path="/productos-preventa" element={
+              <ProtectedRoute requiredRoles={['superadmin', 'admin', 'inventario']}>
+                <>
+                  <PageMeta title="Productos en Preventa - EBS" description="Asignar y gestionar productos para preventa" />
+                  <AdminProductosPreventa />
                 </>
               </ProtectedRoute>
             } />
@@ -514,6 +530,17 @@ function App() {
                   <CatalogoProductosWrapper mode="cliente" />
                 </>
               </ProtectedRoute>
+            } />
+            
+            {/* 🌍 Mundial EBS 2026 */}
+            <Route path="/mundial" element={
+              <>
+                <PageMeta 
+                  title="Mundial EBS 2026 - Resultados y Pronósticos" 
+                  description="Seguimiento en vivo de la Copa Mundial 2026 con resultados, pronósticos y análisis de apuestas"
+                />
+                <MundialEBS />
+              </>
             } />
             
             {/* Rutas adicionales */}

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from './supabaseClient';
 import * as XLSX from 'xlsx';
+import { parseDateLocal, formatDateLocal, nowLocalIsoDate } from '../lib/dateUtils';
 import './ReporteClientesPorProducto.css';
 
 const ReporteClientesPorProducto = () => {
@@ -66,15 +67,19 @@ const { data: productosData, error: productosError } = await supabase
     let facturasFiltradas = facturas;
     
     if (fechaInicio) {
-      facturasFiltradas = facturasFiltradas.filter(f => 
-        new Date(f.fecha) >= new Date(fechaInicio)
-      );
+      const fechaInicioDate = parseDateLocal(fechaInicio);
+      facturasFiltradas = facturasFiltradas.filter(f => {
+        const fechaFactura = parseDateLocal(f.fecha);
+        return fechaFactura && fechaInicioDate && fechaFactura >= fechaInicioDate;
+      });
     }
     
     if (fechaFin) {
-      facturasFiltradas = facturasFiltradas.filter(f => 
-        new Date(f.fecha) <= new Date(fechaFin)
-      );
+      const fechaFinDate = parseDateLocal(fechaFin);
+      facturasFiltradas = facturasFiltradas.filter(f => {
+        const fechaFactura = parseDateLocal(f.fecha);
+        return fechaFactura && fechaFinDate && fechaFactura <= fechaFinDate;
+      });
     }
 
     // Agrupar por cliente
@@ -92,6 +97,8 @@ const { data: productosData, error: productosError } = await supabase
 
         if (esElProducto) {
           const cliente = factura.cliente || 'Cliente Desconocido';
+          const fechaFactura = parseDateLocal(factura.fecha);
+          if (!fechaFactura) return;
           
           if (!clientesMap[cliente]) {
             clientesMap[cliente] = {
@@ -122,10 +129,10 @@ const { data: productosData, error: productosError } = await supabase
           });
 
           // Actualizar fechas
-          if (new Date(factura.fecha) > new Date(clientesMap[cliente].ultimaCompra)) {
+          if (fechaFactura > parseDateLocal(clientesMap[cliente].ultimaCompra)) {
             clientesMap[cliente].ultimaCompra = factura.fecha;
           }
-          if (new Date(factura.fecha) < new Date(clientesMap[cliente].primeraCompra)) {
+          if (fechaFactura < parseDateLocal(clientesMap[cliente].primeraCompra)) {
             clientesMap[cliente].primeraCompra = factura.fecha;
           }
         }
@@ -190,13 +197,11 @@ const { data: productosData, error: productosError } = await supabase
     }).format(precio || 0);
   };
 
-  const formatFecha = (fecha) => {
-    return new Date(fecha).toLocaleDateString('es-CO', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    });
-  };
+  const formatFecha = (fecha) => formatDateLocal(fecha, 'es-CO', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric'
+  });
 
   const exportarCSV = () => {
     if (reporteClientes.length === 0) {
@@ -223,7 +228,7 @@ const { data: productosData, error: productosError } = await supabase
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.download = `reporte_clientes_${productoSeleccionado.nombre.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.csv`;
+    link.download = `reporte_clientes_${productoSeleccionado.nombre.replace(/\s+/g, '_')}_${nowLocalIsoDate()}.csv`;
     link.click();
   };
 
@@ -259,7 +264,7 @@ const { data: productosData, error: productosError } = await supabase
       { wch: 15 }  // Última Compra
     ];
 
-    const fileName = `reporte_clientes_${productoSeleccionado.nombre.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.xlsx`;
+    const fileName = `reporte_clientes_${productoSeleccionado.nombre.replace(/\s+/g, '_')}_${nowLocalIsoDate()}.xlsx`;
     XLSX.writeFile(wb, fileName);
   };
 

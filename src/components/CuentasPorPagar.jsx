@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './CuentasPorPagar.css';
 import { supabase } from '../lib/supabase';
 import * as XLSX from 'xlsx';
+import { parseDateLocal, formatInputDateLocal, nowLocalIsoDate } from '../lib/dateUtils';
 
 const CuentasPorPagar = () => {
   // Estados principales
@@ -59,7 +60,7 @@ const CuentasPorPagar = () => {
   // Formulario de pago
   const [formPago, setFormPago] = useState({
     facturaId: '',
-    fecha: new Date().toISOString().split('T')[0],
+    fecha: formatInputDateLocal(new Date()),
     monto: '',
     metodoPago: 'transferencia', // transferencia, efectivo, cheque, tarjeta
     referencia: '',
@@ -190,7 +191,8 @@ const CuentasPorPagar = () => {
   const calcularDiasVencimiento = (fechaVencimiento) => {
     if (!fechaVencimiento) return null;
     const hoy = new Date();
-    const vencimiento = new Date(fechaVencimiento);
+    const vencimiento = parseDateLocal(fechaVencimiento);
+    if (!vencimiento) return null;
     const diferencia = Math.ceil((vencimiento - hoy) / (1000 * 60 * 60 * 24));
     return diferencia;
   };
@@ -230,11 +232,12 @@ const CuentasPorPagar = () => {
 
   const formatDate = (dateString) => {
     if (!dateString) return '-';
-    return new Date(dateString).toLocaleDateString('es-CO', {
+    const fecha = parseDateLocal(dateString);
+    return fecha ? fecha.toLocaleDateString('es-CO', {
       year: 'numeric',
       month: '2-digit',
       day: '2-digit'
-    });
+    }) : '-';
   };
 
   // Métricas del dashboard
@@ -547,7 +550,7 @@ const CuentasPorPagar = () => {
       setFormFactura({
         proveedorId: '',
         numeroFactura: '',
-        fechaEmision: new Date().toISOString().split('T')[0],
+        fechaEmision: formatInputDateLocal(new Date()),
         fechaVencimiento: '',
         clase: 'FP',
         subtotal: '',
@@ -565,7 +568,7 @@ const CuentasPorPagar = () => {
       setFacturaSeleccionada(factura);
       setFormPago({
         facturaId: factura.id.toString(),
-        fecha: new Date().toISOString().split('T')[0],
+        fecha: formatInputDateLocal(new Date()),
         monto: factura.saldo.toString(),
         metodoPago: 'transferencia',
         referencia: '',
@@ -576,7 +579,7 @@ const CuentasPorPagar = () => {
       setFacturaSeleccionada(null);
       setFormPago({
         facturaId: '',
-        fecha: new Date().toISOString().split('T')[0],
+        fecha: formatInputDateLocal(new Date()),
         monto: '',
         metodoPago: 'transferencia',
         referencia: '',
@@ -889,7 +892,7 @@ const CuentasPorPagar = () => {
     XLSX.utils.book_append_sheet(wb, wsMeta, 'Información');
 
     // Generar archivo
-    const fileName = `informe_cartera_${new Date().toISOString().split('T')[0]}.xlsx`;
+    const fileName = `informe_cartera_${nowLocalIsoDate()}.xlsx`;
     XLSX.writeFile(wb, fileName);
   };
 
@@ -1648,7 +1651,7 @@ const CuentasPorPagar = () => {
                       
                       return true;
                     })
-                    .sort((a, b) => new Date(b.fecha) - new Date(a.fecha))
+                    .sort((a, b) => (parseDateLocal(b.fecha) || new Date(0)) - (parseDateLocal(a.fecha) || new Date(0)))
                     .map(pago => {
                       const factura = facturas.find(f => f.id === pago.facturaId);
                       const proveedor = obtenerProveedor(factura?.proveedorId);

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
 import { supabase } from './supabaseClient';
+import { formatInputDateLocal } from '../lib/dateUtils';
 import './CatalogoClientes.css';
 
 const CatalogoClientes = ({ priceMultiplier = 1, variantTitle = 'Catálogo de Productos' }) => {
@@ -190,6 +191,31 @@ const CatalogoClientes = ({ priceMultiplier = 1, variantTitle = 'Catálogo de Pr
     }).format(precio || 0);
   };
 
+  const parsePromoMarker = (descripcion = '') => {
+    if (!descripcion || !descripcion.startsWith('[PROMO|')) return null;
+    const closingIdx = descripcion.indexOf(']');
+    const payload = closingIdx !== -1 ? descripcion.slice('[PROMO|'.length, closingIdx) : descripcion.slice('[PROMO|'.length);
+    const [descuento = '0', tipoPromocion = 'Oferta especial', descripcionPromo = ''] = payload.split('|');
+    return {
+      descuento: Number(descuento) || 0,
+      tipoPromocion: tipoPromocion.trim(),
+      descripcionPromo: descripcionPromo.trim()
+    };
+  };
+
+  const stripPromoMarker = (descripcion = '') => {
+    if (!descripcion || !descripcion.startsWith('[PROMO|')) return descripcion;
+    const closingIdx = descripcion.indexOf(']');
+    if (closingIdx === -1) return descripcion;
+    return descripcion.slice(closingIdx + 1).trim();
+  };
+
+  const calcularPrecioConPromocion = (precio, promoMeta) => {
+    const precioBase = Number(precio) || 0;
+    if (!promoMeta) return Math.round(precioBase);
+    return Math.max(0, Math.round(precioBase * (1 - promoMeta.descuento / 100)));
+  };
+
   // Generar y descargar PDF del catálogo
   const descargarCatalogoPDF = async () => {
     try {
@@ -277,7 +303,7 @@ const CatalogoClientes = ({ priceMultiplier = 1, variantTitle = 'Catálogo de Pr
       const catSlug = categoriaFiltro !== 'Todas'
         ? `-${categoriaFiltro.toLowerCase().replace(/\s+/g, '-')}`
         : '';
-      const nombreArchivo = `catalogo-ebs${catSlug}-${new Date().toISOString().slice(0, 10)}.pdf`;
+      const nombreArchivo = `catalogo-ebs${catSlug}-${formatInputDateLocal(new Date())}.pdf`;
       doc.save(nombreArchivo);
 
     } catch (err) {
@@ -671,10 +697,12 @@ const CatalogoClientes = ({ priceMultiplier = 1, variantTitle = 'Catálogo de Pr
         <div className={vistaActual === 'grid' ? 'product-grid-two-columns' : 'product-list-view'}>
           {productosFiltradosLista.map(producto => {
             const estaSeleccionado = productosSeleccionados.some(p => p.id === producto.id);
+            const promoMeta = parsePromoMarker(producto.descripcion);
+            const descripcionLimpia = stripPromoMarker(producto.descripcion);
             return (
               <div 
                 key={producto.id} 
-                className={`product-card ${estaSeleccionado ? 'selected' : ''} ${vistaActual === 'lista' ? 'list-card' : ''}`}
+                className={`product-card ${promoMeta ? 'promo-card' : ''} ${estaSeleccionado ? 'selected' : ''} ${vistaActual === 'lista' ? 'list-card' : ''}`}
               >
                 <div className="product-image-container">
                   <img 
@@ -722,9 +750,26 @@ const CatalogoClientes = ({ priceMultiplier = 1, variantTitle = 'Catálogo de Pr
                     <p className="product-code">Ref: {producto.codigo}</p>
                   )}
                   {producto.descripcion && (
-                    <p className="product-description">{producto.descripcion}</p>
+                    <p className={`product-description ${promoMeta ? 'promo-description' : ''}`}>
+                      {descripcionLimpia || promoMeta?.descripcionPromo}
+                    </p>
                   )}
-                  <p className="product-price">{formatPrecio(calcularPrecioVista(producto.precio))}</p>
+                  {(() => {
+                    const precioOriginal = calcularPrecioVista(producto.precio);
+                    const precioPromo = calcularPrecioConPromocion(precioOriginal, promoMeta);
+
+                    return promoMeta ? (
+                      <div className="product-price promo-price">
+                        <span className="original-price">{formatPrecio(precioOriginal)}</span>
+                        <span className="discounted-price">{formatPrecio(precioPromo)}</span>
+                      </div>
+                    ) : (
+                      <p className="product-price">{formatPrecio(precioOriginal)}</p>
+                    );
+                  })()}
+                  {promoMeta ? (
+                    <div className="promo-tag">{promoMeta.tipoPromocion}</div>
+                  ) : null}
                   {producto.categoria && (
                     <span className="product-category">{producto.categoria}</span>
                   )}

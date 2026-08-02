@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../App';
+import { normalizeRole } from '../lib/roleUtils';
 import './Navigation.css';
 
 const Navigation = () => {
@@ -23,6 +24,12 @@ const Navigation = () => {
 
   const toggleSubmenu = (menu) => {
     setMenuActivo(menuActivo === menu ? null : menu);
+  };
+
+  const getActiveGroup = (links) => {
+    return links.find(link => link.tipo === 'grupo' && link.submenu?.some(subLink =>
+      location.pathname === subLink.path || location.pathname.startsWith(subLink.path + '/')
+    ));
   };
 
   // Cerrar menú al hacer clic fuera de él
@@ -51,12 +58,15 @@ const Navigation = () => {
       return [
         { path: '/', label: 'Inicio', icon: '🏠', tipo: 'simple' },
         { path: '/catalogo-clientes', label: 'Catálogo', icon: '📚', tipo: 'simple' },
-        { path: '/catalogo-detalle', label: 'Precios Clientes', icon: '🏷️', tipo: 'simple' }
+        { path: '/catalogo-detalle', label: 'Precios Clientes', icon: '🏷️', tipo: 'simple' },
+        { path: '/mundial', label: 'Mundial 2026', icon: '⚽', tipo: 'simple' }
       ];
     }
 
-    // Enlaces para usuarios logueados (según rol)
-    if (user.role === 'superadmin') {
+    const role = normalizeRole(user.role);
+
+  // Enlaces para usuarios logueados (según rol)
+    if (role === 'superadmin') {
       return [
         // INICIO & VENTAS - Grupo
         { 
@@ -122,7 +132,7 @@ const Navigation = () => {
     }
 
     // Enlaces para usuarios logueados (según rol)
-    if (user.role === 'admin') {
+    if (role === 'admin') {
       return [
         // INICIO & VENTAS - Grupo
         { 
@@ -155,6 +165,7 @@ const Navigation = () => {
             { path: '/reportes-cobros', label: 'Informe de Cobros', icon: '💰' },
             { path: '/plan-seguimiento-ventas', label: 'Plan Seguimiento Ventas', icon: '🎯' },
             { path: '/calculador-sueldo-vendedor', label: 'Calculador Sueldo Vendedor', icon: '💰' },
+            { path: '/reporte-clientes-producto', label: 'Clientes por Producto', icon: '👥' },
             { path: '/rutas-cobro', label: 'Rutas de Cobro', icon: '🚗' }
           ]
         },
@@ -179,6 +190,7 @@ const Navigation = () => {
           tipo: 'grupo',
           submenu: [
             { path: '/catalogo', label: 'Catálogo Productos', icon: '📚' },
+            { path: '/productos-preventa', label: 'Productos Preventa', icon: '🛍️' },
             { path: '/consulta-coopidrogas', label: 'Consulta Coopidrogas', icon: '🔍' },
             { path: '/gestion-inventario', label: 'Gestión Inventario', icon: '📋' },
             { path: '/gestion-pedidos', label: 'Gestión Pedidos', icon: '🛒' }
@@ -247,7 +259,8 @@ const Navigation = () => {
         { path: '/gestion-pedidos', label: 'Gestión Pedidos', icon: '🛒', tipo: 'simple' },
         { path: '/dashboard-ventas', label: 'Dashboard Ventas', icon: '📊', tipo: 'simple' },
         { path: '/catalogo', label: 'Catálogo Productos', icon: '📚', tipo: 'simple' },
-        { path: '/clientes', label: 'Clientes', icon: '👥', tipo: 'simple' }
+        { path: '/clientes', label: 'Clientes', icon: '👥', tipo: 'simple' },
+        { path: '/mundial', label: 'Mundial 2026', icon: '⚽', tipo: 'simple' }
       ];
     }
 
@@ -255,6 +268,7 @@ const Navigation = () => {
     if (user.role === 'inventario') {
       return [
         { path: '/catalogo', label: 'Catálogo Productos', icon: '📚', tipo: 'simple' },
+        { path: '/productos-preventa', label: 'Productos Preventa', icon: '🛍️', tipo: 'simple' },
         { path: '/catalogo-clientes', label: 'Enviar Catálogo', icon: '📤', tipo: 'simple' },
         { path: '/catalogo-detalle', label: 'Catálogo Precios Clientes', icon: '🏷️', tipo: 'simple' },
         { path: '/gestion-inventario', label: 'Gestión Inventario', icon: '📋', tipo: 'simple' },
@@ -299,6 +313,7 @@ const Navigation = () => {
           <button 
             className={`nav-link group-toggle ${isActiveLink(link.path) ? 'active' : ''}`}
             onClick={() => toggleSubmenu(link.path)}
+            aria-expanded={menuActivo === link.path}
           >
             {link.icon && <span className="nav-icon">{link.icon}</span>}
             <span className="nav-label">{link.label}</span>
@@ -340,6 +355,13 @@ const Navigation = () => {
   };
 
   const availableLinks = getAvailableLinks();
+  const activeGroupPath = getActiveGroup(availableLinks)?.path;
+
+  useEffect(() => {
+    if (isMenuOpen && activeGroupPath && menuActivo === null) {
+      setMenuActivo(activeGroupPath);
+    }
+  }, [isMenuOpen, location.pathname, activeGroupPath, menuActivo]);
 
   return (
     <nav className="navigation">

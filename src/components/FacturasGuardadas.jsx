@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from './supabaseClient';
 import * as XLSX from 'xlsx';
+import { parseDateLocal, formatDateLocal, nowLocalIsoDate, formatDateTimeBogota } from '../lib/dateUtils';
 import './FacturasGuardadas.css';
 
 const SALDO_EPSILON = 0.01;
@@ -176,7 +177,7 @@ const FacturasGuardadas = () => {
       return coincideBusqueda && coincideVendedor && coincideCentroComercial && mostrarPorEstado;
     }).sort((a, b) => {
       switch (orden) {
-        case 'antiguos': return new Date(a.fecha) - new Date(b.fecha);
+        case 'antiguos': return (parseDateLocal(a.fecha) || new Date(0)) - (parseDateLocal(b.fecha) || new Date(0));
         case 'mayor-total': return b.total - a.total;
         case 'menor-total': return a.total - b.total;
         case 'mayor-saldo': return (b.saldo || 0) - (a.saldo || 0);
@@ -185,7 +186,7 @@ const FacturasGuardadas = () => {
         case 'alfabetico-za': return b.cliente?.localeCompare(a.cliente || '');
         case 'mayor-numero': return b.id - a.id;
         case 'menor-numero': return a.id - b.id;
-        default: return new Date(b.fecha) - new Date(a.fecha);
+        default: return (parseDateLocal(b.fecha) || new Date(0)) - (parseDateLocal(a.fecha) || new Date(0));
       }
     }),
     abonos
@@ -417,7 +418,7 @@ const FacturasGuardadas = () => {
       XLSX.utils.book_append_sheet(wb, abonosSheet, 'Abonos');
 
       // Descargar
-      const fileName = `facturacion_${new Date().toISOString().slice(0, 10)}.xlsx`;
+      const fileName = `facturacion_${nowLocalIsoDate()}.xlsx`;
       XLSX.writeFile(wb, fileName);
       
     } catch (error) {
@@ -461,7 +462,7 @@ const FacturasGuardadas = () => {
       const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
       const link = document.createElement('a');
       link.href = URL.createObjectURL(blob);
-      link.download = `facturacion_${new Date().toISOString().slice(0, 10)}.csv`;
+      link.download = `facturacion_${nowLocalIsoDate()}.csv`;
       link.click();
       
     } catch (error) {
@@ -493,7 +494,7 @@ const FacturasGuardadas = () => {
         facturas: facturasData,
         abonos: abonosData,
         metadata: {
-          exportadoEl: new Date().toISOString(),
+          exportadoEl: formatDateTimeBogota(new Date()),
           version: '1.0',
           totalFacturas: facturasData.length,
           totalAbonos: abonosData.length
@@ -505,7 +506,7 @@ const FacturasGuardadas = () => {
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = `datos-facturacion-${new Date().toISOString().slice(0, 10)}.json`;
+      link.download = `datos-facturacion-${nowLocalIsoDate()}.json`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -640,8 +641,7 @@ const FacturasGuardadas = () => {
 
   // Formatear fecha
   const formatFecha = (fechaISO) => {
-    const opciones = { year: 'numeric', month: 'short', day: 'numeric' };
-    return new Date(fechaISO).toLocaleDateString('es-ES', opciones);
+    return formatDateLocal(fechaISO, 'es-ES', { year: 'numeric', month: 'short', day: 'numeric' });
   };
 
   // Formatear moneda
