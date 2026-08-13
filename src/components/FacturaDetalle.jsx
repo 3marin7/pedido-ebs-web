@@ -1043,6 +1043,56 @@ const FacturaDetalle = () => {
     });
   };
 
+  // Normalizar número de teléfono a formato internacional mínimo (solo dígitos)
+  const normalizarTelefono = (tel) => {
+    if (!tel) return '';
+    const digitos = String(tel).replace(/\D+/g, '');
+    if (!digitos) return '';
+    // Si ya tiene código de país (ej: 57...) devolver tal cual
+    if (digitos.startsWith('57')) return digitos;
+    // Si empieza con 3 (celular colombiano) añadir 57
+    if (digitos.length === 10 && digitos.startsWith('3')) return `57${digitos}`;
+    if (digitos.length === 9 && digitos.startsWith('3')) return `57${digitos}`;
+    // Si tiene 10 o 9 dígitos sin 3 al inicio, intentar devolver con 57
+    if (digitos.length >= 7 && digitos.length <= 12) return digitos;
+    return digitos;
+  };
+
+  const enviarWhatsAppAlCliente = () => {
+    if (!factura || !factura.telefono) {
+      alert('No hay número de teléfono del cliente definido');
+      return;
+    }
+
+    const telefono = normalizarTelefono(factura.telefono);
+    if (!telefono) {
+      alert('Número de teléfono inválido');
+      return;
+    }
+
+    let mensaje = `Resumen de abonos - Cuenta de Cobro #${factura.id}\n`;
+    mensaje += `Cliente: ${factura.cliente}\n`;
+    mensaje += `Total Factura: ${formatearMoneda(factura.total)}\n\n`;
+
+    if (abonos && abonos.length > 0) {
+      mensaje += `Abonos recientes:\n`;
+      abonos.slice(0, 10).forEach(a => {
+        mensaje += `- ${formatDateLocal(a.fecha, 'es-CO')} | ${formatearMoneda(a.monto)} | ${a.metodo || 'Efectivo'}\n`;
+      });
+      mensaje += `\n`;
+    } else {
+      mensaje += `No se han registrado abonos.\n\n`;
+    }
+
+    mensaje += `Total Abonado: ${formatearMoneda(calcularTotalAbonado())}\n`;
+    mensaje += `Saldo Pendiente: ${formatearMoneda(calcularSaldoPendiente())}\n\n`;
+    mensaje += `Gracias por su preferencia.`;
+
+    const texto = encodeURIComponent(mensaje);
+    const url = `https://wa.me/${telefono}?text=${texto}`;
+    window.open(url, '_blank');
+  };
+
   const metodosPago = ['Efectivo', 'Transferencia', 'Tarjeta', 'Cheque', 'Otro'];
 
   if (cargando) {
@@ -1200,6 +1250,17 @@ const FacturaDetalle = () => {
               disabled={estaPagada()}
             >
               + Agregar Abono
+            </button>
+          )}
+          {/* Botón para enviar resumen de abonos por WhatsApp al cliente */}
+          {factura?.telefono && (
+            <button
+              className="button info-button"
+              onClick={enviarWhatsAppAlCliente}
+              title="Enviar resumen de abonos por WhatsApp al cliente"
+              style={{ marginLeft: '0.5rem' }}
+            >
+              📲 Resumen abonos al cliente
             </button>
           )}
         </div>
