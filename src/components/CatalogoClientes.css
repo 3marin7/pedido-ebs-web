@@ -376,23 +376,25 @@ body {
   color: #b45309;
 }
 
-/* Estilos especiales para tarjetas en vista de lista */
+/* Estilos modernos para tarjetas en vista de lista (móvil: imagen arriba, CTA grande) */
 .product-card.list-card {
-  flex-direction: row;
+  flex-direction: column;
   height: auto;
-  min-height: 100px;
-  margin: 0;
+  min-height: 260px;
+  margin: 6px 0;
 }
 
 .product-card.list-card .product-image-container {
-  width: 100px;
-  height: 100px;
+  width: 100%;
+  height: 220px;
   flex-shrink: 0;
+  border-bottom: 1px solid var(--medium-gray);
 }
 
 .product-card.list-card .product-image {
   width: 100%;
   height: 100%;
+  object-fit: cover;
 }
 
 .product-card.list-card .product-info {
@@ -400,48 +402,61 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 8px;
+  padding: 12px;
 }
 
 .product-card.list-card .product-name {
-  font-size: 14px;
-  font-weight: 600;
-  margin-bottom: 4px;
-  line-height: 1.2;
+  font-size: 1.02rem;
+  font-weight: 700;
+  margin-bottom: 6px;
+  line-height: 1.15;
 }
 
 .product-card.list-card .product-price {
-  font-size: 16px;
+  font-size: 1.25rem;
+  font-weight: 900;
+  color: #ff5a1f; /* naranja llamativo */
+  margin: 6px 0;
+}
+
+.product-card.list-card .product-description {
+  font-size: 0.9rem;
+  color: var(--dark-gray);
+  margin-bottom: 8px;
+}
+
+/* Botón CTA grande estilo naranja */
+.product-card.list-card .add-to-cart-btn {
+  background: linear-gradient(180deg,#ff7a3d,#ff5a1f);
+  color: white;
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 1rem;
   font-weight: 700;
-  color: var(--primary-color);
-  margin: 4px 0;
+  box-shadow: 0 6px 18px rgba(255,90,31,0.18);
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+  min-height: 48px;
 }
 
-.product-card.list-card .quantity-badge {
-  position: static;
-  margin-top: 4px;
-  width: fit-content;
+.product-card.list-card .add-to-cart-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 28px rgba(255,90,31,0.22);
 }
 
-.product-card.list-card .add-button {
-  position: static;
-  width: 100%;
-  margin-top: 4px;
-  border-radius: 6px;
+.product-card.list-card .add-to-cart-btn i {
+  font-size: 1.05rem;
 }
 
-.product-card.list-card .stock-badge {
-  position: absolute;
-  top: 4px;
-  left: 4px;
-  font-size: 9px;
-  padding: 2px 6px;
+.product-card.list-card .product-category {
+  font-size: 0.78rem;
 }
 
-.product-card.list-card .zoom-icon {
-  position: absolute;
-  bottom: 4px;
-  left: 4px;
+/* Mantener badges y elementos superpuestos visibles */
+.product-card.list-card .selected-badge,
+.product-card.list-card .stock-badge,
+.product-card.list-card .nuevo-badge,
+.product-card.list-card .expand-image-btn {
+  right: 10px;
 }
 
 .product-card.selected {
@@ -470,13 +485,24 @@ body {
     margin-top: 150px;
   }
 
+  /* En pantallas más grandes, restaurar la vista en fila */
   .product-card.list-card {
+    flex-direction: row;
     min-height: 120px;
   }
 
   .product-card.list-card .product-image-container {
     width: 120px;
     height: 120px;
+    border-bottom: none;
+  }
+
+  .product-card.list-card .product-image {
+    object-fit: contain;
+  }
+
+  .product-card.list-card .product-info {
+    padding: 8px;
   }
 
   .product-card.list-card .product-name {
@@ -566,23 +592,22 @@ body {
 
 .stock-badge {
   position: absolute;
-  top: 5px;
-  left: 5px;
-  display: flex;
-  flex-direction: column;
+  top: 8px;
+  left: 8px;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-size: 0.65rem;
-  font-weight: bold;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-weight: 800;
   z-index: 2;
-  min-width: 35px;
-  text-align: center;
+  min-height: 26px;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.14);
 }
 
 .stock-badge.stock-disponible {
-  background: #10b981;
+  background: #16a34a;
   color: white;
 }
 
@@ -597,12 +622,14 @@ body {
 }
 
 .stock-label {
-  font-size: 0.55rem;
-  opacity: 0.9;
+  font-size: 0.56rem;
+  line-height: 1;
+  opacity: 0.95;
 }
 
 .stock-number {
-  font-size: 0.75rem;
+  font-size: 0.8rem;
+  line-height: 1;
   font-weight: 900;
 }
 
