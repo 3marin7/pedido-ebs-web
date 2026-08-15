@@ -1070,9 +1070,41 @@ const FacturaDetalle = () => {
       return;
     }
 
-    let mensaje = `Resumen de abonos - Cuenta de Cobro #${factura.id}\n`;
-    mensaje += `Cliente: ${factura.cliente}\n`;
-    mensaje += `Total Factura: ${formatearMoneda(factura.total)}\n\n`;
+    // Resolver posible código de factura (campo alternativo) y código de cliente ya resuelto
+    const codigoFactura = factura.codigo || factura.codigo_factura || factura.ref || factura.numero || '';
+    const clienteCodigo = codigoClienteResuelto || '';
+
+    let mensaje = `Resumen de abonos - Cuenta de Cobro #${factura.id}`;
+    if (codigoFactura) mensaje += ` (Código: ${codigoFactura})`;
+    mensaje += `\n`;
+    mensaje += `Cliente: ${factura.cliente}`;
+    if (clienteCodigo) mensaje += ` [CODIGO: ${clienteCodigo}]`;
+    mensaje += `\n`;
+    mensaje += `Total Factura: ${formatearMoneda(factura.total)}\n`;
+
+    // Fecha de emisión y días de retraso (si aplica)
+    const fechaFacturaDate = parseDateLocal(factura.fecha);
+    if (fechaFacturaDate) {
+      const fechaEmisionTexto = formatDateLocal(factura.fecha, 'es-CO');
+      const diasRetraso = Math.max(0, Math.floor((Date.now() - fechaFacturaDate.getTime()) / (24 * 60 * 60 * 1000)));
+      mensaje += `Fecha emisión: ${fechaEmisionTexto}\n`;
+      mensaje += `Días: ${diasRetraso}\n\n`;
+    } else {
+      mensaje += `\n`;
+    }
+
+    // Listado de productos facturados
+    const productos = factura.productos || [];
+    if (productos.length > 0) {
+      mensaje += `Productos facturados:\n`;
+      productos.forEach(p => {
+        const cant = p.cantidad || 0;
+        const pu = p.precio || 0;
+        const sub = cant * pu;
+        mensaje += `- ${p.nombre}${p.codigo ? ` (Ref: ${p.codigo})` : ''}: ${cant} x ${formatearMoneda(pu)} = ${formatearMoneda(sub)}\n`;
+      });
+      mensaje += `\n`;
+    }
 
     if (abonos && abonos.length > 0) {
       mensaje += `Abonos recientes:\n`;
