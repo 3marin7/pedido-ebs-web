@@ -31,6 +31,9 @@ const CatalogoClientes = ({ priceMultiplier = 1, variantTitle = 'Catálogo de Pr
   const [vistaActual, setVistaActual] = useState('grid'); // 'grid' o 'lista'
   const [clienteSeleccionadoId, setClienteSeleccionadoId] = useState(null);
   const [generandoPDF, setGenerandoPDF] = useState(false);
+  const [navActivo, setNavActivo] = useState('');
+  const [panelBusquedaActiva, setPanelBusquedaActiva] = useState(null);
+  const [menuMasAbierto, setMenuMasAbierto] = useState(false);
 
   const location = useLocation();
 
@@ -129,6 +132,51 @@ const CatalogoClientes = ({ priceMultiplier = 1, variantTitle = 'Catálogo de Pr
 
   const toggleMostrarCarrito = () => {
     setMostrarCarrito(prev => !prev);
+  };
+
+  const manejarNavClick = (item) => {
+    if (item === 'mas') {
+      const abrirMenu = !menuMasAbierto;
+      setMenuMasAbierto(abrirMenu);
+      setPanelBusquedaActiva(null);
+      setNavActivo(abrirMenu ? 'mas' : '');
+      return;
+    }
+
+    setMenuMasAbierto(false);
+    const panelDestino = item;
+
+    if (['buscar', 'categorias'].includes(item)) {
+      const debeMostrar = panelBusquedaActiva !== panelDestino;
+      setPanelBusquedaActiva(debeMostrar ? panelDestino : null);
+      setNavActivo(debeMostrar ? item : '');
+
+      if (!debeMostrar) {
+        return;
+      }
+
+      if (panelDestino === 'buscar') {
+        const inputBusqueda = document.getElementById('catalogo-busqueda');
+        if (inputBusqueda) {
+          inputBusqueda.focus();
+          inputBusqueda.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        return;
+      }
+
+      const categoriaSelect = document.getElementById('catalogo-categoria');
+      if (categoriaSelect) {
+        categoriaSelect.focus();
+        categoriaSelect.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      return;
+    }
+
+    setNavActivo(item);
+
+    if (item === 'carrito') {
+      toggleMostrarCarrito();
+    }
   };
 
   // Función para abrir imagen ampliada
@@ -312,6 +360,33 @@ const CatalogoClientes = ({ priceMultiplier = 1, variantTitle = 'Catálogo de Pr
     } finally {
       setGenerandoPDF(false);
     }
+  };
+
+  const enviarCatalogoWhatsApp = () => {
+    const listaProductos = productosFiltrados();
+
+    if (!listaProductos.length) {
+      alert('No hay productos para enviar por WhatsApp');
+      return;
+    }
+
+    const productosTexto = listaProductos.slice(0, 10).map((producto, index) => {
+      const precio = formatPrecio(calcularPrecioVista(producto.precio));
+      return `${index + 1}. ${producto.nombre} - ${precio}`;
+    }).join('%0A');
+
+    const descripcionCategoria = categoriaFiltro !== 'Todas' ? `%0A*Categoría:* ${categoriaFiltro}` : '';
+    const descripcionBusqueda = busqueda ? `%0A*Búsqueda:* ${busqueda}` : '';
+    const mensaje = `*CATÁLOGO EBS*%0A%0A${variantTitle}${descripcionCategoria}${descripcionBusqueda}%0A%0A*Productos:*%0A${productosTexto}${listaProductos.length > 10 ? `%0A... y ${listaProductos.length - 10} más` : ''}%0A%0A*Total:* ${listaProductos.length} productos`;
+
+    const numerosWhatsApp = ['573002945085', '573004583117'];
+
+    numerosWhatsApp.forEach((numero, index) => {
+      const url = `https://api.whatsapp.com/send?phone=${numero}&text=${mensaje}`;
+      setTimeout(() => {
+        window.open(url, '_blank');
+      }, index * 500);
+    });
   };
 
   // Determinar si un producto es nuevo (últimos 30 días)
@@ -611,67 +686,75 @@ const CatalogoClientes = ({ priceMultiplier = 1, variantTitle = 'Catálogo de Pr
           </div>
         )}
 
-        {/* Filtros en barra pegajosa */}
-        <div className="sticky-filters">
-          <div className="search-container">
-            <i className="fas fa-search"></i>
-            <input
-              type="text"
-              placeholder="Buscar por nombre, código or descripción..."
-              value={busqueda}
-              onChange={handleBusquedaChange}
-            />
-            {busqueda && (
-              <button 
-                className="clear-search"
-                onClick={() => setBusqueda('')}
-              >
-                <i className="fas fa-times"></i>
-              </button>
-            )}
-          </div>
-          
-          <div className="filters-row">
-            <select 
-              value={categoriaFiltro}
-              onChange={handleCategoriaChange}
-              className="category-selector"
-            >
-              {categorias.map(cat => (
-                <option key={cat} value={cat}>{cat}</option>
-              ))}
-            </select>
-            
-            <select 
-              value={ordenamiento}
-              onChange={handleOrdenamientoChange}
-              className="order-selector"
-            >
-              <option value="ultimos-agregados">Últimos Agregados</option>
-              <option value="nombre-asc">Nombre A-Z</option>
-              <option value="nombre-desc">Nombre Z-A</option>
-              <option value="precio-asc">Precio: Menor a Mayor</option>
-              <option value="precio-desc">Precio: Mayor a Menor</option>
-            </select>
-            
-            <div className="view-toggle">
-              <button 
-                className={`view-btn ${vistaActual === 'grid' ? 'active' : ''}`}
-                onClick={() => cambiarVista('grid')}
-                title="Vista Cuadrícula"
-              >
-                <i className="fas fa-th"></i>
-              </button>
-              <button 
-                className={`view-btn ${vistaActual === 'lista' ? 'active' : ''}`}
-                onClick={() => cambiarVista('lista')}
-                title="Vista Lista"
-              >
-                <i className="fas fa-list"></i>
-              </button>
+        {panelBusquedaActiva === 'buscar' && (
+          <div className="sticky-filters search-panel">
+            <div className="search-container">
+              <i className="fas fa-search"></i>
+              <input
+                id="catalogo-busqueda"
+                type="text"
+                placeholder="Buscar por nombre, código o descripción..."
+                value={busqueda}
+                onChange={handleBusquedaChange}
+              />
+              {busqueda && (
+                <button 
+                  className="clear-search"
+                  onClick={() => setBusqueda('')}
+                >
+                  <i className="fas fa-times"></i>
+                </button>
+              )}
             </div>
           </div>
-        </div>
+        )}
+
+        {panelBusquedaActiva === 'categorias' && (
+          <div className="sticky-filters category-panel">
+            <div className="filters-row">
+              <select 
+                id="catalogo-categoria"
+                value={categoriaFiltro}
+                onChange={handleCategoriaChange}
+                className="category-selector"
+              >
+                {categorias.map(cat => (
+                  <option key={cat} value={cat}>{cat}</option>
+                ))}
+              </select>
+              
+              <select 
+                id="catalogo-orden"
+                value={ordenamiento}
+                onChange={handleOrdenamientoChange}
+                className="order-selector"
+              >
+                <option value="ultimos-agregados">Últimos Agregados</option>
+                <option value="nombre-asc">Nombre A-Z</option>
+                <option value="nombre-desc">Nombre Z-A</option>
+                <option value="precio-asc">Precio: Menor a Mayor</option>
+                <option value="precio-desc">Precio: Mayor a Menor</option>
+              </select>
+              
+              <div className="view-toggle">
+                <button 
+                  className={`view-btn ${vistaActual === 'grid' ? 'active' : ''}`}
+                  onClick={() => cambiarVista('grid')}
+                  title="Vista Cuadrícula"
+                >
+                  <i className="fas fa-th"></i>
+                </button>
+                <button 
+                  className={`view-btn ${vistaActual === 'lista' ? 'active' : ''}`}
+                  onClick={() => cambiarVista('lista')}
+                  title="Vista Lista"
+                >
+                  <i className="fas fa-list"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </header>
 
       {/* Mensaje de error */}
@@ -839,23 +922,56 @@ const CatalogoClientes = ({ priceMultiplier = 1, variantTitle = 'Catálogo de Pr
       )}
 
       {/* Bottom Navigation */}
-      <div className="bottom-nav">
-        <button 
-          className="whatsapp-button nav-button"
-          onClick={toggleMostrarCarrito}
-          disabled={productosSeleccionados.length === 0}
-        >
-          <i className="fab fa-whatsapp"></i>
-          <span>Ver Pedido</span>
-          {productosSeleccionados.length > 0 && (
-            <span className="nav-badge">{productosSeleccionados.length}</span>
-          )}
-        </button>
-        
-        <div className="brand-text">
-          EBS Hermanos Marin - ING. Edwin Marin 3004583117
-        </div>
+      <div className="bottom-nav-mobile" role="navigation" aria-label="Navegación del catálogo">
+        {[
+          { key: 'buscar', label: 'Buscar', icon: 'fa-magnifying-glass' },
+          { key: 'categorias', label: 'Categorías', icon: 'fa-list' },
+          { key: 'carrito', label: 'Mi carrito', icon: 'fa-cart-shopping' },
+          { key: 'mas', label: 'Más', icon: 'fa-ellipsis' }
+        ].map((item) => (
+          <button
+            key={item.key}
+            type="button"
+            className={`bottom-nav-item ${navActivo === item.key ? 'active' : ''}`}
+            onClick={() => manejarNavClick(item.key)}
+          >
+            {item.key === 'carrito' && productosSeleccionados.length > 0 && (
+              <span className="bottom-nav-badge">{productosSeleccionados.length}</span>
+            )}
+            <i className={`fas ${item.icon}`}></i>
+            <span>{item.label}</span>
+          </button>
+        ))}
       </div>
+
+      {menuMasAbierto && (
+        <div className="more-menu" role="menu" aria-label="Más opciones del catálogo">
+          <button
+            type="button"
+            className="more-menu-item"
+            onClick={() => {
+              setMenuMasAbierto(false);
+              setNavActivo('');
+              descargarCatalogoPDF();
+            }}
+          >
+            <i className="fas fa-file-pdf"></i>
+            <span>Descargar PDF</span>
+          </button>
+          <button
+            type="button"
+            className="more-menu-item"
+            onClick={() => {
+              setMenuMasAbierto(false);
+              setNavActivo('');
+              enviarCatalogoWhatsApp();
+            }}
+          >
+            <i className="fab fa-whatsapp"></i>
+            <span>Enviar por WhatsApp</span>
+          </button>
+        </div>
+      )}
 
       {/* Notificación de cantidad */}
       {showQuantityNotification && (
