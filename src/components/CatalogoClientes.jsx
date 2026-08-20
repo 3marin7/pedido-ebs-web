@@ -27,7 +27,7 @@ const CatalogoClientes = ({ priceMultiplier = 1, variantTitle = 'Catálogo de Pr
   const [numeroPedido, setNumeroPedido] = useState(null);
   const [imagenAmpliada, setImagenAmpliada] = useState(null);
   const [ordenamiento, setOrdenamiento] = useState('ultimos-agregados');
-  const [cantidadesRapidas] = useState([12, 24, 36, 48, 60, 72]);
+  const [cantidadesRapidas] = useState([12, 24, 36, 60]);
   const [vistaActual, setVistaActual] = useState('grid'); // 'grid' o 'lista'
   const [clienteSeleccionadoId, setClienteSeleccionadoId] = useState(null);
   const [generandoPDF, setGenerandoPDF] = useState(false);
@@ -487,21 +487,55 @@ const CatalogoClientes = ({ priceMultiplier = 1, variantTitle = 'Catálogo de Pr
   };
 
   // Validar información del cliente
+  const irAlFormularioCliente = (campoId = 'vendedor-cliente') => {
+    const bloqueFormulario = document.getElementById('cliente-info-cart');
+    const campo = document.getElementById(campoId);
+    const contenedorCarrito = document.querySelector('.cart-content');
+
+    if (bloqueFormulario) {
+      const offsetTop = bloqueFormulario.offsetTop - 12;
+
+      if (contenedorCarrito && typeof contenedorCarrito.scrollTo === 'function') {
+        contenedorCarrito.scrollTo({
+          top: offsetTop,
+          behavior: 'smooth'
+        });
+      } else if (contenedorCarrito) {
+        contenedorCarrito.scrollTop = offsetTop;
+      }
+
+      bloqueFormulario.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      bloqueFormulario.classList.add('cliente-info-cart--highlight');
+      setTimeout(() => {
+        bloqueFormulario.classList.remove('cliente-info-cart--highlight');
+      }, 1600);
+    }
+
+    if (campo) {
+      setTimeout(() => {
+        campo.focus({ preventScroll: true });
+      }, 180);
+    }
+  };
+
   const validarCliente = () => {
     // ✅ FIX 1: Validar vendedor es obligatorio
     const vendedoresValidos = ['Edwin Marin', 'Fredy Marin', 'Fabian Marin'];
     if (!clienteInfo.vendedor?.trim() || !vendedoresValidos.includes(clienteInfo.vendedor.trim())) {
       setError('❌ Por favor selecciona un vendedor válido');
+      irAlFormularioCliente('vendedor-cliente');
       return false;
     }
 
     if (!clienteInfo.nombre?.trim() || clienteInfo.nombre.trim().length < 3) {
       setError('❌ Por favor ingresa tu nombre completo (mínimo 3 caracteres)');
+      irAlFormularioCliente('nombre-cliente');
       return false;
     }
     
     if (!clienteInfo.telefono?.trim()) {
       setError('❌ Por favor ingresa tu número de teléfono');
+      irAlFormularioCliente('telefono-cliente');
       return false;
     }
     
@@ -509,11 +543,13 @@ const CatalogoClientes = ({ priceMultiplier = 1, variantTitle = 'Catálogo de Pr
     const soloDigitos = clienteInfo.telefono.replace(/\D/g, '');
     if (soloDigitos.length < 9) {
       setError(`❌ Teléfono inválido. Encontrados ${soloDigitos.length} dígitos, se requieren mínimo 9`);
+      irAlFormularioCliente('telefono-cliente');
       return false;
     }
     
     if (soloDigitos.length > 15) {
       setError('❌ Teléfono muy largo. Máximo 15 dígitos');
+      irAlFormularioCliente('telefono-cliente');
       return false;
     }
     
@@ -1150,7 +1186,7 @@ const CatalogoClientes = ({ priceMultiplier = 1, variantTitle = 'Catálogo de Pr
                   </div>
                   
                   {/* Información del cliente */}
-                  <div className="cliente-info-cart">
+                  <div id="cliente-info-cart" className="cliente-info-cart">
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
                       <h3>Completa tus datos para enviar el pedido</h3>
                       {clienteSeleccionadoId && (
@@ -1196,6 +1232,13 @@ const CatalogoClientes = ({ priceMultiplier = 1, variantTitle = 'Catálogo de Pr
                         </div>
                       )}
                     </div>
+                    {error && (
+                      <div className="form-validation-banner" role="alert">
+                        <i className="fas fa-exclamation-circle"></i>
+                        <span>{error}</span>
+                      </div>
+                    )}
+
                     <div className="cliente-form">
                       <div className="form-group">
                         <label htmlFor="vendedor-cliente">Vendedor *</label>
@@ -1266,48 +1309,34 @@ const CatalogoClientes = ({ priceMultiplier = 1, variantTitle = 'Catálogo de Pr
                     />
                   </div>
 
-                  {/* Mostrar error si existe */}
-                  {error && (
-                    <div style={{
-                      backgroundColor: '#fee',
-                      border: '1px solid #f99',
-                      borderRadius: '4px',
-                      padding: '0.75rem 1rem',
-                      marginBottom: '1rem',
-                      color: '#c00',
-                      fontSize: '0.9rem',
-                      fontWeight: '500'
-                    }}>
-                      {error}
+                  <div className="cart-footer">
+                    <div className="cart-total">
+                      <span>Total:</span>
+                      <span className="total-amount">{formatPrecio(calcularTotal())}</span>
                     </div>
-                  )}
-                  
-                  <div className="cart-total">
-                    <span>Total:</span>
-                    <span className="total-amount">{formatPrecio(calcularTotal())}</span>
-                  </div>
 
-                  {/* Botones de acción */}
-                  <div className="cart-actions">
-                    <div className="send-order-container">
-                      <button 
-                        className="send-order-button"
-                        onClick={enviarPedidoWhatsApp}
-                        disabled={enviandoPedido}
-                      >
-                        {enviandoPedido ? (
-                          <>
-                            <div className="loading-spinner-small"></div>
-                            Enviando...
-                          </>
-                        ) : (
-                          <>
-                            <i className="fab fa-whatsapp"></i> 
-                            Enviar Pedido por WhatsApp
-                          </>
-                        )}
-                        <span className="total-on-button">{formatPrecio(calcularTotal())}</span>
-                      </button>
+                    {/* Botones de acción */}
+                    <div className="cart-actions">
+                      <div className="send-order-container">
+                        <button 
+                          className="send-order-button"
+                          onClick={enviarPedidoWhatsApp}
+                          disabled={enviandoPedido}
+                        >
+                          {enviandoPedido ? (
+                            <>
+                              <div className="loading-spinner-small"></div>
+                              Enviando...
+                            </>
+                          ) : (
+                            <>
+                              <i className="fab fa-whatsapp"></i> 
+                              Enviar Pedido por WhatsApp
+                            </>
+                          )}
+                          <span className="total-on-button">{formatPrecio(calcularTotal())}</span>
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </>
