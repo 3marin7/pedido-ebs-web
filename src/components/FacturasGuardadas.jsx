@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from './supabaseClient';
 import * as XLSX from 'xlsx';
@@ -19,6 +19,20 @@ const getCodigoCliente = (factura) => {
 const sameFacturaId = (abonoFacturaId, facturaId) => String(abonoFacturaId) === String(facturaId);
 
 const PAGE_SIZE = 1000;
+
+const useDebouncedValue = (value, delay = 150) => {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+
+    return () => clearTimeout(timer);
+  }, [value, delay]);
+
+  return debouncedValue;
+};
 
 const cargarTodasLasFacturas = async () => {
   let desde = 0;
@@ -76,8 +90,10 @@ const FacturasGuardadas = () => {
   const [vendedores, setVendedores] = useState([]);
   const [orden, setOrden] = useState('recientes');
   const [busquedaCentroComercial, setBusquedaCentroComercial] = useState('');
-    // Obtener centros comerciales únicos de las facturas
-    const centrosComerciales = [...new Set(facturas.map(f => f.centro_comercial).filter(Boolean))];
+  const centrosComerciales = useMemo(
+    () => [...new Set(facturas.map(f => f.centro_comercial).filter(Boolean))],
+    [facturas]
+  );
   const [mostrarConfirmacion, setMostrarConfirmacion] = useState(null);
   const [mostrarResumen, setMostrarResumen] = useState(false);
   const [importando, setImportando] = useState(false);
@@ -89,6 +105,12 @@ const FacturasGuardadas = () => {
   const [resumenActivo, setResumenActivo] = useState('general');
   const [busquedaClienteResumen, setBusquedaClienteResumen] = useState('');
   const [menuAbierto, setMenuAbierto] = useState(false);
+  const [navActivoMobile, setNavActivoMobile] = useState('');
+  const [panelActivoMobile, setPanelActivoMobile] = useState(null); // 'buscar' | 'filtros' | null
+  const [menuMasAbierto, setMenuMasAbierto] = useState(false);
+  const [paginaActual, setPaginaActual] = useState(1);
+  const ITEMS_POR_PAGINA = 20;
+  const busquedaDebounced = useDebouncedValue(busqueda, 150);
 
   // Cargar facturas y abonos desde Supabase
   useEffect(() => {
@@ -120,10 +142,10 @@ const FacturasGuardadas = () => {
     cargarDatos();
   }, []);
 
-  // Calcular saldos para cada factura
-  const calcularSaldos = (facturas, abonos) => {
+  // Calcular saldos para cada factura usando un índice por factura para evitar O(n²)
+  const calcularSaldos = (facturas, abonosPorFactura) => {
     return facturas.map(factura => {
-      const abonosFactura = abonos.filter(abono => sameFacturaId(abono.factura_id, factura.id));
+      const abonosFactura = abonosPorFactura[String(factura.id)] || [];
       const totalFactura = toNumber(factura.total);
       const totalAbonado = abonosFactura.reduce((sum, abono) => sum + toNumber(abono.monto), 0);
       const saldoCalculado = totalFactura - totalAbonado;
@@ -144,61 +166,96 @@ const FacturasGuardadas = () => {
     return password === 'edwin' || password === '777';
   };
 
+  const abonosPorFactura = useMemo(() => {
+    const mapa = {};
+    abonos.forEach((abono) => {
+      const key = String(abono.factura_id);
+      if (!mapa[key]) mapa[key] = [];
+      mapa[key].push(abono);
+    });
+    return mapa;
+  }, [abonos]);
+
+  const facturasConSaldos = useMemo(() => {
+    return calcularSaldos(facturas, abonosPorFactura);
+  }, [facturas, abonosPorFactura]);
+
   // Procesar facturas con filtros, orden y saldos
-  const facturasProcesadas = calcularSaldos(
-    facturas.filter(factura => {
-      const termino = busqueda.trim().toLowerCase();
-      const codigoClienteFactura = getCodigoCliente(factura).toLowerCase();
-      // Permitir búsqueda por código de cliente o nombre
-      let coincideBusqueda = false;
-      if (termino) {
-        if (codigoClienteFactura && codigoClienteFactura === termino) {
-          coincideBusqueda = true;
-        } else if (factura.cliente?.toLowerCase().includes(termino)) {
-          coincideBusqueda = true;
-        } else if (codigoClienteFactura.includes(termino)) {
-          coincideBusqueda = true;
-        } else if (factura.id?.toString().includes(busqueda)) {
-          coincideBusqueda = true;
-        } else if (factura.fecha?.includes(busqueda)) {
+  const facturasProcesadas = useMemo(() => {
+    const termino = busquedaDebounced.trim().toLowerCase();
+
+    return facturasConSaldos
+      .filter((factura) => {
+        const codigoClienteFactura = getCodigoCliente(factura).toLowerCase();
+        let coincideBusqueda = false;
+
+        if (termino) {
+          if (codigoClienteFactura && codigoClienteFactura === termino) {
+            coincideBusqueda = true;
+          } else if (factura.cliente?.toLowerCase().includes(termino)) {
+            coincideBusqueda = true;
+          } else if (codigoClienteFactura.includes(termino)) {
+            coincideBusqueda = true;
+          } else if (factura.id?.toString().includes(termino)) {
+            coincideBusqueda = true;
+          } else if (factura.fecha?.includes(termino)) {
+            coincideBusqueda = true;
+          }
+        } else {
           coincideBusqueda = true;
         }
-      } else {
-        coincideBusqueda = true;
-      }
-      const coincideVendedor = busquedaVendedor === '' || factura.vendedor === busquedaVendedor;
-      const coincideCentroComercial = busquedaCentroComercial === '' || factura.centro_comercial === busquedaCentroComercial;
-      const abonosFactura = abonos.filter(abono => sameFacturaId(abono.factura_id, factura.id));
-      const totalAbonado = abonosFactura.reduce((sum, abono) => sum + toNumber(abono.monto), 0);
-      const saldoCalculado = toNumber(factura.total) - totalAbonado;
-      const saldo = Math.abs(saldoCalculado) < SALDO_EPSILON ? 0 : saldoCalculado;
-      const estaPagada = saldo <= SALDO_EPSILON;
-      const mostrarPorEstado = mostrarPagadas ? true : !estaPagada;
-      return coincideBusqueda && coincideVendedor && coincideCentroComercial && mostrarPorEstado;
-    }).sort((a, b) => {
-      switch (orden) {
-        case 'antiguos': return (parseDateLocal(a.fecha) || new Date(0)) - (parseDateLocal(b.fecha) || new Date(0));
-        case 'mayor-total': return b.total - a.total;
-        case 'menor-total': return a.total - b.total;
-        case 'mayor-saldo': return (b.saldo || 0) - (a.saldo || 0);
-        case 'menor-saldo': return (a.saldo || 0) - (b.saldo || 0);
-        case 'alfabetico-az': return a.cliente?.localeCompare(b.cliente || '');
-        case 'alfabetico-za': return b.cliente?.localeCompare(a.cliente || '');
-        case 'mayor-numero': return b.id - a.id;
-        case 'menor-numero': return a.id - b.id;
-        default: return (parseDateLocal(b.fecha) || new Date(0)) - (parseDateLocal(a.fecha) || new Date(0));
-      }
-    }),
-    abonos
-  );
 
-  const terminoBusqueda = busqueda.trim().toLowerCase();
+        const coincideVendedor = busquedaVendedor === '' || factura.vendedor === busquedaVendedor;
+        const coincideCentroComercial =
+          busquedaCentroComercial === '' || factura.centro_comercial === busquedaCentroComercial;
+        const estaPagada = factura.saldo <= SALDO_EPSILON;
+        const mostrarPorEstado = mostrarPagadas ? true : !estaPagada;
 
-  const resumenDeudaBusqueda = (() => {
+        return coincideBusqueda && coincideVendedor && coincideCentroComercial && mostrarPorEstado;
+      })
+      .sort((a, b) => {
+        switch (orden) {
+          case 'antiguos':
+            return (parseDateLocal(a.fecha) || new Date(0)) - (parseDateLocal(b.fecha) || new Date(0));
+          case 'mayor-total':
+            return b.total - a.total;
+          case 'menor-total':
+            return a.total - b.total;
+          case 'mayor-saldo':
+            return (b.saldo || 0) - (a.saldo || 0);
+          case 'menor-saldo':
+            return (a.saldo || 0) - (b.saldo || 0);
+          case 'alfabetico-az':
+            return a.cliente?.localeCompare(b.cliente || '');
+          case 'alfabetico-za':
+            return b.cliente?.localeCompare(a.cliente || '');
+          case 'mayor-numero':
+            return b.id - a.id;
+          case 'menor-numero':
+            return a.id - b.id;
+          default:
+            return (parseDateLocal(b.fecha) || new Date(0)) - (parseDateLocal(a.fecha) || new Date(0));
+        }
+      });
+  }, [facturasConSaldos, busquedaDebounced, busquedaVendedor, busquedaCentroComercial, mostrarPagadas, orden]);
+
+  const totalPaginas = Math.max(1, Math.ceil(facturasProcesadas.length / ITEMS_POR_PAGINA));
+
+  const facturasPaginadas = useMemo(() => {
+    const inicio = (paginaActual - 1) * ITEMS_POR_PAGINA;
+    return facturasProcesadas.slice(inicio, inicio + ITEMS_POR_PAGINA);
+  }, [facturasProcesadas, paginaActual]);
+
+  useEffect(() => {
+    setPaginaActual(1);
+  }, [busquedaDebounced, busquedaVendedor, busquedaCentroComercial, mostrarPagadas, orden]);
+
+  const terminoBusqueda = busquedaDebounced.trim().toLowerCase();
+
+  const resumenDeudaBusqueda = useMemo(() => {
     if (!terminoBusqueda) return null;
 
-    const facturasConSaldo = calcularSaldos(facturas, abonos);
-    const facturasCoincidentes = facturasConSaldo.filter((factura) => {
+    const facturasCoincidentes = facturasConSaldos.filter((factura) => {
       const codigoClienteFactura = getCodigoCliente(factura).toLowerCase();
       const clienteFactura = (factura.cliente || '').toLowerCase();
 
@@ -232,15 +289,12 @@ const FacturasGuardadas = () => {
       cantidadFacturas: facturasCoincidentes.length,
       clientes,
     };
-  })();
+  }, [facturasConSaldos, terminoBusqueda, busquedaVendedor, busquedaCentroComercial]);
 
   // Calcular estadísticas - CORREGIDO: Solo sumar pendientes y parciales
-  const calcularEstadisticas = () => {
-    const facturasConSaldo = calcularSaldos(facturas, abonos);
-    
-    // Filtrar solo facturas pendientes y parciales para los cálculos
-    const facturasPendientesParciales = facturasConSaldo.filter(f => f.saldo > SALDO_EPSILON);
-    
+  const estadisticas = useMemo(() => {
+    const facturasPendientesParciales = facturasConSaldos.filter((f) => f.saldo > SALDO_EPSILON);
+
     const stats = {
       totalGeneral: 0,
       totalFiltrado: 0,
@@ -253,15 +307,14 @@ const FacturasGuardadas = () => {
       promedioFiltrado: 0,
       totalAbonado: 0,
       totalSaldoPendiente: 0,
-      totalPendientesParciales: 0 // NUEVO: Solo pendientes y parciales
+      totalPendientesParciales: 0
     };
 
-    // Calcular solo para facturas pendientes y parciales
-    facturasPendientesParciales.forEach(f => {
+    facturasPendientesParciales.forEach((f) => {
       stats.totalPendientesParciales += f.total || 0;
       stats.totalAbonado += f.totalAbonado || 0;
       stats.totalSaldoPendiente += f.saldo || 0;
-      
+
       if (!stats.porCliente[f.cliente]) {
         stats.porCliente[f.cliente] = {
           cantidad: 0,
@@ -275,7 +328,7 @@ const FacturasGuardadas = () => {
       stats.porCliente[f.cliente].total += f.total || 0;
       stats.porCliente[f.cliente].abonado += f.totalAbonado || 0;
       stats.porCliente[f.cliente].saldo += f.saldo || 0;
-      
+
       if (!stats.porVendedor[f.vendedor]) {
         stats.porVendedor[f.vendedor] = {
           cantidad: 0,
@@ -291,38 +344,29 @@ const FacturasGuardadas = () => {
       stats.porVendedor[f.vendedor].saldo += f.saldo || 0;
     });
 
-    // Calcular total general (todas las facturas)
-    facturasConSaldo.forEach(f => {
+    facturasConSaldos.forEach((f) => {
       stats.totalGeneral += f.total || 0;
     });
 
-    // Calcular total filtrado
-    facturasProcesadas.forEach(f => {
+    facturasProcesadas.forEach((f) => {
       stats.totalFiltrado += f.total || 0;
     });
 
-    stats.promedioGeneral = stats.cantidadGeneral > 0 
-      ? stats.totalGeneral / stats.cantidadGeneral 
-      : 0;
-      
-    stats.promedioFiltrado = stats.cantidadFiltrada > 0 
-      ? stats.totalFiltrado / stats.cantidadFiltrada 
-      : 0;
+    stats.promedioGeneral = stats.cantidadGeneral > 0 ? stats.totalGeneral / stats.cantidadGeneral : 0;
+    stats.promedioFiltrado = stats.cantidadFiltrada > 0 ? stats.totalFiltrado / stats.cantidadFiltrada : 0;
 
-    Object.keys(stats.porCliente).forEach(cliente => {
-      stats.porCliente[cliente].promedio = 
+    Object.keys(stats.porCliente).forEach((cliente) => {
+      stats.porCliente[cliente].promedio =
         stats.porCliente[cliente].total / stats.porCliente[cliente].cantidad;
     });
-    
-    Object.keys(stats.porVendedor).forEach(vendedor => {
-      stats.porVendedor[vendedor].promedio = 
+
+    Object.keys(stats.porVendedor).forEach((vendedor) => {
+      stats.porVendedor[vendedor].promedio =
         stats.porVendedor[vendedor].total / stats.porVendedor[vendedor].cantidad;
     });
 
     return stats;
-  };
-
-  const estadisticas = calcularEstadisticas();
+  }, [facturas, abonos, facturasProcesadas]);
 
   // Función para determinar la clase de prioridad del cliente
   const getClientePriorityClass = (saldo, total) => {
@@ -991,6 +1035,30 @@ const FacturasGuardadas = () => {
         </div>
       </div>
 
+      {facturasProcesadas.length > 0 && (
+        <div className="pagination-mobile-row">
+          <button
+            type="button"
+            className="button secondary-button small-button"
+            onClick={() => setPaginaActual((prev) => Math.max(1, prev - 1))}
+            disabled={paginaActual === 1 || importando || cargando}
+          >
+            <i className="fas fa-chevron-left"></i> Anterior
+          </button>
+          <span className="pagination-mobile-info">
+            Página {paginaActual} / {totalPaginas}
+          </span>
+          <button
+            type="button"
+            className="button secondary-button small-button"
+            onClick={() => setPaginaActual((prev) => Math.min(totalPaginas, prev + 1))}
+            disabled={paginaActual >= totalPaginas || importando || cargando}
+          >
+            Siguiente <i className="fas fa-chevron-right"></i>
+          </button>
+        </div>
+      )}
+
       {mostrarResumen && (
         <div className="resumen-section">
           <div className="resumen-tabs">
@@ -1208,7 +1276,7 @@ const FacturasGuardadas = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {facturasProcesadas.map((factura) => {
+                  {facturasPaginadas.map((factura) => {
                     return (
                       <tr key={factura.id}>
                         <td>#{factura.id.toString().padStart(6, '0')}</td>
@@ -1244,7 +1312,7 @@ const FacturasGuardadas = () => {
           </div>
         ) : (
           <div className="facturas-grid">
-            {facturasProcesadas.map((factura) => {
+            {facturasPaginadas.map((factura) => {
               const codigoClienteFactura = getCodigoCliente(factura);
 
               return (
@@ -1351,14 +1419,231 @@ const FacturasGuardadas = () => {
         )
       )}
       
-      {/* Botón flotante para nueva factura en móvil */}
-      <button 
-        className="floating-btn mobile-only"
-        onClick={() => navigate('/facturacion')}
-        disabled={importando || cargando}
-      >
-        <i className="fas fa-plus"></i>
-      </button>
+      {/* ── BARRA DE NAVEGACIÓN INFERIOR MÓVIL ── */}
+      {panelActivoMobile === 'buscar' && (
+        <div className="fnav-panel fnav-panel--buscar">
+          <div className="fnav-panel-search">
+            <i className="fas fa-magnifying-glass"></i>
+            <input
+              id="fg-busqueda-mobile"
+              type="text"
+              placeholder="Buscar por cliente, código, ID o fecha..."
+              value={busqueda}
+              onChange={(e) => setBusqueda(e.target.value)}
+              disabled={importando || cargando}
+              autoFocus
+            />
+            {busqueda && (
+              <button className="fnav-clear-btn" onClick={() => setBusqueda('')}>
+                <i className="fas fa-times"></i>
+              </button>
+            )}
+          </div>
+          {resumenDeudaBusqueda && (
+            <div className="fnav-resumen-deuda">
+              <span><strong>{resumenDeudaBusqueda.cantidadFacturas}</strong> facturas · Deuda: <strong>{formatMoneda(resumenDeudaBusqueda.deudaTotal)}</strong></span>
+            </div>
+          )}
+        </div>
+      )}
+
+      {panelActivoMobile === 'vendedores' && (
+        <div className="fnav-panel fnav-panel--lista">
+          <div className="fnav-list">
+            <button className={`fnav-list-item ${!busquedaVendedor ? 'selected' : ''}`} onClick={() => { setBusquedaVendedor(''); setPanelActivoMobile(null); setNavActivoMobile(''); }}>
+              <span className="fnav-check">{!busquedaVendedor ? '✓' : ''}</span>
+              <span>Todos</span>
+            </button>
+            {vendedores.map(v => (
+              <button key={v} className={`fnav-list-item ${busquedaVendedor === v ? 'selected' : ''}`} onClick={() => { setBusquedaVendedor(v); setPanelActivoMobile(null); setNavActivoMobile(''); }}>
+                <span className="fnav-check">{busquedaVendedor === v ? '✓' : ''}</span>
+                <span>{v}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {panelActivoMobile === 'centros' && (
+        <div className="fnav-panel fnav-panel--lista">
+          <div className="fnav-list">
+            <button className={`fnav-list-item ${!busquedaCentroComercial ? 'selected' : ''}`} onClick={() => { setBusquedaCentroComercial(''); setPanelActivoMobile(null); setNavActivoMobile(''); }}>
+              <span className="fnav-check">{!busquedaCentroComercial ? '✓' : ''}</span>
+              <span>Todos</span>
+            </button>
+            {centrosComerciales.map(cc => (
+              <button key={cc} className={`fnav-list-item ${busquedaCentroComercial === cc ? 'selected' : ''}`} onClick={() => { setBusquedaCentroComercial(cc); setPanelActivoMobile(null); setNavActivoMobile(''); }}>
+                <span className="fnav-check">{busquedaCentroComercial === cc ? '✓' : ''}</span>
+                <span>{cc}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {panelActivoMobile === 'orden' && (
+        <div className="fnav-panel fnav-panel--lista">
+          <div className="fnav-list">
+            {[
+              ['recientes', 'Más recientes'],
+              ['antiguos', 'Más antiguos'],
+              ['alfabetico-az', 'A-Z (Cliente)'],
+              ['alfabetico-za', 'Z-A (Cliente)'],
+              ['mayor-total', 'Mayor total'],
+              ['menor-total', 'Menor total'],
+              ['mayor-saldo', 'Mayor saldo'],
+              ['menor-saldo', 'Menor saldo'],
+            ].map(([value, label]) => (
+              <button key={value} className={`fnav-list-item ${orden === value ? 'selected' : ''}`} onClick={() => { setOrden(value); setPanelActivoMobile(null); setNavActivoMobile(''); }}>
+                <span className="fnav-check">{orden === value ? '✓' : ''}</span>
+                <span>{label}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {panelActivoMobile === 'filtros' && (
+        <div className="fnav-panel fnav-panel--filtros">
+          <div className="fnav-filtros-grid">
+            <select
+              value={busquedaVendedor}
+              onChange={(e) => setBusquedaVendedor(e.target.value)}
+              disabled={importando || cargando}
+            >
+              <option value="">Todos los vendedores</option>
+              {vendedores.map(v => (
+                <option key={v} value={v}>{v}</option>
+              ))}
+            </select>
+
+            <select
+              value={busquedaCentroComercial}
+              onChange={(e) => setBusquedaCentroComercial(e.target.value)}
+              disabled={importando || cargando}
+            >
+              <option value="">Todos los centros</option>
+              {centrosComerciales.map(cc => (
+                <option key={cc} value={cc}>{cc}</option>
+              ))}
+            </select>
+
+            <select
+              value={orden}
+              onChange={(e) => setOrden(e.target.value)}
+              disabled={importando || cargando}
+            >
+              <option value="recientes">Más recientes</option>
+              <option value="antiguos">Más antiguos</option>
+              <option value="alfabetico-az">A-Z (Cliente)</option>
+              <option value="alfabetico-za">Z-A (Cliente)</option>
+              <option value="mayor-total">Mayor total</option>
+              <option value="menor-total">Menor total</option>
+              <option value="mayor-saldo">Mayor saldo</option>
+              <option value="menor-saldo">Menor saldo</option>
+            </select>
+
+            <button
+              className={`fnav-toggle-btn ${mostrarPagadas ? 'active' : ''}`}
+              onClick={() => setMostrarPagadas(!mostrarPagadas)}
+            >
+              <i className={`fas fa-${mostrarPagadas ? 'eye' : 'eye-slash'}`}></i>
+              {mostrarPagadas ? 'Todas' : 'Solo pendientes'}
+            </button>
+          </div>
+          <div className="fnav-contador">
+            {facturasProcesadas.length} de {facturas.length} facturas
+            {busquedaVendedor && ` · ${busquedaVendedor}`}
+            {busquedaCentroComercial && ` · ${busquedaCentroComercial}`}
+          </div>
+        </div>
+      )}
+
+      {menuMasAbierto && (
+        <div className="fnav-more-menu">
+          <button className="fnav-more-item" onClick={() => { setMenuMasAbierto(false); setNavActivoMobile(''); exportarExcel(); }}>
+            <i className="fas fa-file-excel"></i> Exportar Excel
+          </button>
+          <button className="fnav-more-item" onClick={() => { setMenuMasAbierto(false); setNavActivoMobile(''); exportarCSV(); }}>
+            <i className="fas fa-file-csv"></i> Exportar CSV
+          </button>
+          <button className="fnav-more-item" onClick={() => { setMenuMasAbierto(false); setNavActivoMobile(''); setVistaTabla(v => !v); }}>
+            <i className={`fas fa-${vistaTabla ? 'th-large' : 'table'}`}></i>
+            {vistaTabla ? 'Vista Tarjetas' : 'Vista Tabla'}
+          </button>
+          <button className="fnav-more-item" onClick={() => { setMenuMasAbierto(false); setNavActivoMobile(''); navigate('/rutas-cobro'); }}>
+            <i className="fas fa-route"></i> Rutas de Cobro
+          </button>
+          <button className="fnav-more-item" onClick={() => { setMenuMasAbierto(false); setNavActivoMobile(''); setMostrarResumen(v => !v); }}>
+            <i className="fas fa-chart-pie"></i> {mostrarResumen ? 'Ocultar resumen' : 'Ver resumen'}
+          </button>
+        </div>
+      )}
+
+      <nav className="fnav-bottom" aria-label="Navegación de facturas">
+        {[
+          { key: 'buscar', label: 'Buscar', icon: 'fa-magnifying-glass', active: true, variant: 'buscar' },
+          { key: 'vendedores', label: busquedaVendedor ? 'Vendedor' : 'Todos', icon: 'fa-user-tie', variant: 'vendedor' },
+          { key: 'centros', label: busquedaCentroComercial ? 'Centro' : 'Todos', icon: 'fa-store', variant: 'centro' },
+          { key: 'orden', label: orden === 'recientes' ? 'Priori...' : 'Orden', icon: 'fa-arrow-up-short-wide', variant: 'orden' },
+          { key: 'mas', label: 'Más', icon: 'fa-chevron-up', variant: 'mas' },
+        ].map(item => {
+          return (
+            <button
+              key={item.key}
+              type="button"
+              className={`fnav-item ${item.active || navActivoMobile === item.key ? 'active' : ''} ${item.variant === 'buscar' ? 'fnav-item--buscar' : ''}`}
+              onClick={() => {
+                if (item.key === 'mas') {
+                  const abrir = !menuMasAbierto;
+                  setMenuMasAbierto(abrir);
+                  setPanelActivoMobile(null);
+                  setNavActivoMobile(abrir ? 'mas' : '');
+                  return;
+                }
+
+                if (item.key === 'vendedores') {
+                  setMenuMasAbierto(false);
+                  const abrir = panelActivoMobile !== 'vendedores';
+                  setPanelActivoMobile(abrir ? 'vendedores' : null);
+                  setNavActivoMobile(abrir ? 'vendedores' : '');
+                  return;
+                }
+
+                if (item.key === 'centros') {
+                  setMenuMasAbierto(false);
+                  const abrir = panelActivoMobile !== 'centros';
+                  setPanelActivoMobile(abrir ? 'centros' : null);
+                  setNavActivoMobile(abrir ? 'centros' : '');
+                  return;
+                }
+
+                if (item.key === 'orden') {
+                  setMenuMasAbierto(false);
+                  const abrir = panelActivoMobile !== 'orden';
+                  setPanelActivoMobile(abrir ? 'orden' : null);
+                  setNavActivoMobile(abrir ? 'orden' : '');
+                  return;
+                }
+
+                setMenuMasAbierto(false);
+                const abrir = panelActivoMobile !== item.key;
+                setPanelActivoMobile(abrir ? item.key : null);
+                setNavActivoMobile(abrir ? item.key : '');
+                if (abrir && item.key === 'buscar') {
+                  setTimeout(() => document.getElementById('fg-busqueda-mobile')?.focus(), 80);
+                }
+              }}
+              disabled={importando || cargando}
+            >
+              {item.key === 'vendedores' && busquedaVendedor && <span className="fnav-badge"></span>}
+              {item.key === 'centros' && busquedaCentroComercial && <span className="fnav-badge"></span>}
+              <i className={`fas ${item.icon}`}></i>
+              <span>{item.label}</span>
+            </button>
+          );
+        })}
+      </nav>
       
       {mostrarConfirmacion && (
         <div className="confirmacion-overlay">

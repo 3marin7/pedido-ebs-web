@@ -37,6 +37,7 @@ const RutasCobro = () => {
   const [reporteDiario, setReporteDiario] = useState(null);
   const [mostrarListaClientes, setMostrarListaClientes] = useState(false);
   const [analisisOpen, setAnalisisOpen] = useState(false);
+  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
 
   // Nuevos estados para historial
   const [mostrarHistorialVisitas, setMostrarHistorialVisitas] = useState(false);
@@ -50,6 +51,11 @@ const RutasCobro = () => {
   const [clienteSeleccionado, setClienteSeleccionado] = useState(null);
   const [mostrarDetallesDeuda, setMostrarDetallesDeuda] = useState(false);
   const [mostrarMapaDeuda, setMostrarMapaDeuda] = useState(false);
+  const [filtrosAlAbrirModal, setFiltrosAlAbrirModal] = useState({
+    vendedor: '',
+    zona: '',
+    centroComercial: ''
+  });
 
   // Cargar clientes con deuda
   useEffect(() => {
@@ -878,7 +884,38 @@ const RutasCobro = () => {
 
   // Función para ver detalles completos de la deuda
   const verDetallesDeuda = (cliente) => {
-    setClienteSeleccionado(cliente);
+    // Si hay filtro de vendedor activo, mostrar solo las facturas de ese vendedor
+    if (filtroVendedor) {
+      const facturasFiltradas = cliente.facturasPendientes.filter(
+        f => (f.vendedor || 'Sin vendedor') === filtroVendedor
+      );
+      const idsFacturasFiltradas = new Set(facturasFiltradas.map(f => f.id));
+      const abonosFiltrados = (cliente.abonosPendientes || []).filter(
+        a => idsFacturasFiltradas.has(a.facturaId)
+      );
+      const totalDeudaFiltrada = facturasFiltradas.reduce((sum, f) => sum + (f.saldo || 0), 0);
+
+      // Recalcular fechas extremas solo con las facturas filtradas
+      const fechas = facturasFiltradas.map(f => new Date(f.fecha));
+      const facturaMasAntigua = fechas.length
+        ? new Date(Math.min(...fechas)).toISOString()
+        : cliente.facturaMasAntigua;
+      const ultimaFactura = fechas.length
+        ? new Date(Math.max(...fechas)).toISOString()
+        : cliente.ultimaFactura;
+
+      setClienteSeleccionado({
+        ...cliente,
+        facturasPendientes: facturasFiltradas,
+        abonosPendientes: abonosFiltrados,
+        totalDeuda: totalDeudaFiltrada,
+        facturaMasAntigua,
+        ultimaFactura,
+        _filtroAplicado: filtroVendedor
+      });
+    } else {
+      setClienteSeleccionado(cliente);
+    }
     setMostrarDetallesDeuda(true);
   };
 
@@ -909,6 +946,13 @@ const RutasCobro = () => {
   const irAFiltros = () => {
     document.querySelector('.controles-principales')?.scrollIntoView({ 
       behavior: 'smooth' 
+    });
+  };
+
+  const irAInicioClientesDeuda = () => {
+    document.querySelector('.clientes-deuda-section')?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start'
     });
   };
 
@@ -1071,9 +1115,6 @@ const RutasCobro = () => {
     ))
   );
 
-  // Obtener zonas únicas
-  const zonasUnicas = [...new Set(clientesConDeuda.map(c => c.zona))].sort();
-
   // Obtener vendedores únicos
   const vendedoresUnicos = [...new Set(clientesConDeuda.map(c => c.vendedor))].sort();
 
@@ -1136,97 +1177,193 @@ const RutasCobro = () => {
 
       {/* CONTROLES PRINCIPALES AGRUPADOS */}
       <div className="controles-principales">
-        
-        {/* Filtros de Búsqueda y Ordenamiento */}
-        <div className="filtros-section">
-          <div className="filtros-group">
-            <div className="filtro-item">
-              <label>Buscar Cliente:</label>
-              <div className="search-container">
+        <div className="desktop-filters">
+          <div className="filtros-section">
+            <div className="smart-search-toolbar">
+              <div className="smart-search-tab active" aria-label="Buscar clientes">
+                <div className="smart-search-icon">
+                  <i className="fas fa-search"></i>
+                </div>
+                <span>Buscar</span>
+              </div>
+
+              <div className="smart-search-field">
+                <i className="fas fa-search"></i>
                 <input
                   type="text"
-                  placeholder="Buscar por nombre, dirección, teléfono..."
+                  placeholder="Buscar por nombre, vendedor, centro comercial..."
                   value={busquedaCliente}
                   onChange={(e) => setBusquedaCliente(e.target.value)}
                   className="search-input"
                 />
                 {busquedaCliente && (
-                  <button 
+                  <button
                     className="button micro-button clear-search"
                     onClick={limpiarBusqueda}
                     title="Limpiar búsqueda"
+                    type="button"
                   >
                     <i className="fas fa-times"></i>
                   </button>
                 )}
               </div>
+
+              <div className="smart-search-filter-group">
+                <div className="filtro-item compact">
+                  <label>Vendedor</label>
+                  <select
+                    value={filtroVendedor}
+                    onChange={(e) => setFiltroVendedor(e.target.value)}
+                  >
+                    <option value="">Todos</option>
+                    {vendedoresUnicos.map(vendedor => (
+                      <option key={vendedor} value={vendedor}>{vendedor}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="filtro-item compact">
+                  <label>Centro Comercial</label>
+                  <select
+                    value={filtroCentroComercial}
+                    onChange={(e) => setFiltroCentroComercial(e.target.value)}
+                  >
+                    <option value="">Todos</option>
+                    {centrosComercialesUnicos.map(cc => (
+                      <option key={cc} value={cc}>{cc}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="filtro-item compact">
+                  <label>Ordenar por</label>
+                  <select
+                    value={ordenamiento}
+                    onChange={(e) => setOrdenamiento(e.target.value)}
+                  >
+                    <option value="prioridad">Prioridad</option>
+                    <option value="deuda">Monto Deuda</option>
+                    <option value="antiguedad">Antigüedad</option>
+                    <option value="zona">Zona</option>
+                    <option value="vendedor">Vendedor</option>
+                    <option value="cliente">Cliente</option>
+                  </select>
+                </div>
+              </div>
             </div>
-            
-            <div className="filtro-item">
-              <label>Filtrar por Zona:</label>
-              <select 
-                value={filtroZona} 
-                onChange={(e) => setFiltroZona(e.target.value)}
+
+            <div className="smart-search-actions">
+              <button
+                className="button primary-button generar-ruta-btn"
+                onClick={generarRutaOptimizada}
+                disabled={clientesFiltrados.length === 0}
               >
-                <option value="">Todas las zonas</option>
-                {zonasUnicas.map(zona => (
-                  <option key={zona} value={zona}>{zona}</option>
-                ))}
-              </select>
-            </div>
-            
-            <div className="filtro-item">
-              <label>Filtrar por Vendedor:</label>
-              <select 
-                value={filtroVendedor} 
-                onChange={(e) => setFiltroVendedor(e.target.value)}
-              >
-                <option value="">Todos los vendedores</option>
-                {vendedoresUnicos.map(vendedor => (
-                  <option key={vendedor} value={vendedor}>{vendedor}</option>
-                ))}
-              </select>
-            </div>
-            
-            <div className="filtro-item">
-              <label>Filtrar por Centro Comercial:</label>
-              <select 
-                value={filtroCentroComercial} 
-                onChange={(e) => setFiltroCentroComercial(e.target.value)}
-              >
-                <option value="">Todos los centros comerciales</option>
-                {centrosComercialesUnicos.map(cc => (
-                  <option key={cc} value={cc}>{cc}</option>
-                ))}
-              </select>
-            </div>
-            
-            <div className="filtro-item">
-              <label>Ordenar por:</label>
-              <select 
-                value={ordenamiento} 
-                onChange={(e) => setOrdenamiento(e.target.value)}
-              >
-                <option value="prioridad">Prioridad (Recomendado)</option>
-                <option value="deuda">Monto Deuda</option>
-                <option value="antiguedad">Antigüedad (Última factura)</option>
-                <option value="zona">Zona</option>
-                <option value="vendedor">Vendedor</option>
-                <option value="cliente">Nombre Cliente</option>
-              </select>
+                <i className="fas fa-route"></i> Generar Ruta Optimizada
+              </button>
+              <div className="ruta-hint">
+                Clientes filtrados: <strong>{clientesFiltrados.length}</strong>
+              </div>
             </div>
           </div>
-          
-          <button 
-            className="button primary-button generar-ruta-btn"
-            onClick={generarRutaOptimizada}
-            disabled={clientesFiltrados.length === 0}
+        </div>
+
+        <div className={`mobile-search-panel ${mobileSearchOpen ? 'open' : ''}`}>
+          <div className="mobile-search-input-wrap">
+            <i className="fas fa-search"></i>
+            <input
+              type="text"
+              value={busquedaCliente}
+              onChange={(e) => setBusquedaCliente(e.target.value)}
+              placeholder="Buscar por nombre, vendedor o centro comercial..."
+              aria-label="Buscar cliente"
+            />
+            {busquedaCliente && (
+              <button
+                type="button"
+                className="button micro-button clear-search"
+                onClick={limpiarBusqueda}
+                title="Limpiar búsqueda"
+              >
+                <i className="fas fa-times"></i>
+              </button>
+            )}
+          </div>
+        </div>
+
+        <button
+          type="button"
+          className="mobile-route-cta"
+          onClick={generarRutaOptimizada}
+          disabled={clientesFiltrados.length === 0}
+        >
+          <i className="fas fa-route"></i> Generar Ruta Optimizada
+        </button>
+
+        <div className="mobile-quick-nav">
+          <button
+            type="button"
+            className={`mobile-quick-item ${mobileSearchOpen ? 'active' : ''}`}
+            onClick={() => {
+              setMobileSearchOpen((prev) => !prev);
+              setTimeout(() => {
+                const input = document.querySelector('.mobile-search-panel input');
+                if (input) input.focus();
+              }, 50);
+            }}
           >
-            <i className="fas fa-route"></i> Generar Ruta Optimizada
+            <i className="fas fa-magnifying-glass"></i>
+            <span>Buscar</span>
           </button>
-          <div className="ruta-hint">
-            Clientes filtrados: <strong>{clientesFiltrados.length}</strong>
+
+          <div className="mobile-quick-item mobile-select-item">
+            <label><i className="fas fa-store"></i></label>
+            <select
+              value={filtroCentroComercial}
+              onChange={(e) => setFiltroCentroComercial(e.target.value)}
+            >
+              <option value="">Todos</option>
+              {centrosComercialesUnicos.map(cc => (
+                <option key={cc} value={cc}>{cc}</option>
+              ))}
+            </select>
           </div>
+
+          <div className="mobile-quick-item mobile-select-item">
+            <label><i className="fas fa-user-tie"></i></label>
+            <select
+              value={filtroVendedor}
+              onChange={(e) => setFiltroVendedor(e.target.value)}
+            >
+              <option value="">Todos</option>
+              {vendedoresUnicos.map(vendedor => (
+                <option key={vendedor} value={vendedor}>{vendedor}</option>
+              ))}
+            </select>
+          </div>
+
+          <div className="mobile-quick-item mobile-select-item">
+            <label><i className="fas fa-arrow-down-short-wide"></i></label>
+            <select
+              value={ordenamiento}
+              onChange={(e) => setOrdenamiento(e.target.value)}
+            >
+              <option value="prioridad">Prioridad</option>
+              <option value="deuda">Deuda</option>
+              <option value="antiguedad">Antigüedad</option>
+              <option value="zona">Zona</option>
+              <option value="vendedor">Vendedor</option>
+              <option value="cliente">Cliente</option>
+            </select>
+          </div>
+
+          <button
+            type="button"
+            className="mobile-quick-item mobile-action-item"
+            onClick={irAInicioClientesDeuda}
+          >
+            <span className="mobile-action-label">Más</span>
+            <i className="fas fa-chevron-up"></i>
+          </button>
         </div>
       </div>
 
@@ -1649,7 +1786,6 @@ const RutasCobro = () => {
           <h3>
             <i className="fas fa-list"></i> 
             Clientes con Deuda Pendiente ({clientesFiltrados.length})
-            {filtroZona && ` - Zona: ${filtroZona}`}
             {filtroVendedor && ` - Vendedor: ${filtroVendedor}`}
           </h3>
           <div className="clientes-deuda-actions">
@@ -1682,12 +1818,11 @@ const RutasCobro = () => {
                   : 'No se encontraron clientes con deudas según los filtros aplicados'
                 }
               </p>
-              {(busquedaCliente || filtroZona || filtroVendedor) && (
+              {(busquedaCliente || filtroVendedor) && (
                 <button 
                   className="button primary-button"
                   onClick={() => {
                     setBusquedaCliente('');
-                    setFiltroZona('');
                     setFiltroVendedor('');
                   }}
                 >
@@ -1870,8 +2005,10 @@ const RutasCobro = () => {
               <button 
                 className="button info-button"
                 onClick={irAFiltros}
+                title="Volver a Filtros"
               >
-                <i className="fas fa-arrow-up"></i> Volver a Filtros
+                <i className="fas fa-arrow-up"></i>
+                <span> Volver a Filtros</span>
               </button>
               <button 
                 className="button success-button"
@@ -1888,14 +2025,18 @@ const RutasCobro = () => {
                   navigator.clipboard.writeText(rutaTexto);
                   alert('Ruta copiada al portapapeles');
                 }}
+                title="Copiar Ruta"
               >
-                <i className="fas fa-copy"></i> Copiar Ruta
+                <i className="fas fa-copy"></i>
+                <span> Copiar Ruta</span>
               </button>
               <button 
                 className="button secondary-button"
                 onClick={() => window.print()}
+                title="Imprimir"
               >
-                <i className="fas fa-print"></i> Imprimir
+                <i className="fas fa-print"></i>
+                <span> Imprimir</span>
               </button>
             </div>
           </div>
@@ -1995,54 +2136,32 @@ const RutasCobro = () => {
         <div className="modal-overlay" onClick={cerrarDetallesDeuda}>
           <div className="modal-detalles-deuda" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <div className="modal-title">
-                <i className="fas fa-money-bill-wave"></i>
-                <h2>Detalles de Deuda - {clienteSeleccionado.nombre}</h2>
+              <div className="modal-header-top">
+                <div className="modal-title">
+                  <i className="fas fa-money-bill-wave"></i>
+                  <div className="modal-title-text">
+                    <span className="modal-subtitle">Detalles de Deuda</span>
+                    <h2>{clienteSeleccionado.nombre}</h2>
+                  </div>
+                </div>
+                <div className="modal-header-actions">
+                  {clienteSeleccionado._filtroAplicado && (
+                    <div className="modal-filter-badge">
+                      <i className="fas fa-filter"></i>
+                      {clienteSeleccionado._filtroAplicado}
+                    </div>
+                  )}
+                  <button
+                    className="button-close"
+                    onClick={cerrarDetallesDeuda}
+                  >
+                    ✕
+                  </button>
+                </div>
               </div>
-              <button 
-                className="button-close"
-                onClick={cerrarDetallesDeuda}
-              >
-                ✕
-              </button>
             </div>
 
             <div className="modal-content">
-              {/* Información del Cliente */}
-              <div className="seccion-detalles">
-                <h3>Información del Cliente</h3>
-                <div className="cliente-info-grid">
-                  <div className="info-item">
-                    <span className="label">Nombre:</span>
-                    <span className="value">{clienteSeleccionado.nombre}</span>
-                  </div>
-                  <div className="info-item">
-                    <span className="label">Dirección:</span>
-                    <span className="value">{clienteSeleccionado.direccion}</span>
-                  </div>
-                  <div className="info-item">
-                    <span className="label">Teléfono:</span>
-                    <span className="value">{clienteSeleccionado.telefono}</span>
-                  </div>
-                  <div className="info-item">
-                    <span className="label">Zona:</span>
-                    <span className="value badge-zona">{clienteSeleccionado.zona}</span>
-                  </div>
-                  <div className="info-item">
-                    <span className="label">Vendedor:</span>
-                    <span className="value">{clienteSeleccionado.vendedor}</span>
-                  </div>
-                  <div className="info-item">
-                    <span className="label">Última Visita:</span>
-                    <span className="value">{clienteSeleccionado.ultimaVisita ? formatFecha(clienteSeleccionado.ultimaVisita) : 'Nunca visitado'}</span>
-                  </div>
-                  <div className="info-item">
-                    <span className="label">Último Abono:</span>
-                    <span className="value">{clienteSeleccionado.ultimaFechaAbono ? formatFecha(clienteSeleccionado.ultimaFechaAbono) : 'Sin abonos'}</span>
-                  </div>
-                </div>
-              </div>
-
               {/* Resumen de Deuda */}
               <div className="seccion-detalles">
                 <h3>Resumen de Deuda</h3>

@@ -8,11 +8,9 @@ import './AdminProductosPreventa.css';
  * Panel de administración para gestionar productos en pre-venta
  */
 const AdminProductosPreventa = () => {
-  const { productosPreventa, productosInventario, loading, guardarProductoPreventa, activarProductoDelInventario, obtenerPedidosPreventa } = usePreventaProducts();
+  const { productosPreventa, loading, guardarProductoPreventa, activarProductoDelInventario, obtenerPedidosPreventa } = usePreventaProducts();
   const [modo, setModo] = useState('lista'); // 'lista', 'crear', 'editar', 'detalles'
   const [productoEditando, setProductoEditando] = useState(null);
-  const [productoExistenteId, setProductoExistenteId] = useState('');
-  const [usarProductoExistente, setUsarProductoExistente] = useState(false);
   const [pedidosPreventa, setPedidosPreventa] = useState([]);
   const [cargandoPedidos, setCargandoPedidos] = useState(false);
 
@@ -40,8 +38,6 @@ const AdminProductosPreventa = () => {
     });
     setErrores({});
     setProductoEditando(null);
-    setProductoExistenteId('');
-    setUsarProductoExistente(false);
   };
 
   const validarFormulario = () => {
@@ -64,8 +60,7 @@ const AdminProductosPreventa = () => {
       const datosProducto = {
         ...formulario,
         precio_venta: parseFloat(formulario.precio_venta),
-        ...(productoExistenteId && { id: Number(productoExistenteId) }),
-        ...(productoEditando && !productoExistenteId && { id: productoEditando.id }),
+        ...(productoEditando && { id: productoEditando.id }),
       };
 
       await guardarProductoPreventa(datosProducto);
@@ -78,8 +73,6 @@ const AdminProductosPreventa = () => {
 
   const handleEditar = (producto) => {
     setProductoEditando(producto);
-    setProductoExistenteId('');
-    setUsarProductoExistente(false);
     setFormulario({
       nombre: producto.nombre,
       descripcion: producto.descripcion || '',
@@ -117,37 +110,6 @@ const AdminProductosPreventa = () => {
     } catch (error) {
       alert('Error: ' + error.message);
     }
-  };
-
-  const handleSeleccionarProductoInventario = (productoId) => {
-    setProductoExistenteId(productoId);
-    if (!productoId) {
-      setUsarProductoExistente(false);
-      setFormulario((current) => ({
-        ...current,
-        nombre: '',
-        descripcion: '',
-        imagen_url: '',
-        categoria: '',
-        precio_venta: '',
-      }));
-      return;
-    }
-
-    const producto = productosInventario.find((item) => item.id === Number(productoId));
-    if (!producto) return;
-
-    setUsarProductoExistente(true);
-    setProductoEditando(producto);
-    setFormulario({
-      nombre: producto.nombre || '',
-      descripcion: producto.descripcion || '',
-      descripcion_preventa: producto.descripcion_preventa || '',
-      precio_venta: producto.precio_venta || '',
-      categoria: producto.categoria || '',
-      imagen_url: producto.imagen_url || '',
-      fecha_disponibilidad: producto.fecha_disponibilidad || '',
-    });
   };
 
   const formatFecha = (fecha) => {
@@ -292,34 +254,6 @@ const AdminProductosPreventa = () => {
                   className={errores.nombre ? 'error' : ''}
                 />
                 {errores.nombre && <span className="error-text">{errores.nombre}</span>}
-              </div>
-
-              <div className="campo-formulario">
-                <label htmlFor="producto-inventario">
-                  Producto desde inventario (inactivo)
-                  {productosInventario.length > 0 && ` — ${productosInventario.length} disponible(s)`}
-                </label>
-                <select
-                  id="producto-inventario"
-                  value={productoExistenteId}
-                  onChange={(e) => handleSeleccionarProductoInventario(e.target.value)}
-                >
-                  <option value="">-- Seleccionar producto inactivo --</option>
-                  {productosInventario.map((prod) => (
-                    <option key={prod.id} value={prod.id}>
-                      {prod.nombre} {prod.categoria ? `(${prod.categoria})` : ''} — Inactivo
-                    </option>
-                  ))}
-                </select>
-                {productosInventario.length === 0 ? (
-                  <small className="info-text">
-                    No se encontraron productos inactivos en inventario. Revisa el catálogo o cambia el estado de producto a inactivo para poder asignarlo a preventa.
-                  </small>
-                ) : (
-                  <small>
-                    Selecciona un producto inactivo que ya existe en inventario para usarlo en pre-venta.
-                  </small>
-                )}
               </div>
 
               {/* Categoría */}
