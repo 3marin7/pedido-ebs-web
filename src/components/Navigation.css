@@ -32,10 +32,10 @@
   max-width: 100%;
   padding: 0 1rem;
   margin: 0 auto;
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
-  flex-wrap: wrap;
+  gap: 0.75rem;
   position: relative;
 }
 
@@ -45,6 +45,23 @@
   gap: 0.75rem;
   flex: 0 0 auto;
   z-index: 1001;
+}
+
+.brand-logo-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  color: inherit;
+}
+
+.brand-logo {
+  display: block;
+  height: 42px;
+  width: auto;
+  max-width: 220px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.15));
 }
 
 .nav-brand h2 {
@@ -121,10 +138,11 @@
   padding: 0;
   transition: var(--transition);
   flex-wrap: wrap;
-  flex: 1;
-  justify-content: flex-start;
-  margin-left: 0.5rem;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
   overflow: visible;
+  row-gap: 0.25rem;
 }
 
 /* Estilos para enlaces normales */
@@ -319,6 +337,9 @@
   border: 1px solid rgba(255, 255, 255, 0.25);
   white-space: nowrap;
   letter-spacing: 0.3px;
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .logout-btn {
@@ -369,18 +390,28 @@
 
 /* RESPONSIVE - Estilos para tablets (VISTA MEJORADA) */
 @media (max-width: 1200px) and (min-width: 769px) {
-  .nav-links {
+  .nav-container {
+    grid-template-columns: auto minmax(0, 1fr) auto;
     gap: 0.5rem;
+    padding: 0 0.5rem;
   }
 
-  .nav-link {
-    padding: 0.55rem 0.8rem;
-    font-size: 0.9rem;
+  .nav-brand h2 {
+    font-size: 1.05rem;
   }
 
+  .nav-links {
+    gap: 0.35rem;
+    justify-content: center;
+    overflow: visible;
+    row-gap: 0.2rem;
+  }
+
+  .nav-link,
   .group-toggle {
-    padding: 0.55rem 0.8rem;
-    font-size: 0.9rem;
+    padding: 0.5rem 0.6rem;
+    font-size: 0.8rem;
+    white-space: nowrap;
   }
 
   .submenu {
@@ -388,13 +419,18 @@
   }
 
   .submenu-link {
-    padding: 0.75rem 0.95rem;
-    font-size: 0.9rem;
+    padding: 0.7rem 0.9rem;
+    font-size: 0.86rem;
   }
 
-  .nav-container {
-    max-width: 100%;
-    padding: 0 0.5rem;
+  .username {
+    font-size: 0.8rem;
+    padding: 0.35rem 0.7rem;
+  }
+
+  .logout-btn {
+    padding: 0.45rem 0.65rem;
+    font-size: 0.8rem;
   }
 }
 
@@ -408,85 +444,106 @@
     right: 0;
     width: 100%;
   }
-  
+
   .nav-container {
     flex-wrap: nowrap;
+    gap: 0.5rem;
   }
-  
+
   .mobile-menu-toggle {
     display: flex;
     margin-left: 0.5rem;
   }
-  
+
   .nav-links {
     position: fixed;
-    top: 60px;
-    left: 0;
-    right: 0;
-    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    top: 70px;
+    left: 10px;
+    right: 10px;
+    background: linear-gradient(180deg, rgba(24, 62, 176, 0.99), rgba(17, 46, 138, 0.98));
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 20px;
     flex-direction: column;
-    padding: 1rem;
-    gap: 0.5rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    transform: translateY(-100%);
+    align-items: stretch;
+    padding: 0.6rem;
+    gap: 0.35rem;
+    box-shadow: 0 20px 42px rgba(0, 0, 0, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    transform: translateY(-12px);
     opacity: 0;
     visibility: hidden;
-    transition: transform 0.3s ease, opacity 0.3s ease, visibility 0.3s;
-    height: calc(100vh - 60px);
+    transition: transform 0.22s ease, opacity 0.22s ease, visibility 0.22s ease;
+    max-height: calc(100vh - 84px);
     overflow-y: auto;
     z-index: 999;
+    backdrop-filter: blur(12px);
   }
-  
+
   .nav-links-open {
     transform: translateY(0);
     opacity: 1;
     visibility: visible;
   }
-  
-  .nav-link,
-  .group-toggle {
-    padding: 1rem;
-    border-radius: var(--border-radius);
-    justify-content: flex-start;
-    font-size: 1.1rem;
+
+  .nav-group {
     width: 100%;
   }
-  
-  /* Submenús en móviles */
+
+  .nav-link,
+  .group-toggle {
+    padding: 0.72rem 0.85rem;
+    border-radius: 12px;
+    justify-content: flex-start;
+    font-size: 0.96rem;
+    width: 100%;
+    font-weight: 700;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    min-height: 44px;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  }
+
+  .group-toggle.active {
+    background: rgba(255, 255, 255, 0.14);
+    border-color: rgba(255, 255, 255, 0.14);
+  }
+
   .submenu {
     position: static;
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.04);
     box-shadow: none;
-    border: none;
-    border-radius: 0;
-    margin: 0.5rem 0 0.5rem 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    margin: 0.25rem 0 0.12rem 0.45rem;
     max-height: 0;
   }
-  
+
   .submenu-open {
-    max-height: min(70vh, 560px);
+    max-height: min(52vh, 420px);
     overflow-y: auto;
-    margin-top: 0;
+    margin-top: 0.15rem;
   }
-  
+
   .submenu-link {
-    padding: 0.8rem 1rem 0.8rem 2rem;
-    font-size: 1rem;
+    padding: 0.68rem 0.75rem;
+    font-size: 0.88rem;
+    border-radius: 10px;
+    margin: 0.14rem;
+    background: rgba(255, 255, 255, 0.02);
   }
-  
+
   .nav-user {
     position: static;
     margin-left: 0.5rem;
   }
-  
+
   .username {
     display: none;
   }
-  
+
   .logout-text {
     display: none;
   }
-  
+
   .logout-btn {
     padding: 0.5rem;
     border-radius: 50%;
@@ -494,17 +551,22 @@
     height: 40px;
     justify-content: center;
   }
-  
+
   .logout-icon {
     margin: 0;
     font-size: 1.2rem;
   }
-  
+
+  .nav-link::after,
+  .group-toggle::after {
+    display: none;
+  }
+
   /* Ajustes responsive para el botón de login */
   .login-text {
     display: none;
   }
-  
+
   .login-link {
     padding: 0.5rem;
     border-radius: 50%;
@@ -512,12 +574,12 @@
     height: 40px;
     justify-content: center;
   }
-  
+
   .login-icon {
     margin: 0;
     font-size: 1.2rem;
   }
-  
+
   .mobile-overlay {
     position: fixed;
     top: 60px;
@@ -528,7 +590,7 @@
     z-index: 998;
     backdrop-filter: blur(2px);
   }
-  
+
   /* Asegura que el contenido principal no quede detrás de la navegación fija */
   body {
     padding-top: 60px;
@@ -540,21 +602,21 @@
   .nav-brand h2 {
     font-size: 1.1rem;
   }
-  
+
   .user-role {
     font-size: 0.7rem;
     padding: 0.15rem 0.5rem;
   }
-  
+
   .navigation {
     padding: 0.5rem;
   }
-  
+
   .nav-links {
     top: 50px;
     height: calc(100vh - 50px);
   }
-  
+
   body {
     padding-top: 50px;
   }

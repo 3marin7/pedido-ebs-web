@@ -367,8 +367,8 @@ const Navigation = () => {
     <nav className="navigation">
       <div className="nav-container">
         <div className="nav-brand">
-          <Link to="/">
-            <h2>Distribuciones EBS</h2>
+          <Link to="/" className="brand-logo-link" aria-label="Distribuciones EBS">
+            <img src="/logo-ebsp.png" alt="Distribuciones EBS" className="brand-logo" />
           </Link>
           {user && <span className="user-role">{user.role}</span>}
           
