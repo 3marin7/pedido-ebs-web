@@ -1783,26 +1783,28 @@ const CatalogoProductos = ({ mode = 'admin' }) => {
         </>
       )}
 
-      <div className="bottom-nav-mobile" role="navigation" aria-label="Navegación del catálogo">
-        {[
-          { key: 'buscar', label: 'Buscar', icon: 'fa-magnifying-glass' },
-          { key: 'categorias', label: 'Categorías', icon: 'fa-list' },
-          { key: 'nuevo', label: 'Nuevo', icon: 'fa-plus', plus: true },
-          { key: 'mas', label: 'Más', icon: 'fa-ellipsis' }
-        ].map((item) => (
-          <button
-            key={item.key}
-            type="button"
-            className={`bottom-nav-item ${navActivoMobile === item.key ? 'active' : ''} ${item.plus ? 'bottom-nav-item--plus' : ''}`}
-            onClick={() => manejarNavClick(item.key)}
-          >
-            <i className={`fas ${item.icon}`}></i>
-            <span>{item.label}</span>
-          </button>
-        ))}
-      </div>
+      {!mostrarFormulario && (
+        <div className="bottom-nav-mobile" role="navigation" aria-label="Navegación del catálogo">
+          {[
+            { key: 'buscar', label: 'Buscar', icon: 'fa-magnifying-glass' },
+            { key: 'categorias', label: 'Categorías', icon: 'fa-list' },
+            { key: 'nuevo', label: 'Nuevo', icon: 'fa-plus', plus: true },
+            { key: 'mas', label: 'Más', icon: 'fa-ellipsis' }
+          ].map((item) => (
+            <button
+              key={item.key}
+              type="button"
+              className={`bottom-nav-item ${navActivoMobile === item.key ? 'active' : ''} ${item.plus ? 'bottom-nav-item--plus' : ''}`}
+              onClick={() => manejarNavClick(item.key)}
+            >
+              <i className={`fas ${item.icon}`}></i>
+              <span>{item.label}</span>
+            </button>
+          ))}
+        </div>
+      )}
 
-      {menuMasAbierto && (
+      {!mostrarFormulario && menuMasAbierto && (
         <div className="more-menu" role="menu" aria-label="Más opciones del catálogo">
           <button
             type="button"
