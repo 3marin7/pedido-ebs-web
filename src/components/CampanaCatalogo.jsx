@@ -114,6 +114,14 @@ const guardarHistorialEnvios = (historial) => {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(historial));
 };
 
+const getViteEnv = () => {
+  if (typeof globalThis !== 'undefined' && globalThis.__APP_ENV__) {
+    return globalThis.__APP_ENV__;
+  }
+
+  return {};
+};
+
 const normalizarBaseUrl = (url) => String(url || '').trim().replace(/\/$/, '');
 
 const esOrigenLocal = (url) => {
@@ -133,7 +141,8 @@ const esOrigenLocal = (url) => {
 
 const obtenerBaseUrlInicial = () => {
   const storedUrl = localStorage.getItem(PUBLIC_URL_STORAGE_KEY);
-  const envUrl = import.meta.env.VITE_PUBLIC_CATALOG_BASE_URL || import.meta.env.VITE_PUBLIC_APP_URL || '';
+  const env = getViteEnv();
+  const envUrl = env.VITE_PUBLIC_CATALOG_BASE_URL || env.VITE_PUBLIC_APP_URL || '';
   const origin = typeof window !== 'undefined' ? window.location.origin : '';
   const candidateUrl = storedUrl || envUrl || origin;
 

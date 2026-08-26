@@ -515,6 +515,8 @@ const CatalogoProductos = ({ mode = 'admin' }) => {
   const [notificacionesStock, setNotificacionesStock] = useState([]);
   const [mostrarNotificaciones, setMostrarNotificaciones] = useState(false);
   const [mostrarAccionesMobile, setMostrarAccionesMobile] = useState(false);
+  const [navActivoMobile, setNavActivoMobile] = useState('');
+  const [menuMasAbierto, setMenuMasAbierto] = useState(false);
   const [nuevaPromocion, setNuevaPromocion] = useState({
     productoId: '',
     descuento: 15,
@@ -656,6 +658,48 @@ const CatalogoProductos = ({ mode = 'admin' }) => {
   }, [productosActivos]);
 
   const promocionesActivas = promocionesDefinidasFromProductos.length > 0 ? promocionesDefinidasFromProductos : promocionesSugeridas;
+
+  const manejarNavClick = (item) => {
+    if (item === 'mas') {
+      const abrirMenu = !menuMasAbierto;
+      setMenuMasAbierto(abrirMenu);
+      setNavActivoMobile(abrirMenu ? 'mas' : '');
+      return;
+    }
+
+    setMenuMasAbierto(false);
+    setNavActivoMobile(item);
+
+    if (item === 'buscar') {
+      setTimeout(() => {
+        const inputBusqueda = document.getElementById('catalogo-busqueda');
+        if (inputBusqueda) {
+          inputBusqueda.focus();
+          inputBusqueda.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 50);
+      return;
+    }
+
+    if (item === 'categorias') {
+      setTimeout(() => {
+        const categoriaSelect = document.getElementById('catalogo-categoria');
+        if (categoriaSelect) {
+          categoriaSelect.focus();
+          categoriaSelect.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 50);
+      return;
+    }
+
+    if (item === 'nuevo') {
+      if (isReadOnly || user?.role === 'inventario') return;
+      setMostrarFormulario(true);
+      setEditandoId(null);
+      setMostrarAccionesMobile(false);
+      setNavActivoMobile('');
+    }
+  };
 
   const handlePromocionInputChange = (e) => {
     const { name, value } = e.target;
@@ -1085,7 +1129,7 @@ const CatalogoProductos = ({ mode = 'admin' }) => {
         </button>
         <div
           id="catalogo-acciones"
-          className={`header-actions ${mostrarAccionesMobile ? 'mobile-open' : ''}`}
+          className="header-actions"
         >
           {!isReadOnly && (
             <ImportExportActions 
@@ -1141,30 +1185,107 @@ const CatalogoProductos = ({ mode = 'admin' }) => {
         </div>
       </header>
 
-      <div className="mobile-view-actions">
-        <button 
-          className={`button ${vistaActual === 'catalogo' ? 'primary-button' : 'secondary-button'}`}
-          onClick={() => setVistaActual('catalogo')}
-          type="button"
-        >
-          <i className="fas fa-boxes"></i> Catálogo
-        </button>
-        {user?.role !== 'inventario' && (
-          <button 
-            className={`button ${vistaActual === 'reporte' ? 'primary-button' : 'secondary-button'}`}
-            onClick={() => setVistaActual('reporte')}
+      {mostrarAccionesMobile && (
+        <div
+          className="menu-overlay active"
+          onClick={() => setMostrarAccionesMobile(false)}
+        ></div>
+      )}
+
+      <div className={`mobile-menu ${mostrarAccionesMobile ? 'active' : ''}`}>
+        <div className="menu-header">
+          <h3>Opciones</h3>
+          <button
+            className="close-menu"
             type="button"
+            onClick={() => setMostrarAccionesMobile(false)}
           >
-            <i className="fas fa-file-alt"></i> Reporte
+            <i className="fas fa-times"></i>
           </button>
-        )}
-        <button 
-          className={`button ${vistaActual === 'promociones' ? 'primary-button' : 'secondary-button'}`}
-          onClick={() => setVistaActual('promociones')}
-          type="button"
-        >
-          <i className="fas fa-tags"></i> Promociones
-        </button>
+        </div>
+
+        <div className="menu-actions">
+          {!isReadOnly && user?.role !== 'inventario' && (
+            <button
+              className="menu-btn primary"
+              type="button"
+              onClick={() => {
+                setMostrarFormulario(true);
+                setEditandoId(null);
+                setMostrarAccionesMobile(false);
+              }}
+            >
+              <i className="fas fa-plus"></i> Nuevo Producto
+            </button>
+          )}
+
+          <button
+            className="menu-btn"
+            type="button"
+            onClick={() => {
+              setMostrarNotificaciones(!mostrarNotificaciones);
+              setMostrarAccionesMobile(false);
+            }}
+          >
+            <i className="fas fa-exclamation-triangle"></i> Stock Bajo ({notificacionesStock.length})
+          </button>
+
+          <button
+            className="menu-btn"
+            type="button"
+            onClick={() => {
+              setVistaActual('catalogo');
+              setMostrarAccionesMobile(false);
+            }}
+          >
+            <i className="fas fa-boxes"></i> Catálogo
+          </button>
+
+          {user?.role !== 'inventario' && (
+            <button
+              className="menu-btn"
+              type="button"
+              onClick={() => {
+                setVistaActual('reporte');
+                setMostrarAccionesMobile(false);
+              }}
+            >
+              <i className="fas fa-file-alt"></i> Reporte
+            </button>
+          )}
+
+          <button
+            className="menu-btn"
+            type="button"
+            onClick={() => {
+              setVistaActual('promociones');
+              setMostrarAccionesMobile(false);
+            }}
+          >
+            <i className="fas fa-tags"></i> Promociones
+          </button>
+
+          {!isReadOnly && (
+            <div className="menu-import-export">
+              <ImportExportActions 
+                productos={productos}
+                productosFiltrados={productosFiltrados}
+                setProductos={setProductos}
+              />
+            </div>
+          )}
+
+          <button
+            className="menu-btn"
+            type="button"
+            onClick={() => {
+              navigate('/');
+              setMostrarAccionesMobile(false);
+            }}
+          >
+            <i className="fas fa-arrow-left"></i> Volver
+          </button>
+        </div>
       </div>
 
       {vistaActual === 'reporte' ? (
@@ -1380,6 +1501,7 @@ const CatalogoProductos = ({ mode = 'admin' }) => {
           <div className="filtros-container">
             <div className="search-box">
               <input
+                id="catalogo-busqueda"
                 type="text"
                 placeholder="🔍 Buscar por nombre o código..."
                 value={busqueda}
@@ -1388,6 +1510,7 @@ const CatalogoProductos = ({ mode = 'admin' }) => {
             </div>
             <div className="filtros-avanzados">
               <select 
+                id="catalogo-categoria"
                 value={categoriaFiltro} 
                 onChange={(e) => setCategoriaFiltro(e.target.value)}
               >
@@ -1658,6 +1781,78 @@ const CatalogoProductos = ({ mode = 'admin' }) => {
             </div>
           )}
         </>
+      )}
+
+      <div className="bottom-nav-mobile" role="navigation" aria-label="Navegación del catálogo">
+        {[
+          { key: 'buscar', label: 'Buscar', icon: 'fa-magnifying-glass' },
+          { key: 'categorias', label: 'Categorías', icon: 'fa-list' },
+          { key: 'nuevo', label: 'Nuevo', icon: 'fa-plus', plus: true },
+          { key: 'mas', label: 'Más', icon: 'fa-ellipsis' }
+        ].map((item) => (
+          <button
+            key={item.key}
+            type="button"
+            className={`bottom-nav-item ${navActivoMobile === item.key ? 'active' : ''} ${item.plus ? 'bottom-nav-item--plus' : ''}`}
+            onClick={() => manejarNavClick(item.key)}
+          >
+            <i className={`fas ${item.icon}`}></i>
+            <span>{item.label}</span>
+          </button>
+        ))}
+      </div>
+
+      {menuMasAbierto && (
+        <div className="more-menu" role="menu" aria-label="Más opciones del catálogo">
+          <button
+            type="button"
+            className="more-menu-item"
+            onClick={() => {
+              setMenuMasAbierto(false);
+              setNavActivoMobile('');
+              setMostrarNotificaciones(!mostrarNotificaciones);
+            }}
+          >
+            <i className="fas fa-bell"></i>
+            <span>Stock bajo</span>
+          </button>
+          <button
+            type="button"
+            className="more-menu-item"
+            onClick={() => {
+              setMenuMasAbierto(false);
+              setNavActivoMobile('');
+              setVistaActual('reporte');
+            }}
+          >
+            <i className="fas fa-file-alt"></i>
+            <span>Reporte</span>
+          </button>
+          <button
+            type="button"
+            className="more-menu-item"
+            onClick={() => {
+              setMenuMasAbierto(false);
+              setNavActivoMobile('');
+              setVistaActual('promociones');
+            }}
+          >
+            <i className="fas fa-tags"></i>
+            <span>Promociones</span>
+          </button>
+          <button
+            type="button"
+            className="more-menu-item"
+            onClick={() => {
+              setMenuMasAbierto(false);
+              setNavActivoMobile('');
+              navigate('/');
+            }}
+          >
+            <i className="fas fa-arrow-left"></i>
+            <span>Volver</span>
+          </button>
+        </div>
       )}
 
       <ModalConfirmacion

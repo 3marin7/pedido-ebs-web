@@ -23,7 +23,7 @@ const Navigation = () => {
   };
 
   const toggleSubmenu = (menu) => {
-    setMenuActivo(menuActivo === menu ? null : menu);
+    setMenuActivo((prevMenu) => (prevMenu === menu ? null : menu));
   };
 
   const getActiveGroup = (links) => {
@@ -358,10 +358,17 @@ const Navigation = () => {
   const activeGroupPath = getActiveGroup(availableLinks)?.path;
 
   useEffect(() => {
-    if (isMenuOpen && activeGroupPath && menuActivo === null) {
-      setMenuActivo(activeGroupPath);
+    if (!isMenuOpen) {
+      setMenuActivo(null);
+      return;
     }
-  }, [isMenuOpen, location.pathname, activeGroupPath, menuActivo]);
+
+    if (activeGroupPath) {
+      setMenuActivo((prevMenu) => (prevMenu === activeGroupPath ? prevMenu : activeGroupPath));
+    } else {
+      setMenuActivo(null);
+    }
+  }, [isMenuOpen, location.pathname, activeGroupPath]);
 
   return (
     <nav className="navigation">

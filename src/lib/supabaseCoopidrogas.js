@@ -32,8 +32,17 @@
 
 import { createClient } from '@supabase/supabase-js';
 
-const url  = import.meta.env.VITE_COOPIDROGAS_URL;
-const key  = import.meta.env.VITE_COOPIDROGAS_ANON_KEY;
+const getViteEnv = () => {
+  if (typeof globalThis !== 'undefined' && globalThis.__APP_ENV__) {
+    return globalThis.__APP_ENV__;
+  }
+
+  return {};
+};
+
+const env = getViteEnv();
+const url = env.VITE_COOPIDROGAS_URL;
+const key = env.VITE_COOPIDROGAS_ANON_KEY;
 
 if (!url || !key) {
   console.warn(
