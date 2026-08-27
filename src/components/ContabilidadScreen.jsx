@@ -1,8 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import './ContabilidadScreen.css';
+import { supabase } from '../lib/supabase';
+import { formatInputDateLocal } from '../lib/dateUtils';
+
+const toNumber = (value) => {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : 0;
+};
 
 const ContabilidadScreen = () => {
-  const [fechaCorte, setFechaCorte] = useState('2025-10-30');
+  const [fechaCorte, setFechaCorte] = useState(formatInputDateLocal(new Date()));
   const [clienteSeleccionado, setClienteSeleccionado] = useState('todos');
   const [tipoReporte, setTipoReporte] = useState('cartera');
   const [datosContabilidad, setDatosContabilidad] = useState(null);
@@ -110,12 +117,114 @@ const ContabilidadScreen = () => {
   };
 
   useEffect(() => {
-    setCargando(true);
-    const timer = setTimeout(() => {
-      setDatosContabilidad(datosEjemplo);
-      setCargando(false);
-    }, 1000);
-    return () => clearTimeout(timer);
+    const cargarDatosReales = async () => {
+      setCargando(true);
+
+      try {
+        const [{ data: facturas, error: errorFacturas }, { data: abonos, error: errorAbonos }] = await Promise.all([
+          supabase.from('facturas').select('*').order('fecha', { ascending: false }),
+          supabase.from('abonos').select('*').order('fecha', { ascending: true })
+        ]);
+
+        if (errorFacturas) throw errorFacturas;
+        if (errorAbonos) throw errorAbonos;
+
+        const abonosPorFactura = (abonos || []).reduce((acumulado, abono) => {
+          const facturaId = String(abono.factura_id);
+          acumulado[facturaId] = (acumulado[facturaId] || 0) + toNumber(abono.monto);
+          return acumulado;
+        }, {});
+
+        const documentos = (facturas || []).map(factura => {
+          const total = toNumber(factura.total);
+          const abonado = abonosPorFactura[String(factura.id)] || 0;
+          const saldo = total - abonado;
+          const estado = saldo <= 0.01 ? 'pagado' : abonado > 0 ? 'parcial' : 'pendiente';
+
+          return {
+            id: factura.id,
+            refDoc: factura.numero_factura || factura.ref_doc || String(factura.id),
+            clase: factura.clase || 'Factura',
+            fechaBase: factura.fecha || factura.fecha_base || '',
+            fechaPago: '',
+            demora: '',
+            fechaVencimiento: factura.fecha_vencimiento || factura.fechaVencimiento || '',
+            importe: total,
+            basePP: total,
+            descuento: 0,
+            aPagar: saldo,
+            estado,
+            cliente: factura.cliente || 'Sin cliente',
+            codigoCliente: factura.codigo_cliente || '',
+            vendedor: factura.vendedor || ''
+          };
+        });
+
+        const grupos = documentos.reduce((acumulado, documento) => {
+          const clave = documento.codigoCliente || documento.cliente;
+          if (!acumulado[clave]) {
+            acumulado[clave] = {
+              id: clave,
+              distribuidora: documento.cliente,
+              cliente: documento.cliente,
+              nit: documento.codigoCliente,
+              documentos: [],
+              total: 0
+            };
+          }
+          acumulado[clave].documentos.push(documento);
+          acumulado[clave].total += documento.aPagar;
+          return acumulado;
+        }, {});
+
+        const reporteCartera = Object.values(grupos);
+        const pendientes = documentos.filter(documento => documento.aPagar > 0.01);
+        const totalCartera = pendientes.reduce((total, documento) => total + documento.aPagar, 0);
+        const totalAbonado = (abonos || []).reduce((total, abono) => total + toNumber(abono.monto), 0);
+        const totalFacturado = documentos.reduce((total, documento) => total + Math.max(documento.importe, 0), 0);
+
+        setDatosContabilidad({
+          reporteCartera,
+          clientes: [{ id: 'todos', nombre: 'Todos los clientes' }, ...reporteCartera.map(cliente => ({
+            id: cliente.nit || cliente.id,
+            nombre: cliente.distribuidora
+          }))],
+          pagosMensuales: [],
+          metricasDashboard: {
+            carteraTotal: totalCartera,
+            clientesActivos: reporteCartera.length,
+            documentosPendientes: pendientes.length,
+            promedioDemora: 0,
+            moraCritica: 0,
+            moraAlerta: 0,
+            moraNormal: 0,
+            eficienciaCobro: totalFacturado > 0 ? Number(((totalAbonado / totalFacturado) * 100).toFixed(1)) : 0
+          }
+        });
+      } catch (error) {
+        console.error('Error cargando cartera desde Supabase:', error);
+        setDatosContabilidad({
+          reporteCartera: [],
+          clientes: [{ id: 'todos', nombre: 'Todos los clientes' }],
+          pagosMensuales: [],
+          metricasDashboard: {
+            carteraTotal: 0,
+            clientesActivos: 0,
+            documentosPendientes: 0,
+            promedioDemora: 0,
+            moraCritica: 0,
+            moraAlerta: 0,
+            moraNormal: 0,
+            eficienciaCobro: 0
+          }
+        });
+        alert('No fue posible cargar las facturas y abonos reales desde Supabase');
+      } finally {
+        setCargando(false);
+      }
+    };
+
+    cargarDatosReales();
   }, []);
 
   // Funciones para manejar el formulario
@@ -352,9 +461,39 @@ const ContabilidadScreen = () => {
   };
 
   const aplicarFiltros = () => {
-    setCargando(true);
-    setTimeout(() => setCargando(false), 800);
+    setVistaActiva('cartera');
   };
+
+  const convertirFechaComparable = (fecha) => {
+    if (!fecha) return '';
+    if (/^\d{4}-\d{2}-\d{2}/.test(fecha)) return fecha.slice(0, 10);
+    const partes = fecha.split('/');
+    if (partes.length !== 3) return '';
+    return `${partes[2]}-${partes[1].padStart(2, '0')}-${partes[0].padStart(2, '0')}`;
+  };
+
+  const reporteCarteraVisible = datosContabilidad?.reporteCartera
+    ?.map(cliente => ({
+      ...cliente,
+      documentos: cliente.documentos.filter(documento => {
+        const coincideCliente = clienteSeleccionado === 'todos'
+          || String(cliente.nit || cliente.id) === String(clienteSeleccionado);
+        const fechaDocumento = convertirFechaComparable(documento.fechaBase);
+        const dentroDelCorte = !fechaCorte || !fechaDocumento || fechaDocumento <= fechaCorte;
+        const esPendiente = documento.estado === 'pendiente' || documento.estado === 'parcial';
+        const fechaVencimiento = convertirFechaComparable(documento.fechaVencimiento);
+        const esVencido = Number(documento.demora) < 0 || (fechaVencimiento && fechaCorte && fechaVencimiento < fechaCorte);
+        const coincideTipo = tipoReporte === 'cartera'
+          || (tipoReporte === 'antiguedad' && esPendiente)
+          || (tipoReporte === 'vencidos' && esPendiente && esVencido);
+        return coincideCliente && dentroDelCorte && coincideTipo;
+      })
+    }))
+    .map(cliente => ({
+      ...cliente,
+      total: cliente.documentos.reduce((total, documento) => total + documento.aPagar, 0)
+    }))
+    .filter(cliente => cliente.documentos.length > 0) || [];
 
   const formatCurrency = (amount) => {
     if (amount === null || amount === undefined || amount === '') return '-';
@@ -397,8 +536,8 @@ const ContabilidadScreen = () => {
     <div className={`contabilidad-container ${cargando ? 'loading' : ''}`}>
       {/* Header */}
       <div className="contabilidad-header">
-        <h1>📊 Sistema de Gestión de Cartera</h1>
-        <p>Dashboard, reportes de cartera y análisis de pagos mensuales</p>
+        <h1>📊 Cartera y Cuentas por Cobrar</h1>
+        <p>Control de facturas pendientes, vencimientos y pagos de clientes</p>
       </div>
 
       {/* Botones de Acción Principales */}
@@ -591,7 +730,7 @@ const ContabilidadScreen = () => {
 
       {vistaActiva === 'dashboard' ? (
         <div className="dashboard-container">
-          <h2>📊 Dashboard de Cartera</h2>
+          <h2>📊 Resumen de Cartera y Cuentas por Cobrar</h2>
           <div className="metricas-grid">
             <div className="metrica-card">
               <h3>Total Cartera</h3>
@@ -602,7 +741,7 @@ const ContabilidadScreen = () => {
               <p className="metrica-valor">{datosContabilidad.reporteCartera.length}</p>
             </div>
             <div className="metrica-card">
-              <h3>Documentos Totales</h3>
+              <h3>Documentos en Cartera</h3>
               <p className="metrica-valor">{getTotalDocumentos()}</p>
             </div>
             <div className="metrica-card">
@@ -652,15 +791,15 @@ const ContabilidadScreen = () => {
                 </select>
               </div>
               
-              <button className="btn btn-primary" onClick={aplicarFiltros}>
-                🔍 Generar Reporte
-              </button>
+              <div className="filtros-resultado" role="status">
+                {reporteCarteraVisible.reduce((total, cliente) => total + cliente.documentos.length, 0)} documentos encontrados
+              </div>
             </div>
           </div>
 
           {/* Reportes de Cartera */}
           <div className="reportes-cartera">
-            {datosContabilidad.reporteCartera.map((cliente) => (
+            {reporteCarteraVisible.map((cliente) => (
               <div key={cliente.id} className="cliente-reporte">
                 <div className="cliente-header">
                   <div className="cliente-info">
@@ -748,22 +887,22 @@ const ContabilidadScreen = () => {
           {/* Resumen General */}
           <div className="resumen-general">
             <div className="resumen-card">
-              <h3>Resumen General de Cartera</h3>
+              <h3>Resumen General de Cuentas por Cobrar</h3>
               <div className="resumen-stats">
                 <div className="resumen-stat">
                   <span className="stat-label">Total Cartera:</span>
                   <span className="stat-value">
-                    {formatCurrency(getTotalCartera())}
+                    {formatCurrency(reporteCarteraVisible.reduce((total, cliente) => total + cliente.total, 0))}
                   </span>
                 </div>
                 <div className="resumen-stat">
                   <span className="stat-label">Clientes Activos:</span>
-                  <span className="stat-value">{datosContabilidad.reporteCartera.length}</span>
+                  <span className="stat-value">{reporteCarteraVisible.length}</span>
                 </div>
                 <div className="resumen-stat">
-                  <span className="stat-label">Documentos Totales:</span>
+                  <span className="stat-label">Documentos en Cartera:</span>
                   <span className="stat-value">
-                    {getTotalDocumentos()}
+                    {reporteCarteraVisible.reduce((total, cliente) => total + cliente.documentos.length, 0)}
                   </span>
                 </div>
               </div>

@@ -411,7 +411,7 @@ function App() {
             <Route path="/dashboard-contabilidad" element={
               <ProtectedRoute requiredRoles={['superadmin', 'admin', 'contabilidad', 'vendedor']}>
                 <>
-                  <PageMeta title="Dashboard de Contabilidad - EBS" description="Panel de control contable" />
+                  <PageMeta title="Cartera y Cuentas por Cobrar - EBS" description="Panel de control de facturas pendientes y pagos de clientes" />
                   <ContabilidadScreen />
                 </>
               </ProtectedRoute>

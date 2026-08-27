@@ -266,6 +266,113 @@
   border: 1px solid #e2e8f0;
 }
 
+.facturas-view > .tabla-wrapper {
+  max-height: 72vh;
+  border-radius: 10px;
+}
+
+.facturas-compacta-wrapper .cpp-table {
+  min-width: 0;
+  table-layout: fixed;
+  font-size: 12px;
+  display: table;
+}
+
+.facturas-compacta-wrapper .cpp-table thead,
+.facturas-compacta-wrapper .cpp-table tbody,
+.facturas-compacta-wrapper .cpp-table tr {
+  display: table-row-group;
+}
+
+.facturas-compacta-wrapper .cpp-table thead {
+  display: table-header-group;
+}
+
+.facturas-compacta-wrapper .cpp-table tr {
+  display: table-row;
+}
+
+.facturas-compacta-wrapper .cpp-table th,
+.facturas-compacta-wrapper .cpp-table td {
+  display: table-cell;
+  vertical-align: middle;
+  overflow: hidden;
+}
+
+.facturas-compacta-wrapper .cpp-table th,
+.facturas-compacta-wrapper .cpp-table td {
+  padding: 8px 7px;
+}
+
+.facturas-compacta-wrapper .cpp-table th:nth-child(1),
+.facturas-compacta-wrapper .cpp-table td:nth-child(1) {
+  width: 17%;
+  min-width: 0;
+}
+
+.facturas-compacta-wrapper .cpp-table th:nth-child(2),
+.facturas-compacta-wrapper .cpp-table td:nth-child(2) {
+  width: 12%;
+  min-width: 0;
+}
+
+.facturas-compacta-wrapper .cpp-table th:nth-child(3),
+.facturas-compacta-wrapper .cpp-table td:nth-child(3) {
+  width: 8%;
+  min-width: 0;
+}
+
+.facturas-compacta-wrapper .cpp-table th:nth-child(4),
+.facturas-compacta-wrapper .cpp-table td:nth-child(4),
+.facturas-compacta-wrapper .cpp-table th:nth-child(5),
+.facturas-compacta-wrapper .cpp-table td:nth-child(5) {
+  width: 10%;
+  min-width: 0;
+}
+
+.facturas-compacta-wrapper .cpp-table th:nth-child(6),
+.facturas-compacta-wrapper .cpp-table td:nth-child(6),
+.facturas-compacta-wrapper .cpp-table th:nth-child(7),
+.facturas-compacta-wrapper .cpp-table td:nth-child(7),
+.facturas-compacta-wrapper .cpp-table th:nth-child(8),
+.facturas-compacta-wrapper .cpp-table td:nth-child(8) {
+  width: 10%;
+  min-width: 0;
+  padding-right: 7px;
+}
+
+.facturas-compacta-wrapper .cpp-table th:nth-child(9),
+.facturas-compacta-wrapper .cpp-table td:nth-child(9) {
+  width: 9%;
+  min-width: 0;
+}
+
+.facturas-compacta-wrapper .cpp-table th:nth-child(10),
+.facturas-compacta-wrapper .cpp-table td:nth-child(10) {
+  width: 12%;
+  min-width: 0;
+}
+
+.facturas-compacta-wrapper .cpp-table td:first-child strong,
+.facturas-compacta-wrapper .cpp-table td:first-child small,
+.facturas-compacta-wrapper .numero-factura {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.facturas-view > .tabla-wrapper .cpp-table tbody tr.estado-pagada:hover {
+  background: #dcfce7 !important;
+}
+
+.facturas-view > .tabla-wrapper .cpp-table tbody tr.estado-parcial:hover {
+  background: #fef3c7 !important;
+}
+
+.facturas-view > .tabla-wrapper .cpp-table tbody tr.estado-vencida:hover {
+  background: #fecaca !important;
+}
+
 .cpp-table {
   width: 100%;
   min-width: 1320px;
@@ -598,14 +705,12 @@
    ======================================== */
 
 .facturas-lista {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  background: white;
-  border-radius: 12px;
-  padding: 12px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-  max-height: 85vh;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  align-items: start;
+  gap: 18px;
+  padding: 2px;
+  max-height: 72vh;
   overflow-y: auto;
 }
 
@@ -620,6 +725,10 @@
   flex-direction: column;
   padding: 0;
   min-height: auto;
+}
+.cuentas-por-pagar-container .factura-card {
+  width: 100%;
+  min-width: 0;
 }
 
 .factura-card:hover {
@@ -673,7 +782,7 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  padding: 14px 16px;
+  padding: 11px 14px;
   border-bottom: 1px solid #e2e8f0;
   background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
   gap: 10px;
@@ -704,7 +813,7 @@
 
 /* Cuerpo de card */
 .factura-card-body {
-  padding: 16px;
+  padding: 10px 14px;
   flex: 1;
   display: block;
   min-height: auto;
@@ -714,15 +823,17 @@
 .datos-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 14px;
+  align-items: start;
+  gap: 10px;
   width: 100%;
 }
 
 .dato-bloque {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  padding: 12px;
+  align-self: start;
+  gap: 7px;
+  padding: 9px 10px;
   background: #f8fafc;
   border-radius: 8px;
   border: 1px solid #e2e8f0;
@@ -731,7 +842,7 @@
 .dato {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
 }
 
 .dato .etiqueta {
@@ -794,7 +905,7 @@
 
 /* Pie de card */
 .factura-card-footer {
-  padding: 12px 16px;
+  padding: 8px 14px;
   border-top: 1px solid #e2e8f0;
   background: #f8fafc;
   display: flex;
@@ -954,6 +1065,17 @@
   gap: 15px;
 }
 
+.facturas-view .view-header > div:first-child {
+  display: flex !important;
+  align-items: center;
+  gap: 10px !important;
+  flex-wrap: wrap;
+}
+
+.facturas-view .view-header > div:first-child > button {
+  min-height: 42px;
+}
+
 .view-header h2 {
   margin: 0;
   color: #1e293b;
@@ -965,6 +1087,10 @@
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
+  padding: 12px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
 }
 
 /* Filtros Section - Para historial de pagos */
@@ -1098,6 +1224,51 @@
   min-width: 42px;
   width: auto;
   padding: 0 6px;
+}
+
+/* Acciones de las tarjetas detalladas */
+.cuentas-por-pagar-container .factura-card-footer .btn-accion.btn-pagar,
+.cuentas-por-pagar-container .factura-card-footer .btn-accion.btn-editar,
+.cuentas-por-pagar-container .factura-card-footer .btn-accion.btn-info {
+  min-height: 38px;
+  border-radius: 8px;
+  font-weight: 700;
+  color: white;
+}
+
+.cuentas-por-pagar-container .factura-card-footer .btn-accion.btn-pagar {
+  background: #059669;
+  border-color: #047857;
+}
+
+.cuentas-por-pagar-container .factura-card-footer .btn-accion.btn-pagar:hover {
+  background: #047857;
+  box-shadow: 0 4px 10px rgba(5, 150, 105, 0.3);
+}
+
+.cuentas-por-pagar-container .factura-card-footer .btn-accion.btn-editar {
+  background: #2563eb;
+  border-color: #1d4ed8;
+}
+
+.cuentas-por-pagar-container .factura-card-footer .btn-accion.btn-editar:hover {
+  background: #1d4ed8;
+  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
+}
+
+.cuentas-por-pagar-container .factura-card-footer .btn-accion.btn-info {
+  background: #475569;
+  border-color: #334155;
+}
+
+.cuentas-por-pagar-container .factura-card-footer .btn-accion.btn-info:hover {
+  background: #334155;
+  box-shadow: 0 4px 10px rgba(51, 65, 85, 0.3);
+}
+
+.cuentas-por-pagar-container .factura-card-footer .btn-accion:focus-visible {
+  outline: 3px solid rgba(37, 99, 235, 0.35);
+  outline-offset: 2px;
 }
 
 .btn-pagar-rapido {
@@ -1585,6 +1756,7 @@
 
   .facturas-lista {
     max-height: 600px;
+    grid-template-columns: 1fr;
   }
 
   .proveedores-grid {
@@ -1639,7 +1811,7 @@
   .facturas-lista {
     max-height: 450px;
     gap: 10px;
-    padding: 10px;
+    padding: 2px;
   }
 
   .factura-card {

@@ -173,6 +173,14 @@ const ReportesVentas = () => {
     total: Math.round(item.total)
   }));
 
+  const ventasMensualesChartData = resumenPorMes
+    .slice()
+    .reverse()
+    .map((mes) => ({
+      mesNombre: mes.mesNombre,
+      total: Math.round(mes.total)
+    }));
+
   const totalGeneral = facturasFiltradas.reduce((sum, item) => sum + (parseFloat(item.total) || 0), 0);
   const cantidadGeneral = facturasFiltradas.length;
 
@@ -181,6 +189,16 @@ const ReportesVentas = () => {
       style: 'currency',
       currency: 'COP',
       minimumFractionDigits: 0
+    }).format(valor || 0);
+  };
+
+  // Formato corto para los ejes de las gráficas (evita que se corten en móvil)
+  const formatMonedaCompacta = (valor) => {
+    return new Intl.NumberFormat('es-CO', {
+      style: 'currency',
+      currency: 'COP',
+      notation: 'compact',
+      maximumFractionDigits: 1
     }).format(valor || 0);
   };
 
@@ -271,11 +289,11 @@ const ReportesVentas = () => {
           {ventasDiariasChartData.length === 0 ? (
             <div className="empty-state"><i className="fas fa-calendar-times"></i><p>No hay ventas en este rango</p></div>
           ) : (
-            <ResponsiveContainer width="100%" height={260}>
-              <LineChart data={ventasDiariasChartData} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
+            <ResponsiveContainer width="100%" height={240}>
+              <LineChart data={ventasDiariasChartData} margin={{ top: 10, right: 10, left: 0, bottom: 5 }}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="fecha" tick={{ fontSize: 12 }} />
-                <YAxis tickFormatter={(value) => formatMoneda(value)} />
+                <XAxis dataKey="fecha" tick={{ fontSize: 11 }} />
+                <YAxis width={64} tick={{ fontSize: 10 }} tickFormatter={(value) => formatMonedaCompacta(value)} />
                 <Tooltip formatter={(value) => formatMoneda(value)} />
                 <Legend />
                 <Line type="monotone" dataKey="total" stroke="#2d99ff" strokeWidth={3} dot={{ r: 4 }} />
@@ -289,11 +307,11 @@ const ReportesVentas = () => {
           {ventasPorVendedorChartData.length === 0 ? (
             <div className="empty-state"><i className="fas fa-user-times"></i><p>No hay vendedores con ventas</p></div>
           ) : (
-            <ResponsiveContainer width="100%" height={260}>
-              <BarChart data={ventasPorVendedorChartData} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
+            <ResponsiveContainer width="100%" height={240}>
+              <BarChart data={ventasPorVendedorChartData} margin={{ top: 10, right: 10, left: 0, bottom: 5 }}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="vendedor" tick={{ fontSize: 12 }} />
-                <YAxis tickFormatter={(value) => formatMoneda(value)} />
+                <XAxis dataKey="vendedor" tick={{ fontSize: 11 }} interval={0} />
+                <YAxis width={64} tick={{ fontSize: 10 }} tickFormatter={(value) => formatMonedaCompacta(value)} />
                 <Tooltip formatter={(value) => formatMoneda(value)} />
                 <Legend />
                 <Bar dataKey="total" fill="#50d3aa" />
@@ -384,6 +402,26 @@ const ReportesVentas = () => {
               ))}
             </tbody>
           </table>
+        </div>
+      </div>
+
+      <div className="chart-row">
+        <div className="chart-card">
+          <h2><i className="fas fa-chart-column"></i> Histórico de Ventas por Mes</h2>
+          {ventasMensualesChartData.length === 0 ? (
+            <div className="empty-state"><i className="fas fa-calendar-times"></i><p>No hay ventas para el filtro seleccionado</p></div>
+          ) : (
+            <ResponsiveContainer width="100%" height={260}>
+              <BarChart data={ventasMensualesChartData} margin={{ top: 10, right: 10, left: 0, bottom: 5 }}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="mesNombre" tick={{ fontSize: 11 }} interval={0} angle={-20} textAnchor="end" height={60} />
+                <YAxis width={64} tick={{ fontSize: 10 }} tickFormatter={(value) => formatMonedaCompacta(value)} />
+                <Tooltip formatter={(value) => formatMoneda(value)} />
+                <Legend />
+                <Bar dataKey="total" name="Ventas del mes" fill="#7c5cff" />
+              </BarChart>
+            </ResponsiveContainer>
+          )}
         </div>
       </div>
     </div>

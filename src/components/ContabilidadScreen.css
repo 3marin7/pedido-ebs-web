@@ -270,6 +270,46 @@
   align-items: end;
 }
 
+.contabilidad-container .filtros-section {
+  padding: 20px;
+  border: 1px solid #dbe3ef;
+  border-left: 4px solid #2563eb;
+}
+
+.contabilidad-container .filtros-section h3 {
+  margin: 0 0 16px;
+  color: #1e293b;
+}
+
+.contabilidad-container .filtros-grid {
+  grid-template-columns: repeat(3, minmax(180px, 1fr));
+  gap: 14px;
+}
+
+.contabilidad-container .filtros-grid .form-group input,
+.contabilidad-container .filtros-grid .form-group select {
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 42px;
+  padding: 9px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  background: white;
+}
+
+.filtros-resultado {
+  min-height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 12px;
+  border-radius: 8px;
+  background: #eff6ff;
+  color: #1d4ed8;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
 /* Reportes de Cartera */
 .reportes-cartera {
   display: flex;
@@ -572,4 +612,117 @@
 
 .tabla-container::-webkit-scrollbar-thumb:hover {
   background: #a8a8a8;
+}
+
+/* Ajustes finales del dashboard de cartera */
+.contabilidad-container .contabilidad-header {
+  text-align: left;
+  padding: 24px 28px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%);
+  box-shadow: 0 8px 24px rgba(37, 99, 235, 0.2);
+}
+
+.contabilidad-container .contabilidad-header h1 {
+  font-size: clamp(1.5rem, 3vw, 2.2rem);
+  line-height: 1.2;
+}
+
+.contabilidad-container .acciones-principales,
+.contabilidad-container .navegacion-vistas {
+  align-items: center;
+  gap: 10px;
+}
+
+.contabilidad-container .btn {
+  min-height: 42px;
+  padding: 10px 16px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  color: white;
+  font-weight: 700;
+  box-shadow: 0 2px 5px rgba(15, 23, 42, 0.12);
+}
+
+.contabilidad-container .btn-success { background: #15803d; border-color: #166534; }
+.contabilidad-container .btn-primary { background: #1d4ed8; border-color: #1e40af; }
+.contabilidad-container .btn-secondary { background: #475569; border-color: #334155; }
+.contabilidad-container .btn-success:hover { background: #166534; }
+.contabilidad-container .btn-primary:hover { background: #1e40af; }
+.contabilidad-container .btn-secondary:hover { background: #334155; }
+
+.contabilidad-container .metricas-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.contabilidad-container .metrica-card {
+  min-width: 0;
+  padding: 20px;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.contabilidad-container .metrica-card h3 {
+  margin: 0;
+  max-width: 100%;
+  font-size: 0.95rem;
+  line-height: 1.25;
+}
+
+.contabilidad-container .metrica-valor {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: clamp(1.35rem, 2.5vw, 2rem);
+  line-height: 1.2;
+  color: white;
+}
+
+.contabilidad-container .btn-vista {
+  min-height: 42px;
+  padding: 10px 16px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  color: #334155;
+  background: white;
+  font-weight: 700;
+}
+
+.contabilidad-container .btn-vista.active {
+  color: white;
+  background: #2563eb;
+  border-color: #1d4ed8;
+  box-shadow: 0 3px 8px rgba(37, 99, 235, 0.25);
+}
+
+.contabilidad-container .btn-vista:hover:not(.active) {
+  color: #1d4ed8;
+  background: #eff6ff;
+  border-color: #93c5fd;
+}
+
+@media (max-width: 900px) {
+  .contabilidad-container .metricas-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 600px) {
+  .contabilidad-container { padding: 0 0.75rem; }
+  .contabilidad-container .contabilidad-header { padding: 20px; }
+  .contabilidad-container .metricas-grid { grid-template-columns: 1fr; }
+  .contabilidad-container .btn,
+  .contabilidad-container .btn-vista { width: 100%; justify-content: center; }
+  .contabilidad-container .navegacion-vistas,
+  .contabilidad-container .acciones-principales {
+    flex-direction: column;
+    align-items: stretch;
+  }
 }

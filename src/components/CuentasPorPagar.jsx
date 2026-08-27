@@ -616,7 +616,8 @@ const CuentasPorPagar = () => {
     setFacturaParaDetalle(null);
   };
 
-  // Filtrar facturas
+  // Filtrar y agrupar facturas por estado
+  const prioridadEstado = { pendiente: 1, parcial: 2, vencida: 3, pagada: 4 };
   const facturasFiltradas = facturas.filter(factura => {
     const matchEstado = filtroEstado === 'todos' || factura.estado === filtroEstado;
     const matchProveedor = filtroProveedor === 'todos' || factura.proveedorId === parseInt(filtroProveedor);
@@ -625,6 +626,10 @@ const CuentasPorPagar = () => {
       obtenerProveedor(factura.proveedorId)?.nombre.toLowerCase().includes(busqueda.toLowerCase());
     
     return matchEstado && matchProveedor && matchBusqueda;
+  }).sort((a, b) => {
+    const diferenciaEstado = (prioridadEstado[a.estado] || 5) - (prioridadEstado[b.estado] || 5);
+    if (diferenciaEstado !== 0) return diferenciaEstado;
+    return String(a.fechaEmision || '').localeCompare(String(b.fechaEmision || ''));
   });
 
   const escapeHtml = (value) => {
@@ -1318,7 +1323,7 @@ const CuentasPorPagar = () => {
 
           {/* VISTA COMPACTA - TABLA */}
           {vistaFacturas === 'compacta' && (
-            <div className="tabla-wrapper">
+            <div className="tabla-wrapper facturas-compacta-wrapper">
               {facturasFiltradas.length === 0 ? (
                 <div className="text-center" style={{padding: '20px', color: '#94a3b8'}}>
                   No hay facturas que coincidan con los filtros

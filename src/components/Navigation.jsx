@@ -109,10 +109,9 @@ const Navigation = () => {
           icon: '💰', 
           tipo: 'grupo',
           submenu: [
-            { path: '/gastos', label: 'Gestión de Gastos', icon: '💸' },
             { path: '/gastos-empresa', label: 'Gastos de Empresa', icon: '📊' },
             { path: '/cuentas-por-pagar', label: 'Cuentas por Pagar', icon: '📄' },
-            { path: '/dashboard-contabilidad', label: 'Dashboard Contabilidad', icon: '📊' }
+            { path: '/dashboard-contabilidad', label: 'Cartera y Cuentas por Cobrar', icon: '📊' }
           ]
         },
         // BODEGA - Grupo
@@ -176,10 +175,9 @@ const Navigation = () => {
           icon: '💰', 
           tipo: 'grupo',
           submenu: [
-            { path: '/gastos', label: 'Gestión de Gastos', icon: '💸' },
             { path: '/gastos-empresa', label: 'Gastos de Empresa', icon: '📊' },
             { path: '/cuentas-por-pagar', label: 'Cuentas por Pagar', icon: '📄' },
-            { path: '/dashboard-contabilidad', label: 'Dashboard Contabilidad', icon: '📊' }
+            { path: '/dashboard-contabilidad', label: 'Cartera y Cuentas por Cobrar', icon: '📊' }
           ]
         },
         // BODEGA - Grupo
@@ -240,27 +238,51 @@ const Navigation = () => {
       ];
     }
 
-    // Contabilidad (caro) - Ver facturas, reportes, gestión de pedidos, catálogo (lectura)
+    // Contabilidad - Accesos agrupados para mantener la navegación compacta
     if (user.role === 'contabilidad') {
       return [
-        { path: '/dashboard-contabilidad', label: 'Dashboard Contabilidad', icon: '📊', tipo: 'simple' },
-        { path: '/facturas', label: 'Facturas Guardadas', icon: '📄', tipo: 'simple' },
-        { path: '/catalogo-clientes', label: 'Enviar Catálogo', icon: '📤', tipo: 'simple' },
-        { path: '/campana-catalogo', label: 'Campaña Catálogo', icon: '🎯', tipo: 'simple' },
-        { path: '/rutas-cobro', label: 'Rutas de Cobro', icon: '🚗', tipo: 'simple' },
-        { path: '/catalogo-detalle', label: 'Catálogo Precios Clientes', icon: '🏷️', tipo: 'simple' },
-        { path: '/reportes-ventas', label: 'Informe de Ventas', icon: '🧾', tipo: 'simple' },
-        { path: '/reportes-cobros', label: 'Reportes de Cobros', icon: '📈', tipo: 'simple' },
-        { path: '/plan-seguimiento-ventas', label: 'Plan Seguimiento Ventas', icon: '🎯', tipo: 'simple' },
-        { path: '/calculador-sueldo-vendedor', label: 'Calculador Sueldo Vendedor', icon: '💰', tipo: 'simple' },
-        { path: '/gastos', label: 'Gestión de Gastos', icon: '💰', tipo: 'simple' },
-        { path: '/gastos-empresa', label: 'Gastos de la Empresa', icon: '💸', tipo: 'simple' },
-        { path: '/cuentas-por-pagar', label: 'Gastos Empresa (Proveedores)', icon: '📊', tipo: 'simple' },
-        { path: '/gestion-pedidos', label: 'Gestión Pedidos', icon: '🛒', tipo: 'simple' },
-        { path: '/dashboard-ventas', label: 'Dashboard Ventas', icon: '📊', tipo: 'simple' },
-        { path: '/catalogo', label: 'Catálogo Productos', icon: '📚', tipo: 'simple' },
-        { path: '/clientes', label: 'Clientes', icon: '👥', tipo: 'simple' },
-        { path: '/mundial', label: 'Mundial 2026', icon: '⚽', tipo: 'simple' }
+        {
+          path: '#ventas',
+          label: 'Inicio & Ventas',
+          icon: '🏠',
+          tipo: 'grupo',
+          submenu: [
+            { path: '/catalogo-clientes', label: 'Catálogo en Línea', icon: '🌐' }
+          ]
+        },
+        {
+          path: '#informes',
+          label: 'Informes',
+          icon: '📊',
+          tipo: 'grupo',
+          submenu: [
+            { path: '/dashboard-ventas', label: 'Dashboard Ventas', icon: '📈' },
+            { path: '/reportes-ventas', label: 'Informe de Ventas', icon: '🧾' },
+            { path: '/reportes-cobros', label: 'Reportes de Cobros', icon: '💰' },
+            { path: '/plan-seguimiento-ventas', label: 'Plan Seguimiento Ventas', icon: '🎯' },
+            { path: '/calculador-sueldo-vendedor', label: 'Calculador Sueldo Vendedor', icon: '💰' }
+          ]
+        },
+        {
+          path: '#contabilidad',
+          label: 'Contabilidad',
+          icon: '💰',
+          tipo: 'grupo',
+          submenu: [
+            { path: '/dashboard-contabilidad', label: 'Cartera y Cuentas por Cobrar', icon: '📊' },
+            { path: '/gastos-empresa', label: 'Gastos de la Empresa', icon: '📊' },
+            { path: '/cuentas-por-pagar', label: 'Gastos Empresa (Proveedores)', icon: '📄' }
+          ]
+        },
+        {
+          path: '#bodega',
+          label: 'Bodega',
+          icon: '📦',
+          tipo: 'grupo',
+          submenu: [
+            { path: '/catalogo', label: 'Catálogo Productos', icon: '📚' }
+          ]
+        }
       ];
     }
 

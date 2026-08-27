@@ -35,6 +35,68 @@ const formatInputDate = (dateValue) => {
   return `${year}-${month}-${day}`;
 };
 
+const formatFechaCorta = (dateValue) => {
+  const date = parseDateLocal(dateValue);
+  if (!date) return '';
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const year = date.getFullYear();
+  return `${day}/${month}/${year}`;
+};
+
+const UNIDADES = ['', 'un', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve'];
+const DECENAS = ['diez', 'once', 'doce', 'trece', 'catorce', 'quince', 'dieciséis', 'diecisiete', 'dieciocho', 'diecinueve'];
+const DECENAS_10 = ['', '', 'veinte', 'treinta', 'cuarenta', 'cincuenta', 'sesenta', 'setenta', 'ochenta', 'noventa'];
+const CENTENAS = ['', 'ciento', 'doscientos', 'trescientos', 'cuatrocientos', 'quinientos', 'seiscientos', 'setecientos', 'ochocientos', 'novecientos'];
+
+// Convierte un número entero (0-999) a letras en español
+const centenasALetras = (n) => {
+  if (n === 0) return '';
+  if (n === 100) return 'cien';
+  const c = Math.floor(n / 100);
+  const resto = n % 100;
+  let texto = c > 0 ? CENTENAS[c] : '';
+
+  if (resto > 0) {
+    if (resto < 10) {
+      texto += (texto ? ' ' : '') + UNIDADES[resto];
+    } else if (resto < 20) {
+      texto += (texto ? ' ' : '') + DECENAS[resto - 10];
+    } else {
+      const d = Math.floor(resto / 10);
+      const u = resto % 10;
+      texto += (texto ? ' ' : '') + DECENAS_10[d] + (u > 0 ? ` y ${UNIDADES[u]}` : '');
+    }
+  }
+  return texto.trim();
+};
+
+// Convierte un valor monetario entero a su representación en letras (pesos colombianos)
+const numeroALetras = (valor) => {
+  const entero = Math.round(Math.abs(Number(valor) || 0));
+  if (entero === 0) return 'Cero pesos M/CTE.';
+
+  const millones = Math.floor(entero / 1000000);
+  const miles = Math.floor((entero % 1000000) / 1000);
+  const cientos = entero % 1000;
+
+  let partes = [];
+
+  if (millones > 0) {
+    partes.push(millones === 1 ? 'un millón' : `${centenasALetras(millones)} millones`);
+  }
+  if (miles > 0) {
+    partes.push(miles === 1 ? 'mil' : `${centenasALetras(miles)} mil`);
+  }
+  if (cientos > 0) {
+    partes.push(centenasALetras(cientos));
+  }
+
+  const texto = partes.join(' ').replace(/\s+/g, ' ').trim();
+  const textoCapitalizado = texto.charAt(0).toUpperCase() + texto.slice(1);
+  return `${textoCapitalizado} pesos M/CTE.`;
+};
+
 const CalculadorSueldoVendedor = () => {
   const [vendedores, setVendedores] = useState([]);
   const [vendedorSeleccionado, setVendedorSeleccionado] = useState(null);
@@ -47,6 +109,27 @@ const CalculadorSueldoVendedor = () => {
   // Configuración de sueldo
   const [sueldoBase, setSueldoBase] = useState(1000000);
   const [porcentajeComision, setPorcentajeComision] = useState(4);
+
+  // Colilla de pago (comprobante mensual en PDF)
+  const [mostrarModalColilla, setMostrarModalColilla] = useState(false);
+  const [generandoColilla, setGenerandoColilla] = useState(false);
+  const [datosEmpresa, setDatosEmpresa] = useState({
+    nombre: 'DROGUERÍA JIREH',
+    nit: '52469246-8',
+    telefono: '3209105993',
+    direccion: 'Cra. 80 K # 82 A - 11 Sur Local 2, Bogotá D.C.',
+    representante: 'CAROLINA BERNAL'
+  });
+  const [datosEmpleado, setDatosEmpleado] = useState({
+    cargo: '',
+    cedula: '',
+    contrato: 'Término Indefinido',
+    fechaIngreso: '',
+    diasLiquidados: 30,
+    porcentajeEPS: 4,
+    porcentajeAFP: 4,
+    formaPago: 'Transferencia Electrónica Bancaria'
+  });
 
   // Datos de resultados
   const [datosVendedor, setDatosVendedor] = useState({
@@ -335,6 +418,226 @@ const CalculadorSueldoVendedor = () => {
     };
   }, [sueldoBase, porcentajeComision, datosVendedor.ventasTotal, datosVendedor.cobrosTotal, datosVendedor.saldoTotal]);
 
+  // Genera el comprobante mensual de pago (colilla) en PDF a partir del ingreso mensual total calculado
+  const generarColillaPDF = async () => {
+    try {
+      setGenerandoColilla(true);
+
+      const { jsPDF } = await import('jspdf');
+      const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'letter' });
+
+      const sueldoBaseValor = resumenCalculos.sueldoBase;
+      const comisionValor = resumenCalculos.comisionCalculada;
+      const totalDevengado = resumenCalculos.sueldoMensual;
+      const epsValor = totalDevengado * (datosEmpleado.porcentajeEPS / 100);
+      const afpValor = totalDevengado * (datosEmpleado.porcentajeAFP / 100);
+      const totalDeducciones = epsValor + afpValor;
+      const netoPagado = totalDevengado - totalDeducciones;
+
+      const marginX = 12;
+      const anchoUtil = 210 - marginX * 2;
+      let y = 14;
+
+      // ── Encabezado ──
+      doc.setTextColor(20, 60, 120);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(15);
+      doc.text(datosEmpresa.nombre, marginX, y);
+
+      doc.setFontSize(15);
+      doc.setTextColor(20, 20, 20);
+      doc.text('COMPROBANTE MENSUAL DE PAGO', marginX + anchoUtil, y, { align: 'right' });
+
+      y += 5;
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8.5);
+      doc.setTextColor(70, 70, 70);
+      doc.text(`NIT: ${datosEmpresa.nit}   |   Tel: ${datosEmpresa.telefono}`, marginX, y);
+
+      doc.setFillColor(219, 234, 254);
+      const periodoTexto = `Periodo: ${formatFechaCorta(fechaInicio)} al ${formatFechaCorta(fechaFin)}`;
+      const periodoAncho = doc.getTextWidth(periodoTexto) + 6;
+      doc.roundedRect(marginX + anchoUtil - periodoAncho, y - 4, periodoAncho, 5.5, 1, 1, 'F');
+      doc.setTextColor(29, 78, 216);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(8.5);
+      doc.text(periodoTexto, marginX + anchoUtil - 3, y - 0.3, { align: 'right' });
+
+      y += 4;
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8.5);
+      doc.setTextColor(70, 70, 70);
+      doc.text(datosEmpresa.direccion, marginX, y);
+
+      y += 4;
+      doc.setDrawColor(210, 210, 210);
+      doc.line(marginX, y, marginX + anchoUtil, y);
+
+      // ── Datos del empleado ──
+      y += 6;
+      const colDerechaX = marginX + anchoUtil / 2 + 4;
+      const filaAltura = 5.2;
+
+      const filaDatos = (label, valorIzq, label2, valorDer) => {
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(9);
+        doc.setTextColor(30, 30, 30);
+        doc.text(label, marginX, y);
+        doc.text(label2, colDerechaX, y);
+
+        doc.setFont('helvetica', 'normal');
+        doc.text(String(valorIzq || '-'), marginX + 28, y);
+        doc.text(String(valorDer || '-'), colDerechaX + 32, y);
+        y += filaAltura;
+      };
+
+      filaDatos('Empleado:', datosVendedor.nombre, 'Cargo:', datosEmpleado.cargo);
+      filaDatos('Cédula:', datosEmpleado.cedula, 'Contrato / Ingreso:', `${datosEmpleado.contrato} | ${formatFechaCorta(datosEmpleado.fechaIngreso) || '-'}`);
+
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(9);
+      doc.text('Básico Mensual:', marginX, y);
+      doc.text('Días Liquidados:', colDerechaX, y);
+      doc.setTextColor(20, 60, 120);
+      doc.text(`${formatCurrency(sueldoBaseValor)} COP`, marginX + 28, y);
+      doc.setTextColor(30, 30, 30);
+      doc.setFont('helvetica', 'normal');
+      doc.text(`${datosEmpleado.diasLiquidados} Días`, colDerechaX + 32, y);
+
+      y += 7;
+      doc.setDrawColor(210, 210, 210);
+      doc.line(marginX, y, marginX + anchoUtil, y);
+
+      // ── Tablas Devengados / Deducciones ──
+      y += 5;
+      const anchoTabla = (anchoUtil - 6) / 2;
+      const xIzq = marginX;
+      const xDer = marginX + anchoTabla + 6;
+      const tablaHeaderY = y;
+
+      doc.setFillColor(30, 90, 180);
+      doc.rect(xIzq, tablaHeaderY, anchoTabla, 6, 'F');
+      doc.setFillColor(200, 40, 60);
+      doc.rect(xDer, tablaHeaderY, anchoTabla, 6, 'F');
+      doc.setTextColor(255, 255, 255);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(8.5);
+      doc.text('DEVENGADOS (INGRESOS)', xIzq + 2, tablaHeaderY + 4.2);
+      doc.text('DEDUCCIONES DE LEY', xDer + 2, tablaHeaderY + 4.2);
+
+      y = tablaHeaderY + 9;
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(7.5);
+      doc.setTextColor(90, 90, 90);
+      doc.text('Concepto', xIzq, y);
+      doc.text('Días', xIzq + anchoTabla - 26, y, { align: 'right' });
+      doc.text('Valor ($)', xIzq + anchoTabla, y, { align: 'right' });
+      doc.text('Concepto', xDer, y);
+      doc.text('%', xDer + anchoTabla - 26, y, { align: 'right' });
+      doc.text('Valor ($)', xDer + anchoTabla, y, { align: 'right' });
+
+      y += 2;
+      doc.setDrawColor(220, 220, 220);
+      doc.line(xIzq, y, xIzq + anchoTabla, y);
+      doc.line(xDer, y, xDer + anchoTabla, y);
+
+      y += 4.5;
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8);
+      doc.setTextColor(40, 40, 40);
+      doc.text('Sueldo Básico Mensual', xIzq, y);
+      doc.text(String(datosEmpleado.diasLiquidados), xIzq + anchoTabla - 26, y, { align: 'right' });
+      doc.text(formatCurrency(sueldoBaseValor).replace('$', '').trim(), xIzq + anchoTabla, y, { align: 'right' });
+
+      doc.text(`Aporte Salud (EPS - ${datosEmpleado.porcentajeEPS}%)`, xDer, y);
+      doc.text(`${datosEmpleado.porcentajeEPS}%`, xDer + anchoTabla - 26, y, { align: 'right' });
+      doc.text(formatCurrency(epsValor).replace('$', '').trim(), xDer + anchoTabla, y, { align: 'right' });
+
+      let yFilaExtra = y;
+      if (comisionValor > 0) {
+        yFilaExtra += 5;
+        doc.text(`Comisión por Cobros (${porcentajeComision}%)`, xIzq, yFilaExtra);
+        doc.text('-', xIzq + anchoTabla - 26, yFilaExtra, { align: 'right' });
+        doc.text(formatCurrency(comisionValor).replace('$', '').trim(), xIzq + anchoTabla, yFilaExtra, { align: 'right' });
+      }
+
+      const yAporte2 = y + 5;
+      doc.text(`Aporte Pensión (AFP - ${datosEmpleado.porcentajeAFP}%)`, xDer, yAporte2);
+      doc.text(`${datosEmpleado.porcentajeAFP}%`, xDer + anchoTabla - 26, yAporte2, { align: 'right' });
+      doc.text(formatCurrency(afpValor).replace('$', '').trim(), xDer + anchoTabla, yAporte2, { align: 'right' });
+
+      y = Math.max(yFilaExtra, yAporte2) + 4.5;
+      doc.setDrawColor(210, 210, 210);
+      doc.line(xIzq, y - 3, xIzq + anchoTabla, y - 3);
+      doc.line(xDer, y - 3, xDer + anchoTabla, y - 3);
+
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(8.5);
+      doc.setTextColor(20, 20, 20);
+      doc.text('TOTAL DEVENGADO:', xIzq, y);
+      doc.text(`$${formatCurrency(totalDevengado).replace('$', '').trim()}`, xIzq + anchoTabla, y, { align: 'right' });
+      doc.text('TOTAL DEDUCCIONES:', xDer, y);
+      doc.text(`$${formatCurrency(totalDeducciones).replace('$', '').trim()}`, xDer + anchoTabla, y, { align: 'right' });
+
+      // ── Forma de pago y neto ──
+      y += 9;
+      doc.setDrawColor(200, 200, 200);
+      doc.line(marginX, y - 4, marginX + anchoUtil, y - 4);
+
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(8);
+      doc.setTextColor(30, 30, 30);
+      doc.text('Forma de pago:', marginX, y);
+      doc.setFont('helvetica', 'normal');
+      doc.text(datosEmpleado.formaPago, marginX + 24, y);
+
+      y += 4.5;
+      doc.setFont('helvetica', 'bold');
+      doc.text('Valor en letras:', marginX, y);
+      doc.setFont('helvetica', 'normal');
+      doc.text(numeroALetras(netoPagado), marginX + 24, y);
+
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(8);
+      doc.setTextColor(30, 30, 30);
+      doc.text('NETO MENSUAL PAGADO:', marginX + anchoUtil, y - 4.5, { align: 'right' });
+      doc.setFontSize(11);
+      doc.setTextColor(20, 60, 120);
+      doc.text(`${formatCurrency(netoPagado)} COP`, marginX + anchoUtil, y + 1, { align: 'right' });
+
+      // ── Firmas ──
+      y += 14;
+      doc.setDrawColor(120, 120, 120);
+      doc.line(marginX, y, marginX + 60, y);
+      doc.line(marginX + anchoUtil - 60, y, marginX + anchoUtil, y);
+
+      y += 4;
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(8.5);
+      doc.setTextColor(20, 20, 20);
+      doc.text(datosEmpresa.representante, marginX, y);
+      doc.text(datosVendedor.nombre, marginX + anchoUtil - 60, y);
+
+      y += 4;
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(7.5);
+      doc.setTextColor(80, 80, 80);
+      doc.text(`Representante Legal | ${datosEmpresa.nombre}`, marginX, y);
+      doc.text(`C.C. ${datosEmpleado.cedula || '-'} | Firma Empleado`, marginX + anchoUtil - 60, y);
+
+      const nombreVendedorSlug = (datosVendedor.nombre || 'vendedor').toLowerCase().replace(/\s+/g, '-');
+      const nombreArchivo = `colilla-pago-${nombreVendedorSlug}-${formatInputDate(fechaFin) || formatInputDate(new Date())}.pdf`;
+      doc.save(nombreArchivo);
+
+      setMostrarModalColilla(false);
+    } catch (err) {
+      console.error('Error generando colilla de pago:', err);
+      setError('No se pudo generar la colilla de pago. Intenta nuevamente.');
+    } finally {
+      setGenerandoColilla(false);
+    }
+  };
+
   return (
     <div className="calculador-sueldo">
       <div className="calculador-header">
@@ -507,7 +810,17 @@ const CalculadorSueldoVendedor = () => {
 
             {/* Cálculo de Sueldo */}
             <div className="calculo-sueldo">
-              <h2>🧮 Cálculo de Sueldo Mensual</h2>
+              <div className="calculo-sueldo-header">
+                <h2>🧮 Cálculo de Sueldo Mensual</h2>
+                <button
+                  type="button"
+                  className="btn-generar-colilla"
+                  onClick={() => setMostrarModalColilla(true)}
+                  disabled={cargando}
+                >
+                  🧾 Generar Colilla de Pago (PDF)
+                </button>
+              </div>
               
               <div className="formula">
                 <div className="formula-item">
@@ -616,6 +929,163 @@ const CalculadorSueldoVendedor = () => {
           </div>
         )}
       </div>
+
+      {mostrarModalColilla && (
+        <div className="modal-overlay-colilla" onClick={() => !generandoColilla && setMostrarModalColilla(false)}>
+          <div className="modal-colilla" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-colilla-header">
+              <h3>🧾 Datos para la Colilla de Pago</h3>
+              <button
+                type="button"
+                className="modal-colilla-cerrar"
+                onClick={() => setMostrarModalColilla(false)}
+                disabled={generandoColilla}
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="modal-colilla-body">
+              <p className="modal-colilla-nota">
+                El comprobante usará el <strong>Ingreso Mensual Total</strong> calculado ({formatCurrency(resumenCalculos.sueldoMensual)}) para el empleado <strong>{datosVendedor.nombre}</strong>.
+              </p>
+
+              <h4>Empresa</h4>
+              <div className="modal-colilla-grid">
+                <div className="modal-colilla-campo">
+                  <label>Nombre de la empresa</label>
+                  <input
+                    type="text"
+                    value={datosEmpresa.nombre}
+                    onChange={(e) => setDatosEmpresa({ ...datosEmpresa, nombre: e.target.value })}
+                  />
+                </div>
+                <div className="modal-colilla-campo">
+                  <label>NIT</label>
+                  <input
+                    type="text"
+                    value={datosEmpresa.nit}
+                    onChange={(e) => setDatosEmpresa({ ...datosEmpresa, nit: e.target.value })}
+                  />
+                </div>
+                <div className="modal-colilla-campo">
+                  <label>Teléfono</label>
+                  <input
+                    type="text"
+                    value={datosEmpresa.telefono}
+                    onChange={(e) => setDatosEmpresa({ ...datosEmpresa, telefono: e.target.value })}
+                  />
+                </div>
+                <div className="modal-colilla-campo">
+                  <label>Representante legal</label>
+                  <input
+                    type="text"
+                    value={datosEmpresa.representante}
+                    onChange={(e) => setDatosEmpresa({ ...datosEmpresa, representante: e.target.value })}
+                  />
+                </div>
+                <div className="modal-colilla-campo modal-colilla-campo-full">
+                  <label>Dirección</label>
+                  <input
+                    type="text"
+                    value={datosEmpresa.direccion}
+                    onChange={(e) => setDatosEmpresa({ ...datosEmpresa, direccion: e.target.value })}
+                  />
+                </div>
+              </div>
+
+              <h4>Empleado</h4>
+              <div className="modal-colilla-grid">
+                <div className="modal-colilla-campo">
+                  <label>Cédula</label>
+                  <input
+                    type="text"
+                    value={datosEmpleado.cedula}
+                    onChange={(e) => setDatosEmpleado({ ...datosEmpleado, cedula: e.target.value })}
+                  />
+                </div>
+                <div className="modal-colilla-campo">
+                  <label>Cargo</label>
+                  <input
+                    type="text"
+                    value={datosEmpleado.cargo}
+                    onChange={(e) => setDatosEmpleado({ ...datosEmpleado, cargo: e.target.value })}
+                  />
+                </div>
+                <div className="modal-colilla-campo">
+                  <label>Tipo de contrato</label>
+                  <input
+                    type="text"
+                    value={datosEmpleado.contrato}
+                    onChange={(e) => setDatosEmpleado({ ...datosEmpleado, contrato: e.target.value })}
+                  />
+                </div>
+                <div className="modal-colilla-campo">
+                  <label>Fecha de ingreso</label>
+                  <input
+                    type="date"
+                    value={datosEmpleado.fechaIngreso}
+                    onChange={(e) => setDatosEmpleado({ ...datosEmpleado, fechaIngreso: e.target.value })}
+                  />
+                </div>
+                <div className="modal-colilla-campo">
+                  <label>Días liquidados</label>
+                  <input
+                    type="number"
+                    value={datosEmpleado.diasLiquidados}
+                    onChange={(e) => setDatosEmpleado({ ...datosEmpleado, diasLiquidados: parseInt(e.target.value, 10) || 0 })}
+                  />
+                </div>
+                <div className="modal-colilla-campo">
+                  <label>Forma de pago</label>
+                  <input
+                    type="text"
+                    value={datosEmpleado.formaPago}
+                    onChange={(e) => setDatosEmpleado({ ...datosEmpleado, formaPago: e.target.value })}
+                  />
+                </div>
+                <div className="modal-colilla-campo">
+                  <label>Aporte Salud EPS (%)</label>
+                  <input
+                    type="number"
+                    step="0.1"
+                    value={datosEmpleado.porcentajeEPS}
+                    onChange={(e) => setDatosEmpleado({ ...datosEmpleado, porcentajeEPS: parseFloat(e.target.value) || 0 })}
+                  />
+                </div>
+                <div className="modal-colilla-campo">
+                  <label>Aporte Pensión AFP (%)</label>
+                  <input
+                    type="number"
+                    step="0.1"
+                    value={datosEmpleado.porcentajeAFP}
+                    onChange={(e) => setDatosEmpleado({ ...datosEmpleado, porcentajeAFP: parseFloat(e.target.value) || 0 })}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="modal-colilla-footer">
+              <button
+                type="button"
+                className="btn-secondary"
+                onClick={() => setMostrarModalColilla(false)}
+                disabled={generandoColilla}
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                className="btn-primary"
+                onClick={generarColillaPDF}
+                disabled={generandoColilla}
+              >
+                {generandoColilla ? 'Generando…' : '📄 Generar PDF'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
