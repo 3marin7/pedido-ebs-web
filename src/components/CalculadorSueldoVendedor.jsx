@@ -100,6 +100,8 @@ const numeroALetras = (valor) => {
 const CalculadorSueldoVendedor = () => {
   const [vendedores, setVendedores] = useState([]);
   const [vendedorSeleccionado, setVendedorSeleccionado] = useState(null);
+  const [mostrarNuevoVendedor, setMostrarNuevoVendedor] = useState(false);
+  const [nuevoVendedor, setNuevoVendedor] = useState('');
   const [periodo, setPeriodo] = useState('mes-actual');
   const [fechaInicio, setFechaInicio] = useState('');
   const [fechaFin, setFechaFin] = useState('');
@@ -175,17 +177,18 @@ const CalculadorSueldoVendedor = () => {
   const cargarVendedores = async () => {
     try {
       setError(null);
-      const { data, error: queryError } = await supabase
-        .from('facturas')
-        .select('vendedor')
-        .not('vendedor', 'is', null)
-        .not('vendedor', 'eq', 'Sin asignar')
-        .order('vendedor');
+      const [{ data: facturas, error: errorFacturas }, { data: gastos, error: errorGastos }] = await Promise.all([
+        supabase.from('facturas').select('vendedor').not('vendedor', 'is', null).not('vendedor', 'eq', 'Sin asignar'),
+        supabase.from('gastos_empresa').select('empleado').not('empleado', 'is', null)
+      ]);
 
-      if (queryError) throw queryError;
+      if (errorFacturas) throw errorFacturas;
+      if (errorGastos) throw errorGastos;
 
-      // Obtener vendedores únicos
-      const vendedoresUnicos = Array.from(new Set((data || []).map(f => f.vendedor))).sort();
+      const vendedoresUnicos = Array.from(new Set([
+        ...(facturas || []).map(f => f.vendedor),
+        ...(gastos || []).map(g => g.empleado)
+      ].map(nombre => String(nombre).trim()).filter(Boolean))).sort((a, b) => a.localeCompare(b, 'es'));
       setVendedores(vendedoresUnicos);
 
       if (vendedoresUnicos.length > 0 && !vendedorSeleccionado) {
@@ -195,6 +198,16 @@ const CalculadorSueldoVendedor = () => {
       console.error('Error cargando vendedores:', err);
       setError('Error al cargar lista de vendedores');
     }
+  };
+
+  const agregarNuevoVendedor = () => {
+    const nombre = nuevoVendedor.trim();
+    if (!nombre) return;
+
+    setVendedores(prev => Array.from(new Set([...prev, nombre])).sort((a, b) => a.localeCompare(b, 'es')));
+    setVendedorSeleccionado(nombre);
+    setNuevoVendedor('');
+    setMostrarNuevoVendedor(false);
   };
 
   const cargarDatosVendedor = async () => {
@@ -655,8 +668,18 @@ const CalculadorSueldoVendedor = () => {
         {/* Panel de Control */}
         <div className="control-panel">
           <div className="control-group">
-            <label>Selecciona Vendedor:</label>
+            <div className="control-label-row">
+              <label htmlFor="vendedor-calculador">Selecciona Vendedor o Empleado:</label>
+              <button
+                type="button"
+                className="btn-agregar-vendedor"
+                onClick={() => setMostrarNuevoVendedor(prev => !prev)}
+              >
+                {mostrarNuevoVendedor ? 'Cancelar' : '+ Agregar'}
+              </button>
+            </div>
             <select 
+              id="vendedor-calculador"
               value={vendedorSeleccionado || ''} 
               onChange={(e) => setVendedorSeleccionado(e.target.value)}
               disabled={cargando}
@@ -666,6 +689,21 @@ const CalculadorSueldoVendedor = () => {
                 <option key={v} value={v}>{v}</option>
               ))}
             </select>
+            {mostrarNuevoVendedor && (
+              <div className="nuevo-vendedor-row">
+                <input
+                  type="text"
+                  value={nuevoVendedor}
+                  onChange={(e) => setNuevoVendedor(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === 'Enter') agregarNuevoVendedor(); }}
+                  placeholder="Nombre del vendedor o empleado"
+                  autoFocus
+                />
+                <button type="button" className="btn-confirmar-vendedor" onClick={agregarNuevoVendedor}>
+                  Guardar
+                </button>
+              </div>
+            )}
           </div>
 
           <div className="control-group">
