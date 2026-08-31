@@ -29,7 +29,7 @@ const Login = () => {
     { 
       id: 8,
       username: 'EMC',
-      password: 'superadmin123',
+      password: 'eneasemc',
       role: 'superadmin',
       descripcion: 'SUPERADMIN - Acceso EXCLUSIVO a reportes avanzados. Reporte de clientes por producto, análisis completo.'
     },
