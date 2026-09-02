@@ -167,6 +167,7 @@ const GastosEmpresa = () => {
   };
 
   const empleadosIniciales = [
+    'Empresa',
     'Edwin Marín',
     'Jhon Fredy Marín',
     'Fabian Marín',
@@ -179,7 +180,7 @@ const GastosEmpresa = () => {
   ];
 
   const ordenarEmpleados = (lista) => {
-    const prioridad = ['Edwin Marín', 'Jhon Fredy Marín', 'Paola Huertas', 'Carolina Bernal', 'Fabian Marín', 'Kedma Marín', 'Sharon Marín', 'Kevin Alexander Vanegas', 'Dairon'];
+    const prioridad = ['Empresa', 'Edwin Marín', 'Jhon Fredy Marín', 'Paola Huertas', 'Carolina Bernal', 'Fabian Marín', 'Kedma Marín', 'Sharon Marín', 'Kevin Alexander Vanegas', 'Dairon'];
     const porPrioridad = (nombre) => {
       const indice = prioridad.indexOf(nombre);
       return indice === -1 ? Number.MAX_SAFE_INTEGER : indice;
@@ -195,7 +196,9 @@ const GastosEmpresa = () => {
     if (typeof window === 'undefined') return ordenarEmpleados(empleadosIniciales);
     try {
       const guardados = localStorage.getItem('nominaEmpleados');
-      return guardados ? ordenarEmpleados(JSON.parse(guardados)) : ordenarEmpleados(empleadosIniciales);
+      return guardados
+        ? ordenarEmpleados([...empleadosIniciales, ...JSON.parse(guardados)])
+        : ordenarEmpleados(empleadosIniciales);
     } catch (error) {
       return ordenarEmpleados(empleadosIniciales);
     }
