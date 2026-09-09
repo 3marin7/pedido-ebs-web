@@ -507,6 +507,7 @@ const CatalogoProductos = ({ mode = 'admin' }) => {
   const [editandoId, setEditandoId] = useState(null);
   const [filtroEstado, setFiltroEstado] = useState('activos');
   const [vistaActual, setVistaActual] = useState('catalogo');
+  const [vistaProductos, setVistaProductos] = useState('tarjetas');
   const [modalEliminar, setModalEliminar] = useState({
     isOpen: false,
     productoId: null,
@@ -516,6 +517,7 @@ const CatalogoProductos = ({ mode = 'admin' }) => {
   const [mostrarNotificaciones, setMostrarNotificaciones] = useState(false);
   const [mostrarAccionesMobile, setMostrarAccionesMobile] = useState(false);
   const [navActivoMobile, setNavActivoMobile] = useState('');
+  const [panelCatalogoMobile, setPanelCatalogoMobile] = useState(null);
   const [menuMasAbierto, setMenuMasAbierto] = useState(false);
   const [nuevaPromocion, setNuevaPromocion] = useState({
     productoId: '',
@@ -668,29 +670,16 @@ const CatalogoProductos = ({ mode = 'admin' }) => {
     }
 
     setMenuMasAbierto(false);
+
+    if (item === 'buscar' || item === 'categorias') {
+      const abrirPanel = panelCatalogoMobile === item ? null : item;
+      setPanelCatalogoMobile(abrirPanel);
+      setNavActivoMobile(abrirPanel || '');
+      return;
+    }
+
+    setPanelCatalogoMobile(null);
     setNavActivoMobile(item);
-
-    if (item === 'buscar') {
-      setTimeout(() => {
-        const inputBusqueda = document.getElementById('catalogo-busqueda');
-        if (inputBusqueda) {
-          inputBusqueda.focus();
-          inputBusqueda.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
-      }, 50);
-      return;
-    }
-
-    if (item === 'categorias') {
-      setTimeout(() => {
-        const categoriaSelect = document.getElementById('catalogo-categoria');
-        if (categoriaSelect) {
-          categoriaSelect.focus();
-          categoriaSelect.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
-      }, 50);
-      return;
-    }
 
     if (item === 'nuevo') {
       if (isReadOnly || user?.role === 'inventario') return;
@@ -1521,6 +1510,25 @@ const CatalogoProductos = ({ mode = 'admin' }) => {
               </select>
               <span>Mostrando {productosFiltrados.length} de {productos.length}</span>
             </div>
+            <div className="productos-view-toggle" aria-label="Vista de productos">
+              <span>Vista:</span>
+              <button
+                type="button"
+                className={vistaProductos === 'tarjetas' ? 'active' : ''}
+                onClick={() => setVistaProductos('tarjetas')}
+                aria-label="Vista de tarjetas"
+              >
+                <i className="fas fa-grip"></i> Tarjetas
+              </button>
+              <button
+                type="button"
+                className={vistaProductos === 'lista' ? 'active' : ''}
+                onClick={() => setVistaProductos('lista')}
+                aria-label="Vista de lista"
+              >
+                <i className="fas fa-list"></i> Lista
+              </button>
+            </div>
           </div>
 
           <div className="tabs-container">
@@ -1708,6 +1716,53 @@ const CatalogoProductos = ({ mode = 'admin' }) => {
               <p>Prueba con otros filtros</p>
             </div>
           ) : (
+            vistaProductos === 'lista' ? (
+              <div className="productos-lista-tabla-wrapper">
+                <table className="productos-lista-tabla">
+                  <thead>
+                    <tr>
+                      <th>Nombre</th>
+                      <th>Categoría</th>
+                      <th>Stock</th>
+                      <th>Precio</th>
+                      <th>Estado</th>
+                      {!isReadOnly && user?.role !== 'inventario' && <th>Acciones</th>}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {productosFiltrados.map(producto => (
+                      <tr key={producto.id} className={!producto.activo ? 'inactivo' : ''}>
+                        <td className="lista-nombre">{producto.nombre}</td>
+                        <td>{producto.categoria || 'Sin categoría'}</td>
+                        <td>{producto.stock || 0}</td>
+                        <td>{formatPrecio(producto.precio)}</td>
+                        <td>
+                          <span className={`lista-estado ${producto.activo ? 'activo' : 'inactivo'}`}>
+                            {producto.activo ? 'ACTIVO' : 'INACTIVO'}
+                          </span>
+                        </td>
+                        {!isReadOnly && user?.role !== 'inventario' && (
+                          <td className="lista-acciones">
+                            <button className="action-button toggle-button" onClick={() => toggleEstadoProducto(producto.id)}>
+                              <i className={`fas ${producto.activo ? 'fa-eye-slash' : 'fa-eye'}`}></i>
+                              {producto.activo ? 'Desactivar' : 'Activar'}
+                            </button>
+                            <button className="action-button edit-button" onClick={() => editarProducto(producto)}>
+                              <i className="fas fa-edit"></i> Editar
+                            </button>
+                            {!producto.activo && (
+                              <button className="action-button delete-button" onClick={() => abrirModalEliminar(producto.id, producto.nombre)}>
+                                <i className="fas fa-trash"></i> Eliminar
+                              </button>
+                            )}
+                          </td>
+                        )}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
             <div className="productos-grid">
               {productosFiltrados.map(producto => (
                 <div key={producto.id} className={`producto-card ${!producto.activo ? 'inactivo' : ''}`}>
@@ -1779,11 +1834,51 @@ const CatalogoProductos = ({ mode = 'admin' }) => {
                 </div>
               ))}
             </div>
+            )
           )}
         </>
       )}
 
       {!mostrarFormulario && (
+        <>
+          {panelCatalogoMobile === 'buscar' && (
+            <div className="catalogo-mobile-panel catalogo-mobile-panel--buscar">
+              <label htmlFor="catalogo-busqueda-mobile">Buscar productos</label>
+              <div className="catalogo-mobile-search">
+                <i className="fas fa-search"></i>
+                <input
+                  id="catalogo-busqueda-mobile"
+                  type="search"
+                  placeholder="Buscar por nombre o código..."
+                  value={busqueda}
+                  onChange={(e) => setBusqueda(e.target.value)}
+                  autoFocus
+                />
+                {busqueda && (
+                  <button type="button" onClick={() => setBusqueda('')} aria-label="Limpiar búsqueda">
+                    <i className="fas fa-times"></i>
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
+
+          {panelCatalogoMobile === 'categorias' && (
+            <div className="catalogo-mobile-panel catalogo-mobile-panel--categorias">
+              <label htmlFor="catalogo-categoria-mobile">Filtrar productos</label>
+              <select
+                id="catalogo-categoria-mobile"
+                value={categoriaFiltro}
+                onChange={(e) => setCategoriaFiltro(e.target.value)}
+                autoFocus
+              >
+                <option value="Todas">Todas las categorías</option>
+                {categorias.map(cat => <option key={cat} value={cat}>{cat}</option>)}
+              </select>
+              <span>Mostrando {productosFiltrados.length} de {productos.length}</span>
+            </div>
+          )}
+
         <div className="bottom-nav-mobile" role="navigation" aria-label="Navegación del catálogo">
           {[
             { key: 'buscar', label: 'Buscar', icon: 'fa-magnifying-glass' },
@@ -1802,6 +1897,7 @@ const CatalogoProductos = ({ mode = 'admin' }) => {
             </button>
           ))}
         </div>
+        </>
       )}
 
       {!mostrarFormulario && menuMasAbierto && (

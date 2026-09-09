@@ -272,8 +272,8 @@
 }
 
 .facturas-compacta-wrapper .cpp-table {
-  min-width: 0;
-  table-layout: fixed;
+  min-width: 1080px;
+  table-layout: auto;
   font-size: 12px;
   display: table;
 }
@@ -297,6 +297,7 @@
   display: table-cell;
   vertical-align: middle;
   overflow: hidden;
+  white-space: nowrap;
 }
 
 .facturas-compacta-wrapper .cpp-table th,
@@ -306,28 +307,24 @@
 
 .facturas-compacta-wrapper .cpp-table th:nth-child(1),
 .facturas-compacta-wrapper .cpp-table td:nth-child(1) {
-  width: 17%;
-  min-width: 0;
+  min-width: 190px;
 }
 
 .facturas-compacta-wrapper .cpp-table th:nth-child(2),
 .facturas-compacta-wrapper .cpp-table td:nth-child(2) {
-  width: 12%;
-  min-width: 0;
+  min-width: 130px;
 }
 
 .facturas-compacta-wrapper .cpp-table th:nth-child(3),
 .facturas-compacta-wrapper .cpp-table td:nth-child(3) {
-  width: 8%;
-  min-width: 0;
+  min-width: 85px;
 }
 
 .facturas-compacta-wrapper .cpp-table th:nth-child(4),
 .facturas-compacta-wrapper .cpp-table td:nth-child(4),
 .facturas-compacta-wrapper .cpp-table th:nth-child(5),
 .facturas-compacta-wrapper .cpp-table td:nth-child(5) {
-  width: 10%;
-  min-width: 0;
+  min-width: 125px;
 }
 
 .facturas-compacta-wrapper .cpp-table th:nth-child(6),
@@ -336,21 +333,34 @@
 .facturas-compacta-wrapper .cpp-table td:nth-child(7),
 .facturas-compacta-wrapper .cpp-table th:nth-child(8),
 .facturas-compacta-wrapper .cpp-table td:nth-child(8) {
-  width: 10%;
-  min-width: 0;
+  min-width: 125px;
   padding-right: 7px;
 }
 
 .facturas-compacta-wrapper .cpp-table th:nth-child(9),
 .facturas-compacta-wrapper .cpp-table td:nth-child(9) {
-  width: 9%;
-  min-width: 0;
+  min-width: 115px;
 }
 
 .facturas-compacta-wrapper .cpp-table th:nth-child(10),
 .facturas-compacta-wrapper .cpp-table td:nth-child(10) {
-  width: 12%;
-  min-width: 0;
+  min-width: 145px;
+}
+
+.facturas-compacta-wrapper .cpp-table th:last-child,
+.facturas-compacta-wrapper .cpp-table td:last-child {
+  position: sticky;
+  right: 0;
+  background: #fff;
+  box-shadow: -6px 0 10px rgba(15, 23, 42, 0.1);
+}
+
+.facturas-compacta-wrapper .cpp-table thead th:last-child {
+  background: #f8fafc;
+}
+
+.facturas-compacta-wrapper .cpp-table tbody tr:hover td:last-child {
+  background: #f8fafc;
 }
 
 .facturas-compacta-wrapper .cpp-table td:first-child strong,

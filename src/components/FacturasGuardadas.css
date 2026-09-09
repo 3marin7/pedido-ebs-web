@@ -1953,11 +1953,21 @@
 /* Ajustes para el contenedor principal en móvil */
 @media (max-width: 768px) {
   .facturas-container {
-    padding: 15px;
+    padding: 15px 15px calc(210px + env(safe-area-inset-bottom));
   }
   
   .facturas-header {
     margin-bottom: 20px;
+  }
+
+  .factura-card-footer {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .factura-card-footer .button {
+    width: 100%;
+    min-height: 44px;
   }
 }/* En tu archivo FacturasGuardadas.css - Agregar estos estilos */
 

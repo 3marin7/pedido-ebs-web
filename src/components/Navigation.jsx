@@ -99,7 +99,9 @@ const Navigation = () => {
             { path: '/reportes-cobros', label: 'Informe de Cobros', icon: '💰' },
             { path: '/plan-seguimiento-ventas', label: 'Plan Seguimiento Ventas', icon: '🎯' },
             { path: '/calculador-sueldo-vendedor', label: 'Calculador Sueldo Vendedor', icon: '💰' },
-            { path: '/reporte-clientes-producto', label: 'Clientes por Producto', icon: '👥' }
+            { path: '/reporte-clientes-producto', label: 'Clientes por Producto', icon: '👥' },
+            { path: '/gestion-inmuebles', label: 'Informes Arriendos', icon: '🏢' },
+            { path: '/compras-inmuebles', label: 'Comprar Inmueble', icon: '🏠' }
           ]
         },
         // CONTABILIDAD - Grupo
@@ -165,7 +167,9 @@ const Navigation = () => {
             { path: '/plan-seguimiento-ventas', label: 'Plan Seguimiento Ventas', icon: '🎯' },
             { path: '/calculador-sueldo-vendedor', label: 'Calculador Sueldo Vendedor', icon: '💰' },
             { path: '/reporte-clientes-producto', label: 'Clientes por Producto', icon: '👥' },
-            { path: '/rutas-cobro', label: 'Rutas de Cobro', icon: '🚗' }
+            { path: '/rutas-cobro', label: 'Rutas de Cobro', icon: '🚗' },
+            { path: '/gestion-inmuebles', label: 'Informes Arriendos', icon: '🏢' },
+            { path: '/compras-inmuebles', label: 'Comprar Inmueble', icon: '🏠' }
           ]
         },
         // CONTABILIDAD - Grupo

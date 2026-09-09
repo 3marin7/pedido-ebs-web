@@ -33,6 +33,8 @@ import CalculadorSueldoVendedor from './components/CalculadorSueldoVendedor';
 import PlanSeguimientoVentas from './components/PlanSeguimientoVentas';
 import MundialEBS from './components/MundialEBS';
 import AdminProductosPreventa from './components/AdminProductosPreventa';
+import GestionInmuebles from './components/GestionInmuebles';
+import ComprasInmuebles from './components/ComprasInmuebles';
 
 // Contexto de autenticación
 const AuthContext = createContext();
@@ -313,6 +315,24 @@ function App() {
                   <PageMeta title="Mapa de Locales - EBS" description="Mapa interactivo de locales y ubicaciones" />
                   <MallMap />
                 </>
+              </ProtectedRoute>
+            } />
+
+            <Route path="/gestion-inmuebles" element={
+              <ProtectedRoute requiredRoles={['superadmin', 'admin']}>
+                <><PageMeta title="Gestión de Inmuebles - EBS" description="Dashboard de propiedades, arriendos y servicios públicos" /><GestionInmuebles /></>
+              </ProtectedRoute>
+            } />
+
+            <Route path="/gestion-inmuebles/:unidad" element={
+              <ProtectedRoute requiredRoles={['superadmin', 'admin']}>
+                <><PageMeta title="Detalle de Inmueble - EBS" description="Detalle de arriendos y servicios públicos" /><GestionInmuebles /></>
+              </ProtectedRoute>
+            } />
+
+            <Route path="/compras-inmuebles" element={
+              <ProtectedRoute requiredRoles={['superadmin', 'admin']}>
+                <><PageMeta title="Compra de Inmuebles - EBS" description="Control de compras, abonos y saldos de inmuebles" /><ComprasInmuebles /></>
               </ProtectedRoute>
             } />
             
