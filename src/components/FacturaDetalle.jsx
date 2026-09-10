@@ -1043,6 +1043,12 @@ const FacturaDetalle = () => {
     });
   };
 
+  const formatearFechaCorta = (fecha) => {
+    const fechaLocal = parseDateLocal(fecha);
+    if (!fechaLocal) return 'Fecha invalida';
+    return `${fechaLocal.getDate()}/${fechaLocal.getMonth() + 1}/${String(fechaLocal.getFullYear()).slice(-2)}`;
+  };
+
   // Normalizar número de teléfono a formato internacional mínimo (solo dígitos)
   const normalizarTelefono = (tel) => {
     if (!tel) return '';
@@ -1233,10 +1239,10 @@ const FacturaDetalle = () => {
         <table className="productos-table">
           <thead>
             <tr>
-              <th>Producto</th>
-              <th>Cantidad</th>
-              <th>Precio Unitario</th>
-              <th>Subtotal</th>
+              <th>Prod.</th>
+              <th>Cant.</th>
+              <th>P Unit</th>
+              <th>Subt.</th>
             </tr>
           </thead>
           <tbody>
@@ -1376,7 +1382,7 @@ const FacturaDetalle = () => {
               <tbody>
                 {abonos.map((abono) => (
                   <tr key={abono.id}>
-                    <td>{formatearFecha(abono.fecha)}</td>
+                    <td>{formatearFechaCorta(abono.fecha)}</td>
                     <td>{formatearMoneda(abono.monto)}</td>
                     <td>{abono.metodo || 'Efectivo'}</td>
                     <td>{abono.nota || '-'}</td>

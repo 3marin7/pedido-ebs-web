@@ -196,7 +196,28 @@
 .productos-table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 500px; /* Mínimo ancho para evitar compresión excesiva */
+  min-width: 500px;
+  table-layout: fixed;
+}
+
+.productos-table th:nth-child(1),
+.productos-table td:nth-child(1) {
+  width: 44%;
+  overflow-wrap: anywhere;
+}
+
+.productos-table th:nth-child(2),
+.productos-table td:nth-child(2) {
+  width: 12%;
+  white-space: nowrap;
+}
+
+.productos-table th:nth-child(3),
+.productos-table td:nth-child(3),
+.productos-table th:nth-child(4),
+.productos-table td:nth-child(4) {
+  width: 22%;
+  white-space: nowrap;
 }
 
 .productos-table th {
@@ -509,6 +530,180 @@
   .button {
     padding: 0.5rem 0.8rem;
     font-size: 0.8rem;
+  }
+}
+
+/* En móvil cada fila se presenta como una ficha para evitar que las columnas se amontonen. */
+@media (max-width: 767px) {
+  .productos-table-container,
+  .abonos-table-container {
+    overflow-x: visible;
+  }
+
+  .productos-table,
+  .abonos-table {
+    width: 100%;
+    min-width: 0;
+    border-collapse: separate;
+    border-spacing: 0 0.75rem;
+  }
+
+  .productos-table thead,
+  .abonos-table thead {
+    display: none;
+  }
+
+  .productos-table tbody tr,
+  .abonos-table tbody tr {
+    display: block;
+    padding: 0.75rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  }
+
+  .productos-table tbody td,
+  .abonos-table tbody td {
+    display: table-cell;
+    width: auto;
+    padding: 0.65rem 0.8rem;
+    border-bottom: 1px solid #eee;
+    font-size: 0.9rem;
+    overflow-wrap: normal;
+    word-break: normal;
+  }
+
+  .productos-table tbody td:last-child,
+  .abonos-table tbody td:last-child {
+    border-bottom: none;
+  }
+
+  .productos-table tbody td::before,
+  .abonos-table tbody td::before {
+    content: none;
+  }
+
+  .productos-table tfoot,
+  .productos-table tfoot tr {
+    display: table-row-group;
+  }
+
+  .productos-table tfoot tr {
+    padding: 0;
+    border-top: 0;
+  }
+
+  .productos-table tfoot td {
+    display: table-cell;
+    width: auto;
+    padding: 0.65rem 0.8rem;
+    border: 0;
+  }
+
+  .productos-table tfoot .total-label {
+    margin-right: 0.75rem;
+    text-align: left;
+  }
+
+  .productos-table tfoot .total-value {
+    font-weight: 700;
+  }
+
+  .acciones-cell {
+    white-space: normal;
+  }
+
+  .acciones-cell .button {
+    margin-right: 0.4rem;
+  }
+}
+
+/* Alternativa móvil: conservar la tabla y permitir desplazamiento sin solapamientos. */
+@media (max-width: 767px) {
+  .productos-table-container,
+  .abonos-table-container {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .productos-table,
+  .abonos-table {
+    display: table;
+    width: 100%;
+    min-width: 680px;
+    table-layout: fixed;
+    border-collapse: collapse;
+    border-spacing: 0;
+  }
+
+  .productos-table thead,
+  .abonos-table thead {
+    display: table-header-group;
+  }
+
+  .productos-table tbody,
+  .abonos-table tbody {
+    display: table-row-group;
+  }
+
+  .productos-table tbody tr,
+  .abonos-table tbody tr {
+    display: table-row;
+    padding: 0;
+    border: 0;
+    box-shadow: none;
+  }
+
+  .productos-table th,
+  .productos-table td,
+  .abonos-table th,
+  .abonos-table td {
+    display: table-cell;
+    width: auto;
+    white-space: nowrap;
+    padding: 0.65rem 0.8rem;
+  }
+
+  .productos-table td:first-child {
+    width: 30%;
+    white-space: normal;
+  }
+
+  .productos-table th:nth-child(1),
+  .productos-table td:nth-child(1) { width: 32%; }
+  .productos-table th:nth-child(2),
+  .productos-table td:nth-child(2) { width: 14%; }
+  .productos-table th:nth-child(3),
+  .productos-table td:nth-child(3),
+  .productos-table th:nth-child(4),
+  .productos-table td:nth-child(4) { width: 27%; }
+
+  .abonos-table th:nth-child(1),
+  .abonos-table td:nth-child(1) { width: 18%; }
+  .abonos-table th:nth-child(2),
+  .abonos-table td:nth-child(2) { width: 20%; }
+  .abonos-table th:nth-child(3),
+  .abonos-table td:nth-child(3) { width: 18%; }
+  .abonos-table th:nth-child(4),
+  .abonos-table td:nth-child(4) { width: 29%; white-space: normal; }
+  .abonos-table th:nth-child(5),
+  .abonos-table td:nth-child(5) { width: 15%; }
+
+  .productos-table tbody td::before,
+  .abonos-table tbody td::before {
+    content: none;
+  }
+
+  .productos-table tfoot,
+  .productos-table tfoot tr {
+    display: table-footer-group;
+  }
+
+  .productos-table tfoot td {
+    display: table-cell;
+    white-space: nowrap;
   }
 }
 

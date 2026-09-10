@@ -21,7 +21,6 @@ import GestionInventario from './components/GestionInventario';
 import DashboardVentas from './components/DashboardVentas';
 import MallMap from './components/MallMap';
 import RutasCobro from './components/RutasCobro';
-import GastosScreen from './components/GastosScreen';
 import GastosEmpresa from './components/GastosEmpresa';
 import CuentasPorPagar from './components/CuentasPorPagar';
 import ContabilidadScreen from './components/ContabilidadScreen';
@@ -401,8 +400,8 @@ function App() {
             <Route path="/gastos" element={
               <ProtectedRoute requiredRoles={['superadmin', 'admin', 'contabilidad', 'vendedor']}>
                 <>
-                  <PageMeta title="Gestión de Gastos - EBS" description="Control y análisis de gastos" />
-                  <GastosScreen />
+                  <PageMeta title="Gastos de la Empresa - EBS" description="Control de gastos operacionales" />
+                  <GastosEmpresa />
                 </>
               </ProtectedRoute>
             } />
