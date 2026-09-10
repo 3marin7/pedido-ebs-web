@@ -34,6 +34,7 @@ import MundialEBS from './components/MundialEBS';
 import AdminProductosPreventa from './components/AdminProductosPreventa';
 import GestionInmuebles from './components/GestionInmuebles';
 import ComprasInmuebles from './components/ComprasInmuebles';
+import GestionPlataformas from './components/GestionPlataformas';
 
 // Contexto de autenticación
 const AuthContext = createContext();
@@ -332,6 +333,12 @@ function App() {
             <Route path="/compras-inmuebles" element={
               <ProtectedRoute requiredRoles={['superadmin', 'admin']}>
                 <><PageMeta title="Compra de Inmuebles - EBS" description="Control de compras, abonos y saldos de inmuebles" /><ComprasInmuebles /></>
+              </ProtectedRoute>
+            } />
+
+            <Route path="/gestion-plataformas" element={
+              <ProtectedRoute requiredRoles={['superadmin', 'admin']}>
+                <><PageMeta title="Plataformas Arrendadas - EBS" description="Control de contratos, facturación e infraestructura técnica de clientes" /><GestionPlataformas /></>
               </ProtectedRoute>
             } />
             

@@ -101,7 +101,8 @@ const Navigation = () => {
             { path: '/calculador-sueldo-vendedor', label: 'Calculador Sueldo Vendedor', icon: '💰' },
             { path: '/reporte-clientes-producto', label: 'Clientes por Producto', icon: '👥' },
             { path: '/gestion-inmuebles', label: 'Informes Arriendos', icon: '🏢' },
-            { path: '/compras-inmuebles', label: 'Comprar Inmueble', icon: '🏠' }
+            { path: '/compras-inmuebles', label: 'Comprar Inmueble', icon: '🏠' },
+            { path: '/gestion-plataformas', label: 'Plataformas Arrendadas', icon: '☁️' }
           ]
         },
         // CONTABILIDAD - Grupo
@@ -169,7 +170,8 @@ const Navigation = () => {
             { path: '/reporte-clientes-producto', label: 'Clientes por Producto', icon: '👥' },
             { path: '/rutas-cobro', label: 'Rutas de Cobro', icon: '🚗' },
             { path: '/gestion-inmuebles', label: 'Informes Arriendos', icon: '🏢' },
-            { path: '/compras-inmuebles', label: 'Comprar Inmueble', icon: '🏠' }
+            { path: '/compras-inmuebles', label: 'Comprar Inmueble', icon: '🏠' },
+            { path: '/gestion-plataformas', label: 'Plataformas Arrendadas', icon: '☁️' }
           ]
         },
         // CONTABILIDAD - Grupo
