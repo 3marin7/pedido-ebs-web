@@ -437,7 +437,7 @@
 /* RESPONSIVE - Estilos para móviles (MENÚ HAMBURGUESA) */
 @media (max-width: 768px) {
   .navigation {
-    padding: 0.6rem 1rem;
+    padding: max(0.6rem, env(safe-area-inset-top)) 1rem 0.6rem;
     position: fixed;
     top: 0;
     left: 0;
@@ -457,7 +457,7 @@
 
   .nav-links {
     position: fixed;
-    top: 70px;
+    top: calc(70px + env(safe-area-inset-top));
     left: 10px;
     right: 10px;
     background: linear-gradient(180deg, rgba(24, 62, 176, 0.99), rgba(17, 46, 138, 0.98));
@@ -472,7 +472,7 @@
     opacity: 0;
     visibility: hidden;
     transition: transform 0.22s ease, opacity 0.22s ease, visibility 0.22s ease;
-    max-height: calc(100vh - 84px);
+    max-height: calc(100vh - 84px - env(safe-area-inset-top));
     overflow-y: auto;
     z-index: 999;
     backdrop-filter: blur(12px);

@@ -180,7 +180,7 @@ body {
 /* ===== FILTROS COMPACTOS ===== */
 .sticky-filters {
   position: fixed;
-  bottom: 96px;
+  bottom: calc(96px + env(safe-area-inset-bottom));
   z-index: 1100;
   background: rgba(255, 255, 255, 0.97);
   border: 1px solid rgba(15, 23, 42, 0.08);
@@ -845,7 +845,7 @@ body {
 .more-menu {
   position: fixed;
   right: 12px;
-  bottom: 98px;
+  bottom: calc(98px + env(safe-area-inset-bottom));
   background: rgba(255, 255, 255, 0.98);
   border: 1px solid #ececec;
   border-radius: 16px;
@@ -1942,6 +1942,10 @@ body {
 
 /* Safe areas para iPhone */
 @supports (padding: max(0px)) {
+  .catalogo-mobile {
+    padding-top: max(0px, env(safe-area-inset-top));
+  }
+
   .app-header {
     padding-left: max(10px, env(safe-area-inset-left));
     padding-right: max(10px, env(safe-area-inset-right));

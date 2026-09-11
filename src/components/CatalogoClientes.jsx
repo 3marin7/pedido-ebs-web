@@ -771,6 +771,29 @@ const CatalogoClientes = ({ priceMultiplier = 1, variantTitle = 'Catálogo de Pr
                 <option value="precio-asc">Precio: Menor a Mayor</option>
                 <option value="precio-desc">Precio: Mayor a Menor</option>
               </select>
+
+              <div className="view-toggle" role="group" aria-label="Cambiar vista de productos">
+                <button
+                  type="button"
+                  className={`view-btn ${vistaActual === 'grid' ? 'active' : ''}`}
+                  onClick={() => cambiarVista('grid')}
+                  title="Vista Cuadrícula"
+                  aria-label="Vista Cuadrícula"
+                  aria-pressed={vistaActual === 'grid'}
+                >
+                  <i className="fas fa-th"></i>
+                </button>
+                <button
+                  type="button"
+                  className={`view-btn ${vistaActual === 'lista' ? 'active' : ''}`}
+                  onClick={() => cambiarVista('lista')}
+                  title="Vista Lista"
+                  aria-label="Vista Lista"
+                  aria-pressed={vistaActual === 'lista'}
+                >
+                  <i className="fas fa-list"></i>
+                </button>
+              </div>
               
             </div>
           </div>
