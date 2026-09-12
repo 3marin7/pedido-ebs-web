@@ -1,5 +1,5 @@
 import React from 'react';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import CampanaCatalogo from '../CampanaCatalogo';
 
@@ -11,6 +11,13 @@ const mockTableData = {
       telefono: '3222466661',
       clasificacion: 3,
       centro_comercial: 'Droguerias'
+    },
+    {
+      id: 2,
+      nombre: 'TIENDA DEL CENTRO',
+      telefono: '3001234567',
+      clasificacion: 3,
+      centro_comercial: 'CC ferrocarril'
     }
   ],
   facturas: [],
@@ -58,7 +65,7 @@ describe('CampanaCatalogo', () => {
     });
 
     expect(screen.getByText('Clientes aptos para compartir catálogo')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Enviar por WhatsApp' })).toBeInTheDocument();
+    expect(screen.getAllByRole('button', { name: 'Enviar por WhatsApp' }).length).toBeGreaterThan(0);
   });
 
   test('bloquea envio por WhatsApp cuando no hay URL publica valida', async () => {
@@ -68,7 +75,7 @@ describe('CampanaCatalogo', () => {
       expect(screen.getByText('CRISTINA DROGUERIA ARLET')).toBeInTheDocument();
     });
 
-    fireEvent.click(screen.getByRole('button', { name: 'Enviar por WhatsApp' }));
+    fireEvent.click(screen.getAllByRole('button', { name: 'Enviar por WhatsApp' })[0]);
 
     expect(
       screen.getByText(/No se puede enviar por WhatsApp mientras la URL p[uú]blica siga vac[ií]a o apunte a localhost/i)
@@ -91,7 +98,7 @@ describe('CampanaCatalogo', () => {
       expect(screen.getByText(/URL p[uú]blica guardada: https:\/\/pedido-ebs-web\.vercel\.app/i)).toBeInTheDocument();
     });
 
-    fireEvent.click(screen.getByRole('button', { name: 'Enviar por WhatsApp' }));
+    fireEvent.click(screen.getAllByRole('button', { name: 'Enviar por WhatsApp' })[0]);
 
     expect(window.open).toHaveBeenCalledTimes(1);
 
@@ -123,5 +130,39 @@ describe('CampanaCatalogo', () => {
     await waitFor(() => {
       expect(navigator.clipboard.writeText).toHaveBeenCalledWith('https://pedido-ebs-web.vercel.app');
     });
+  });
+
+  test('filtra la campaña para mostrar solo droguerías', async () => {
+    render(<CampanaCatalogo />);
+
+    await waitFor(() => {
+      expect(screen.getByText('TIENDA DEL CENTRO')).toBeInTheDocument();
+    });
+
+    fireEvent.change(screen.getByRole('combobox', { name: 'Enviar campaña a' }), {
+      target: { value: 'droguerias' }
+    });
+
+    expect(screen.getByText('CRISTINA DROGUERIA ARLET')).toBeInTheDocument();
+    expect(screen.queryByText('TIENDA DEL CENTRO')).not.toBeInTheDocument();
+    const totalCard = screen.getByText('Total evaluados').closest('.stat-card');
+    expect(totalCard).not.toBeNull();
+    expect(within(totalCard).getByText('1')).toBeInTheDocument();
+  });
+
+  test('permite seleccionar un centro comercial específico', async () => {
+    render(<CampanaCatalogo />);
+
+    await waitFor(() => {
+      expect(screen.getByText('CRISTINA DROGUERIA ARLET')).toBeInTheDocument();
+    });
+
+    const selector = screen.getByRole('combobox', { name: 'Enviar campaña a' });
+    expect(screen.getByRole('option', { name: 'Solo CC ferrocarril' })).toBeInTheDocument();
+
+    fireEvent.change(selector, { target: { value: 'centro:cc ferrocarril' } });
+
+    expect(screen.getByText('TIENDA DEL CENTRO')).toBeInTheDocument();
+    expect(screen.queryByText('CRISTINA DROGUERIA ARLET')).not.toBeInTheDocument();
   });
 });

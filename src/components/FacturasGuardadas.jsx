@@ -387,7 +387,12 @@ const FacturasGuardadas = () => {
     }
     
     const facturaAEliminar = facturas.find(f => f.id === id);
-    const facturasConSaldo = calcularSaldos([facturaAEliminar], abonos);
+    if (!facturaAEliminar) {
+      setErrorPassword('No se encontró la factura seleccionada. Recarga la página e inténtalo nuevamente.');
+      return;
+    }
+
+    const facturasConSaldo = calcularSaldos([facturaAEliminar], abonosPorFactura);
     const tieneSaldoPendiente = (facturasConSaldo[0]?.saldo || 0) > SALDO_EPSILON;
     
     if (tieneSaldoPendiente) {
@@ -424,7 +429,7 @@ const FacturasGuardadas = () => {
       
     } catch (error) {
       console.error("Error eliminando factura:", error);
-      alert('Error al eliminar la factura');
+      alert(`No se pudo eliminar la factura: ${error.message || 'Error desconocido'}`);
     } finally {
       setCargando(false);
       setMostrarConfirmacion(null);

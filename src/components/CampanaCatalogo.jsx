@@ -100,6 +100,13 @@ const formatearFecha = (fecha) => {
   });
 };
 
+const normalizarTexto = (valor) =>
+  String(valor || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .trim()
+    .toLowerCase();
+
 const cargarHistorialEnvios = () => {
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
@@ -159,9 +166,19 @@ const CampanaCatalogo = () => {
   const [error, setError] = useState('');
   const [mostrarNoAptos, setMostrarNoAptos] = useState(false);
   const [soloConTelefono, setSoloConTelefono] = useState(true);
+  const [segmentoCliente, setSegmentoCliente] = useState('todos');
   const [mensajeAccion, setMensajeAccion] = useState('');
   const [publicBaseUrl, setPublicBaseUrl] = useState(obtenerBaseUrlInicial);
   const [publicBaseUrlInput, setPublicBaseUrlInput] = useState(obtenerBaseUrlInicial);
+
+  const centrosComerciales = useMemo(() => {
+    const centros = clientes
+      .map((cliente) => String(cliente.centro_comercial || '').trim())
+      .filter(Boolean);
+
+    return [...new Map(centros.map((centro) => [normalizarTexto(centro), centro])).entries()]
+      .sort((left, right) => left[1].localeCompare(right[1], 'es'));
+  }, [clientes]);
 
   useEffect(() => {
     setHistorialEnvios(cargarHistorialEnvios());
@@ -297,27 +314,39 @@ const CampanaCatalogo = () => {
       };
     });
 
-    const aptos = campaignRows
+    const clientesSegmentados = campaignRows.filter((cliente) => {
+      if (segmentoCliente === 'droguerias') {
+        return normalizarTexto(cliente.centro_comercial) === 'droguerias';
+      }
+
+      if (segmentoCliente.startsWith('centro:')) {
+        return normalizarTexto(cliente.centro_comercial) === segmentoCliente.slice('centro:'.length);
+      }
+
+      return true;
+    });
+
+    const aptos = clientesSegmentados
       .filter((cliente) => (soloConTelefono ? !!cliente.telefonoWhatsApp : true))
       .filter((cliente) => cliente.apto)
       .sort((left, right) => right.puntajeCampana - left.puntajeCampana);
 
-    const noAptos = campaignRows
+    const noAptos = clientesSegmentados
       .filter((cliente) => cliente.razonesBloqueo.length > 0)
       .sort((left, right) => right.totalSaldoPendiente - left.totalSaldoPendiente);
 
-    const enviadosRecientes = campaignRows.filter(
+    const enviadosRecientes = clientesSegmentados.filter(
       (cliente) => cliente.diasDesdeUltimoEnvio !== null && cliente.diasDesdeUltimoEnvio < reglas.diasReenvio
     ).length;
 
     return {
       aptos,
       noAptos,
-      totalClientes: campaignRows.length,
+      totalClientes: clientesSegmentados.length,
       enviadosRecientes,
       ultimaActualizacion: new Date().toISOString()
     };
-  }, [abonos, clientes, facturas, historialEnvios, reglas, soloConTelefono]);
+  }, [abonos, clientes, facturas, historialEnvios, reglas, segmentoCliente, soloConTelefono]);
 
   // Usa exactamente la URL pública configurada por el usuario.
   const linkCatalogo = publicBaseUrl ? `${normalizarBaseUrl(publicBaseUrl)}` : '';
@@ -502,6 +531,25 @@ const CampanaCatalogo = () => {
           </div>
         </section>
 
+        <section className="criterios-panel campaign-segment-panel">
+          <div className="panel-header">
+            <h2>Segmento de campaña</h2>
+            <p>Selecciona qué tipo de clientes quieres incluir antes de enviar el catálogo.</p>
+          </div>
+          <label>
+            <span>Enviar campaña a</span>
+            <select value={segmentoCliente} onChange={(event) => setSegmentoCliente(event.target.value)}>
+              <option value="todos">Todos los clientes</option>
+              <option value="droguerias">Solo droguerías</option>
+              {centrosComerciales.map(([valor, etiqueta]) => (
+                <option key={valor} value={`centro:${valor}`}>
+                  Solo {etiqueta}
+                </option>
+              ))}
+            </select>
+          </label>
+        </section>
+
         {mensajeAccion && <div className="campana-feedback">{mensajeAccion}</div>}
         {error && <div className="campana-error">{error}</div>}
 
@@ -611,14 +659,6 @@ const CampanaCatalogo = () => {
                     <div>
                       <span>Saldo pendiente</span>
                       <strong>{formatearMoneda(cliente.totalSaldoPendiente)}</strong>
-                    </div>
-                    <div>
-                      <span>Facturas pendientes</span>
-                      <strong>{cliente.cantidadFacturasPendientes}</strong>
-                    </div>
-                    <div>
-                      <span>Atraso máximo</span>
-                      <strong>{cliente.maxDiasAtraso} días</strong>
                     </div>
                   </div>
 
