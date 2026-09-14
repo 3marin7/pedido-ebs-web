@@ -1907,6 +1907,7 @@ button {
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0,0,0,0.1);
   margin-top: 20px;
+  min-width: 0;
 }
 
 .reporte-inventario h2 {
@@ -1973,10 +1974,13 @@ button {
 .tabla-reporte-container {
   overflow-x: auto;
   margin-top: 20px;
+  max-width: 100%;
+  -webkit-overflow-scrolling: touch;
 }
 
 .tabla-reporte {
-  width: 100%;
+  width: max-content;
+  min-width: 100%;
   border-collapse: collapse;
   font-size: 14px;
 }
@@ -1986,6 +1990,7 @@ button {
   padding: 12px 15px;
   text-align: left;
   border-bottom: 1px solid #ecf0f1;
+  white-space: nowrap;
 }
 
 .tabla-reporte th {
@@ -2634,6 +2639,7 @@ button {
   
   .tabla-reporte {
     font-size: 12px;
+    min-width: 980px;
   }
   
   .tabla-reporte th,

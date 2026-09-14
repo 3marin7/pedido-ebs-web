@@ -29,6 +29,8 @@ const ClientesScreen = ({
   const [cargandoClientes, setCargandoClientes] = useState(true);
   const [error, setError] = useState(null);
   const [mostrarEstadisticas, setMostrarEstadisticas] = useState(false);
+  const [vistaClientes, setVistaClientes] = useState('tarjetas');
+  const [mostrarReporteDatos, setMostrarReporteDatos] = useState(false);
 
   // Cargar clientes al montar el componente
   useEffect(() => {
@@ -291,6 +293,7 @@ const ClientesScreen = ({
         Codigo_Cliente: cliente.codigo_cliente || '',
         Nombre: cliente.nombre || '',
         Telefono: cliente.telefono || '',
+        Centro_Comercial: cliente.centro_comercial || '',
         Correo: cliente.correo || '',
         Direccion: cliente.direccion || '',
         Clasificacion: cliente.clasificacion || 3,
@@ -428,6 +431,107 @@ const ClientesScreen = ({
     return (coincideNombre || coincideTelefono || coincideCorreo || coincideCodigo) && coincideClasificacion && coincideCentro;
   });
 
+  const reporteDatos = clientes.map((cliente) => {
+    const faltantes = [
+      !String(cliente.telefono || '').trim() && 'Teléfono',
+      !String(cliente.centro_comercial || '').trim() && 'Centro comercial',
+      !String(cliente.direccion || '').trim() && 'Dirección',
+      !String(cliente.correo || '').trim() && 'Correo'
+    ].filter(Boolean);
+
+    return {
+      ...cliente,
+      faltantes,
+      datosCompletos: faltantes.length === 0
+    };
+  });
+
+  const clientesConDatosFaltantes = reporteDatos.filter((cliente) => !cliente.datosCompletos);
+
+  const exportarReporteDatos = () => {
+    if (clientes.length === 0) {
+      setError('No hay clientes para generar el reporte');
+      return;
+    }
+
+    const filasReporte = reporteDatos.map((cliente) => ({
+      ID: cliente.id,
+      Codigo_Cliente: cliente.codigo_cliente || '',
+      Nombre: cliente.nombre || '',
+      Telefono: cliente.telefono || '',
+      Centro_Comercial: cliente.centro_comercial || '',
+      Direccion: cliente.direccion || '',
+      Correo: cliente.correo || '',
+      Clasificacion: cliente.clasificacion || 3,
+      Datos_Completos: cliente.datosCompletos ? 'Sí' : 'No',
+      Informacion_Faltante: cliente.faltantes.join(', ')
+    }));
+
+    const workbook = XLSX.utils.book_new();
+    const worksheet = XLSX.utils.json_to_sheet(filasReporte);
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Datos faltantes');
+    XLSX.writeFile(workbook, `reporte_datos_clientes_${formatInputDateLocal(new Date())}.xlsx`, {
+      bookType: 'xlsx'
+    });
+    alert(`✅ Se generó el reporte de ${filasReporte.length} clientes`);
+  };
+
+  const imprimirFormatoActualizacion = () => {
+    if (clientes.length === 0) {
+      setError('No hay clientes para imprimir');
+      return;
+    }
+
+    const clientesAImprimir = clientesConDatosFaltantes.length > 0
+      ? clientesConDatosFaltantes
+      : reporteDatos;
+    const escaparHtml = (valor) => String(valor || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+    const filas = clientesAImprimir.map((cliente) => `
+      <tr>
+        <td><strong>${escaparHtml(cliente.nombre)}</strong><br><small>Código: ${escaparHtml(cliente.codigo_cliente || 'Sin código')}</small></td>
+        <td>${escaparHtml(cliente.telefono)}</td>
+        <td>${escaparHtml(cliente.centro_comercial)}</td>
+        <td>${escaparHtml(cliente.direccion)}</td>
+        <td>${escaparHtml(cliente.correo)}</td>
+        <td class="check"></td>
+      </tr>
+    `).join('');
+    const ventana = window.open('', '_blank', 'noopener,noreferrer');
+
+    if (!ventana) {
+      setError('El navegador bloqueó la ventana de impresión. Permite ventanas emergentes e inténtalo nuevamente.');
+      return;
+    }
+
+    ventana.document.write(`<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Formato de actualización de clientes</title><style>
+      @page { size: landscape; margin: 12mm; }
+      * { box-sizing: border-box; }
+      body { font-family: Arial, sans-serif; color: #172b4d; margin: 0; }
+      h1 { font-size: 20px; margin: 0 0 4px; }
+      p { margin: 0 0 12px; color: #526581; font-size: 11px; }
+      .meta { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 11px; }
+      table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+      th, td { border: 1px solid #9aa9bc; padding: 7px; vertical-align: top; font-size: 10px; height: 34px; word-wrap: break-word; }
+      th { background: #e8eef7; text-align: left; font-size: 10px; }
+      th:nth-child(1) { width: 21%; } th:nth-child(2) { width: 14%; } th:nth-child(3) { width: 15%; } th:nth-child(4) { width: 22%; } th:nth-child(5) { width: 20%; } th:nth-child(6) { width: 8%; }
+      .check { height: 34px; }
+      .footer { margin-top: 10px; font-size: 10px; color: #526581; }
+    </style></head><body>
+      <h1>Formato de actualización de clientes</h1>
+      <p>Completar manualmente los datos faltantes y entregar para actualizar el sistema.</p>
+      <div class="meta"><span>Total de registros: ${clientesAImprimir.length}</span><span>Fecha: ${formatInputDateLocal(new Date())}</span></div>
+      <table><thead><tr><th>Cliente / código</th><th>Teléfono</th><th>Centro comercial</th><th>Dirección</th><th>Correo</th><th>Revisado</th></tr></thead><tbody>${filas}</tbody></table>
+      <div class="footer">Marque “Revisado” cuando la información haya sido confirmada.</div>
+    </body></html>`);
+    ventana.document.close();
+    ventana.focus();
+    ventana.print();
+  };
+
   return (
     <div className="clientes-modal">
       <div className="clientes-content">
@@ -486,6 +590,28 @@ const ClientesScreen = ({
               <option value="Droguerias">Droguerias</option>
             </select>
           </div>
+          <div className="clientes-view-toggle" role="group" aria-label="Vista de clientes">
+            <button
+              type="button"
+              className={vistaClientes === 'tarjetas' ? 'active' : ''}
+              onClick={() => setVistaClientes('tarjetas')}
+              aria-label="Vista de tarjetas"
+              aria-pressed={vistaClientes === 'tarjetas'}
+            >
+              <i className="fas fa-th-large"></i>
+              <span>Tarjetas</span>
+            </button>
+            <button
+              type="button"
+              className={vistaClientes === 'lista' ? 'active' : ''}
+              onClick={() => setVistaClientes('lista')}
+              aria-label="Vista de lista"
+              aria-pressed={vistaClientes === 'lista'}
+            >
+              <i className="fas fa-list"></i>
+              <span>Lista</span>
+            </button>
+          </div>
         </div>
         
         {cargandoClientes ? (
@@ -523,15 +649,12 @@ const ClientesScreen = ({
             </div>
             
             {!clienteEditando && (
-              <div className="clientes-list">
+              <div className={`clientes-list clientes-list--${vistaClientes}`}>
                 {clientesFiltrados.length > 0 ? (
                   clientesFiltrados.map(cliente => (
-                    <div 
-                      key={cliente.id} 
-                      className="cliente-item"
-                    >
+                    <div key={cliente.id} className="clientes-screen-item">
                       <div 
-                        className="cliente-info"
+                        className="clientes-screen-info"
                         onClick={() => seleccionarCliente(cliente)}
                       >
                         <h4>{cliente.nombre}</h4>
@@ -546,7 +669,7 @@ const ClientesScreen = ({
                         {cliente.correo && <p>📧 Email: {cliente.correo}</p>}
                         {cliente.direccion && <p>📍 Dir: {cliente.direccion}</p>}
                       </div>
-                      <div className="cliente-acciones">
+                      <div className="clientes-screen-actions">
                         <button
                           className="button info-button"
                           onClick={(e) => {
@@ -689,6 +812,30 @@ const ClientesScreen = ({
               <span className="badge-count">{clientes.length}</span>
             )}
           </button>
+
+          <button
+            className="button primary-button"
+            onClick={() => setMostrarReporteDatos((prev) => !prev)}
+            disabled={clientes.length === 0 || importandoClientes || cargandoClientes}
+          >
+            📋 {mostrarReporteDatos ? 'Ocultar reporte' : 'Reporte datos faltantes'}
+          </button>
+
+          <button
+            className="button info-button"
+            onClick={exportarReporteDatos}
+            disabled={clientes.length === 0 || importandoClientes || cargandoClientes}
+          >
+            📥 Descargar reporte Excel
+          </button>
+
+          <button
+            className="button secondary-button"
+            onClick={imprimirFormatoActualizacion}
+            disabled={clientes.length === 0 || importandoClientes || cargandoClientes}
+          >
+            🖨️ Imprimir formato manual
+          </button>
           
           <label 
             htmlFor="importar-clientes" 
@@ -713,6 +860,39 @@ const ClientesScreen = ({
             </div>
           )}
         </div>
+
+        {mostrarReporteDatos && (
+          <section className="clientes-data-report" aria-label="Reporte de datos faltantes">
+            <div className="clientes-data-report-header">
+              <div>
+                <h3>Reporte de información faltante</h3>
+                <p>{clientesConDatosFaltantes.length} de {clientes.length} clientes necesitan actualización.</p>
+              </div>
+              <div className="clientes-data-report-summary">
+                <span>Teléfono: {reporteDatos.filter((cliente) => cliente.faltantes.includes('Teléfono')).length}</span>
+                <span>Centro comercial: {reporteDatos.filter((cliente) => cliente.faltantes.includes('Centro comercial')).length}</span>
+                <span>Dirección: {reporteDatos.filter((cliente) => cliente.faltantes.includes('Dirección')).length}</span>
+                <span>Correo: {reporteDatos.filter((cliente) => cliente.faltantes.includes('Correo')).length}</span>
+              </div>
+            </div>
+            <div className="clientes-data-report-list">
+              {clientesConDatosFaltantes.length === 0 ? (
+                <p className="clientes-data-report-complete">Todos los clientes tienen la información principal completa.</p>
+              ) : (
+                clientesConDatosFaltantes.map((cliente) => (
+                  <div key={cliente.id} className="clientes-data-report-row">
+                    <strong>{cliente.nombre}</strong>
+                    <span>{cliente.centro_comercial || 'Sin centro comercial'}</span>
+                    <span className="clientes-data-report-missing">Falta: {cliente.faltantes.join(', ')}</span>
+                    <button className="button info-button" onClick={() => iniciarEdicionCliente(cliente)}>
+                      Editar
+                    </button>
+                  </div>
+                ))
+              )}
+            </div>
+          </section>
+        )}
       </div>
     </div>
   );

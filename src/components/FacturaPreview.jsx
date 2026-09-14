@@ -29,7 +29,8 @@ const FacturaPreview = ({ factura, onVolver, onGuardar, cargando }) => {
         </div>
       </div>
 
-      <table className="tabla-productos">
+      <div className="tabla-productos-wrapper">
+        <table className="tabla-productos">
         <thead>
           <tr>
             <th>Cantidad</th>
@@ -48,7 +49,8 @@ const FacturaPreview = ({ factura, onVolver, onGuardar, cargando }) => {
             </tr>
           ))}
         </tbody>
-      </table>
+        </table>
+      </div>
 
       <div className="total">
         <h3>TOTAL: ${factura.total?.toFixed(2) || "0.00"}</h3>

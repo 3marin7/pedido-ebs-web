@@ -1626,13 +1626,15 @@
 }
 
 .facturas-table {
+  max-width: 100%;
   overflow-x: auto;
   border: 1px solid #e2e8f0;
   border-radius: 10px;
 }
 
 .facturas-table table {
-  width: 100%;
+  width: max-content;
+  min-width: 900px;
   border-collapse: collapse;
   font-size: 14px;
 }
@@ -1655,6 +1657,7 @@
   padding: 12px;
   border-bottom: 1px solid #e2e8f0;
   color: #2d3748;
+  white-space: nowrap;
 }
 
 .facturas-table tbody tr.vencida {

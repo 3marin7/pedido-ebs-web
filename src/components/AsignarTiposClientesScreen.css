@@ -120,7 +120,8 @@
 }
 
 .asignar-tipos-screen .tabla-clientes {
-  width: 100%;
+  width: max-content;
+  min-width: 760px;
   border-collapse: collapse;
   font-size: 13px;
 }
@@ -137,6 +138,7 @@
   padding: 15px;
   text-align: left;
   font-size: 12px;
+  white-space: nowrap;
 }
 
 .asignar-tipos-screen .tabla-clientes tbody tr {

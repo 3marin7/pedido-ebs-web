@@ -367,7 +367,8 @@
 }
 
 .data-table {
-  width: 100%;
+  width: max-content;
+  min-width: 760px;
   border-collapse: collapse;
   font-size: 14px;
 }
@@ -386,6 +387,7 @@
   padding: 12px;
   border-bottom: 1px solid #e9ecef;
   vertical-align: middle;
+  white-space: nowrap;
 }
 
 .data-table tbody tr:hover {

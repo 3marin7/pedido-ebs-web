@@ -263,13 +263,15 @@
 /* Tablas */
 .tabla-container {
   overflow-x: auto;
+  max-width: 100%;
   background-color: white;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
 table {
-  width: 100%;
+  width: max-content;
+  min-width: 760px;
   border-collapse: collapse;
   font-size: 14px;
 }
@@ -288,6 +290,7 @@ td {
   padding: 12px 15px;
   border-bottom: 1px solid #e9ecef;
   color: #495057;
+  white-space: nowrap;
 }
 
 td.total {

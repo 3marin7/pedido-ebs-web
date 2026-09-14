@@ -589,13 +589,15 @@
 /* Mejoras para la tabla */
 .clients-table-container {
   max-height: 400px;
-  overflow-y: auto;
+  max-width: 100%;
+  overflow: auto;
   border: 1px solid #ddd;
   border-radius: 8px;
 }
 
 .clients-table {
-  width: 100%;
+  width: max-content;
+  min-width: 720px;
   border-collapse: collapse;
 }
 
@@ -613,6 +615,7 @@
 .clients-table td {
   padding: 10px 8px;
   border-bottom: 1px solid #eee;
+  white-space: nowrap;
 }
 
 .clients-table tr.selected {

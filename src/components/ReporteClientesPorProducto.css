@@ -444,7 +444,8 @@
 }
 
 .tabla-clientes {
-  width: 100%;
+  width: max-content;
+  min-width: 760px;
   border-collapse: collapse;
   background: var(--white);
 }
@@ -465,6 +466,7 @@
   padding: 14px 12px;
   border-bottom: 1px solid var(--border-color);
   font-size: 0.95rem;
+  white-space: nowrap;
 }
 
 .tabla-clientes tbody tr {

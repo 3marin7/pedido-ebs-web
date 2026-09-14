@@ -221,7 +221,8 @@
 }
 
 .tabla-auditoria {
-  width: 100%;
+  width: max-content;
+  min-width: 760px;
   border-collapse: collapse;
   font-size: 0.95em;
 }
@@ -246,6 +247,10 @@
 
 .tabla-auditoria tbody tr:hover {
   background-color: #f8f9fa;
+}
+
+.tabla-auditoria td {
+  white-space: nowrap;
 }
 
 .tabla-auditoria td {

@@ -300,11 +300,19 @@
 }
 
 .tabla-clientes-compra {
-  width: 100%;
+  width: max-content;
+  min-width: 520px;
   border-collapse: collapse;
   background: white;
   border-radius: 5px;
   overflow: hidden;
+}
+
+.clientes-top,
+.tabla-reporte-wrapper {
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .tabla-clientes-compra thead {
@@ -580,7 +588,8 @@
 }
 
 .tabla-cobros-vendedor {
-  width: 100%;
+  width: max-content;
+  min-width: 600px;
   border-collapse: collapse;
   background: white;
 }
@@ -594,6 +603,7 @@
   padding: 12px;
   border-bottom: 1px solid #e2e8f0;
   text-align: left;
+  white-space: nowrap;
 }
 
 .tabla-cobros-vendedor th {

@@ -47,9 +47,16 @@
 }
 
 .tabla-productos {
-  width: 100%;
+  width: max-content;
+  min-width: 560px;
   border-collapse: collapse;
   margin: 20px 0;
+}
+
+.tabla-productos-wrapper {
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .tabla-productos th {

@@ -56,7 +56,8 @@
 }
 
 .tabla-productos table {
-  width: 100%;
+  width: max-content;
+  min-width: 760px;
   border-collapse: collapse;
 }
 
@@ -73,6 +74,7 @@
 .tabla-productos td {
   padding: 12px;
   border-bottom: 1px solid #eee;
+  white-space: nowrap;
 }
 
 .tabla-productos tr:hover {
