@@ -22,12 +22,19 @@ a:hover {
   color: #535bf2;
 }
 
-body {
+html, body, #root {
   margin: 0;
-  display: flex;
-  place-items: center;
+  width: 100%;
   min-width: 320px;
+  min-height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+body {
+  display: block;
   min-height: 100vh;
+  -webkit-overflow-scrolling: touch;
 }
 
 h1 {
