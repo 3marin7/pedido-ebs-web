@@ -443,6 +443,7 @@
     left: 0;
     right: 0;
     width: 100%;
+    background-clip: padding-box;
   }
 
   .nav-container {
@@ -591,10 +592,7 @@
     backdrop-filter: blur(2px);
   }
 
-  /* Asegura que el contenido principal no quede detrás de la navegación fija */
-  body {
-    padding-top: 60px;
-  }
+  /* No forzamos padding-top al body porque genera la franja blanca en iPhone. */
 }
 
 /* Para pantallas muy pequeñas */
@@ -609,16 +607,12 @@
   }
 
   .navigation {
-    padding: 0.5rem;
+    padding: max(0.5rem, env(safe-area-inset-top)) 0.5rem 0.5rem;
   }
 
   .nav-links {
     top: 50px;
     height: calc(100vh - 50px);
-  }
-
-  body {
-    padding-top: 50px;
   }
 }
 

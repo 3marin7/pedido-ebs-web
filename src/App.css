@@ -168,6 +168,7 @@ input, select, textarea, button {
 @media (max-width: 768px) {
   body {
     -webkit-overflow-scrolling: touch;
+    padding-top: 0 !important;
   }
   
   .main-container {
@@ -179,21 +180,23 @@ input, select, textarea, button {
     padding: 1rem;
     margin-bottom: 1rem;
   }
-}/* Asegura que el contenido no quede oculto detrás de la barra de navegación fija */
+}
+
+/* Asegura que el contenido no quede oculto detrás de la barra de navegación fija */
 body {
   margin: 0;
   padding: 0;
 }
 
-/* Para dispositivos móviles */
-@media (max-width: 768px) {
-  body {
-    padding-top: 60px !important;
+/* Evita franja blanca en iPhone cuando la barra del navegador/estado cambia */
+@supports (padding: max(0px)) {
+  html, body {
+    min-height: 100dvh;
   }
 }
 
 @media (max-width: 480px) {
   body {
-    padding-top: 50px !important;
+    padding-top: 0 !important;
   }
 }
