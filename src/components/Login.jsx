@@ -29,13 +29,13 @@ const Login = () => {
     { 
       id: 8,
       username: 'EMC',
-      password: 'eneasemc',
+      password: 'superadmin123',
       role: 'superadmin',
       descripcion: 'SUPERADMIN - Acceso EXCLUSIVO a reportes avanzados. Reporte de clientes por producto, análisis completo.'
     },
     { 
       id: 3, 
-      username: 'Kevin', 
+      username: 'sharon',
       password: 'sharon1310', 
       role: 'inventario',
       descripcion: 'Bodega (Inventario) - Crear facturas, catálogo, gestión de inventario, gestión de pedidos.'

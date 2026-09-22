@@ -934,7 +934,9 @@ const RutasCobro = () => {
   const irAFacturaPorId = (facturaId) => {
     if (!facturaId) return;
     cerrarDetallesDeuda();
-    navigate(`/factura/${facturaId}`);
+    navigate(`/factura/${facturaId}`, {
+      state: { returnTo: '/rutas-cobro' }
+    });
   };
 
   const irARutaGenerada = () => {

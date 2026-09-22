@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from './supabaseClient';
 import { useAuth } from '../App';
 import './FacturaDetalle.css';
@@ -34,12 +34,14 @@ const formatDateLocal = (valor, locale = 'es-ES', options = {}) => {
 const FacturaDetalle = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const { user } = useAuth();
   const [factura, setFactura] = useState(null);
   const [cargando, setCargando] = useState(true);
   const [copiado, setCopiado] = useState(false);
   const [abonos, setAbonos] = useState([]);
   const [telefonoVendedor, setTelefonoVendedor] = useState('');
+  const returnTo = location.state?.returnTo || '/facturas';
     // Consultar teléfono del vendedor
     useEffect(() => {
       const obtenerTelefonoVendedor = async () => {
@@ -1148,7 +1150,7 @@ const FacturaDetalle = () => {
         <h2>Cuenta de cobro no encontrada</h2>
         <button 
           className="button primary-button"
-          onClick={() => navigate('/facturas')}
+          onClick={() => navigate(returnTo)}
         >
           Volver al listado
         </button>
@@ -1164,7 +1166,7 @@ const FacturaDetalle = () => {
       <div className="factura-actions-bar">
         <button 
           className="button secondary-button"
-          onClick={() => navigate('/facturas')}
+          onClick={() => navigate(returnTo)}
         >
           &larr; Volver
         </button>

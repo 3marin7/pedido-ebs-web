@@ -99,7 +99,7 @@ const FacturasGuardadas = () => {
   const [importando, setImportando] = useState(false);
   const [errorImportacion, setErrorImportacion] = useState(null);
   const [mostrarPagadas, setMostrarPagadas] = useState(false);
-  const [vistaTabla, setVistaTabla] = useState(false);
+  const [vistaActual, setVistaActual] = useState('tarjeta');
   const [password, setPassword] = useState('');
   const [errorPassword, setErrorPassword] = useState('');
   const [resumenActivo, setResumenActivo] = useState('general');
@@ -720,12 +720,13 @@ const FacturasGuardadas = () => {
   };
 
   return (
-    <div className="facturas-container">
+    <div className={`facturas-container ${menuAbierto ? 'facturas-menu-open' : ''}`}>
       {/* Overlay para cerrar menú */}
       {menuAbierto && (
         <div 
-          className="menu-overlay"
+          className="menu-overlay active"
           onClick={() => setMenuAbierto(false)}
+          aria-hidden="true"
         ></div>
       )}
 
@@ -809,16 +810,35 @@ const FacturasGuardadas = () => {
             <i className={`fas fa-${mostrarPagadas ? 'eye' : 'eye-slash'}`}></i> 
             {mostrarPagadas ? 'Mostrando Todas' : 'Solo Pendientes'}
           </button>
-          <button 
-            className={`menu-btn ${vistaTabla ? 'active' : ''}`}
+          <button
+            className={`menu-btn ${vistaActual === 'lista' ? 'active' : ''}`}
             onClick={() => {
-              setVistaTabla(!vistaTabla);
+              setVistaActual('lista');
               setMenuAbierto(false);
             }}
             disabled={importando || cargando}
           >
-            <i className={`fas fa-${vistaTabla ? 'th-large' : 'list'}`}></i> 
-            {vistaTabla ? 'Vista Tarjeta' : 'Vista Tabla'}
+            <i className="fas fa-list"></i> Vista de lista
+          </button>
+          <button
+            className={`menu-btn ${vistaActual === 'tabla' ? 'active' : ''}`}
+            onClick={() => {
+              setVistaActual('tabla');
+              setMenuAbierto(false);
+            }}
+            disabled={importando || cargando}
+          >
+            <i className="fas fa-table"></i> Vista tabla
+          </button>
+          <button
+            className={`menu-btn ${vistaActual === 'tarjeta' ? 'active' : ''}`}
+            onClick={() => {
+              setVistaActual('tarjeta');
+              setMenuAbierto(false);
+            }}
+            disabled={importando || cargando}
+          >
+            <i className="fas fa-th-large"></i> Vista tarjetas
           </button>
           <button 
             className={`menu-btn ${mostrarResumen ? 'active' : ''}`}
@@ -911,11 +931,25 @@ const FacturasGuardadas = () => {
                 {mostrarPagadas ? 'Mostrando Todas' : 'Solo Pendientes'}
               </button>
               <button 
-                className={`button ${vistaTabla ? 'success-button' : 'secondary-button'}`}
-                onClick={() => setVistaTabla(!vistaTabla)}
+                className={`button ${vistaActual === 'lista' ? 'success-button' : 'secondary-button'}`}
+                onClick={() => setVistaActual('lista')}
                 disabled={importando || cargando}
               >
-                <i className={`fas fa-${vistaTabla ? 'th-large' : 'list'}`}></i> {vistaTabla ? 'Vista Tarjeta' : 'Vista Tabla'}
+                <i className="fas fa-list"></i> Vista de lista
+              </button>
+              <button
+                className={`button ${vistaActual === 'tabla' ? 'success-button' : 'secondary-button'}`}
+                onClick={() => setVistaActual('tabla')}
+                disabled={importando || cargando}
+              >
+                <i className="fas fa-table"></i> Vista tabla
+              </button>
+              <button
+                className={`button ${vistaActual === 'tarjeta' ? 'success-button' : 'secondary-button'}`}
+                onClick={() => setVistaActual('tarjeta')}
+                disabled={importando || cargando}
+              >
+                <i className="fas fa-th-large"></i> Vista tarjeta
               </button>
               <button 
                 className="button secondary-button"
@@ -942,6 +976,34 @@ const FacturasGuardadas = () => {
           <i className="fas fa-exclamation-circle"></i> {errorImportacion}
         </div>
       )}
+
+      <div className="vista-facturas-selector" aria-label="Vista de facturas">
+        <span className="vista-facturas-label">Ver como:</span>
+        <button
+          type="button"
+          className={vistaActual === 'lista' ? 'active' : ''}
+          onClick={() => setVistaActual('lista')}
+          disabled={importando || cargando}
+        >
+          <i className="fas fa-list"></i> Lista
+        </button>
+        <button
+          type="button"
+          className={vistaActual === 'tabla' ? 'active' : ''}
+          onClick={() => setVistaActual('tabla')}
+          disabled={importando || cargando}
+        >
+          <i className="fas fa-table"></i> Tabla
+        </button>
+        <button
+          type="button"
+          className={vistaActual === 'tarjeta' ? 'active' : ''}
+          onClick={() => setVistaActual('tarjeta')}
+          disabled={importando || cargando}
+        >
+          <i className="fas fa-th-large"></i> Tarjetas
+        </button>
+      </div>
 
       <div className="filtros-container">
         <div className="search-box">
@@ -1266,7 +1328,7 @@ const FacturasGuardadas = () => {
           </p>
         </div>
       ) : (
-        vistaTabla ? (
+        vistaActual === 'tabla' ? (
           <div className="tabla-container">
             <div className="tabla-scroll">
               <table className="facturas-table">
@@ -1314,6 +1376,28 @@ const FacturasGuardadas = () => {
                 </tbody>
               </table>
             </div>
+          </div>
+        ) : vistaActual === 'lista' ? (
+          <div className="facturas-lista-nueva" aria-label="Lista de facturas">
+            {facturasPaginadas.map((factura) => (
+              <article key={factura.id} className="factura-lista-item">
+                <div className="factura-lista-principal">
+                  <strong className="factura-lista-cliente">{factura.cliente || 'Cliente sin nombre'}</strong>
+                  <span className="factura-lista-codigo">Factura #{factura.id.toString().padStart(6, '0')}</span>
+                </div>
+                <time className="factura-lista-fecha">{formatFecha(factura.fecha)}</time>
+                <strong className={`factura-lista-saldo ${factura.saldo > 0 ? 'saldo-pendiente' : 'saldo-pagado'}`}>
+                  {formatMoneda(factura.saldo)}
+                </strong>
+                <button
+                  className="button primary-button small-button factura-lista-detalle"
+                  onClick={() => navigate(`/factura/${factura.id}`)}
+                  disabled={importando || cargando}
+                >
+                  <i className="fas fa-eye"></i> Ver detalle
+                </button>
+              </article>
+            ))}
           </div>
         ) : (
           <div className="facturas-grid">
@@ -1572,9 +1656,14 @@ const FacturasGuardadas = () => {
           <button className="fnav-more-item" onClick={() => { setMenuMasAbierto(false); setNavActivoMobile(''); exportarCSV(); }}>
             <i className="fas fa-file-csv"></i> Exportar CSV
           </button>
-          <button className="fnav-more-item" onClick={() => { setMenuMasAbierto(false); setNavActivoMobile(''); setVistaTabla(v => !v); }}>
-            <i className={`fas fa-${vistaTabla ? 'th-large' : 'table'}`}></i>
-            {vistaTabla ? 'Vista Tarjetas' : 'Vista Tabla'}
+          <button className="fnav-more-item" onClick={() => { setMenuMasAbierto(false); setNavActivoMobile(''); setVistaActual('lista'); }}>
+            <i className="fas fa-list"></i> Vista de lista
+          </button>
+          <button className="fnav-more-item" onClick={() => { setMenuMasAbierto(false); setNavActivoMobile(''); setVistaActual('tabla'); }}>
+            <i className="fas fa-table"></i> Vista tabla
+          </button>
+          <button className="fnav-more-item" onClick={() => { setMenuMasAbierto(false); setNavActivoMobile(''); setVistaActual('tarjeta'); }}>
+            <i className="fas fa-th-large"></i> Vista tarjetas
           </button>
           <button className="fnav-more-item" onClick={() => { setMenuMasAbierto(false); setNavActivoMobile(''); navigate('/rutas-cobro'); }}>
             <i className="fas fa-route"></i> Rutas de Cobro

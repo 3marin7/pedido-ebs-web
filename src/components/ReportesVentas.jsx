@@ -75,13 +75,35 @@ const ReportesVentas = () => {
   const [fechaInicio, setFechaInicio] = useState('');
   const [fechaFin, setFechaFin] = useState('');
   const [filtroVendedor, setFiltroVendedor] = useState('Todos');
+  const [filtroCentroComercial, setFiltroCentroComercial] = useState('Todos');
+  const [centrosComerciales, setCentrosComerciales] = useState([]);
 
   useEffect(() => {
     const cargarDatos = async () => {
       try {
         setCargando(true);
-        const facturasData = await fetchAllRows('facturas', 'fecha', false);
-        setFacturas(facturasData || []);
+        const [facturasData, clientesData] = await Promise.all([
+          fetchAllRows('facturas', 'fecha', false),
+          fetchAllRows('clientes', 'nombre', true)
+        ]);
+
+        const centrosPorCliente = new Map(
+          (clientesData || [])
+            .filter((cliente) => cliente.nombre && cliente.centro_comercial)
+            .map((cliente) => [String(cliente.nombre).trim().toLowerCase(), String(cliente.centro_comercial).trim()])
+        );
+        const facturasConCentro = (facturasData || []).map((factura) => ({
+          ...factura,
+          centro_comercial: factura.centro_comercial || centrosPorCliente.get(String(factura.cliente || '').trim().toLowerCase()) || ''
+        }));
+
+        setFacturas(facturasConCentro);
+        setCentrosComerciales([
+          ...new Set([
+            ...(facturasConCentro || []).map((factura) => factura.centro_comercial),
+            ...(clientesData || []).map((cliente) => cliente.centro_comercial)
+          ].map((centro) => String(centro || '').trim()).filter(Boolean))
+        ].sort((a, b) => a.localeCompare(b, 'es')));
 
         const hoy = new Date();
         const primerDiaMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
@@ -103,6 +125,7 @@ const ReportesVentas = () => {
   const facturasFiltradas = (facturas || [])
     .filter((factura) => {
       if (filtroVendedor !== 'Todos' && factura.vendedor !== filtroVendedor) return false;
+      if (filtroCentroComercial !== 'Todos' && factura.centro_comercial !== filtroCentroComercial) return false;
       const fecha = normalizarFechaISO(factura.fecha);
       if (!fecha) return false;
       if (fechaInicio && fecha < fechaInicio) return false;
@@ -252,6 +275,18 @@ const ReportesVentas = () => {
                 <option value="Todos">Todos los vendedores</option>
                 {vendedores.map((vendedor) => (
                   <option key={vendedor} value={vendedor}>{vendedor}</option>
+                ))}
+              </select>
+            </label>
+          </div>
+
+          <div className="filtro-group">
+            <label>
+              <i className="fas fa-store"></i> Centro comercial / droguería:
+              <select value={filtroCentroComercial} onChange={(e) => setFiltroCentroComercial(e.target.value)}>
+                <option value="Todos">Todos los centros</option>
+                {centrosComerciales.map((centro) => (
+                  <option key={centro} value={centro}>{centro}</option>
                 ))}
               </select>
             </label>

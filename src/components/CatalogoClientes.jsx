@@ -4,6 +4,14 @@ import { supabase } from './supabaseClient';
 import { formatInputDateLocal } from '../lib/dateUtils';
 import './CatalogoClientes.css';
 
+const normalizarCategoriaUrl = (valor) => String(valor || '')
+  .normalize('NFD')
+  .replace(/[\u0300-\u036f]/g, '')
+  .replace(/[_-]+/g, ' ')
+  .replace(/\s+/g, ' ')
+  .trim()
+  .toLowerCase();
+
 const CatalogoClientes = ({ priceMultiplier = 1, variantTitle = 'Catálogo de Productos' }) => {
   const [productos, setProductos] = useState([]);
   const [productosSeleccionados, setProductosSeleccionados] = useState([]);
@@ -36,6 +44,26 @@ const CatalogoClientes = ({ priceMultiplier = 1, variantTitle = 'Catálogo de Pr
   const [menuMasAbierto, setMenuMasAbierto] = useState(false);
 
   const location = useLocation();
+
+  const sincronizarCategoriaDesdeUrl = useCallback((categoriaLista = []) => {
+    if (!location.search) return;
+
+    const params = new URLSearchParams(location.search);
+    const categoriaParam = params.get('categoria');
+    if (!categoriaParam) return;
+
+    const categoriaNormalizada = normalizarCategoriaUrl(categoriaParam);
+    if (!categoriaNormalizada) return;
+
+    const categoriaCoincide = categoriaLista.some((categoria) => {
+      const categoriaActual = normalizarCategoriaUrl(categoria);
+      return categoriaActual === categoriaNormalizada;
+    });
+
+    if (categoriaCoincide) {
+      setCategoriaFiltro(categoriaLista.find((categoria) => normalizarCategoriaUrl(categoria) === categoriaNormalizada) || 'Todas');
+    }
+  }, [location.search]);
 
   const calcularPrecioVista = useCallback((precioBase) => {
     const precio = Number(precioBase) || 0;
@@ -70,17 +98,29 @@ const CatalogoClientes = ({ priceMultiplier = 1, variantTitle = 'Catálogo de Pr
 
         // Extraer categorías únicas
         const categoriasUnicas = [...new Set(productos.map(p => p.categoria).filter(Boolean))].sort();
-        setCategorias(['Todas', ...categoriasUnicas]);
+        const categoriasLista = ['Todas', ...categoriasUnicas];
+        setCategorias(categoriasLista);
         setProductos(productos || []);
 
-        // Cargar información del cliente desde URL si existe
         if (location.search) {
           const params = new URLSearchParams(location.search);
           const clienteNombre = params.get('cliente');
           const clienteTelefono = params.get('telefono');
           const clienteDireccion = params.get('direccion');
           const clienteId = params.get('clienteId');
-          
+          const categoriaParam = params.get('categoria');
+
+          if (categoriaParam) {
+            const categoriaNormalizada = normalizarCategoriaUrl(categoriaParam);
+            const categoriaEncontrada = categoriasLista.find((categoria) =>
+              normalizarCategoriaUrl(categoria) === categoriaNormalizada
+            );
+
+            if (categoriaEncontrada) {
+              setCategoriaFiltro(categoriaEncontrada);
+            }
+          }
+
           if (clienteNombre || clienteTelefono || clienteDireccion) {
             setClienteInfo(prev => ({
               ...prev,
@@ -88,7 +128,7 @@ const CatalogoClientes = ({ priceMultiplier = 1, variantTitle = 'Catálogo de Pr
               telefono: decodeURIComponent(clienteTelefono || ''),
               direccion: decodeURIComponent(clienteDireccion || '')
             }));
-            
+
             if (clienteId) {
               setClienteSeleccionadoId(clienteId);
             }
@@ -119,7 +159,20 @@ const CatalogoClientes = ({ priceMultiplier = 1, variantTitle = 'Catálogo de Pr
   };
 
   const handleCategoriaChange = (e) => {
-    setCategoriaFiltro(e.target.value);
+    const siguienteCategoria = e.target.value;
+    setCategoriaFiltro(siguienteCategoria);
+
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      if (siguienteCategoria && siguienteCategoria !== 'Todas') {
+        params.set('categoria', siguienteCategoria);
+      } else {
+        params.delete('categoria');
+      }
+
+      const nextUrl = `${window.location.pathname}${params.toString() ? `?${params.toString()}` : ''}`;
+      window.history.replaceState({}, '', nextUrl);
+    }
   };
 
   const handleOrdenamientoChange = (e) => {

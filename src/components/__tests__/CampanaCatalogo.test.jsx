@@ -26,6 +26,12 @@ const mockTableData = {
 
 const mockFrom = jest.fn((tableName) => ({
   select: jest.fn(() => ({
+    eq: jest.fn(() => ({
+      range: jest.fn(async () => ({
+        data: mockTableData[tableName] || [],
+        error: null
+      }))
+    })),
     range: jest.fn(async () => ({
       data: mockTableData[tableName] || [],
       error: null
@@ -111,7 +117,7 @@ describe('CampanaCatalogo', () => {
 
     expect(decodedText).toContain('Hola CRISTINA DROGUERIA ARLET,');
     expect(decodedText).toContain('https://pedido-ebs-web.vercel.app');
-    expect(decodedText).not.toContain('/catalogo-clientes');
+    expect(decodedText).toContain('/catalogo-clientes?');
   });
 
   test('copia el link general luego de configurar URL publica', async () => {
@@ -128,7 +134,7 @@ describe('CampanaCatalogo', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Copiar link general' }));
 
     await waitFor(() => {
-      expect(navigator.clipboard.writeText).toHaveBeenCalledWith('https://pedido-ebs-web.vercel.app');
+      expect(navigator.clipboard.writeText).toHaveBeenCalledWith('https://pedido-ebs-web.vercel.app/catalogo-clientes');
     });
   });
 

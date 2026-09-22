@@ -36,6 +36,36 @@
   flex-wrap: wrap;
 }
 
+@media (max-width: 767px) {
+  .factura-actions-bar {
+    flex-direction: row;
+    align-items: stretch;
+    gap: 0.45rem;
+  }
+
+  .factura-actions-bar > .button,
+  .action-buttons,
+  .action-buttons .button {
+    min-width: 0;
+  }
+
+  .factura-actions-bar > .button,
+  .action-buttons {
+    flex: 1 1 0;
+  }
+
+  .action-buttons {
+    gap: 0.45rem;
+  }
+
+  .action-buttons .button {
+    flex: 1 1 0;
+    padding-left: 0.45rem;
+    padding-right: 0.45rem;
+    white-space: nowrap;
+  }
+}
+
 .button {
   padding: 0.6rem 1rem;
   border: none;

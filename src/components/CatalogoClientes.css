@@ -551,6 +551,31 @@ body {
   }
 }
 
+@media (min-width: 768px) and (max-width: 1024px) {
+  .sticky-filters {
+    position: fixed;
+    bottom: calc(80px + env(safe-area-inset-bottom));
+    top: auto;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(92vw, 540px);
+    margin: 0;
+  }
+
+  .search-panel,
+  .category-panel {
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(92vw, 540px);
+  }
+
+  .product-grid-two-columns,
+  .product-list-view {
+    margin-top: 0;
+    padding-top: 8px;
+  }
+}
+
 @media (min-width: 1024px) {
   .product-grid-two-columns {
     grid-template-columns: repeat(4, 1fr);

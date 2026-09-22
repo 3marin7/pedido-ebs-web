@@ -26,6 +26,14 @@ const Navigation = () => {
     setMenuActivo((prevMenu) => (prevMenu === menu ? null : menu));
   };
 
+  useEffect(() => {
+    document.body.classList.toggle('mobile-navigation-open', isMenuOpen);
+
+    return () => {
+      document.body.classList.remove('mobile-navigation-open');
+    };
+  }, [isMenuOpen]);
+
   const getActiveGroup = (links) => {
     return links.find(link => link.tipo === 'grupo' && link.submenu?.some(subLink =>
       location.pathname === subLink.path || location.pathname.startsWith(subLink.path + '/')

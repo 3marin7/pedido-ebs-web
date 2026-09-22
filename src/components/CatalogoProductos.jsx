@@ -282,6 +282,388 @@ const ImportExportActions = ({ productos, productosFiltrados, setProductos }) =>
   );
 };
 
+// Componente para revisión de inventario
+const RevisionInventario = ({ productos, setProductos, user }) => {
+  const [filtroRevision, setFiltroRevision] = useState('todos');
+  const [busquedaRevision, setBusquedaRevision] = useState('');
+  const [modalRevision, setModalRevision] = useState(null);
+
+  const productosRevision = useMemo(() => {
+    return productos.map((producto) => {
+      const cantidadSistema = Number(producto.cantidad_sistema ?? producto.stock ?? 0);
+      const cantidadReal = Number(producto.cantidad_real ?? producto.stock ?? 0);
+      const estadoRevision = producto.estado_revision || (
+        producto.cantidad_real != null || producto.cantidad_sistema != null
+          ? (cantidadReal === cantidadSistema ? 'verificado' : 'diferencia')
+          : 'pendiente'
+      );
+
+      return {
+        ...producto,
+        cantidad_sistema: cantidadSistema,
+        cantidad_real: cantidadReal,
+        estado_revision: estadoRevision,
+        diferencia: cantidadReal - cantidadSistema,
+        fecha_revision: producto.fecha_revision || null,
+        revisado_por: producto.revisado_por || '',
+        observacion: producto.observacion || ''
+      };
+    });
+  }, [productos]);
+
+  const resumenRevision = useMemo(() => {
+    const totales = {
+      pendientes: 0,
+      verificados: 0,
+      diferencias: 0,
+      ajustados: 0,
+    };
+
+    productosRevision.forEach((producto) => {
+      if (producto.estado_revision === 'pendiente') totales.pendientes += 1;
+      if (producto.estado_revision === 'verificado') totales.verificados += 1;
+      if (producto.estado_revision === 'diferencia') totales.diferencias += 1;
+      if (producto.estado_revision === 'ajustado') totales.ajustados += 1;
+    });
+
+    return totales;
+  }, [productosRevision]);
+
+  const productosFiltrados = useMemo(() => {
+    return productosRevision.filter((producto) => {
+      const coincideBusqueda = !busquedaRevision ||
+        producto.nombre.toLowerCase().includes(busquedaRevision.toLowerCase()) ||
+        (producto.codigo && producto.codigo.toLowerCase().includes(busquedaRevision.toLowerCase()));
+
+      const coincideFiltro = filtroRevision === 'todos' || producto.estado_revision === filtroRevision;
+      return coincideBusqueda && coincideFiltro;
+    });
+  }, [productosRevision, busquedaRevision, filtroRevision]);
+
+  const getEstadoLabel = (estado) => {
+    const labels = {
+      pendiente: 'Pendientes',
+      verificado: 'Verificados',
+      diferencia: 'Diferencias',
+      ajustado: 'Ajustados'
+    };
+    return labels[estado] || 'Pendientes';
+  };
+
+  const guardarRevision = async (producto, formValues) => {
+    const cantidadSistema = Number(producto.cantidad_sistema ?? producto.stock ?? 0);
+    const cantidadReal = Number(formValues.cantidadReal ?? 0);
+    const estadoRevision = formValues.estado;
+    const fechaRevision = new Date().toISOString();
+    const usuarioRevision = user?.username || 'Sistema';
+    const observacion = formValues.observacion || '';
+    const diferencia = cantidadReal - cantidadSistema;
+
+    const actualizado = {
+      ...producto,
+      cantidad_sistema: cantidadSistema,
+      cantidad_real: cantidadReal,
+      stock: cantidadReal,
+      estado_revision: estadoRevision,
+      diferencia,
+      fecha_revision: fechaRevision,
+      revisado_por: usuarioRevision,
+      observacion
+    };
+
+    setProductos((prevProductos) => prevProductos.map((item) => item.id === producto.id ? actualizado : item));
+
+    try {
+      const { error: errorProducto } = await supabase
+        .from('productos')
+        .update({
+          stock: cantidadReal,
+          cantidad_real: cantidadReal,
+          cantidad_sistema: cantidadSistema,
+          estado_revision: estadoRevision,
+          fecha_revision: fechaRevision,
+          revisado_por: usuarioRevision,
+          observacion
+        })
+        .eq('id', producto.id);
+
+      if (errorProducto) {
+        console.error('Error guardando producto en revisión:', errorProducto);
+        alert('No se pudo guardar la revisión. Verifica que la tabla productos tenga las columnas de inventario.');
+        return;
+      }
+
+      const { error: errorRevision } = await supabase
+        .from('inventario_revisiones')
+        .insert([
+          {
+            producto_id: producto.id,
+            cantidad_sistema: cantidadSistema,
+            cantidad_real: cantidadReal,
+            diferencia,
+            estado_revision: estadoRevision,
+            fecha_revision: fechaRevision,
+            revisado_por: usuarioRevision,
+            observacion,
+            rol_usuario: user?.role || 'N/A'
+          }
+        ]);
+
+      if (errorRevision) {
+        console.error('Error guardando historial de revisión:', errorRevision);
+        alert('La revisión no quedó guardada en el historial. Intenta de nuevo.');
+        return;
+      }
+
+      const { data: productosActualizados, error: errorCarga } = await supabase
+        .from('productos')
+        .select('*')
+        .order('nombre', { ascending: true });
+
+      if (!errorCarga && productosActualizados) {
+        const { data: revisionesData } = await supabase
+          .from('inventario_revisiones')
+          .select('*')
+          .order('fecha_revision', { ascending: false });
+
+        const revisionesPorProducto = new Map();
+        (revisionesData || []).forEach((revision) => {
+          if (!revisionesPorProducto.has(revision.producto_id)) {
+            revisionesPorProducto.set(revision.producto_id, revision);
+          }
+        });
+
+        const productosConRevision = (productosActualizados || []).map((item) => {
+          const ultimaRevision = revisionesPorProducto.get(item.id);
+          if (!ultimaRevision) return item;
+
+          const cantidadSistemaRevision = Number(ultimaRevision.cantidad_sistema ?? item.stock ?? 0);
+          const cantidadRealRevision = Number(ultimaRevision.cantidad_real ?? item.stock ?? 0);
+          const siguienteEstado = ultimaRevision.estado_revision || item.estado_revision || 'pendiente';
+
+          return {
+            ...item,
+            stock: cantidadRealRevision,
+            cantidad_sistema: cantidadSistemaRevision,
+            cantidad_real: cantidadRealRevision,
+            estado_revision: siguienteEstado,
+            fecha_revision: ultimaRevision.fecha_revision || item.fecha_revision || null,
+            revisado_por: ultimaRevision.revisado_por || item.revisado_por || '',
+            observacion: ultimaRevision.observacion || item.observacion || '',
+            diferencia: cantidadRealRevision - cantidadSistemaRevision
+          };
+        });
+
+        setProductos(productosConRevision);
+      }
+
+      const { error: errorAuditoria } = await supabase
+        .from('auditoria_productos')
+        .insert([
+          {
+            producto_id: producto.id,
+            tipo_accion: 'revision_inventario',
+            campos_modificados: {
+              cantidad_sistema: cantidadSistema,
+              cantidad_real: cantidadReal,
+              diferencia,
+              estado_revision: estadoRevision,
+              fecha_revision: fechaRevision,
+              revisado_por: usuarioRevision,
+              observacion
+            },
+            cambios_resumen: `Revisión de inventario: sistema ${cantidadSistema}, real ${cantidadReal}, diferencia ${diferencia}, estado ${estadoRevision}.`,
+            usuario: usuarioRevision,
+            rol_usuario: user?.role || 'N/A'
+          }
+        ]);
+
+      if (errorAuditoria) {
+        console.warn('No se pudo guardar la auditoría de revisión:', errorAuditoria);
+      }
+
+      alert('✅ Revisión guardada correctamente.');
+    } catch (error) {
+      console.error('No se pudo guardar la revisión en Supabase:', error);
+      alert('No se pudo guardar la revisión. Revisa la conexión o la estructura de la base de datos.');
+    }
+
+    setModalRevision(null);
+  };
+
+  return (
+    <div className="revision-inventario">
+      <div className="revision-header">
+        <div>
+          <p className="revision-eyebrow">Control operativo</p>
+          <h2>Revisión de inventario</h2>
+        </div>
+        <div className="revision-summary">
+          <div className="revision-card pending">
+            <span className="revision-number">{resumenRevision.pendientes}</span>
+            <span className="revision-label">Pendientes</span>
+          </div>
+          <div className="revision-card verified">
+            <span className="revision-number">{resumenRevision.verificados}</span>
+            <span className="revision-label">Verificados</span>
+          </div>
+          <div className="revision-card difference">
+            <span className="revision-number">{resumenRevision.diferencias}</span>
+            <span className="revision-label">Diferencia</span>
+          </div>
+          <div className="revision-card adjusted">
+            <span className="revision-number">{resumenRevision.ajustados}</span>
+            <span className="revision-label">Ajustados</span>
+          </div>
+        </div>
+      </div>
+
+      <div className="revision-toolbar">
+        <div className="revision-search">
+          <input
+            type="text"
+            value={busquedaRevision}
+            onChange={(e) => setBusquedaRevision(e.target.value)}
+            placeholder="Buscar producto o código..."
+          />
+        </div>
+        <div className="revision-filtros">
+          {['todos', 'pendiente', 'verificado', 'diferencia', 'ajustado'].map((estado) => (
+            <button
+              key={estado}
+              type="button"
+              className={`revision-filter ${filtroRevision === estado ? 'active' : ''}`}
+              onClick={() => setFiltroRevision(estado)}
+            >
+              {estado === 'todos' ? 'Todos' : getEstadoLabel(estado)}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="revision-table-wrap">
+        <table className="revision-table">
+          <thead>
+            <tr>
+              <th>Producto</th>
+              <th>Categoría</th>
+              <th>Sistema</th>
+              <th>Real</th>
+              <th>Diferencia</th>
+              <th>Estado</th>
+              <th>Fecha</th>
+              <th>Revisado por</th>
+              <th>Acción</th>
+            </tr>
+          </thead>
+          <tbody>
+            {productosFiltrados.map((producto) => (
+              <tr key={producto.id} className={`revision-row ${producto.estado_revision}`}>
+                <td>
+                  <div className="revision-product">
+                    <strong>{producto.nombre}</strong>
+                    <small>{producto.codigo || 'Sin código'}</small>
+                  </div>
+                </td>
+                <td>{producto.categoria || 'Sin categoría'}</td>
+                <td>{producto.cantidad_sistema}</td>
+                <td>{producto.cantidad_real}</td>
+                <td className={producto.diferencia === 0 ? 'difference-zero' : producto.diferencia > 0 ? 'difference-positive' : 'difference-negative'}>
+                  {producto.diferencia > 0 ? '+' : ''}{producto.diferencia}
+                </td>
+                <td>
+                  <span className={`revision-badge ${producto.estado_revision}`}>
+                    {getEstadoLabel(producto.estado_revision)}
+                  </span>
+                </td>
+                <td>{producto.fecha_revision ? new Date(producto.fecha_revision).toLocaleDateString('es-CO') : 'Sin revisión'}</td>
+                <td>{producto.revisado_por || '-'}</td>
+                <td>
+                  <button
+                    type="button"
+                    className="button secondary-button small-button"
+                    onClick={() => setModalRevision(producto)}
+                  >
+                    Verificar
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {modalRevision && (
+        <div className="modal-overlay">
+          <div className="producto-form revision-modal">
+            <h2>Revisión de {modalRevision.nombre}</h2>
+            <div className="form-group">
+              <label>Estado</label>
+              <select
+                defaultValue={modalRevision.estado_revision}
+                id="revision-estado"
+              >
+                <option value="pendiente">Pendiente</option>
+                <option value="verificado">Verificado</option>
+                <option value="diferencia">Diferencia</option>
+                <option value="ajustado">Ajustado</option>
+              </select>
+            </div>
+
+            <div className="form-row">
+              <div className="form-group">
+                <label>Cantidad sistema</label>
+                <input type="number" value={modalRevision.cantidad_sistema} readOnly />
+              </div>
+              <div className="form-group">
+                <label>Cantidad real</label>
+                <input
+                  type="number"
+                  min="0"
+                  defaultValue={modalRevision.cantidad_real}
+                  id="revision-cantidad-real"
+                />
+              </div>
+            </div>
+
+            <div className="form-group">
+              <label>Observación</label>
+              <textarea
+                rows="3"
+                defaultValue={modalRevision.observacion}
+                id="revision-observacion"
+                placeholder="Describe si hubo diferencia, ajuste o novedad"
+              />
+            </div>
+
+            <div className="form-actions">
+              <button className="button secondary-button" onClick={() => setModalRevision(null)}>
+                Cancelar
+              </button>
+              <button
+                className="button success-button"
+                onClick={() => {
+                  const estado = document.getElementById('revision-estado')?.value || 'pendiente';
+                  const cantidadReal = document.getElementById('revision-cantidad-real')?.value;
+                  const observacion = document.getElementById('revision-observacion')?.value || '';
+
+                  guardarRevision(modalRevision, {
+                    estado,
+                    cantidadReal,
+                    observacion
+                  });
+                }}
+              >
+                Guardar revisión
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
 // Componente para reporte de inventario
 const ReporteInventario = ({ productos }) => {
   const [filtroCategoria, setFiltroCategoria] = useState('Todas');
@@ -810,12 +1192,50 @@ const CatalogoProductos = ({ mode = 'admin' }) => {
 
         if (error) throw error;
 
-        setProductos(data || []);
+        let productosBase = data || [];
+
+        try {
+          const { data: revisionesData } = await supabase
+            .from('inventario_revisiones')
+            .select('*')
+            .order('fecha_revision', { ascending: false });
+
+          const revisionesPorProducto = new Map();
+          (revisionesData || []).forEach((revision) => {
+            if (!revisionesPorProducto.has(revision.producto_id)) {
+              revisionesPorProducto.set(revision.producto_id, revision);
+            }
+          });
+
+          productosBase = productosBase.map((producto) => {
+            const ultimaRevision = revisionesPorProducto.get(producto.id);
+            if (!ultimaRevision) return producto;
+
+            const cantidadSistemaRevision = Number(ultimaRevision.cantidad_sistema ?? producto.stock ?? 0);
+            const cantidadRealRevision = Number(ultimaRevision.cantidad_real ?? producto.stock ?? 0);
+
+            return {
+              ...producto,
+              stock: cantidadRealRevision,
+              cantidad_sistema: cantidadSistemaRevision,
+              cantidad_real: cantidadRealRevision,
+              estado_revision: ultimaRevision.estado_revision || producto.estado_revision || 'pendiente',
+              fecha_revision: ultimaRevision.fecha_revision || producto.fecha_revision || null,
+              revisado_por: ultimaRevision.revisado_por || producto.revisado_por || '',
+              observacion: ultimaRevision.observacion || producto.observacion || '',
+              diferencia: cantidadRealRevision - cantidadSistemaRevision
+            };
+          });
+        } catch (revisionesError) {
+          console.warn('No se pudo cargar historial de revisiones:', revisionesError);
+        }
+
+        setProductos(productosBase);
 
         // Obtener recomendaciones de rotación y sugerencias de pedido
         try {
           const recs = await getProductSalesAndRecommendations({ periodDays: 90, leadTimeDays: 14, safetyDays: 7 });
-          const merged = mergeRecommendationsIntoProducts(data || [], recs);
+          const merged = mergeRecommendationsIntoProducts(productosBase, recs);
           setProductos(merged);
         } catch (recErr) {
           console.warn('No se pudieron obtener recomendaciones de inventario:', recErr);
@@ -1247,6 +1667,17 @@ const CatalogoProductos = ({ mode = 'admin' }) => {
             className="menu-btn"
             type="button"
             onClick={() => {
+              setVistaActual('revision');
+              setMostrarAccionesMobile(false);
+            }}
+          >
+            <i className="fas fa-clipboard-check"></i> Revisión
+          </button>
+
+          <button
+            className="menu-btn"
+            type="button"
+            onClick={() => {
               setVistaActual('promociones');
               setMostrarAccionesMobile(false);
             }}
@@ -1279,6 +1710,8 @@ const CatalogoProductos = ({ mode = 'admin' }) => {
 
       {vistaActual === 'reporte' ? (
         <ReporteInventario productos={productos} />
+      ) : vistaActual === 'revision' ? (
+        <RevisionInventario productos={productos} setProductos={setProductos} user={user} />
       ) : vistaActual === 'promociones' ? (
         <div className="promociones-view">
           <div className="promociones-hero">
@@ -1925,6 +2358,18 @@ const CatalogoProductos = ({ mode = 'admin' }) => {
           >
             <i className="fas fa-file-alt"></i>
             <span>Reporte</span>
+          </button>
+          <button
+            type="button"
+            className="more-menu-item"
+            onClick={() => {
+              setMenuMasAbierto(false);
+              setNavActivoMobile('');
+              setVistaActual('revision');
+            }}
+          >
+            <i className="fas fa-clipboard-check"></i>
+            <span>Revisión</span>
           </button>
           <button
             type="button"

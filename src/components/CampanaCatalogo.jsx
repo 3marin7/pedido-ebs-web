@@ -170,6 +170,8 @@ const CampanaCatalogo = () => {
   const [mensajeAccion, setMensajeAccion] = useState('');
   const [publicBaseUrl, setPublicBaseUrl] = useState(obtenerBaseUrlInicial);
   const [publicBaseUrlInput, setPublicBaseUrlInput] = useState(obtenerBaseUrlInicial);
+  const [categoriaSeleccionada, setCategoriaSeleccionada] = useState('Todas');
+  const [categoriasDisponibles, setCategoriasDisponibles] = useState(['Todas']);
 
   const centrosComerciales = useMemo(() => {
     const centros = clientes
@@ -200,15 +202,22 @@ const CampanaCatalogo = () => {
         setCargando(true);
         setError('');
 
-        const [clientesData, facturasData, abonosData] = await Promise.all([
+        const [clientesData, facturasData, abonosData, productosData] = await Promise.all([
           fetchAllRows('clientes'),
           fetchAllRows('facturas'),
-          fetchAllRows('abonos')
+          fetchAllRows('abonos'),
+          supabase.from('productos').select('categoria').eq('activo', true)
         ]);
+
+        const categorias = [...new Set((productosData?.data || [])
+          .map((producto) => String(producto.categoria || '').trim())
+          .filter(Boolean))]
+          .sort((izquierda, derecha) => izquierda.localeCompare(derecha, 'es'));
 
         setClientes(clientesData || []);
         setFacturas(facturasData || []);
         setAbonos(abonosData || []);
+        setCategoriasDisponibles(['Todas', ...categorias]);
       } catch (loadError) {
         console.error('Error cargando datos de campaña:', loadError);
         setError('No fue posible cargar la campaña de catálogo.');
@@ -348,8 +357,41 @@ const CampanaCatalogo = () => {
     };
   }, [abonos, clientes, facturas, historialEnvios, reglas, segmentoCliente, soloConTelefono]);
 
-  // Usa exactamente la URL pública configurada por el usuario.
-  const linkCatalogo = publicBaseUrl ? `${normalizarBaseUrl(publicBaseUrl)}` : '';
+  const construirUrlCatalogo = (cliente = null, categoria = categoriaSeleccionada) => {
+    if (!publicBaseUrl || esOrigenLocal(publicBaseUrl)) {
+      return '';
+    }
+
+    const params = new URLSearchParams();
+
+    if (categoria && categoria !== 'Todas') {
+      params.set('categoria', categoria);
+    }
+
+    if (cliente) {
+      if (cliente.nombre) {
+        params.set('cliente', cliente.nombre.trim());
+      }
+
+      const telefonoCliente = cliente.telefonoWhatsApp || normalizarTelefonoWhatsApp(cliente.telefono);
+      if (telefonoCliente) {
+        params.set('telefono', telefonoCliente);
+      }
+
+      if (cliente.direccion) {
+        params.set('direccion', cliente.direccion.trim());
+      }
+
+      if (cliente.id) {
+        params.set('clienteId', String(cliente.id));
+      }
+    }
+
+    const queryString = params.toString();
+    return `${normalizarBaseUrl(publicBaseUrl)}/catalogo-clientes${queryString ? `?${queryString}` : ''}`;
+  };
+
+  const linkCatalogo = construirUrlCatalogo();
   const linkCompartibleDisponible = Boolean(linkCatalogo) && !esOrigenLocal(linkCatalogo);
 
   const registrarEnvio = (cliente, canal) => {
@@ -397,19 +439,21 @@ const CampanaCatalogo = () => {
   };
 
   const copiarLink = async (cliente = null) => {
-    if (!linkCompartibleDisponible) {
+    const linkFinal = cliente ? construirUrlCatalogo(cliente, categoriaSeleccionada) : linkCatalogo;
+
+    if (!linkFinal || esOrigenLocal(linkFinal)) {
       setMensajeAccion('Configura primero la URL pública real de la plataforma antes de copiar o compartir el link.');
       return;
     }
 
     try {
-      await navigator.clipboard.writeText(linkCatalogo);
+      await navigator.clipboard.writeText(linkFinal);
 
       if (cliente) {
         registrarEnvio(cliente, 'copia-link');
-        setMensajeAccion(`Link copiado para ${cliente.nombre}.`);
+        setMensajeAccion(`Link copiado para ${cliente.nombre} con categoría ${categoriaSeleccionada === 'Todas' ? 'general' : categoriaSeleccionada}.`);
       } else {
-        setMensajeAccion('Link general del catálogo copiado.');
+        setMensajeAccion(`Link general del catálogo copiado con categoría ${categoriaSeleccionada === 'Todas' ? 'general' : categoriaSeleccionada}.`);
       }
     } catch (copyError) {
       console.error('Error copiando link:', copyError);
@@ -423,7 +467,8 @@ const CampanaCatalogo = () => {
       return;
     }
 
-    if (!linkCompartibleDisponible) {
+    const linkFinal = construirUrlCatalogo(cliente, categoriaSeleccionada);
+    if (!linkFinal || esOrigenLocal(linkFinal)) {
       setMensajeAccion('No se puede enviar por WhatsApp mientras la URL pública siga vacía o apunte a localhost.');
       return;
     }
@@ -432,14 +477,14 @@ const CampanaCatalogo = () => {
       `Hola ${cliente.nombre},`,
       'Te comparto nuestro catálogo digital de Distribuciones EBS para que revises productos y puedas hacer tu pedido fácilmente.',
       '',
-      linkCatalogo
+      linkFinal
     ].join('\n');
 
     const mensaje = encodeURIComponent(mensajePlano);
 
     window.open(`https://wa.me/${cliente.telefonoWhatsApp}?text=${mensaje}`, '_blank', 'noopener,noreferrer');
     registrarEnvio(cliente, 'whatsapp');
-    setMensajeAccion(`Se abrió WhatsApp para ${cliente.nombre}.`);
+    setMensajeAccion(`Se abrió WhatsApp para ${cliente.nombre} con categoría ${categoriaSeleccionada === 'Todas' ? 'general' : categoriaSeleccionada}.`);
   };
 
   return (
@@ -508,6 +553,36 @@ const CampanaCatalogo = () => {
               El envío por WhatsApp está bloqueado hasta que definas una URL pública real. Si mandas `localhost`, el cliente no podrá abrir el enlace.
             </div>
           )}
+        </section>
+
+        <section className="criterios-panel">
+          <div className="panel-header">
+            <h2>Selección de categoría del catálogo</h2>
+            <p>
+              La categoría elegida se añadirá automáticamente a la URL que se comparte con cada cliente.
+            </p>
+          </div>
+
+          <div className="url-config-grid">
+            <label className="url-config-field">
+              <span>Categoría para el cliente</span>
+              <select
+                value={categoriaSeleccionada}
+                onChange={(event) => setCategoriaSeleccionada(event.target.value)}
+              >
+                {categoriasDisponibles.map((categoria) => (
+                  <option key={categoria} value={categoria}>
+                    {categoria}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
+
+          <div className="url-helper-block">
+            <span className="url-helper-label">Vista previa del link</span>
+            <strong>{linkCompartibleDisponible ? linkCatalogo : 'Configura una URL pública válida'}</strong>
+          </div>
         </section>
 
         <section className="recordatorio-banner">
