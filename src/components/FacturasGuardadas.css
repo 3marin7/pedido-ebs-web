@@ -17,10 +17,12 @@
 .vista-facturas-selector {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 6px;
   margin: 0 0 14px;
   padding: 6px;
   width: fit-content;
+  max-width: 100%;
   background: #eef3f8;
   border: 1px solid #dbe4ee;
   border-radius: 7px;
@@ -67,7 +69,41 @@
 /* Cabecera */
 .facturas-header {
   display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex: 1 1 280px;
+  min-width: 0;
+}
+
+.header-left h1 {
+  margin: 0;
+  font-size: clamp(2rem, 2.6vw, 3.1rem);
+  line-height: 1.1;
+  white-space: normal;
+  word-break: break-word;
+}
+
+.header-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+  flex: 1 1 auto;
+}
+
+.header-actions .button {
   white-space: nowrap;
+  flex: 0 0 auto;
 }
 
 /* Tarjetas de Factura */
@@ -2093,6 +2129,22 @@
 }
 
 /* ===== RESPONSIVE ===== */
+@media (max-width: 1024px) {
+  .facturas-header {
+    align-items: flex-start;
+  }
+
+  .header-left,
+  .header-actions.desktop-only {
+    flex-basis: 100%;
+    width: 100%;
+  }
+
+  .header-actions.desktop-only {
+    justify-content: flex-start;
+  }
+}
+
 @media (max-width: 768px) {
   .menu-toggle {
     display: block;
@@ -2111,19 +2163,19 @@
   }
   
   .facturas-header {
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
     gap: 10px;
   }
   
   .facturas-header h1 {
-    font-size: 1.3rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    font-size: clamp(1.45rem, 4vw, 2rem);
+    white-space: normal;
+    overflow: visible;
+    text-overflow: unset;
   }
   
   .header-left {
-    flex: 1;
+    flex: 1 1 100%;
     min-width: 0;
   }
 }

@@ -283,32 +283,61 @@ const ImportExportActions = ({ productos, productosFiltrados, setProductos }) =>
 };
 
 // Componente para revisión de inventario
+const sumarDias = (fecha, dias) => {
+  const nuevaFecha = new Date(fecha);
+  nuevaFecha.setHours(0, 0, 0, 0);
+  nuevaFecha.setDate(nuevaFecha.getDate() + dias);
+  return nuevaFecha;
+};
+
+const calcularProximaRevision = (fechaBase = new Date()) => {
+  return sumarDias(fechaBase, 90).toISOString();
+};
+
+const normalizarRevisionTrimestral = (producto) => {
+  const cantidadSistema = Number(producto.cantidad_sistema ?? producto.stock ?? 0);
+  const cantidadReal = Number(producto.cantidad_real ?? producto.stock ?? 0);
+  const hoy = new Date();
+  hoy.setHours(0, 0, 0, 0);
+
+  let fechaProximaRevision = producto.fecha_proxima_revision ? new Date(producto.fecha_proxima_revision) : null;
+  const fechaRevision = producto.fecha_revision ? new Date(producto.fecha_revision) : null;
+
+  if (!fechaProximaRevision && fechaRevision) {
+    fechaProximaRevision = sumarDias(fechaRevision, 90);
+  }
+
+  let estadoRevision = producto.estado_revision || (
+    producto.cantidad_real != null || producto.cantidad_sistema != null
+      ? (cantidadReal === cantidadSistema ? 'verificado' : 'diferencia')
+      : 'pendiente'
+  );
+
+  if (fechaProximaRevision && fechaProximaRevision <= hoy) {
+    estadoRevision = 'pendiente';
+    fechaProximaRevision = sumarDias(hoy, 90);
+  }
+
+  return {
+    ...producto,
+    cantidad_sistema: cantidadSistema,
+    cantidad_real: cantidadReal,
+    estado_revision: estadoRevision,
+    diferencia: cantidadReal - cantidadSistema,
+    fecha_revision: producto.fecha_revision || null,
+    fecha_proxima_revision: fechaProximaRevision ? fechaProximaRevision.toISOString() : null,
+    revisado_por: producto.revisado_por || '',
+    observacion: producto.observacion || ''
+  };
+};
+
 const RevisionInventario = ({ productos, setProductos, user }) => {
   const [filtroRevision, setFiltroRevision] = useState('todos');
   const [busquedaRevision, setBusquedaRevision] = useState('');
   const [modalRevision, setModalRevision] = useState(null);
 
   const productosRevision = useMemo(() => {
-    return productos.map((producto) => {
-      const cantidadSistema = Number(producto.cantidad_sistema ?? producto.stock ?? 0);
-      const cantidadReal = Number(producto.cantidad_real ?? producto.stock ?? 0);
-      const estadoRevision = producto.estado_revision || (
-        producto.cantidad_real != null || producto.cantidad_sistema != null
-          ? (cantidadReal === cantidadSistema ? 'verificado' : 'diferencia')
-          : 'pendiente'
-      );
-
-      return {
-        ...producto,
-        cantidad_sistema: cantidadSistema,
-        cantidad_real: cantidadReal,
-        estado_revision: estadoRevision,
-        diferencia: cantidadReal - cantidadSistema,
-        fecha_revision: producto.fecha_revision || null,
-        revisado_por: producto.revisado_por || '',
-        observacion: producto.observacion || ''
-      };
-    });
+    return productos.map((producto) => normalizarRevisionTrimestral(producto));
   }, [productos]);
 
   const resumenRevision = useMemo(() => {
@@ -328,6 +357,48 @@ const RevisionInventario = ({ productos, setProductos, user }) => {
 
     return totales;
   }, [productosRevision]);
+
+  const resumenPorEstado = useMemo(() => {
+    const base = {
+      todos: { count: 0, cantidadReal: 0, ajuste: 0 },
+      pendiente: { count: 0, cantidadReal: 0, ajuste: 0 },
+      verificado: { count: 0, cantidadReal: 0, ajuste: 0 },
+      diferencia: { count: 0, cantidadReal: 0, ajuste: 0 },
+      ajustado: { count: 0, cantidadReal: 0, ajuste: 0 },
+    };
+
+    productosRevision.forEach((producto) => {
+      const estado = producto.estado_revision || 'pendiente';
+      const cantidadReal = Number(producto.cantidad_real ?? 0);
+      const ajuste = Number(producto.diferencia ?? 0);
+
+      base.todos.count += 1;
+      base.todos.cantidadReal += cantidadReal;
+      base.todos.ajuste += ajuste;
+
+      if (!base[estado]) {
+        base[estado] = { count: 0, cantidadReal: 0, ajuste: 0 };
+      }
+
+      base[estado].count += 1;
+      base[estado].cantidadReal += cantidadReal;
+      base[estado].ajuste += ajuste;
+    });
+
+    return base;
+  }, [productosRevision]);
+
+  const totalEstadoActual = filtroRevision === 'todos' ? resumenPorEstado.todos : resumenPorEstado[filtroRevision] || { count: 0, cantidadReal: 0, ajuste: 0 };
+
+  const etiquetaEstadoActual = {
+    todos: 'Total inventario',
+    pendiente: 'Total pendientes',
+    verificado: 'Total verificados',
+    diferencia: 'Total diferencias',
+    ajustado: 'Total ajustados'
+  }[filtroRevision] || 'Total inventario';
+
+  const formatCantidad = (valor) => new Intl.NumberFormat('es-CO').format(Math.round(Number(valor || 0)));
 
   const productosFiltrados = useMemo(() => {
     return productosRevision.filter((producto) => {
@@ -358,6 +429,7 @@ const RevisionInventario = ({ productos, setProductos, user }) => {
     const usuarioRevision = user?.username || 'Sistema';
     const observacion = formValues.observacion || '';
     const diferencia = cantidadReal - cantidadSistema;
+    const fechaProximaRevision = calcularProximaRevision(new Date());
 
     const actualizado = {
       ...producto,
@@ -367,6 +439,7 @@ const RevisionInventario = ({ productos, setProductos, user }) => {
       estado_revision: estadoRevision,
       diferencia,
       fecha_revision: fechaRevision,
+      fecha_proxima_revision: fechaProximaRevision,
       revisado_por: usuarioRevision,
       observacion
     };
@@ -382,6 +455,7 @@ const RevisionInventario = ({ productos, setProductos, user }) => {
           cantidad_sistema: cantidadSistema,
           estado_revision: estadoRevision,
           fecha_revision: fechaRevision,
+          fecha_proxima_revision: fechaProximaRevision,
           revisado_por: usuarioRevision,
           observacion
         })
@@ -403,6 +477,7 @@ const RevisionInventario = ({ productos, setProductos, user }) => {
             diferencia,
             estado_revision: estadoRevision,
             fecha_revision: fechaRevision,
+            fecha_proxima_revision: fechaProximaRevision,
             revisado_por: usuarioRevision,
             observacion,
             rol_usuario: user?.role || 'N/A'
@@ -441,17 +516,18 @@ const RevisionInventario = ({ productos, setProductos, user }) => {
           const cantidadRealRevision = Number(ultimaRevision.cantidad_real ?? item.stock ?? 0);
           const siguienteEstado = ultimaRevision.estado_revision || item.estado_revision || 'pendiente';
 
-          return {
+          return normalizarRevisionTrimestral({
             ...item,
             stock: cantidadRealRevision,
             cantidad_sistema: cantidadSistemaRevision,
             cantidad_real: cantidadRealRevision,
             estado_revision: siguienteEstado,
             fecha_revision: ultimaRevision.fecha_revision || item.fecha_revision || null,
+            fecha_proxima_revision: ultimaRevision.fecha_proxima_revision || item.fecha_proxima_revision || null,
             revisado_por: ultimaRevision.revisado_por || item.revisado_por || '',
             observacion: ultimaRevision.observacion || item.observacion || '',
             diferencia: cantidadRealRevision - cantidadSistemaRevision
-          };
+          });
         });
 
         setProductos(productosConRevision);
@@ -539,6 +615,31 @@ const RevisionInventario = ({ productos, setProductos, user }) => {
             </button>
           ))}
         </div>
+      </div>
+
+      <div className="revision-resumen-estado">
+        <div className="revision-total-box active">
+          <span>{etiquetaEstadoActual}</span>
+          <strong>{formatCantidad(totalEstadoActual.cantidadReal)} unidades</strong>
+          <small>{totalEstadoActual.count} productos</small>
+        </div>
+
+        <div className="revision-total-box">
+          <span>Ajuste</span>
+          <strong>{totalEstadoActual.ajuste >= 0 ? '+' : ''}{formatCantidad(totalEstadoActual.ajuste)} unidades</strong>
+          <small>variación en revisión</small>
+        </div>
+
+        {['pendiente', 'verificado', 'diferencia', 'ajustado'].map((estado) => (
+          <div
+            key={estado}
+            className={`revision-total-box mini ${filtroRevision === estado ? 'active' : ''}`}
+          >
+            <span>{getEstadoLabel(estado)}</span>
+            <strong>{resumenPorEstado[estado]?.count ?? 0}</strong>
+            <small>{formatCantidad(resumenPorEstado[estado]?.cantidadReal ?? 0)} und.</small>
+          </div>
+        ))}
       </div>
 
       <div className="revision-table-wrap">
@@ -693,11 +794,25 @@ const ReporteInventario = ({ productos }) => {
     }).format(precio);
   };
 
+  const getRevisionState = (producto) => {
+    const estado = producto?.estado_revision || 'pendiente';
+
+    const map = {
+      pendiente: { label: 'Pendiente', icon: '•', className: 'pending' },
+      verificado: { label: 'Verificado', icon: '✓', className: 'verified' },
+      diferencia: { label: 'Diferencia', icon: '!', className: 'difference' },
+      ajustado: { label: 'Ajustado', icon: '✓', className: 'adjusted' }
+    };
+
+    return map[estado] || map.pendiente;
+  };
+
   const exportarReporte = () => {
-    let csvContent = "Código,Nombre,Categoría,Precio Unitario,Stock,Valor Total,Estado\n";
+    let csvContent = "Código,Nombre,Categoría,Precio Unitario,Stock,Valor Total,Estado,Revisión\n";
     
     productosFiltrados.forEach(producto => {
       const valorTotalProducto = producto.precio * (producto.stock || 0);
+      const revision = getRevisionState(producto);
       const row = [
         producto.codigo || 'N/A',
         `"${producto.nombre.replace(/"/g, '""')}"`,
@@ -705,14 +820,15 @@ const ReporteInventario = ({ productos }) => {
         formatPrecio(producto.precio).replace(/[^\d,]/g, ''),
         producto.stock || 0,
         formatPrecio(valorTotalProducto).replace(/[^\d,]/g, ''),
-        producto.activo ? 'Activo' : 'Inactivo'
+        producto.activo ? 'Activo' : 'Inactivo',
+        revision.label
       ].join(',');
       
       csvContent += row + '\n';
     });
 
     // Agregar total general
-    csvContent += `\nTOTAL GENERAL,,,${totalProductos} productos,,${formatPrecio(valorTotal).replace(/[^\d,]/g, '')},`;
+    csvContent += `\nTOTAL GENERAL,,,${totalProductos} productos,,${formatPrecio(valorTotal).replace(/[^\d,]/g, '')},,`;
 
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
@@ -787,11 +903,13 @@ const ReporteInventario = ({ productos }) => {
               <th>Pedido Sugerido</th>
               <th>Valor Total</th>
               <th>Estado</th>
+              <th>Revisión</th>
             </tr>
           </thead>
           <tbody>
             {productosFiltrados.map(producto => {
               const valorTotalProducto = producto.precio * (producto.stock || 0);
+              const revision = getRevisionState(producto);
               return (
                 <tr key={producto.id} className={!producto.activo ? 'inactivo' : ''}>
                   <td>{producto.codigo || 'N/A'}</td>
@@ -805,6 +923,11 @@ const ReporteInventario = ({ productos }) => {
                   <td>
                     <span className={`estado-badge ${producto.activo ? 'activo' : 'inactivo'}`}>
                       {producto.activo ? 'Activo' : 'Inactivo'}
+                    </span>
+                  </td>
+                  <td>
+                    <span className={`revision-report-badge ${revision.className}`}>
+                      {revision.icon} {revision.label}
                     </span>
                   </td>
                 </tr>
@@ -2272,7 +2395,7 @@ const CatalogoProductos = ({ mode = 'admin' }) => {
         </>
       )}
 
-      {!mostrarFormulario && (
+      {!mostrarFormulario && vistaActual !== 'revision' && (
         <>
           {panelCatalogoMobile === 'buscar' && (
             <div className="catalogo-mobile-panel catalogo-mobile-panel--buscar">
@@ -2312,28 +2435,28 @@ const CatalogoProductos = ({ mode = 'admin' }) => {
             </div>
           )}
 
-        <div className="bottom-nav-mobile" role="navigation" aria-label="Navegación del catálogo">
-          {[
-            { key: 'buscar', label: 'Buscar', icon: 'fa-magnifying-glass' },
-            { key: 'categorias', label: 'Categorías', icon: 'fa-list' },
-            { key: 'nuevo', label: 'Nuevo', icon: 'fa-plus', plus: true },
-            { key: 'mas', label: 'Más', icon: 'fa-ellipsis' }
-          ].map((item) => (
-            <button
-              key={item.key}
-              type="button"
-              className={`bottom-nav-item ${navActivoMobile === item.key ? 'active' : ''} ${item.plus ? 'bottom-nav-item--plus' : ''}`}
-              onClick={() => manejarNavClick(item.key)}
-            >
-              <i className={`fas ${item.icon}`}></i>
-              <span>{item.label}</span>
-            </button>
-          ))}
-        </div>
+          <div className="bottom-nav-mobile" role="navigation" aria-label="Navegación del catálogo">
+            {[
+              { key: 'buscar', label: 'Buscar', icon: 'fa-magnifying-glass' },
+              { key: 'categorias', label: 'Categorías', icon: 'fa-list' },
+              { key: 'nuevo', label: 'Nuevo', icon: 'fa-plus', plus: true },
+              { key: 'mas', label: 'Más', icon: 'fa-ellipsis' }
+            ].map((item) => (
+              <button
+                key={item.key}
+                type="button"
+                className={`bottom-nav-item ${navActivoMobile === item.key ? 'active' : ''} ${item.plus ? 'bottom-nav-item--plus' : ''}`}
+                onClick={() => manejarNavClick(item.key)}
+              >
+                <i className={`fas ${item.icon}`}></i>
+                <span>{item.label}</span>
+              </button>
+            ))}
+          </div>
         </>
       )}
 
-      {!mostrarFormulario && menuMasAbierto && (
+      {!mostrarFormulario && vistaActual !== 'revision' && menuMasAbierto && (
         <div className="more-menu" role="menu" aria-label="Más opciones del catálogo">
           <button
             type="button"

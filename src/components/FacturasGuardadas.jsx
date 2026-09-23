@@ -770,7 +770,7 @@ const FacturasGuardadas = () => {
             }}
             disabled={importando || cargando}
           >
-            <i className="fas fa-file-excel"></i> Exportar Excel
+            <i className="fas fa-file-excel"></i> Excel
           </button>
           <button 
             className="menu-btn"
@@ -780,7 +780,7 @@ const FacturasGuardadas = () => {
             }}
             disabled={importando || cargando}
           >
-            <i className="fas fa-file-csv"></i> Exportar CSV
+            <i className="fas fa-file-csv"></i> CSV
           </button>
           <label 
             htmlFor="importar-datos-mobile" 
@@ -899,14 +899,14 @@ const FacturasGuardadas = () => {
                 onClick={exportarExcel}
                 disabled={importando || cargando}
               >
-                <i className="fas fa-file-excel"></i> Exportar Excel
+                <i className="fas fa-file-excel"></i> Excel
               </button>
               <button 
                 className="button info-button"
                 onClick={exportarCSV}
                 disabled={importando || cargando}
               >
-                <i className="fas fa-file-csv"></i> Exportar CSV
+                <i className="fas fa-file-csv"></i> CSV
               </button>
               <label 
                 htmlFor="importar-datos" 
@@ -929,27 +929,6 @@ const FacturasGuardadas = () => {
               >
                 <i className={`fas fa-${mostrarPagadas ? 'eye' : 'eye-slash'}`}></i> 
                 {mostrarPagadas ? 'Mostrando Todas' : 'Solo Pendientes'}
-              </button>
-              <button 
-                className={`button ${vistaActual === 'lista' ? 'success-button' : 'secondary-button'}`}
-                onClick={() => setVistaActual('lista')}
-                disabled={importando || cargando}
-              >
-                <i className="fas fa-list"></i> Vista de lista
-              </button>
-              <button
-                className={`button ${vistaActual === 'tabla' ? 'success-button' : 'secondary-button'}`}
-                onClick={() => setVistaActual('tabla')}
-                disabled={importando || cargando}
-              >
-                <i className="fas fa-table"></i> Vista tabla
-              </button>
-              <button
-                className={`button ${vistaActual === 'tarjeta' ? 'success-button' : 'secondary-button'}`}
-                onClick={() => setVistaActual('tarjeta')}
-                disabled={importando || cargando}
-              >
-                <i className="fas fa-th-large"></i> Vista tarjeta
               </button>
               <button 
                 className="button secondary-button"

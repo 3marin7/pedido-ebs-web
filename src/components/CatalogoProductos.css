@@ -2007,6 +2007,52 @@ button {
   border-color: #1d4ed8;
 }
 
+.revision-resumen-estado {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+  margin: 18px 0 20px;
+}
+
+.revision-total-box {
+  background: #f8fafc;
+  border: 1px solid #dfe7f1;
+  border-radius: 14px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-height: 92px;
+}
+
+.revision-total-box.active {
+  background: linear-gradient(135deg, #eff6ff, #dbeafe);
+  border-color: #93c5fd;
+}
+
+.revision-total-box.mini.active {
+  box-shadow: inset 0 0 0 2px rgba(29, 78, 216, 0.25);
+}
+
+.revision-total-box span {
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #475569;
+  font-weight: 700;
+}
+
+.revision-total-box strong {
+  font-size: 1.1rem;
+  color: #0f172a;
+  line-height: 1.2;
+}
+
+.revision-total-box small {
+  color: #64748b;
+  font-size: 11px;
+}
+
 .revision-table-wrap {
   overflow-x: auto;
   border-radius: 12px;
@@ -2310,6 +2356,38 @@ button {
 .estado-badge.inactivo {
   background-color: #f8d7da;
   color: #721c24;
+}
+
+.revision-report-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.revision-report-badge.pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.revision-report-badge.verified {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.revision-report-badge.difference {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.revision-report-badge.adjusted {
+  background: #dbeafe;
+  color: #1d4ed8;
 }
 
 .tabla-reporte tfoot {

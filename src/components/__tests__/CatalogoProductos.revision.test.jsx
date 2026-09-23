@@ -71,6 +71,75 @@ describe('CatalogoProductos - revisión de inventario', () => {
     expect(screen.getByText('Toalla Premium')).toBeInTheDocument();
   });
 
+  test('debe mostrar el total del inventario verificado y su ajuste en la vista activa', async () => {
+    render(
+      <MemoryRouter>
+        <CatalogoProductos />
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('Catálogo de Productos')).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: /Revisión/i }));
+    fireEvent.click(screen.getByRole('button', { name: /Verificados/i }));
+
+    await waitFor(() => {
+      expect(screen.getByText(/Total verificados/i)).toBeInTheDocument();
+      expect(screen.getByText(/Ajuste/i)).toBeInTheDocument();
+    });
+  });
+
+  test('debe volver a poner en pendiente un producto cuya revisión trimestral ya venció', async () => {
+    supabase.from.mockImplementation((table) => {
+      if (table === 'productos') {
+        return {
+          select: jest.fn().mockReturnThis(),
+          order: jest.fn().mockResolvedValue({
+            data: [{
+              id: 3,
+              nombre: 'Caja de prueba',
+              codigo: 'C-003',
+              categoria: 'Otros',
+              precio: 5000,
+              stock: 12,
+              activo: true,
+              descripcion: 'Prueba',
+              created_at: '2026-01-01T00:00:00.000Z',
+              fecha_revision: '2026-01-01T00:00:00.000Z',
+              fecha_proxima_revision: '2026-04-01T00:00:00.000Z',
+              estado_revision: 'verificado'
+            }],
+            error: null,
+          }),
+        };
+      }
+
+      return {
+        insert: jest.fn().mockResolvedValue({ error: null }),
+        update: jest.fn().mockReturnValue({ eq: jest.fn().mockResolvedValue({ error: null }) }),
+      };
+    });
+
+    render(
+      <MemoryRouter>
+        <CatalogoProductos />
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('Catálogo de Productos')).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: /Revisión/i }));
+
+    await waitFor(() => {
+      expect(screen.getByText('Caja de prueba')).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /^Pendientes$/i })).toBeInTheDocument();
+    });
+  });
+
   test('debe avisar cuando la revisión no se guarda en base de datos', async () => {
     const alertSpy = jest.spyOn(window, 'alert').mockImplementation(() => {});
 

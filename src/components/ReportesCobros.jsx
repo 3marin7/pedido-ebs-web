@@ -59,6 +59,8 @@ const ReportesCobros = () => {
   const [fechaInicio, setFechaInicio] = useState('');
   const [fechaFin, setFechaFin] = useState('');
   const [filtroVendedor, setFiltroVendedor] = useState('Todos');
+  const [filtroCentroComercial, setFiltroCentroComercial] = useState('Todos');
+  const [centrosComerciales, setCentrosComerciales] = useState([]);
   const [mostrarGrafico, setMostrarGrafico] = useState(true);
   const [mostrarModalImportar, setMostrarModalImportar] = useState(false);
   const [archivoCSV, setArchivoCSV] = useState(null);
@@ -154,28 +156,52 @@ const ReportesCobros = () => {
       try {
         setCargando(true);
         
-        // Cargar todas las facturas (sin limite de 1000 filas)
-        const facturasData = await fetchAllRows('facturas', 'fecha', false);
-        setFacturas(facturasData || []);
+        // Cargar todas las facturas y clientes para resolver centro comercial
+        const [facturasData, clientesData] = await Promise.all([
+          fetchAllRows('facturas', 'fecha', false),
+          fetchAllRows('clientes', 'nombre', true)
+        ]);
+
+        const centrosPorCliente = new Map(
+          (clientesData || [])
+            .filter((cliente) => cliente.nombre && cliente.centro_comercial)
+            .map((cliente) => [String(cliente.nombre).trim().toLowerCase(), String(cliente.centro_comercial).trim()])
+        );
+
+        const facturasConCentro = (facturasData || []).map((factura) => ({
+          ...factura,
+          centro_comercial: factura.centro_comercial || centrosPorCliente.get(String(factura.cliente || '').trim().toLowerCase()) || ''
+        }));
+
+        setFacturas(facturasConCentro);
+        setCentrosComerciales([
+          ...new Set([
+            ...(facturasConCentro || []).map((factura) => factura.centro_comercial),
+            ...(clientesData || []).map((cliente) => cliente.centro_comercial)
+          ].map((centro) => String(centro || '').trim()).filter(Boolean))
+        ].sort((a, b) => a.localeCompare(b, 'es')));
 
         const facturasPorId = new Map(
-          (facturasData || []).map((factura) => [String(factura.id), factura])
+          (facturasConCentro || []).map((factura) => [String(factura.id), factura])
         );
-        
+
         // Cargar todos los abonos (sin limite de 1000 filas)
         const abonosData = await fetchAllRows('abonos', 'fecha', false);
-        
+
         // Enriquecer abonos con información de la factura
         const abonosEnriquecidos = (abonosData || []).map(abono => {
           const facturaRelacionada = facturasPorId.get(String(abono.factura_id));
+          const centroComercial = facturaRelacionada?.centro_comercial || centrosPorCliente.get(String(facturaRelacionada?.cliente || '').trim().toLowerCase()) || '';
+
           return {
             ...abono,
             vendedor: facturaRelacionada?.vendedor || 'Sin asignar',
             cliente: facturaRelacionada?.cliente || 'Cliente desconocido',
+            centro_comercial: centroComercial,
             facturaId: abono.factura_id
           };
         });
-        
+
         setAbonos(abonosEnriquecidos);
         
         // Establecer fechas por defecto (mes actual), igual que el calculador.
@@ -206,7 +232,14 @@ const ReportesCobros = () => {
         abono => abono.vendedor === filtroVendedor
       );
     }
-    
+
+    // Filtrar por centro comercial si no es "Todos"
+    if (filtroCentroComercial !== 'Todos') {
+      abonosFiltrados = abonosFiltrados.filter(
+        abono => abono.centro_comercial === filtroCentroComercial
+      );
+    }
+
     // Filtrar por rango de fechas
     abonosFiltrados = abonosFiltrados.filter(abono => {
       const fechaAbono = normalizarFechaISO(abono.fecha);
@@ -1284,6 +1317,21 @@ const ReportesCobros = () => {
                     <option key={vendedor} value={vendedor}>
                       {vendedor}
                     </option>
+                  ))}
+                </select>
+              </label>
+            </div>
+
+            <div className="filtro-group">
+              <label>
+                <i className="fas fa-store"></i> Centro comercial / droguería:
+                <select
+                  value={filtroCentroComercial}
+                  onChange={e => setFiltroCentroComercial(e.target.value)}
+                >
+                  <option value="Todos">Todos los centros</option>
+                  {centrosComerciales.map((centro) => (
+                    <option key={centro} value={centro}>{centro}</option>
                   ))}
                 </select>
               </label>
