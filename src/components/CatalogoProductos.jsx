@@ -296,7 +296,9 @@ const calcularProximaRevision = (fechaBase = new Date()) => {
 
 const normalizarRevisionTrimestral = (producto) => {
   const cantidadSistema = Number(producto.cantidad_sistema ?? producto.stock ?? 0);
-  const cantidadReal = Number(producto.cantidad_real ?? producto.stock ?? 0);
+  const cantidadReal = Number(
+    producto.cantidad_real != null ? producto.cantidad_real : (producto.stock ?? 0)
+  );
   const hoy = new Date();
   hoy.setHours(0, 0, 0, 0);
 
@@ -307,13 +309,19 @@ const normalizarRevisionTrimestral = (producto) => {
     fechaProximaRevision = sumarDias(fechaRevision, 90);
   }
 
+  const tieneEstadoExplicito = ['pendiente', 'verificado', 'diferencia', 'ajustado'].includes(producto.estado_revision);
+
   let estadoRevision = producto.estado_revision || (
     producto.cantidad_real != null || producto.cantidad_sistema != null
       ? (cantidadReal === cantidadSistema ? 'verificado' : 'diferencia')
       : 'pendiente'
   );
 
-  if (fechaProximaRevision && fechaProximaRevision <= hoy) {
+  if (tieneEstadoExplicito && ['ajustado', 'diferencia'].includes(producto.estado_revision) && Number(producto.cantidad_real ?? producto.stock ?? 0) >= 0) {
+    estadoRevision = producto.estado_revision;
+  }
+
+  if (!tieneEstadoExplicito && fechaProximaRevision && fechaProximaRevision <= hoy) {
     estadoRevision = 'pendiente';
     fechaProximaRevision = sumarDias(hoy, 90);
   }
@@ -360,35 +368,53 @@ const RevisionInventario = ({ productos, setProductos, user }) => {
 
   const resumenPorEstado = useMemo(() => {
     const base = {
-      todos: { count: 0, cantidadReal: 0, ajuste: 0 },
-      pendiente: { count: 0, cantidadReal: 0, ajuste: 0 },
-      verificado: { count: 0, cantidadReal: 0, ajuste: 0 },
-      diferencia: { count: 0, cantidadReal: 0, ajuste: 0 },
-      ajustado: { count: 0, cantidadReal: 0, ajuste: 0 },
+      todos: { count: 0, cantidadReal: 0, ajuste: 0, valorReal: 0, valorAjuste: 0 },
+      pendiente: { count: 0, cantidadReal: 0, ajuste: 0, valorReal: 0, valorAjuste: 0 },
+      verificado: { count: 0, cantidadReal: 0, ajuste: 0, valorReal: 0, valorAjuste: 0 },
+      diferencia: { count: 0, cantidadReal: 0, ajuste: 0, valorReal: 0, valorAjuste: 0 },
+      ajustado: { count: 0, cantidadReal: 0, ajuste: 0, valorReal: 0, valorAjuste: 0 },
     };
 
     productosRevision.forEach((producto) => {
       const estado = producto.estado_revision || 'pendiente';
       const cantidadReal = Number(producto.cantidad_real ?? 0);
-      const ajuste = Number(producto.diferencia ?? 0);
+      const cantidadSistema = Number(producto.cantidad_sistema ?? producto.stock ?? 0);
+      const precio = Number(producto.precio || 0);
+      const ajuste = cantidadReal - cantidadSistema;
+      const valorReal = precio * cantidadReal;
+      const valorAjuste = ajuste * precio;
 
       base.todos.count += 1;
       base.todos.cantidadReal += cantidadReal;
       base.todos.ajuste += ajuste;
+      base.todos.valorReal += valorReal;
+      base.todos.valorAjuste += valorAjuste;
 
       if (!base[estado]) {
-        base[estado] = { count: 0, cantidadReal: 0, ajuste: 0 };
+        base[estado] = { count: 0, cantidadReal: 0, ajuste: 0, valorReal: 0, valorAjuste: 0 };
       }
 
       base[estado].count += 1;
       base[estado].cantidadReal += cantidadReal;
       base[estado].ajuste += ajuste;
+      base[estado].valorReal += valorReal;
+      base[estado].valorAjuste += valorAjuste;
     });
 
     return base;
   }, [productosRevision]);
 
-  const totalEstadoActual = filtroRevision === 'todos' ? resumenPorEstado.todos : resumenPorEstado[filtroRevision] || { count: 0, cantidadReal: 0, ajuste: 0 };
+  const totalEstadoActual = filtroRevision === 'todos'
+    ? resumenPorEstado.todos
+    : resumenPorEstado[filtroRevision] || {
+        count: 0,
+        cantidadReal: 0,
+        ajuste: 0,
+        valorReal: 0,
+        valorAjuste: 0
+      };
+
+  const valorTotalInventarioReal = totalEstadoActual.valorReal;
 
   const etiquetaEstadoActual = {
     todos: 'Total inventario',
@@ -398,7 +424,51 @@ const RevisionInventario = ({ productos, setProductos, user }) => {
     ajustado: 'Total ajustados'
   }[filtroRevision] || 'Total inventario';
 
+  const etiquetaEstadoResumen = {
+    todos: 'inventario real',
+    pendiente: 'pendientes',
+    verificado: 'verificados',
+    diferencia: 'diferencias',
+    ajustado: 'ajustados'
+  }[filtroRevision] || 'inventario real';
+
+  const footerLabels = {
+    todos: {
+      unidades: 'Total real',
+      valor: 'Valor real',
+      ajuste: 'Ajuste total'
+    },
+    pendiente: {
+      unidades: 'Pendientes',
+      valor: 'Valor pendientes',
+      ajuste: 'Ajuste pendientes'
+    },
+    verificado: {
+      unidades: 'Verificados',
+      valor: 'Valor verificados',
+      ajuste: 'Ajuste verificados'
+    },
+    diferencia: {
+      unidades: 'Diferencias',
+      valor: 'Valor diferencias',
+      ajuste: 'Ajuste diferencias'
+    },
+    ajustado: {
+      unidades: 'Ajustados',
+      valor: 'Valor ajustados',
+      ajuste: 'Ajuste ajustados'
+    }
+  };
+
+  const footerLabel = footerLabels[filtroRevision] || footerLabels.todos;
+
   const formatCantidad = (valor) => new Intl.NumberFormat('es-CO').format(Math.round(Number(valor || 0)));
+  const formatPrecio = (valor) => new Intl.NumberFormat('es-CO', {
+    style: 'currency',
+    currency: 'COP',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0
+  }).format(Number(valor || 0));
 
   const productosFiltrados = useMemo(() => {
     return productosRevision.filter((producto) => {
@@ -423,7 +493,8 @@ const RevisionInventario = ({ productos, setProductos, user }) => {
 
   const guardarRevision = async (producto, formValues) => {
     const cantidadSistema = Number(producto.cantidad_sistema ?? producto.stock ?? 0);
-    const cantidadReal = Number(formValues.cantidadReal ?? 0);
+    const cantidadRealInput = Number(formValues.cantidadReal ?? producto.cantidad_real ?? producto.stock ?? 0);
+    const cantidadReal = Number.isFinite(cantidadRealInput) ? Math.max(0, cantidadRealInput) : Math.max(0, cantidadSistema);
     const estadoRevision = formValues.estado;
     const fechaRevision = new Date().toISOString();
     const usuarioRevision = user?.username || 'Sistema';
@@ -513,7 +584,9 @@ const RevisionInventario = ({ productos, setProductos, user }) => {
           if (!ultimaRevision) return item;
 
           const cantidadSistemaRevision = Number(ultimaRevision.cantidad_sistema ?? item.stock ?? 0);
-          const cantidadRealRevision = Number(ultimaRevision.cantidad_real ?? item.stock ?? 0);
+          const cantidadRealRevision = Number(
+            ultimaRevision.cantidad_real != null ? ultimaRevision.cantidad_real : (item.stock ?? 0)
+          );
           const siguienteEstado = ultimaRevision.estado_revision || item.estado_revision || 'pendiente';
 
           return normalizarRevisionTrimestral({
@@ -692,6 +765,26 @@ const RevisionInventario = ({ productos, setProductos, user }) => {
             ))}
           </tbody>
         </table>
+      </div>
+
+      <div className="revision-footer-total">
+        <div className="revision-footer-total__card">
+          <span>{footerLabel.unidades}</span>
+          <strong>{formatCantidad(totalEstadoActual.cantidadReal)} unidades</strong>
+          <small>{totalEstadoActual.count} productos</small>
+        </div>
+
+        <div className="revision-footer-total__card">
+          <span>{footerLabel.valor}</span>
+          <strong>{formatPrecio(valorTotalInventarioReal)}</strong>
+          <small>Precio × cantidad real</small>
+        </div>
+
+        <div className="revision-footer-total__card">
+          <span>{footerLabel.ajuste}</span>
+          <strong>{totalEstadoActual.ajuste >= 0 ? '+' : ''}{formatCantidad(totalEstadoActual.ajuste)} unidades</strong>
+          <small>{formatPrecio(totalEstadoActual.valorAjuste)}</small>
+        </div>
       </div>
 
       {modalRevision && (
