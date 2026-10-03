@@ -434,8 +434,8 @@ const RevisionInventario = ({ productos, setProductos, user }) => {
 
   const footerLabels = {
     todos: {
-      unidades: 'Total real',
-      valor: 'Valor real',
+      unidades: 'Total inventario real',
+      valor: 'Valor total real',
       ajuste: 'Ajuste total'
     },
     pendiente: {
@@ -591,7 +591,6 @@ const RevisionInventario = ({ productos, setProductos, user }) => {
 
           return normalizarRevisionTrimestral({
             ...item,
-            stock: cantidadRealRevision,
             cantidad_sistema: cantidadSistemaRevision,
             cantidad_real: cantidadRealRevision,
             estado_revision: siguienteEstado,
@@ -1432,7 +1431,6 @@ const CatalogoProductos = ({ mode = 'admin' }) => {
 
             return {
               ...producto,
-              stock: cantidadRealRevision,
               cantidad_sistema: cantidadSistemaRevision,
               cantidad_real: cantidadRealRevision,
               estado_revision: ultimaRevision.estado_revision || producto.estado_revision || 'pendiente',

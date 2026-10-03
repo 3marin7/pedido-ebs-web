@@ -7,6 +7,32 @@ import './InvoiceScreen.css';
 import { useAuth } from '../App';
 import { formatInputDateLocal } from '../lib/dateUtils';
 
+export const normalizeProductName = (value = '') =>
+  String(value)
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-zA-Z0-9]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .toLowerCase();
+
+export const findMatchingProduct = (catalogo, nombre, codigo = '') => {
+  if (!Array.isArray(catalogo) || !catalogo.length) return null;
+
+  const nombreNormalizado = normalizeProductName(nombre);
+  const codigoNormalizado = normalizeProductName(codigo);
+
+  const productoPorNombre = catalogo.find(producto => normalizeProductName(producto.nombre || '') === nombreNormalizado);
+  if (productoPorNombre) return productoPorNombre;
+
+  if (codigoNormalizado) {
+    const productoConCodigo = catalogo.find(producto => normalizeProductName(producto.codigo || '') === codigoNormalizado);
+    if (productoConCodigo) return productoConCodigo;
+  }
+
+  return null;
+};
+
 const InvoiceScreen = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -189,9 +215,7 @@ const InvoiceScreen = () => {
     const productosActualizados = productos.map(p => {
       if (p.producto_id) return p;
 
-      const coincidencia = productosCatalogo.find(pc =>
-        (pc.nombre || '').trim().toLowerCase() === (p.nombre || '').trim().toLowerCase()
-      );
+      const coincidencia = findMatchingProduct(productosCatalogo, p.nombre, p.codigo || '');
 
       if (!coincidencia) return p;
       huboCambios = true;
@@ -242,10 +266,9 @@ const InvoiceScreen = () => {
       return;
     }
 
-    // Buscar el producto en el catálogo para verificar stock
-    const productoCatalogo = productosCatalogo.find(p => 
-      p.nombre.toLowerCase() === nombreProducto.toLowerCase()
-    );
+    // Buscar el producto exacto en el catálogo para verificar stock.
+    // No usar coincidencias parciales porque nombres como "HUGGIES ETAPA 3 52" y "HUGGIES ETAPA 5 X 52" son muy parecidos.
+    const productoCatalogo = findMatchingProduct(productosCatalogo, nombreProducto);
 
     if (productoCatalogo && productoCatalogo.stock !== null && productoCatalogo.stock !== undefined) {
       const stockDisponible = verificarStockDisponible(productoCatalogo.id, cantidad);

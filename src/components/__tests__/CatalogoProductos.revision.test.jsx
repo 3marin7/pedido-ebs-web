@@ -4,6 +4,11 @@ import { MemoryRouter } from 'react-router-dom';
 import CatalogoProductos from '../CatalogoProductos';
 import { supabase } from '../supabaseClient';
 
+jest.mock('../../lib/inventoryUtils', () => ({
+  getProductSalesAndRecommendations: jest.fn().mockResolvedValue([]),
+  mergeRecommendationsIntoProducts: jest.fn((productos) => productos),
+}));
+
 jest.mock('../supabaseClient', () => ({
   supabase: {
     from: jest.fn(),
@@ -69,6 +74,41 @@ describe('CatalogoProductos - revisión de inventario', () => {
     expect(screen.getByText('Revisión de inventario')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Pendientes/i })).toBeInTheDocument();
     expect(screen.getByText('Toalla Premium')).toBeInTheDocument();
+  });
+
+  test('debe conservar el stock actual del producto aunque el historial tenga una cantidad anterior', async () => {
+    supabase.from.mockImplementation((tabla) => {
+      const data = tabla === 'productos'
+        ? [{
+            id: 78,
+            nombre: 'Huggies Etapa 3',
+            categoria: 'Pañales',
+            precio: 36000,
+            stock: 78,
+            activo: true,
+          }]
+        : [{
+            producto_id: 78,
+            cantidad_sistema: 78,
+            cantidad_real: 0,
+            estado_revision: 'diferencia',
+          }];
+
+      return {
+        select: jest.fn().mockReturnThis(),
+        order: jest.fn().mockResolvedValue({ data, error: null }),
+      };
+    });
+
+    render(
+      <MemoryRouter>
+        <CatalogoProductos />
+      </MemoryRouter>
+    );
+
+    await screen.findByText('Huggies Etapa 3');
+
+    expect(screen.getByText('Stock: 78')).toBeInTheDocument();
   });
 
   test('debe mostrar el total del inventario verificado y su ajuste en la vista activa', async () => {
