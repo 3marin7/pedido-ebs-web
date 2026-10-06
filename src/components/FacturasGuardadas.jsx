@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../App';
+import { isAdminRole, isSuperAdminRole } from '../lib/roleUtils';
 import { supabase } from './supabaseClient';
 import * as XLSX from 'xlsx';
 import { parseDateLocal, formatDateLocal, nowLocalIsoDate, formatDateTimeBogota } from '../lib/dateUtils';
@@ -82,6 +84,8 @@ const cargarTodosLosAbonos = async () => {
 
 const FacturasGuardadas = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const canDeleteInvoices = isAdminRole(user?.role) || isSuperAdminRole(user?.role);
   const [facturas, setFacturas] = useState([]);
   const [abonos, setAbonos] = useState([]);
   const [cargando, setCargando] = useState(true);
@@ -100,8 +104,6 @@ const FacturasGuardadas = () => {
   const [errorImportacion, setErrorImportacion] = useState(null);
   const [mostrarPagadas, setMostrarPagadas] = useState(false);
   const [vistaActual, setVistaActual] = useState('tarjeta');
-  const [password, setPassword] = useState('');
-  const [errorPassword, setErrorPassword] = useState('');
   const [resumenActivo, setResumenActivo] = useState('general');
   const [busquedaClienteResumen, setBusquedaClienteResumen] = useState('');
   const [menuAbierto, setMenuAbierto] = useState(false);
@@ -159,11 +161,6 @@ const FacturasGuardadas = () => {
         estado: saldo <= SALDO_EPSILON ? 'Pagada' : (totalAbonado > 0 ? 'Parcial' : 'Pendiente')
       };
     });
-  };
-
-  // Función para verificar la contraseña
-  const verificarPassword = () => {
-    return password === 'edwin' || password === '777';
   };
 
   const abonosPorFactura = useMemo(() => {
@@ -381,14 +378,11 @@ const FacturasGuardadas = () => {
 
   // Eliminar factura (y sus abonos asociados)
   const eliminarFactura = async (id) => {
-    if (!verificarPassword()) {
-      setErrorPassword('Contraseña incorrecta');
-      return;
-    }
+    if (!canDeleteInvoices) return;
     
     const facturaAEliminar = facturas.find(f => f.id === id);
     if (!facturaAEliminar) {
-      setErrorPassword('No se encontró la factura seleccionada. Recarga la página e inténtalo nuevamente.');
+      alert('No se encontró la factura seleccionada. Recarga la página e inténtalo nuevamente.');
       return;
     }
 
@@ -433,8 +427,6 @@ const FacturasGuardadas = () => {
     } finally {
       setCargando(false);
       setMostrarConfirmacion(null);
-      setPassword('');
-      setErrorPassword('');
     }
   };
 
@@ -1338,16 +1330,18 @@ const FacturasGuardadas = () => {
                           >
                             <i className="fas fa-eye"></i>
                           </button>
-                          <button
-                            className="button danger-button small-button"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setMostrarConfirmacion(factura.id);
-                            }}
-                            disabled={importando || cargando}
-                          >
-                            <i className="fas fa-trash"></i>
-                          </button>
+                          {canDeleteInvoices && (
+                            <button
+                              className="button danger-button small-button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setMostrarConfirmacion(factura.id);
+                              }}
+                              disabled={importando || cargando}
+                            >
+                              <i className="fas fa-trash"></i>
+                            </button>
+                          )}
                         </td>
                       </tr>
                     );
@@ -1469,16 +1463,18 @@ const FacturasGuardadas = () => {
                   >
                     <i className="fas fa-eye"></i> Ver Detalle
                   </button>
-                  <button
-                    className="button danger-button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setMostrarConfirmacion(factura.id);
-                    }}
-                    disabled={importando || cargando}
-                  >
-                    <i className="fas fa-trash"></i> Eliminar
-                  </button>
+                  {canDeleteInvoices && (
+                    <button
+                      className="button danger-button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setMostrarConfirmacion(factura.id);
+                      }}
+                      disabled={importando || cargando}
+                    >
+                      <i className="fas fa-trash"></i> Eliminar
+                    </button>
+                  )}
                 </footer>
               </article>
               );
@@ -1722,22 +1718,7 @@ const FacturasGuardadas = () => {
         <div className="confirmacion-overlay">
           <div className="confirmacion-box">
             <h4>Confirmar eliminación</h4>
-            <p>Para eliminar la factura, ingrese la contraseña de autorización:</p>
-            
-            <div className="password-input-container">
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => {
-                  setPassword(e.target.value);
-                  setErrorPassword('');
-                }}
-                placeholder="Ingrese la contraseña"
-                className={errorPassword ? 'input-error' : ''}
-              />
-              {errorPassword && <span className="error-text">{errorPassword}</span>}
-            </div>
-            
+            <p>Esta acción no se puede deshacer. ¿Deseas continuar?</p>
             <div className="confirmacion-buttons">
               <button 
                 className="button danger-button"
@@ -1749,8 +1730,6 @@ const FacturasGuardadas = () => {
                 className="button secondary-button"
                 onClick={() => {
                   setMostrarConfirmacion(null);
-                  setPassword('');
-                  setErrorPassword('');
                 }}
               >
                 <i className="fas fa-times"></i> Cancelar

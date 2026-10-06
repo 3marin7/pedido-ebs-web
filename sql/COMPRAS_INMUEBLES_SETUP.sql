@@ -38,20 +38,47 @@ alter table public.compras_inmuebles enable row level security;
 alter table public.abonos_inmueble enable row level security;
 alter table public.gastos_inmueble enable row level security;
 
--- Esta aplicación autentica usuarios en la propia app y usa el cliente anon de Supabase.
-create policy "compras_inmuebles_select_app"
-  on public.compras_inmuebles for select to anon, authenticated using (true);
-create policy "compras_inmuebles_insert_app"
-  on public.compras_inmuebles for insert to anon, authenticated with check (true);
-create policy "abonos_inmueble_select_app"
-  on public.abonos_inmueble for select to anon, authenticated using (true);
-create policy "abonos_inmueble_insert_app"
-  on public.abonos_inmueble for insert to anon, authenticated with check (true);
-create policy "gastos_inmueble_select_app"
-  on public.gastos_inmueble for select to anon, authenticated using (true);
-create policy "gastos_inmueble_insert_app"
-  on public.gastos_inmueble for insert to anon, authenticated with check (true);
+-- Ejecutar AUTENTICACION_SUPABASE_SETUP.sql primero para crear los perfiles
+-- y la función pública has_app_role.
+do $$
+declare
+  target_table text;
+  existing_policy record;
+begin
+  foreach target_table in array array['compras_inmuebles', 'abonos_inmueble', 'gastos_inmueble']
+  loop
+    for existing_policy in
+      select policyname
+      from pg_policies
+      where schemaname = 'public'
+        and tablename = target_table
+    loop
+      execute format('drop policy %I on public.%I', existing_policy.policyname, target_table);
+    end loop;
 
-grant select, insert on public.compras_inmuebles to anon, authenticated;
-grant select, insert on public.abonos_inmueble to anon, authenticated;
-grant select, insert on public.gastos_inmueble to anon, authenticated;
+    execute format('revoke all privileges on table public.%I from public, anon, authenticated', target_table);
+    execute format('grant select, insert on table public.%I to authenticated', target_table);
+  end loop;
+end
+$$;
+
+create policy "admins can read property purchases"
+  on public.compras_inmuebles for select to authenticated
+  using (public.has_app_role(array['admin', 'superadmin']));
+create policy "admins can create property purchases"
+  on public.compras_inmuebles for insert to authenticated
+  with check (public.has_app_role(array['admin', 'superadmin']));
+
+create policy "admins can read property payments"
+  on public.abonos_inmueble for select to authenticated
+  using (public.has_app_role(array['admin', 'superadmin']));
+create policy "admins can create property payments"
+  on public.abonos_inmueble for insert to authenticated
+  with check (public.has_app_role(array['admin', 'superadmin']));
+
+create policy "admins can read property expenses"
+  on public.gastos_inmueble for select to authenticated
+  using (public.has_app_role(array['admin', 'superadmin']));
+create policy "admins can create property expenses"
+  on public.gastos_inmueble for insert to authenticated
+  with check (public.has_app_role(array['admin', 'superadmin']));

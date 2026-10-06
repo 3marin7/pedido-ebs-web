@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from './supabaseClient';
 import './CatalogoProductos.css';
 import { useAuth } from '../App';
+import { isAdminRole, isSuperAdminRole } from '../lib/roleUtils';
 import { getProductSalesAndRecommendations, mergeRecommendationsIntoProducts } from '../lib/inventoryUtils';
 
 // Componente para subir imágenes a Cloudinary
@@ -1041,17 +1042,6 @@ const ReporteInventario = ({ productos }) => {
 
 // Modal para validar contraseña al eliminar
 const ModalConfirmacion = ({ isOpen, onClose, onConfirm, productoNombre }) => {
-  const [password, setPassword] = useState('');
-
-  const handleConfirm = () => {
-    if (password === 'edwin' || password === '777') {
-      onConfirm();
-      onClose();
-    } else {
-      alert('Contraseña incorrecta comunicate con soporte 3004583117');
-    }
-  };
-
   if (!isOpen) return null;
 
   return (
@@ -1059,19 +1049,15 @@ const ModalConfirmacion = ({ isOpen, onClose, onConfirm, productoNombre }) => {
       <div className="modal-confirmacion">
         <h3>Confirmar Eliminación</h3>
         <p>Está a punto de eliminar el producto: <strong>{productoNombre}</strong></p>
-        <p>Ingrese la contraseña para confirmar:</p>
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="Contraseña"
-          className="password-input"
-        />
+        <p>Esta acción no se puede deshacer. ¿Deseas continuar?</p>
         <div className="modal-actions">
           <button className="button secondary-button" onClick={onClose}>
             Cancelar
           </button>
-          <button className="button danger-button" onClick={handleConfirm}>
+          <button className="button danger-button" onClick={() => {
+            onConfirm();
+            onClose();
+          }}>
             Confirmar Eliminación
           </button>
         </div>
@@ -1085,6 +1071,7 @@ const CatalogoProductos = ({ mode = 'admin' }) => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const isReadOnly = mode === 'contabilidad';
+  const canDeleteProducts = isAdminRole(user?.role) || isSuperAdminRole(user?.role);
   const [productos, setProductos] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [nuevoProducto, setNuevoProducto] = useState({
@@ -1481,11 +1468,34 @@ const CatalogoProductos = ({ mode = 'admin' }) => {
     });
   };
 
+  const normalizarNombreProducto = (nombre = '') => {
+    return String(nombre)
+      .trim()
+      .replace(/\s+/g, ' ')
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '');
+  };
+
   const validarProducto = () => {
-    if (!nuevoProducto.nombre || !nuevoProducto.precio) {
+    const nombreProducto = String(nuevoProducto.nombre || '').trim();
+
+    if (!nombreProducto || !nuevoProducto.precio) {
       alert('⚠️ Nombre y precio son campos obligatorios');
       return false;
     }
+
+    const nombreNormalizado = normalizarNombreProducto(nombreProducto);
+    const productoDuplicado = productos.find((producto) => {
+      if (producto.id === editandoId) return false;
+      return normalizarNombreProducto(producto.nombre || '') === nombreNormalizado;
+    });
+
+    if (productoDuplicado) {
+      alert(`⚠️ Ya existe un producto llamado "${productoDuplicado.nombre}". Revisa que no lo crees dos veces.`);
+      return false;
+    }
+
     return true;
   };
 
@@ -1695,6 +1705,7 @@ const CatalogoProductos = ({ mode = 'admin' }) => {
   };
 
   const abrirModalEliminar = (productoId, productoNombre) => {
+    if (!canDeleteProducts) return;
     setModalEliminar({
       isOpen: true,
       productoId,
@@ -1711,7 +1722,7 @@ const CatalogoProductos = ({ mode = 'admin' }) => {
   };
 
   const confirmarEliminacion = () => {
-    if (modalEliminar.productoId) {
+    if (canDeleteProducts && modalEliminar.productoId) {
       eliminarProducto(modalEliminar.productoId);
     }
   };
@@ -2397,7 +2408,7 @@ const CatalogoProductos = ({ mode = 'admin' }) => {
                             <button className="action-button edit-button" onClick={() => editarProducto(producto)}>
                               <i className="fas fa-edit"></i> Editar
                             </button>
-                            {!producto.activo && (
+                            {!producto.activo && canDeleteProducts && (
                               <button className="action-button delete-button" onClick={() => abrirModalEliminar(producto.id, producto.nombre)}>
                                 <i className="fas fa-trash"></i> Eliminar
                               </button>
@@ -2468,7 +2479,7 @@ const CatalogoProductos = ({ mode = 'admin' }) => {
                       </button>
                       
                       {/* Botón de eliminar solo visible para productos inactivos */}
-                      {!producto.activo && (
+                      {!producto.activo && canDeleteProducts && (
                         <button 
                           className="action-button delete-button"
                           onClick={() => abrirModalEliminar(producto.id, producto.nombre)}

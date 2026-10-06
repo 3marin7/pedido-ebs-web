@@ -1,5 +1,4 @@
--- La aplicación usa autenticación propia y consulta Supabase con la clave anon.
--- Ejecuta este script una sola vez en Supabase SQL Editor.
+-- Ejecuta AUTENTICACION_SUPABASE_SETUP.sql primero para configurar Auth y roles.
 
 alter table public.abonos_inmueble add column if not exists evidencia_url text;
 create table if not exists public.gastos_inmueble (
@@ -19,39 +18,45 @@ alter table public.compras_inmuebles enable row level security;
 alter table public.abonos_inmueble enable row level security;
 alter table public.gastos_inmueble enable row level security;
 
-drop policy if exists "usuarios autenticados pueden consultar compras" on public.compras_inmuebles;
-drop policy if exists "usuarios autenticados pueden crear compras" on public.compras_inmuebles;
-drop policy if exists "usuarios autenticados pueden consultar abonos" on public.abonos_inmueble;
-drop policy if exists "usuarios autenticados pueden crear abonos" on public.abonos_inmueble;
-drop policy if exists "compras_inmuebles_select_app" on public.compras_inmuebles;
-drop policy if exists "compras_inmuebles_insert_app" on public.compras_inmuebles;
-drop policy if exists "abonos_inmueble_select_app" on public.abonos_inmueble;
-drop policy if exists "abonos_inmueble_insert_app" on public.abonos_inmueble;
-drop policy if exists "gastos_inmueble_select_app" on public.gastos_inmueble;
-drop policy if exists "gastos_inmueble_insert_app" on public.gastos_inmueble;
+do $$
+declare
+  target_table text;
+  existing_policy record;
+begin
+  foreach target_table in array array['compras_inmuebles', 'abonos_inmueble', 'gastos_inmueble']
+  loop
+    for existing_policy in
+      select policyname
+      from pg_policies
+      where schemaname = 'public'
+        and tablename = target_table
+    loop
+      execute format('drop policy %I on public.%I', existing_policy.policyname, target_table);
+    end loop;
 
-create policy "compras_inmuebles_select_app"
-  on public.compras_inmuebles for select
-  to anon, authenticated
-  using (true);
+    execute format('revoke all privileges on table public.%I from public, anon, authenticated', target_table);
+    execute format('grant select, insert on table public.%I to authenticated', target_table);
+  end loop;
+end
+$$;
 
-create policy "compras_inmuebles_insert_app"
-  on public.compras_inmuebles for insert
-  to anon, authenticated
-  with check (true);
+create policy "admins can read property purchases"
+  on public.compras_inmuebles for select to authenticated
+  using (public.has_app_role(array['admin', 'superadmin']));
+create policy "admins can create property purchases"
+  on public.compras_inmuebles for insert to authenticated
+  with check (public.has_app_role(array['admin', 'superadmin']));
 
-create policy "abonos_inmueble_select_app"
-  on public.abonos_inmueble for select
-  to anon, authenticated
-  using (true);
+create policy "admins can read property payments"
+  on public.abonos_inmueble for select to authenticated
+  using (public.has_app_role(array['admin', 'superadmin']));
+create policy "admins can create property payments"
+  on public.abonos_inmueble for insert to authenticated
+  with check (public.has_app_role(array['admin', 'superadmin']));
 
-create policy "abonos_inmueble_insert_app"
-  on public.abonos_inmueble for insert
-  to anon, authenticated
-  with check (true);
-create policy "gastos_inmueble_select_app" on public.gastos_inmueble for select to anon, authenticated using (true);
-create policy "gastos_inmueble_insert_app" on public.gastos_inmueble for insert to anon, authenticated with check (true);
-
-grant select, insert on public.compras_inmuebles to anon, authenticated;
-grant select, insert on public.abonos_inmueble to anon, authenticated;
-grant select, insert on public.gastos_inmueble to anon, authenticated;
+create policy "admins can read property expenses"
+  on public.gastos_inmueble for select to authenticated
+  using (public.has_app_role(array['admin', 'superadmin']));
+create policy "admins can create property expenses"
+  on public.gastos_inmueble for insert to authenticated
+  with check (public.has_app_role(array['admin', 'superadmin']));

@@ -2,70 +2,54 @@
 import React, { useState } from 'react';
 import { useAuth } from '../App';
 import { Link } from 'react-router-dom';
+import { supabase } from '../lib/supabase';
 import './Login.css'; // Asegúrate de importar el CSS
 
 const Login = () => {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [message, setMessage] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isRecoveryMode, setIsRecoveryMode] = useState(false);
   const { login } = useAuth();
 
-  // Datos de usuarios con roles y permisos específicos
-  const users = [
-    { 
-      id: 1, 
-      username: 'Edwin', 
-      password: 'emc', 
-      role: 'admin',
-      descripcion: 'Admin - Acceso Total. Administrador del sistema. Ver todo, gestionar usuarios, reportes completos.'
-    },
-    { 
-      id: 2, 
-      username: 'fredy', 
-      password: '801551', 
-      role: 'admin',
-      descripcion: 'Admin - Acceso Total. Administrador del sistema. Ver todo, gestionar usuarios, reportes completos.'
-    },
-    { 
-      id: 8,
-      username: 'EMC',
-      password: 'superadmin123',
-      role: 'superadmin',
-      descripcion: 'SUPERADMIN - Acceso EXCLUSIVO a reportes avanzados. Reporte de clientes por producto, análisis completo.'
-    },
-    { 
-      id: 3, 
-      username: 'sharon',
-      password: 'sharon1310', 
-      role: 'inventario',
-      descripcion: 'Bodega (Inventario) - Crear facturas, catálogo, gestión de inventario, gestión de pedidos.'
-    },
-    { 
-      id: 4, 
-      username: 'caro', 
-      password: 'caro123', 
-      role: 'contabilidad',
-      descripcion: 'Contabilidad - Ver facturas guardadas, reportes de cobros, análisis de contabilidad.'
-    },
-    { 
-      id: 5, 
-      username: 'fabian', 
-      password: '0411', 
-      role: 'admin',
-      descripcion: 'Admin - Acceso Total. Administrador del sistema. Ver todo, gestionar usuarios, reportes completos.'
-    }
-  ];
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    
-    const user = users.find(u => u.username === username && u.password === password);
-    
-    if (user) {
-      login(user);
-    } else {
-      setError('Credenciales incorrectas');
+
+    setIsSubmitting(true);
+    try {
+      const result = await login(email, password);
+      if (result?.error) {
+        setError('No se pudo iniciar sesión. Verifica tus credenciales o consulta al administrador.');
+      }
+    } catch (loginError) {
+      console.error('Error al iniciar sesión:', loginError);
+      setError('No se pudo conectar con el servicio de autenticación. Intenta de nuevo.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handlePasswordRecovery = async (e) => {
+    e.preventDefault();
+    setError('');
+    setMessage('');
+    setIsSubmitting(true);
+
+    try {
+      const { error: recoveryError } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+        redirectTo: `${window.location.origin}/actualizar-contrasena`,
+      });
+
+      if (recoveryError) throw recoveryError;
+      setMessage('Si existe una cuenta asociada a ese correo, recibirás un enlace para restablecer la contraseña.');
+    } catch (recoveryError) {
+      console.error('Error solicitando recuperación de contraseña:', recoveryError);
+      setError('No se pudo solicitar el restablecimiento. Verifica el correo o inténtalo más tarde.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -80,50 +64,57 @@ const Login = () => {
         <div className="login-content">
           <div className="login-form-section">
             <h3>Acceso para el equipo</h3>
-            <p>Ingresa tus credenciales para acceder al sistema</p>
+            <p>{isRecoveryMode ? 'Te enviaremos un enlace para crear una contraseña nueva.' : 'Ingresa tus credenciales para acceder al sistema'}</p>
             
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={isRecoveryMode ? handlePasswordRecovery : handleSubmit}>
               <div className="form-group">
-                <label>Usuario:</label>
+                <label htmlFor="login-email">Correo electrónico:</label>
                 <input
-                  type="text"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
+                  id="login-email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   required
-                  placeholder="Ingresa tu usuario"
+                  autoComplete="username"
+                  placeholder="Ingresa tu correo electrónico"
+                  disabled={isSubmitting}
                 />
               </div>
-              <div className="form-group">
-                <label>Contraseña:</label>
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  placeholder="Ingresa tu contraseña"
-                />
-              </div>
+              {!isRecoveryMode && (
+                <div className="form-group">
+                  <label htmlFor="login-password">Contraseña:</label>
+                  <input
+                    id="login-password"
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    autoComplete="current-password"
+                    placeholder="Ingresa tu contraseña"
+                    disabled={isSubmitting}
+                  />
+                </div>
+              )}
               {error && <div className="error-message">{error}</div>}
-              <button type="submit" className="login-btn">
-                Ingresar al sistema
+              {message && <div className="success-message" role="status">{message}</div>}
+              <button type="submit" className="login-btn" disabled={isSubmitting}>
+                {isSubmitting
+                  ? (isRecoveryMode ? 'Enviando...' : 'Verificando...')
+                  : (isRecoveryMode ? 'Enviar enlace' : 'Ingresar al sistema')}
               </button>
             </form>
-
-            {/* Información de Roles - OCULTA */}
-            {/* <div className="roles-info">
-              <h4>Roles y Accesos:</h4>
-              <div className="roles-list">
-                {users.map((user) => (
-                  <div key={user.id} className={`role-item role-${user.role}`}>
-                    <div className="role-header">
-                      <strong>{user.username}</strong>
-                      <span className="role-badge">{user.role}</span>
-                    </div>
-                    <p>{user.descripcion}</p>
-                  </div>
-                ))}
-              </div>
-            </div> */}
+            <button
+              type="button"
+              className="login-text-btn"
+              onClick={() => {
+                setIsRecoveryMode(!isRecoveryMode);
+                setError('');
+                setMessage('');
+              }}
+              disabled={isSubmitting}
+            >
+              {isRecoveryMode ? 'Volver al inicio de sesión' : 'Olvidé mi contraseña'}
+            </button>
           </div>
           
           <div className="catalog-section">

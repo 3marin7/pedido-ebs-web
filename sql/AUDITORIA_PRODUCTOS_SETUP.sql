@@ -23,15 +23,33 @@ CREATE INDEX IF NOT EXISTS idx_auditoria_rol ON auditoria_productos(rol_usuario)
 -- 3. Habilitar Row Level Security
 ALTER TABLE auditoria_productos ENABLE ROW LEVEL SECURITY;
 
--- 4. Crear políticas RLS
-DROP POLICY IF EXISTS "Allow read all" ON auditoria_productos;
-DROP POLICY IF EXISTS "Allow insert all" ON auditoria_productos;
+-- Ejecutar AUTENTICACION_SUPABASE_SETUP.sql primero para configurar perfiles y roles.
+DO $$
+DECLARE
+  existing_policy record;
+BEGIN
+  FOR existing_policy IN
+    SELECT policyname FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'auditoria_productos'
+  LOOP
+    EXECUTE format('DROP POLICY %I ON public.auditoria_productos', existing_policy.policyname);
+  END LOOP;
+END
+$$;
 
-CREATE POLICY "Allow read all" ON auditoria_productos
-  FOR SELECT USING (true);
+REVOKE ALL PRIVILEGES ON TABLE public.auditoria_productos FROM public, anon, authenticated;
+GRANT SELECT, INSERT ON TABLE public.auditoria_productos TO authenticated;
+GRANT USAGE, SELECT ON SEQUENCE public.auditoria_productos_id_seq TO authenticated;
 
-CREATE POLICY "Allow insert all" ON auditoria_productos
-  FOR INSERT WITH CHECK (true);
+CREATE POLICY "authorized staff can read product audit"
+  ON public.auditoria_productos
+  FOR SELECT TO authenticated
+  USING (public.has_app_role(array['admin', 'superadmin', 'inventario']));
+
+CREATE POLICY "authorized staff can create product audit"
+  ON public.auditoria_productos
+  FOR INSERT TO authenticated
+  WITH CHECK (public.has_app_role(array['admin', 'superadmin', 'inventario']));
 
 -- 5. Verificar que se creó correctamente
 SELECT column_name, data_type

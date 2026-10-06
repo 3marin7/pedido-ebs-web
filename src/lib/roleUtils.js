@@ -4,6 +4,8 @@ export const normalizeRole = (role) => {
 
   switch (normalized) {
     case 'administrador':
+    case 'administracion':
+    case 'administración':
       return 'admin';
     case 'superadministrador':
     case 'super administrador':

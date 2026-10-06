@@ -1,5 +1,5 @@
 import React from 'react'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import { BrowserRouter } from 'react-router-dom'
 import Login from '../Login'
@@ -9,125 +9,64 @@ jest.mock('../../App', () => ({
 }))
 
 import { useAuth } from '../../App'
+import { supabase } from '../../lib/supabase'
 
 const renderWithRouter = (component) => render(<BrowserRouter>{component}</BrowserRouter>)
 
 describe('Login', () => {
+  const loginMock = jest.fn()
+
   beforeEach(() => {
     jest.clearAllMocks()
-    useAuth.mockReturnValue({
-      login: jest.fn()
-    })
+    loginMock.mockResolvedValue({ error: null })
+    useAuth.mockReturnValue({ login: loginMock })
   })
 
-  test('renderiza el formulario de login y el acceso al catálogo', () => {
+  test('renderiza el formulario y el acceso al catálogo', () => {
     renderWithRouter(<Login />)
 
-    expect(screen.getByPlaceholderText(/usuario/i)).toBeInTheDocument()
-    expect(screen.getByPlaceholderText(/contraseña/i)).toBeInTheDocument()
+    expect(screen.getByLabelText(/correo electrónico/i)).toBeInTheDocument()
+    expect(screen.getByLabelText(/contraseña/i)).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /ingresar al sistema/i })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: /ver catálogo completo/i })).toHaveAttribute('href', '/catalogo-clientes')
   })
 
-  test('muestra el formulario vacío al iniciar', () => {
+  test('envía el correo y la contraseña a la autenticación de Supabase', async () => {
     renderWithRouter(<Login />)
 
-    expect(screen.getByPlaceholderText(/usuario/i)).toHaveValue('')
-    expect(screen.getByPlaceholderText(/contraseña/i)).toHaveValue('')
-    expect(screen.queryByText(/credenciales incorrectas/i)).not.toBeInTheDocument()
-  })
-
-  test('actualiza los campos del formulario al escribir', () => {
-    renderWithRouter(<Login />)
-
-    const usernameInput = screen.getByPlaceholderText(/usuario/i)
-    const passwordInput = screen.getByPlaceholderText(/contraseña/i)
-
-    fireEvent.change(usernameInput, { target: { value: 'Edwin' } })
-    fireEvent.change(passwordInput, { target: { value: 'emc' } })
-
-    expect(usernameInput).toHaveValue('Edwin')
-    expect(passwordInput).toHaveValue('emc')
-  })
-
-  test('llama a login con credenciales válidas de Edwin', () => {
-    const loginMock = jest.fn()
-    useAuth.mockReturnValue({ login: loginMock })
-
-    renderWithRouter(<Login />)
-
-    fireEvent.change(screen.getByPlaceholderText(/usuario/i), { target: { value: 'Edwin' } })
-    fireEvent.change(screen.getByPlaceholderText(/contraseña/i), { target: { value: 'emc' } })
+    fireEvent.change(screen.getByLabelText(/correo electrónico/i), { target: { value: 'edwin@example.com' } })
+    fireEvent.change(screen.getByLabelText(/contraseña/i), { target: { value: 'new-secure-password' } })
     fireEvent.click(screen.getByRole('button', { name: /ingresar al sistema/i }))
 
-    expect(loginMock).toHaveBeenCalledWith(
-      expect.objectContaining({
-        username: 'Edwin',
-        password: 'emc',
-        role: 'admin'
+    await waitFor(() => {
+      expect(loginMock).toHaveBeenCalledWith('edwin@example.com', 'new-secure-password')
+    })
+  })
+
+  test('muestra un mensaje genérico cuando Supabase rechaza el acceso', async () => {
+    loginMock.mockResolvedValue({ error: new Error('Invalid login credentials') })
+    renderWithRouter(<Login />)
+
+    fireEvent.change(screen.getByLabelText(/correo electrónico/i), { target: { value: 'edwin@example.com' } })
+    fireEvent.change(screen.getByLabelText(/contraseña/i), { target: { value: 'wrong-password' } })
+    fireEvent.click(screen.getByRole('button', { name: /ingresar al sistema/i }))
+
+    expect(await screen.findByText(/no se pudo iniciar sesión/i)).toBeInTheDocument()
+  })
+
+  test('solicita un enlace para restablecer la contraseña', async () => {
+    renderWithRouter(<Login />)
+
+    fireEvent.click(screen.getByRole('button', { name: /olvidé mi contraseña/i }))
+    fireEvent.change(screen.getByLabelText(/correo electrónico/i), { target: { value: 'edwin@example.com' } })
+    fireEvent.click(screen.getByRole('button', { name: /enviar enlace/i }))
+
+    await waitFor(() => {
+      expect(supabase.auth.resetPasswordForEmail).toHaveBeenCalledWith('edwin@example.com', {
+        redirectTo: `${window.location.origin}/actualizar-contrasena`,
       })
-    )
-  })
-
-  test('acepta las credenciales válidas de EMC', () => {
-    const loginMock = jest.fn()
-    useAuth.mockReturnValue({ login: loginMock })
-
-    renderWithRouter(<Login />)
-
-    fireEvent.change(screen.getByPlaceholderText(/usuario/i), { target: { value: 'EMC' } })
-    fireEvent.change(screen.getByPlaceholderText(/contraseña/i), { target: { value: 'superadmin123' } })
-    fireEvent.click(screen.getByRole('button', { name: /ingresar al sistema/i }))
-
-    expect(loginMock).toHaveBeenCalledWith(
-      expect.objectContaining({
-        username: 'EMC',
-        password: 'superadmin123',
-        role: 'superadmin'
-      })
-    )
-  })
-
-  test('acepta las credenciales válidas de Sharon', () => {
-    const loginMock = jest.fn()
-    useAuth.mockReturnValue({ login: loginMock })
-
-    renderWithRouter(<Login />)
-
-    fireEvent.change(screen.getByPlaceholderText(/usuario/i), { target: { value: 'sharon' } })
-    fireEvent.change(screen.getByPlaceholderText(/contraseña/i), { target: { value: 'sharon1310' } })
-    fireEvent.click(screen.getByRole('button', { name: /ingresar al sistema/i }))
-
-    expect(loginMock).toHaveBeenCalledWith(
-      expect.objectContaining({
-        username: 'sharon',
-        password: 'sharon1310',
-        role: 'inventario'
-      })
-    )
-  })
-
-  test('muestra un error si las credenciales no coinciden', () => {
-    const loginMock = jest.fn()
-    useAuth.mockReturnValue({ login: loginMock })
-
-    renderWithRouter(<Login />)
-
-    fireEvent.change(screen.getByPlaceholderText(/usuario/i), { target: { value: 'usuario' } })
-    fireEvent.change(screen.getByPlaceholderText(/contraseña/i), { target: { value: 'wrong' } })
-    fireEvent.click(screen.getByRole('button', { name: /ingresar al sistema/i }))
-
-    expect(loginMock).not.toHaveBeenCalled()
-    expect(screen.getByText(/credenciales incorrectas/i)).toBeInTheDocument()
-  })
-
-  test('mantiene la validación del navegador en los campos', () => {
-    renderWithRouter(<Login />)
-
-    expect(screen.getByPlaceholderText(/usuario/i)).toHaveAttribute('required')
-    expect(screen.getByPlaceholderText(/contraseña/i)).toHaveAttribute('required')
-    expect(screen.getByPlaceholderText(/usuario/i)).toHaveAttribute('type', 'text')
-    expect(screen.getByPlaceholderText(/contraseña/i)).toHaveAttribute('type', 'password')
+    })
+    expect(await screen.findByRole('status')).toHaveTextContent(/recibirás un enlace/i)
   })
 
   test('muestra la información del catálogo para usuarios sin cuenta', () => {

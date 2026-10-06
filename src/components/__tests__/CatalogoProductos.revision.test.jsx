@@ -413,4 +413,58 @@ describe('CatalogoProductos - revisión de inventario', () => {
 
     alertSpy.mockRestore();
   });
+
+  test('no debe permitir crear un producto si ya existe otro con el mismo nombre', async () => {
+    const alertSpy = jest.spyOn(window, 'alert').mockImplementation(() => {});
+    const insertMock = jest.fn().mockResolvedValue({ data: [{ id: 99, nombre: 'Pañal X' }], error: null });
+
+    supabase.from.mockImplementation((table) => {
+      if (table === 'productos') {
+        return {
+          select: jest.fn().mockReturnThis(),
+          order: jest.fn().mockResolvedValue({
+            data: [{
+              id: 1,
+              nombre: 'Pañal X',
+              codigo: 'P-001',
+              categoria: 'Pañales',
+              precio: 15000,
+              stock: 10,
+              activo: true,
+              descripcion: 'Pañal',
+              created_at: '2026-01-01T00:00:00.000Z',
+            }],
+            error: null,
+          }),
+          insert: insertMock,
+        };
+      }
+
+      return {
+        insert: jest.fn().mockResolvedValue({ error: null }),
+      };
+    });
+
+    render(
+      <MemoryRouter>
+        <CatalogoProductos />
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('Catálogo de Productos')).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: /Nuevo Producto/i }));
+    fireEvent.change(screen.getByLabelText(/Nombre \*:/i), { target: { value: 'PaÑal x   ' } });
+    fireEvent.change(screen.getByLabelText(/Precio \*:/i), { target: { value: '25000' } });
+    fireEvent.click(screen.getByRole('button', { name: /Agregar Producto/i }));
+
+    await waitFor(() => {
+      expect(alertSpy).toHaveBeenCalledWith(expect.stringContaining('ya existe'));
+    });
+
+    expect(insertMock).not.toHaveBeenCalled();
+    alertSpy.mockRestore();
+  });
 });

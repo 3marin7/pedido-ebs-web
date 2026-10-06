@@ -92,19 +92,57 @@ SELECT
   c.activo
 FROM clientes c
 LEFT JOIN tipos_clientes tc ON c.tipo_cliente_id = tc.id
-LEFT JOIN limites_facturacion lf ON tc.id = lf.tipo_cliente_id;
+LEFT JOIN limites_facturacion lf ON tc.id = lf.tipo_cliente_id
+WHERE public.has_app_role(array['admin', 'superadmin', 'vendedor', 'inventario', 'contabilidad']);
 
--- 7. HABILITAR RLS SI ES NECESARIO
--- ALTER TABLE tipos_clientes ENABLE ROW LEVEL SECURITY;
--- ALTER TABLE limites_facturacion ENABLE ROW LEVEL SECURITY;
--- ALTER TABLE validaciones_facturacion ENABLE ROW LEVEL SECURITY;
+-- Ejecutar AUTENTICACION_SUPABASE_SETUP.sql primero para configurar perfiles y roles.
+ALTER TABLE public.tipos_clientes ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.limites_facturacion ENABLE ROW LEVEL SECURITY;
 
--- 8. CREAR POLÍTICAS DE LECTURA PÚBLICAS (ajustar según seguridad requerida)
-CREATE POLICY "Allow read tipos_clientes" ON tipos_clientes
-  FOR SELECT USING (true);
+DO $$
+DECLARE
+  target_table text;
+  existing_policy record;
+BEGIN
+  FOREACH target_table IN ARRAY ARRAY['tipos_clientes', 'limites_facturacion']
+  LOOP
+    FOR existing_policy IN
+      SELECT policyname
+      FROM pg_policies
+      WHERE schemaname = 'public' AND tablename = target_table
+    LOOP
+      EXECUTE format('DROP POLICY %I ON public.%I', existing_policy.policyname, target_table);
+    END LOOP;
+    EXECUTE format('REVOKE ALL PRIVILEGES ON TABLE public.%I FROM public, anon, authenticated', target_table);
+    EXECUTE format('GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE public.%I TO authenticated', target_table);
+  END LOOP;
+END
+$$;
 
-CREATE POLICY "Allow read limites_facturacion" ON limites_facturacion
-  FOR SELECT USING (true);
+CREATE POLICY "staff can read customer types"
+  ON public.tipos_clientes
+  FOR SELECT TO authenticated
+  USING (public.has_app_role(array['admin', 'superadmin', 'vendedor', 'inventario', 'contabilidad']));
+
+CREATE POLICY "admins can manage customer types"
+  ON public.tipos_clientes
+  FOR ALL TO authenticated
+  USING (public.has_app_role(array['admin', 'superadmin']))
+  WITH CHECK (public.has_app_role(array['admin', 'superadmin']));
+
+CREATE POLICY "staff can read billing limits"
+  ON public.limites_facturacion
+  FOR SELECT TO authenticated
+  USING (public.has_app_role(array['admin', 'superadmin', 'vendedor', 'inventario', 'contabilidad']));
+
+CREATE POLICY "admins can manage billing limits"
+  ON public.limites_facturacion
+  FOR ALL TO authenticated
+  USING (public.has_app_role(array['admin', 'superadmin']))
+  WITH CHECK (public.has_app_role(array['admin', 'superadmin']));
+
+REVOKE ALL PRIVILEGES ON TABLE public.clientes_con_limites FROM public, anon, authenticated;
+GRANT SELECT ON TABLE public.clientes_con_limites TO authenticated;
 
 -- 9. VERIFICAR ESTRUCTURA CREADA
 SELECT 'Tipos de Clientes' as tabla, COUNT(*) FROM tipos_clientes

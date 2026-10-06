@@ -15,6 +15,7 @@ import CampanaCatalogo from './components/CampanaCatalogo';
 import CampanaCatalogoApi from './components/CampanaCatalogoApi';
 import GestionPedidos from './components/GestionPedidos';
 import Login from './components/Login';
+import ActualizarContrasena from './components/ActualizarContrasena';
 import NotFound from './components/NotFound';
 import Navigation from './components/Navigation';
 import GestionInventario from './components/GestionInventario';
@@ -35,6 +36,7 @@ import AdminProductosPreventa from './components/AdminProductosPreventa';
 import GestionInmuebles from './components/GestionInmuebles';
 import ComprasInmuebles from './components/ComprasInmuebles';
 import GestionPlataformas from './components/GestionPlataformas';
+import { supabase } from './lib/supabase';
 
 // Contexto de autenticación
 const AuthContext = createContext();
@@ -148,37 +150,120 @@ function App() {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Verificación de sesión al cargar la app
+  // La sesión y su identidad se validan con Supabase; el rol viene del perfil protegido.
   useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      const parsedUser = JSON.parse(storedUser);
-      setUser({ ...parsedUser, role: normalizeRole(parsedUser.role) });
+    let active = true;
+    let sessionCheck = 0;
+
+    try {
+      localStorage.removeItem('user');
+      localStorage.removeItem('auth');
+    } catch (error) {
+      console.error('No se pudieron limpiar las sesiones antiguas del navegador:', error);
     }
-    setIsLoading(false);
+
+    const applySession = async (session) => {
+      const currentCheck = ++sessionCheck;
+      if (!active) return;
+
+      if (!session?.user) {
+        setUser(null);
+        setIsLoading(false);
+        return;
+      }
+
+      setIsLoading(true);
+      const { data: profile, error } = await supabase
+        .from('user_profiles')
+        .select('username, role, nombre, telefono, activo')
+        .eq('id', session.user.id)
+        .maybeSingle();
+
+      if (!active || currentCheck !== sessionCheck) return;
+
+      if (error || !profile || profile.activo === false) {
+        if (error) console.error('No se pudo verificar el perfil de usuario:', error);
+        if (!profile || profile.activo === false) {
+          console.error('La cuenta autenticada no tiene un perfil activo.');
+        }
+        setUser(null);
+        setIsLoading(false);
+        await supabase.auth.signOut();
+        return;
+      }
+
+      setUser({
+        id: session.user.id,
+        email: session.user.email,
+        username: profile.username || session.user.email,
+        role: normalizeRole(profile.role),
+        name: profile.nombre || '',
+        telefono: profile.telefono || '',
+      });
+      setIsLoading(false);
+    };
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      queueMicrotask(() => {
+        void applySession(session);
+      });
+    });
+
+    supabase.auth.getSession().then(({ data, error }) => {
+      if (error) console.error('No se pudo recuperar la sesión de Supabase:', error);
+      if (active) void applySession(data?.session || null);
+    });
+
+    return () => {
+      active = false;
+      subscription?.unsubscribe();
+    };
   }, []);
 
-  // Función de login
-  const login = (userData) => {
-    const normalizedUser = { ...userData, role: normalizeRole(userData.role) };
-    setUser(normalizedUser);
-    localStorage.setItem('user', JSON.stringify(normalizedUser));
-  };
+  const login = async (email, password) => {
+    const { data, error: authError } = await supabase.auth.signInWithPassword({
+      email: email.trim(),
+      password,
+    });
 
-  // Función de logout
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem('user');
-  };
+    if (authError) return { error: authError };
 
-  // Función para verificar la sesión
-  const checkSession = () => {
-    const storedUser = localStorage.getItem('user');
-    if (!storedUser) {
-      logout();
-      return false;
+    const { data: profile, error: profileError } = await supabase
+      .from('user_profiles')
+      .select('username, role, nombre, telefono, activo')
+      .eq('id', data.user.id)
+      .maybeSingle();
+
+    if (profileError || !profile || profile.activo === false) {
+      if (profileError) console.error('No se pudo verificar el perfil de usuario:', profileError);
+      await supabase.auth.signOut();
+      return {
+        error: new Error('La cuenta no tiene un perfil activo. Comunícate con el administrador.'),
+      };
     }
-    return true;
+
+    setUser({
+      id: data.user.id,
+      email: data.user.email,
+      username: profile.username || data.user.email,
+      role: normalizeRole(profile.role),
+      name: profile.nombre || '',
+      telefono: profile.telefono || '',
+    });
+    return { error: null };
+  };
+
+  const logout = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      console.error('No se pudo cerrar la sesión de Supabase:', error);
+      return;
+    }
+    setUser(null);
+  };
+
+  const checkSession = () => {
+    return Boolean(user);
   };
 
   const value = {
@@ -239,6 +324,13 @@ function App() {
               <>
                 <PageMeta title="Iniciar Sesión - EBS" description="Inicia sesión en el sistema EBS Hermanos Marín" />
                 {user ? <Navigate to="/facturacion" replace /> : <Login />}
+              </>
+            } />
+
+            <Route path="/actualizar-contrasena" element={
+              <>
+                <PageMeta title="Actualizar contraseña - EBS" description="Actualiza tu contraseña de acceso al sistema EBS" />
+                <ActualizarContrasena />
               </>
             } />
             

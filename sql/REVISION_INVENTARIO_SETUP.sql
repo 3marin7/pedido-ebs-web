@@ -29,14 +29,33 @@ CREATE INDEX IF NOT EXISTS idx_revision_fecha ON inventario_revisiones(fecha_rev
 
 ALTER TABLE inventario_revisiones ENABLE ROW LEVEL SECURITY;
 
-DROP POLICY IF EXISTS "Allow read all on inventario_revisiones" ON inventario_revisiones;
-DROP POLICY IF EXISTS "Allow insert all on inventario_revisiones" ON inventario_revisiones;
+-- Ejecutar AUTENTICACION_SUPABASE_SETUP.sql primero para configurar perfiles y roles.
+DO $$
+DECLARE
+  existing_policy record;
+BEGIN
+  FOR existing_policy IN
+    SELECT policyname FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'inventario_revisiones'
+  LOOP
+    EXECUTE format('DROP POLICY %I ON public.inventario_revisiones', existing_policy.policyname);
+  END LOOP;
+END
+$$;
 
-CREATE POLICY "Allow read all on inventario_revisiones" ON inventario_revisiones
-  FOR SELECT USING (true);
+REVOKE ALL PRIVILEGES ON TABLE public.inventario_revisiones FROM public, anon, authenticated;
+GRANT SELECT, INSERT ON TABLE public.inventario_revisiones TO authenticated;
+GRANT USAGE, SELECT ON SEQUENCE public.inventario_revisiones_id_seq TO authenticated;
 
-CREATE POLICY "Allow insert all on inventario_revisiones" ON inventario_revisiones
-  FOR INSERT WITH CHECK (true);
+CREATE POLICY "authorized staff can read inventory revisions"
+  ON public.inventario_revisiones
+  FOR SELECT TO authenticated
+  USING (public.has_app_role(array['admin', 'superadmin', 'inventario']));
+
+CREATE POLICY "authorized staff can create inventory revisions"
+  ON public.inventario_revisiones
+  FOR INSERT TO authenticated
+  WITH CHECK (public.has_app_role(array['admin', 'superadmin', 'inventario']));
 
 SELECT column_name, data_type
 FROM information_schema.columns
