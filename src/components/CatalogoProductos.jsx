@@ -1486,8 +1486,18 @@ const CatalogoProductos = ({ mode = 'admin' }) => {
     }
 
     const nombreNormalizado = normalizarNombreProducto(nombreProducto);
+    const productoActual = editandoId
+      ? productos.find((producto) => String(producto.id) === String(editandoId))
+      : null;
+    const nombreActualSinCambios = productoActual
+      && normalizarNombreProducto(productoActual.nombre || '') === nombreNormalizado;
+
+    // Allow saving other fields (for example, an image) on legacy duplicate
+    // products when the user is not introducing another name collision.
+    if (nombreActualSinCambios) return true;
+
     const productoDuplicado = productos.find((producto) => {
-      if (producto.id === editandoId) return false;
+      if (String(producto.id) === String(editandoId)) return false;
       return normalizarNombreProducto(producto.nombre || '') === nombreNormalizado;
     });
 

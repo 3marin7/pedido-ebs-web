@@ -467,4 +467,5 @@ describe('CatalogoProductos - revisión de inventario', () => {
     expect(insertMock).not.toHaveBeenCalled();
     alertSpy.mockRestore();
   });
+
 });
