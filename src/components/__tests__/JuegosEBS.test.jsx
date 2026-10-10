@@ -31,7 +31,7 @@ afterEach(() => {
 });
 
 describe('JuegosEBS', () => {
-  test('muestra los cuatro juegos disponibles', async () => {
+  test('muestra los cinco juegos disponibles', async () => {
     render(<JuegosEBS />);
 
     expect(await screen.findByRole('heading', { name: 'Juegos EBS' })).toBeInTheDocument();
@@ -39,6 +39,7 @@ describe('JuegosEBS', () => {
     expect(screen.getByRole('heading', { name: 'Sudoku' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Palabra del día' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Triqui' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Puzzle deslizante' })).toBeInTheDocument();
   });
 
   test('permite iniciar una partida de memoria', async () => {
@@ -107,5 +108,25 @@ describe('JuegosEBS', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Reiniciar' }));
     expect(screen.getByRole('status')).toHaveTextContent('Turno del jugador X');
     expect(screen.getByRole('gridcell', { name: 'Casilla 1, vacía' })).toBeEmptyDOMElement();
+  });
+
+  test('permite mover una ficha adyacente en el puzzle deslizante', async () => {
+    render(<JuegosEBS />);
+    fireEvent.click((await screen.findAllByRole('button', { name: 'Jugar' }))[4]);
+
+    const puzzle = screen.getByRole('grid', { name: 'Puzzle deslizante 4 por 4' });
+    const cells = Array.from(puzzle.querySelectorAll('[role="gridcell"]'));
+    const emptyIndex = cells.findIndex((cell) => cell.getAttribute('aria-label') === 'Espacio vacío');
+    const emptyRow = Math.floor(emptyIndex / 4);
+    const adjacentIndex = emptyRow > 0 ? emptyIndex - 4 : emptyIndex + 4;
+    const movedTile = cells[adjacentIndex].getAttribute('aria-label');
+
+    fireEvent.click(cells[adjacentIndex]);
+
+    expect(screen.getByText('Movimientos:')).toHaveTextContent('Movimientos: 1');
+    expect(screen.getByRole('gridcell', { name: 'Espacio vacío' })).toBeInTheDocument();
+    const updatedCells = Array.from(puzzle.querySelectorAll('[role="gridcell"]'));
+    expect(updatedCells[adjacentIndex]).toHaveAttribute('aria-label', 'Espacio vacío');
+    expect(screen.getByRole('gridcell', { name: movedTile })).toHaveTextContent(movedTile.match(/\d+/)[0]);
   });
 });

@@ -448,11 +448,102 @@ const JuegoTriqui = () => {
   );
 };
 
+const SLIDING_PUZZLE_SOLUTION = Array.from({ length: 15 }, (_, index) => index + 1).concat(0);
+
+const getSlidingPuzzleNeighbors = (emptyIndex) => {
+  const row = Math.floor(emptyIndex / 4);
+  const column = emptyIndex % 4;
+  return [
+    row > 0 ? emptyIndex - 4 : -1,
+    row < 3 ? emptyIndex + 4 : -1,
+    column > 0 ? emptyIndex - 1 : -1,
+    column < 3 ? emptyIndex + 1 : -1,
+  ].filter((index) => index >= 0);
+};
+
+const createSlidingPuzzle = () => {
+  const board = [...SLIDING_PUZZLE_SOLUTION];
+  let emptyIndex = board.length - 1;
+  let previousEmptyIndex = -1;
+
+  for (let move = 0; move < 120; move += 1) {
+    const possibleMoves = getSlidingPuzzleNeighbors(emptyIndex)
+      .filter((index) => index !== previousEmptyIndex);
+    const nextIndex = possibleMoves[Math.floor(Math.random() * possibleMoves.length)];
+    [board[emptyIndex], board[nextIndex]] = [board[nextIndex], board[emptyIndex]];
+    previousEmptyIndex = emptyIndex;
+    emptyIndex = nextIndex;
+  }
+
+  return board;
+};
+
+const JuegoPuzzleDeslizante = () => {
+  const [board, setBoard] = useState(createSlidingPuzzle);
+  const [moves, setMoves] = useState(0);
+  const emptyIndex = board.indexOf(0);
+  const movableIndexes = getSlidingPuzzleNeighbors(emptyIndex);
+  const isComplete = board.every((tile, index) => tile === SLIDING_PUZZLE_SOLUTION[index]);
+
+  const moveTile = (index) => {
+    if (isComplete || !movableIndexes.includes(index)) return;
+    setBoard((currentBoard) => {
+      const nextBoard = [...currentBoard];
+      [nextBoard[emptyIndex], nextBoard[index]] = [nextBoard[index], nextBoard[emptyIndex]];
+      return nextBoard;
+    });
+    setMoves((currentMoves) => currentMoves + 1);
+  };
+
+  const shufflePuzzle = () => {
+    setBoard(createSlidingPuzzle());
+    setMoves(0);
+  };
+
+  return (
+    <section className="juego-panel">
+      <div className="juego-panel-heading">
+        <div>
+          <p className="juego-eyebrow">Ordena las fichas</p>
+          <h2>Puzzle deslizante</h2>
+          <p>Mueve las fichas junto al espacio vacío para ordenar los números del 1 al 15.</p>
+        </div>
+        <button className="juego-button juego-button-secondary" onClick={shufflePuzzle} type="button">
+          Mezclar de nuevo
+        </button>
+      </div>
+      <div className="juego-scoreline puzzle-scoreline">
+        <span>Movimientos: <strong>{moves}</strong></span>
+        {isComplete && <strong className="juego-success">¡Puzzle completado!</strong>}
+      </div>
+      <div aria-label="Puzzle deslizante 4 por 4" className="puzzle-board" role="grid">
+        {board.map((tile, index) => (
+          <button
+            aria-label={tile === 0 ? 'Espacio vacío' : `Ficha ${tile}`}
+            className={`puzzle-tile ${tile === 0 ? 'puzzle-tile-empty' : ''}`}
+            disabled={tile !== 0 && !movableIndexes.includes(index)}
+            key={tile}
+            onClick={() => moveTile(index)}
+            role="gridcell"
+            type="button"
+          >
+            {tile || ''}
+          </button>
+        ))}
+      </div>
+      <p aria-live="polite" className="puzzle-status" role="status">
+        {isComplete ? '¡Excelente! Ordenaste todas las fichas.' : 'Solo puedes mover una ficha que esté junto al espacio vacío.'}
+      </p>
+    </section>
+  );
+};
+
 const GAMES = [
   { id: 'memoria', icon: '🧠', title: 'Memoria de productos', description: 'Encuentra las parejas iguales del catálogo.' },
   { id: 'sudoku', icon: '🧩', title: 'Sudoku', description: 'Completa la cuadrícula y pon a prueba tu lógica.' },
   { id: 'palabra', icon: '🔤', title: 'Palabra del día', description: 'Descubre la palabra en seis intentos.' },
   { id: 'triqui', icon: '⭕', title: 'Triqui', description: 'Desafía a un amigo a formar una línea de tres.' },
+  { id: 'puzzle', icon: '🔢', title: 'Puzzle deslizante', description: 'Ordena las fichas del 1 al 15 en el menor número de movimientos.' },
 ];
 
 const JuegosEBS = () => {
@@ -532,6 +623,7 @@ const JuegosEBS = () => {
           {activeGame === 'sudoku' && <JuegoSudoku />}
           {activeGame === 'palabra' && <JuegoPalabra />}
           {activeGame === 'triqui' && <JuegoTriqui />}
+          {activeGame === 'puzzle' && <JuegoPuzzleDeslizante />}
         </div>
       )}
     </main>

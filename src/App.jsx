@@ -654,7 +654,7 @@ function App() {
               <>
                 <PageMeta
                   title="Juegos EBS"
-                  description="Juega Memoria de productos, Sudoku, Palabra del día y Triqui."
+                  description="Juega Memoria de productos, Sudoku, Palabra del día, Triqui y Puzzle deslizante."
                 />
                 <JuegosEBS />
               </>
