@@ -31,7 +31,7 @@ import ReporteClientesPorProducto from './components/ReporteClientesPorProducto'
 import ConsultaCoopidrogas from './components/ConsultaCoopidrogas';
 import CalculadorSueldoVendedor from './components/CalculadorSueldoVendedor';
 import PlanSeguimientoVentas from './components/PlanSeguimientoVentas';
-import MundialEBS from './components/MundialEBS';
+import JuegosEBS from './components/JuegosEBS';
 import AdminProductosPreventa from './components/AdminProductosPreventa';
 import GestionInmuebles from './components/GestionInmuebles';
 import ComprasInmuebles from './components/ComprasInmuebles';
@@ -256,8 +256,7 @@ function App() {
   const logout = async () => {
     const { error } = await supabase.auth.signOut();
     if (error) {
-      console.error('No se pudo cerrar la sesión de Supabase:', error);
-      return;
+      throw error;
     }
     setUser(null);
   };
@@ -650,16 +649,17 @@ function App() {
               </ProtectedRoute>
             } />
             
-            {/* 🌍 Mundial EBS 2026 */}
-            <Route path="/mundial" element={
+            {/* Juegos públicos EBS */}
+            <Route path="/juegos" element={
               <>
-                <PageMeta 
-                  title="Mundial EBS 2026 - Resultados y Pronósticos" 
-                  description="Seguimiento en vivo de la Copa Mundial 2026 con resultados, pronósticos y análisis de apuestas"
+                <PageMeta
+                  title="Juegos EBS"
+                  description="Juega Memoria de productos, Sudoku, Palabra del día y Triqui."
                 />
-                <MundialEBS />
+                <JuegosEBS />
               </>
             } />
+            <Route path="/mundial" element={<Navigate to="/juegos" replace />} />
             
             {/* Rutas adicionales */}
             <Route path="/unauthorized" element={

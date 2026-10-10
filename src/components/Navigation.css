@@ -550,8 +550,9 @@
   }
 
   .nav-user {
-    position: static;
+    position: relative;
     margin-left: 0.5rem;
+    z-index: 2101;
   }
 
   .username {

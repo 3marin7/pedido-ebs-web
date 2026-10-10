@@ -9,13 +9,24 @@ const Navigation = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [menuActivo, setMenuActivo] = useState(null);
   const menuRef = useRef(null);
   const toggleRef = useRef(null);
 
-  const handleLogout = () => {
-    logout();
-    navigate('/');
+  const handleLogout = async () => {
+    setIsLoggingOut(true);
+    try {
+      await logout();
+      setIsMenuOpen(false);
+      setMenuActivo(null);
+      navigate('/');
+    } catch (error) {
+      console.error('No se pudo cerrar la sesión:', error);
+      window.alert('No se pudo cerrar la sesión. Verifica tu conexión e inténtalo de nuevo.');
+    } finally {
+      setIsLoggingOut(false);
+    }
   };
 
   const toggleMenu = () => {
@@ -67,7 +78,7 @@ const Navigation = () => {
         { path: '/', label: 'Inicio', icon: '🏠', tipo: 'simple' },
         { path: '/catalogo-clientes', label: 'Catálogo', icon: '📚', tipo: 'simple' },
         { path: '/catalogo-detalle', label: 'Precios Clientes', icon: '🏷️', tipo: 'simple' },
-        { path: '/mundial', label: 'Mundial 2026', icon: '⚽', tipo: 'simple' }
+        { path: '/juegos', label: 'Juegos EBS', icon: '🎮', tipo: 'simple' }
       ];
     }
 
@@ -461,9 +472,12 @@ const Navigation = () => {
               <button 
                 onClick={handleLogout} 
                 className="logout-btn"
+                type="button"
+                disabled={isLoggingOut}
+                aria-label={isLoggingOut ? 'Cerrando sesión' : 'Cerrar sesión'}
               >
-                <span className="logout-icon">🚪</span>
-                <span className="logout-text">Cerrar sesión</span>
+                <span className="logout-icon">{isLoggingOut ? '⏳' : '🚪'}</span>
+                <span className="logout-text">{isLoggingOut ? 'Cerrando sesión...' : 'Cerrar sesión'}</span>
               </button>
             </>
           ) : (
