@@ -1,11 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { supabase } from '../lib/supabase';
-import { useAuth } from '../App';
 import './MovimientosInventario.css';
 
 export default function MovimientosInventario() {
-  const { user } = useAuth();
-  
   const [movimiento, setMovimiento] = useState({
     producto_id: '',
     tipo_movimiento: 'entrada',
@@ -20,6 +17,8 @@ export default function MovimientosInventario() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [busqueda, setBusqueda] = useState('');
+  const submittingRef = useRef(false);
+  const requestIdRef = useRef(null);
 
   useEffect(() => {
     cargarProductos();
@@ -59,6 +58,8 @@ export default function MovimientosInventario() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (submittingRef.current) return;
+    submittingRef.current = true;
     setLoading(true);
     setError('');
 
@@ -66,18 +67,21 @@ export default function MovimientosInventario() {
     if (!movimiento.producto_id) {
       setError('Debe seleccionar un producto');
       setLoading(false);
+      submittingRef.current = false;
       return;
     }
 
     if (!movimiento.cantidad || movimiento.cantidad <= 0) {
       setError('La cantidad debe ser mayor a cero');
       setLoading(false);
+      submittingRef.current = false;
       return;
     }
 
     if (!movimiento.motivo) {
       setError('Debe seleccionar un motivo');
       setLoading(false);
+      submittingRef.current = false;
       return;
     }
 
@@ -86,70 +90,43 @@ export default function MovimientosInventario() {
       if (producto && parseInt(movimiento.cantidad) > producto.stock) {
         setError('❌ No hay suficiente stock disponible. Stock actual: ' + producto.stock);
         setLoading(false);
+        submittingRef.current = false;
         return;
       }
     }
 
     try {
-      // Obtener el producto para capturar stock anterior
-      const producto = productos.find(p => p.id == movimiento.producto_id);
-      const stockAnterior = producto?.stock || 0;
       const cantidadMovida = parseInt(movimiento.cantidad);
-      
-      // Determinar qué usar como nombre de usuario
-      let nombreUsuario = 'Sistema';
-      if (user) {
-        if (user.username) {
-          nombreUsuario = user.username;
-        } else if (user.email) {
-          nombreUsuario = user.email;
-        } else if (user.id) {
-          nombreUsuario = user.id;
-        } else if (user.name) {
-          nombreUsuario = user.name;
-        }
-      }
-      
-      // Calcular nuevo stock según tipo de movimiento
-      let stockNuevo = stockAnterior;
-      if (movimiento.tipo_movimiento === 'entrada') {
-        stockNuevo = stockAnterior + cantidadMovida;
-      } else if (movimiento.tipo_movimiento === 'salida') {
-        stockNuevo = stockAnterior - cantidadMovida;
-      }
 
-      const { data, error } = await supabase
-        .from('movimientos_inventario')
-        .insert([{
-          producto_id: movimiento.producto_id,
-          tipo_movimiento: movimiento.tipo_movimiento,
-          cantidad: cantidadMovida,
-          stock_anterior: stockAnterior,
-          stock_nuevo: stockNuevo,
-          descripcion: `${movimiento.motivo}${movimiento.observaciones ? ' - ' + movimiento.observaciones : ''}`,
-          usuario: nombreUsuario,
-          rol_usuario: user?.role || 'N/A',
-          precio_unitario: movimiento.precio_unitario ? parseFloat(movimiento.precio_unitario) : null,
-          motivo: movimiento.motivo,
-          observaciones: movimiento.observaciones
-        }]);
+      if (!requestIdRef.current) requestIdRef.current = crypto.randomUUID();
+      const { data, error } = await supabase.rpc('registrar_movimiento_inventario', {
+        p_request_id: requestIdRef.current,
+        p_producto_id: Number(movimiento.producto_id),
+        p_tipo_movimiento: movimiento.tipo_movimiento,
+        p_cantidad: cantidadMovida,
+        p_descripcion: `${movimiento.motivo}${movimiento.observaciones ? ' - ' + movimiento.observaciones : ''}`,
+        p_precio_unitario: movimiento.precio_unitario ? parseFloat(movimiento.precio_unitario) : null,
+        p_motivo: movimiento.motivo,
+        p_observaciones: movimiento.observaciones || null,
+      });
 
       if (error) {
         console.error('Error de Supabase:', error);
-        setError('Error al registrar movimiento: ' + error.message);
+        setError(`No se pudo registrar el movimiento de forma segura: ${error.message}`);
       } else {
-        const { error: updateError } = await supabase
-          .from('productos')
-          .update({ stock: stockNuevo })
-          .eq('id', movimiento.producto_id);
-
-        if (updateError) {
-          console.error('Error actualizando stock del producto:', updateError);
-          setError('El movimiento se registró, pero no se pudo actualizar el stock del producto. Intenta nuevamente.');
-        } else {
-          alert('✅ Movimiento registrado y stock actualizado exitosamente');
+        const stockNuevo = Number(data?.stock_nuevo);
+        if (!Number.isFinite(stockNuevo)) {
+          throw new Error('Supabase no devolvió el stock actualizado del producto.');
         }
 
+        const fueReintento = Boolean(data?.ya_registrado);
+        alert(
+          fueReintento
+            ? `✅ Este movimiento ya estaba registrado. Stock actual: ${stockNuevo}`
+            : `✅ Movimiento registrado. Stock actualizado: ${data.stock_anterior} → ${stockNuevo}`
+        );
+
+        requestIdRef.current = null;
         setMovimiento({
           producto_id: '',
           tipo_movimiento: 'entrada',
@@ -158,7 +135,7 @@ export default function MovimientosInventario() {
           motivo: '',
           observaciones: ''
         });
-        setBusqueda(''); // Limpiar búsqueda
+        setBusqueda('');
         cargarProductos();
       }
     } catch (err) {
@@ -166,6 +143,12 @@ export default function MovimientosInventario() {
       setError('Error inesperado: ' + err.message);
     }
     setLoading(false);
+    submittingRef.current = false;
+  };
+
+  const actualizarMovimiento = (cambios) => {
+    requestIdRef.current = null;
+    setMovimiento((actual) => ({ ...actual, ...cambios }));
   };
 
   const limpiarBusqueda = () => {
@@ -248,9 +231,10 @@ export default function MovimientosInventario() {
             </label>
             <select
               value={movimiento.producto_id}
-              onChange={(e) => setMovimiento({...movimiento, producto_id: e.target.value})}
+              onChange={(e) => actualizarMovimiento({ producto_id: e.target.value })}
               required
               className="form-select"
+              disabled={loading}
             >
               <option value="">Seleccionar Producto</option>
               {productosFiltrados.map((producto) => (
@@ -274,9 +258,10 @@ export default function MovimientosInventario() {
               </label>
               <select
                 value={movimiento.tipo_movimiento}
-                onChange={(e) => setMovimiento({...movimiento, tipo_movimiento: e.target.value, motivo: ''})}
+                onChange={(e) => actualizarMovimiento({ tipo_movimiento: e.target.value, motivo: '' })}
                 required
                 className="form-select"
+                disabled={loading}
               >
                 <option value="entrada">📥 Entrada (Aumenta stock)</option>
                 <option value="salida">📤 Salida (Disminuye stock)</option>
@@ -292,9 +277,10 @@ export default function MovimientosInventario() {
                 min="1"
                 placeholder="Ej: 10"
                 value={movimiento.cantidad}
-                onChange={(e) => setMovimiento({...movimiento, cantidad: e.target.value})}
+                onChange={(e) => actualizarMovimiento({ cantidad: e.target.value })}
                 required
                 className="form-input"
+                disabled={loading}
               />
             </div>
           </div>
@@ -311,8 +297,9 @@ export default function MovimientosInventario() {
                 min="0"
                 placeholder="Ej: 5800"
                 value={movimiento.precio_unitario}
-                onChange={(e) => setMovimiento({...movimiento, precio_unitario: e.target.value})}
+                onChange={(e) => actualizarMovimiento({ precio_unitario: e.target.value })}
                 className="form-input"
+                disabled={loading}
               />
             </div>
 
@@ -322,9 +309,10 @@ export default function MovimientosInventario() {
               </label>
               <select
                 value={movimiento.motivo}
-                onChange={(e) => setMovimiento({...movimiento, motivo: e.target.value})}
+                onChange={(e) => actualizarMovimiento({ motivo: e.target.value })}
                 required
                 className="form-select"
+                disabled={loading}
               >
                 <option value="">Seleccionar motivo</option>
                 {movimiento.tipo_movimiento === 'entrada'
@@ -351,9 +339,10 @@ export default function MovimientosInventario() {
             <textarea
               placeholder="Detalles adicionales del movimiento..."
               value={movimiento.observaciones}
-              onChange={(e) => setMovimiento({...movimiento, observaciones: e.target.value})}
+              onChange={(e) => actualizarMovimiento({ observaciones: e.target.value })}
               rows="3"
               className="form-textarea"
+              disabled={loading}
             />
           </div>
 

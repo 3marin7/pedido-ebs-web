@@ -485,6 +485,9 @@
     visibility: hidden;
     transition: transform 0.22s ease, opacity 0.22s ease, visibility 0.22s ease;
     max-height: calc(100vh - 84px - env(safe-area-inset-top));
+    max-height: calc(100dvh - 84px - env(safe-area-inset-top));
+    height: auto;
+    min-height: 0;
     overflow-y: auto;
     overscroll-behavior: contain;
     -webkit-overflow-scrolling: touch;
@@ -626,7 +629,8 @@
 
   .nav-links {
     top: calc(64px + env(safe-area-inset-top));
-    height: calc(100vh - 64px - env(safe-area-inset-top));
+    max-height: calc(100vh - 64px - env(safe-area-inset-top));
+    max-height: calc(100dvh - 64px - env(safe-area-inset-top));
   }
 }
 

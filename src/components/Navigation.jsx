@@ -107,7 +107,16 @@ const Navigation = () => {
             { path: '/reportes-cobros', label: 'Informe de Cobros', icon: '💰' },
             { path: '/plan-seguimiento-ventas', label: 'Plan Seguimiento Ventas', icon: '🎯' },
             { path: '/calculador-sueldo-vendedor', label: 'Calculador Sueldo Vendedor', icon: '💰' },
-            { path: '/reporte-clientes-producto', label: 'Clientes por Producto', icon: '👥' },
+            { path: '/reporte-clientes-producto', label: 'Clientes por Producto', icon: '👥' }
+          ]
+        },
+        // INMUEBLES - Grupo
+        {
+          path: '#inmuebles',
+          label: 'Inmuebles',
+          icon: '🏢',
+          tipo: 'grupo',
+          submenu: [
             { path: '/gestion-inmuebles', label: 'Informes Arriendos', icon: '🏢' },
             { path: '/compras-inmuebles', label: 'Comprar Inmueble', icon: '🏠' },
             { path: '/gestion-plataformas', label: 'Plataformas Arrendadas', icon: '☁️' }
@@ -176,7 +185,16 @@ const Navigation = () => {
             { path: '/plan-seguimiento-ventas', label: 'Plan Seguimiento Ventas', icon: '🎯' },
             { path: '/calculador-sueldo-vendedor', label: 'Calculador Sueldo Vendedor', icon: '💰' },
             { path: '/reporte-clientes-producto', label: 'Clientes por Producto', icon: '👥' },
-            { path: '/rutas-cobro', label: 'Rutas de Cobro', icon: '🚗' },
+            { path: '/rutas-cobro', label: 'Rutas de Cobro', icon: '🚗' }
+          ]
+        },
+        // INMUEBLES - Grupo
+        {
+          path: '#inmuebles',
+          label: 'Inmuebles',
+          icon: '🏢',
+          tipo: 'grupo',
+          submenu: [
             { path: '/gestion-inmuebles', label: 'Informes Arriendos', icon: '🏢' },
             { path: '/compras-inmuebles', label: 'Comprar Inmueble', icon: '🏠' },
             { path: '/gestion-plataformas', label: 'Plataformas Arrendadas', icon: '☁️' }
