@@ -2,6 +2,17 @@ import { useState, useEffect, useRef } from 'react';
 import { supabase } from '../lib/supabase';
 import './MovimientosInventario.css';
 
+export const normalizarMovimientoPayload = ({ movimiento, requestId }) => ({
+  p_request_id: requestId,
+  p_producto_id: Number(movimiento.producto_id),
+  p_tipo_movimiento: movimiento.tipo_movimiento,
+  p_cantidad: Number(movimiento.cantidad),
+  p_descripcion: `${movimiento.motivo}${movimiento.observaciones ? ' - ' + movimiento.observaciones : ''}`,
+  p_precio_unitario: movimiento.precio_unitario ? parseFloat(movimiento.precio_unitario) : null,
+  p_motivo: movimiento.motivo,
+  p_observaciones: movimiento.observaciones || null,
+});
+
 export default function MovimientosInventario() {
   const [movimiento, setMovimiento] = useState({
     producto_id: '',
@@ -56,12 +67,37 @@ export default function MovimientosInventario() {
     }
   };
 
+  const esErrorDeFuncionFaltante = (error) => {
+    const mensaje = error?.message || '';
+    return /Could not find the function|function .* does not exist|does not exist|not found/i.test(mensaje);
+  };
+
+  const registrarMovimientoInventario = async (payload) => {
+    const { data, error } = await supabase.rpc('registrar_movimiento_inventario', payload);
+
+    if (!error) {
+      return { data, error: null };
+    }
+
+    if (esErrorDeFuncionFaltante(error)) {
+      throw new Error(
+        'La función de inventario no existe en Supabase. Debes ejecutar el SQL de la función en el editor SQL de Supabase antes de registrar movimientos.'
+      );
+    }
+
+    return { data: null, error };
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (submittingRef.current) return;
     submittingRef.current = true;
     setLoading(true);
     setError('');
+
+    if (!requestIdRef.current) {
+      requestIdRef.current = crypto.randomUUID();
+    }
 
     // Validaciones
     if (!movimiento.producto_id) {
@@ -98,17 +134,15 @@ export default function MovimientosInventario() {
     try {
       const cantidadMovida = parseInt(movimiento.cantidad);
 
-      if (!requestIdRef.current) requestIdRef.current = crypto.randomUUID();
-      const { data, error } = await supabase.rpc('registrar_movimiento_inventario', {
-        p_request_id: requestIdRef.current,
-        p_producto_id: Number(movimiento.producto_id),
-        p_tipo_movimiento: movimiento.tipo_movimiento,
-        p_cantidad: cantidadMovida,
-        p_descripcion: `${movimiento.motivo}${movimiento.observaciones ? ' - ' + movimiento.observaciones : ''}`,
-        p_precio_unitario: movimiento.precio_unitario ? parseFloat(movimiento.precio_unitario) : null,
-        p_motivo: movimiento.motivo,
-        p_observaciones: movimiento.observaciones || null,
+      const payload = normalizarMovimientoPayload({
+        movimiento: {
+          ...movimiento,
+          cantidad: cantidadMovida.toString(),
+        },
+        requestId: requestIdRef.current,
       });
+
+      const { data, error } = await registrarMovimientoInventario(payload);
 
       if (error) {
         console.error('Error de Supabase:', error);
@@ -141,9 +175,11 @@ export default function MovimientosInventario() {
     } catch (err) {
       console.error('Error inesperado:', err);
       setError('Error inesperado: ' + err.message);
+    } finally {
+      setLoading(false);
+      submittingRef.current = false;
+      requestIdRef.current = null;
     }
-    setLoading(false);
-    submittingRef.current = false;
   };
 
   const actualizarMovimiento = (cambios) => {
