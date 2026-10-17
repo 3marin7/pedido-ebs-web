@@ -2,6 +2,17 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
 import { supabase } from './supabaseClient';
 import { formatInputDateLocal } from '../lib/dateUtils';
+import {
+  conTiempoLimite,
+  esErrorDeRed,
+  guardarProductosEnCache,
+  leerProductosDeCache,
+  encolarPedido,
+  obtenerPedidosPendientes,
+  obtenerSincronizadosSinWhatsApp,
+  marcarWhatsAppEnviado,
+  sincronizarPedidosPendientes
+} from '../lib/offlinePedidos';
 import './CatalogoClientes.css';
 
 const normalizarCategoriaUrl = (valor) => String(valor || '')
@@ -42,6 +53,11 @@ const CatalogoClientes = ({ priceMultiplier = 1, variantTitle = 'Catálogo de Pr
   const [navActivo, setNavActivo] = useState('');
   const [panelBusquedaActiva, setPanelBusquedaActiva] = useState(null);
   const [menuMasAbierto, setMenuMasAbierto] = useState(false);
+  const [sinConexion, setSinConexion] = useState(typeof navigator !== 'undefined' && navigator.onLine === false);
+  const [catalogoDesdeCache, setCatalogoDesdeCache] = useState(null);
+  const [pedidosPendientes, setPedidosPendientes] = useState(0);
+  const [sincronizadosSinWhatsApp, setSincronizadosSinWhatsApp] = useState([]);
+  const [pedidoGuardadoOffline, setPedidoGuardadoOffline] = useState(false);
 
   const location = useLocation();
 
@@ -70,80 +86,145 @@ const CatalogoClientes = ({ priceMultiplier = 1, variantTitle = 'Catálogo de Pr
     return Math.round(precio * (Number(priceMultiplier) || 1));
   }, [priceMultiplier]);
 
-  // Cargar productos desde Supabase
+  // Cargar productos: primero los guardados en el dispositivo, luego los del servidor
   useEffect(() => {
+    let cancelado = false;
+
+    const aplicarProductos = (lista) => {
+      const categoriasUnicas = [...new Set(lista.map(p => p.categoria).filter(Boolean))].sort();
+      const categoriasLista = ['Todas', ...categoriasUnicas];
+      setCategorias(categoriasLista);
+      setProductos(lista);
+      return categoriasLista;
+    };
+
+    const aplicarParametrosUrl = (categoriasLista) => {
+      if (!location.search) return;
+
+      const params = new URLSearchParams(location.search);
+      const clienteNombre = params.get('cliente');
+      const clienteTelefono = params.get('telefono');
+      const clienteDireccion = params.get('direccion');
+      const clienteId = params.get('clienteId');
+      const categoriaParam = params.get('categoria');
+
+      if (categoriaParam) {
+        const categoriaNormalizada = normalizarCategoriaUrl(categoriaParam);
+        const categoriaEncontrada = categoriasLista.find((categoria) =>
+          normalizarCategoriaUrl(categoria) === categoriaNormalizada
+        );
+
+        if (categoriaEncontrada) {
+          setCategoriaFiltro(categoriaEncontrada);
+        }
+      }
+
+      if (clienteNombre || clienteTelefono || clienteDireccion) {
+        setClienteInfo(prev => ({
+          ...prev,
+          nombre: decodeURIComponent(clienteNombre || ''),
+          telefono: decodeURIComponent(clienteTelefono || ''),
+          direccion: decodeURIComponent(clienteDireccion || '')
+        }));
+
+        if (clienteId) {
+          setClienteSeleccionadoId(clienteId);
+        }
+      }
+    };
+
     const cargarProductos = async () => {
+      setCargando(true);
+      setError(null);
+
+      // 1. Mostrar al instante el catálogo guardado (si existe)
+      const cache = await leerProductosDeCache();
+      if (cancelado) return;
+      if (cache?.productos?.length) {
+        aplicarParametrosUrl(aplicarProductos(cache.productos));
+        setCatalogoDesdeCache(cache.fecha);
+        setCargando(false);
+      }
+
+      // 2. Actualizar desde el servidor
       try {
-        setCargando(true);
-        setError(null);
-        
-        const { data: productos, error } = await supabase
-          .from('productos')
-          .select(`
-            id,
-            codigo,
-            nombre,
-            precio,
-            categoria,
-            descripcion,
-            imagen_url,
-            stock,
-            activo,
-            created_at
-          `)
-          .eq('activo', true)
-          .order('nombre', { ascending: true });
+        const { data: productos, error } = await conTiempoLimite(
+          supabase
+            .from('productos')
+            .select(`
+              id,
+              codigo,
+              nombre,
+              precio,
+              categoria,
+              descripcion,
+              imagen_url,
+              stock,
+              activo,
+              created_at
+            `)
+            .eq('activo', true)
+            .order('nombre', { ascending: true })
+        );
 
         if (error) throw error;
+        if (cancelado) return;
 
-        // Extraer categorías únicas
-        const categoriasUnicas = [...new Set(productos.map(p => p.categoria).filter(Boolean))].sort();
-        const categoriasLista = ['Todas', ...categoriasUnicas];
-        setCategorias(categoriasLista);
-        setProductos(productos || []);
-
-        if (location.search) {
-          const params = new URLSearchParams(location.search);
-          const clienteNombre = params.get('cliente');
-          const clienteTelefono = params.get('telefono');
-          const clienteDireccion = params.get('direccion');
-          const clienteId = params.get('clienteId');
-          const categoriaParam = params.get('categoria');
-
-          if (categoriaParam) {
-            const categoriaNormalizada = normalizarCategoriaUrl(categoriaParam);
-            const categoriaEncontrada = categoriasLista.find((categoria) =>
-              normalizarCategoriaUrl(categoria) === categoriaNormalizada
-            );
-
-            if (categoriaEncontrada) {
-              setCategoriaFiltro(categoriaEncontrada);
-            }
-          }
-
-          if (clienteNombre || clienteTelefono || clienteDireccion) {
-            setClienteInfo(prev => ({
-              ...prev,
-              nombre: decodeURIComponent(clienteNombre || ''),
-              telefono: decodeURIComponent(clienteTelefono || ''),
-              direccion: decodeURIComponent(clienteDireccion || '')
-            }));
-
-            if (clienteId) {
-              setClienteSeleccionadoId(clienteId);
-            }
-          }
-        }
+        const lista = productos || [];
+        const categoriasLista = aplicarProductos(lista);
+        if (!cache?.productos?.length) aplicarParametrosUrl(categoriasLista);
+        setCatalogoDesdeCache(null);
+        guardarProductosEnCache(lista);
       } catch (error) {
         console.error("Error cargando productos:", error);
-        setError('Error al cargar el catálogo. Intenta nuevamente.');
+        if (cancelado) return;
+        if (!cache?.productos?.length) {
+          setError(esErrorDeRed(error)
+            ? 'Sin conexión y no hay catálogo guardado en este dispositivo. Abre el catálogo una vez con internet.'
+            : 'Error al cargar el catálogo. Intenta nuevamente.');
+        }
       } finally {
-        setCargando(false);
+        if (!cancelado) setCargando(false);
       }
     };
     
     cargarProductos();
+    return () => { cancelado = true; };
   }, [location.search]);
+
+  // Estado de conexión y envío automático de pedidos guardados sin internet
+  const sincronizarPendientes = useCallback(async () => {
+    const { enviados, pendientes } = await sincronizarPedidosPendientes(supabase);
+    setPedidosPendientes(pendientes);
+    if (enviados.length > 0) {
+      setSincronizadosSinWhatsApp(await obtenerSincronizadosSinWhatsApp());
+    }
+  }, []);
+
+  useEffect(() => {
+    const alConectar = () => {
+      setSinConexion(false);
+      sincronizarPendientes();
+    };
+    const alDesconectar = () => setSinConexion(true);
+
+    obtenerPedidosPendientes().then(lista => setPedidosPendientes(lista.length));
+    obtenerSincronizadosSinWhatsApp().then(setSincronizadosSinWhatsApp);
+    if (navigator.onLine) sincronizarPendientes();
+
+    window.addEventListener('online', alConectar);
+    window.addEventListener('offline', alDesconectar);
+    // Reintento periódico: a veces el navegador dice "en línea" pero la red no responde
+    const intervalo = setInterval(() => {
+      if (navigator.onLine) sincronizarPendientes();
+    }, 60000);
+
+    return () => {
+      window.removeEventListener('online', alConectar);
+      window.removeEventListener('offline', alDesconectar);
+      clearInterval(intervalo);
+    };
+  }, [sincronizarPendientes]);
 
   // Handlers
   const handleInputChange = (e) => {
@@ -621,11 +702,67 @@ const CatalogoClientes = ({ priceMultiplier = 1, variantTitle = 'Catálogo de Pr
       vendedor: ''
     }));
     setPedidoEnviado(false);
+    setPedidoGuardadoOffline(false);
     setNumeroPedido(null);
     setMostrarCarrito(false);
   };
 
-  // Generar enlace de WhatsApp - FUNCIÓN CORREGIDA
+  // Mensaje de WhatsApp a partir del pedido guardado
+  const abrirWhatsAppPedido = (pedido, numero) => {
+    const numerosWhatsApp = ['573002945085', '573004583117']; // Dos números de WhatsApp
+    
+    let mensaje = `*¡NUEVO PEDIDO!*%0A%0A`;
+    mensaje += `*Cliente:* ${pedido.cliente_nombre}%0A`;
+    mensaje += `*Teléfono:* ${pedido.cliente_telefono}%0A`;
+    if (pedido.direccion_entrega) {
+      mensaje += `*Dirección:* ${pedido.direccion_entrega}%0A`;
+    }
+    mensaje += `%0A*📦 PRODUCTOS SELECCIONADOS:*%0A%0A`;
+    
+    pedido.productos.forEach(p => {
+      mensaje += `✔️ ${p.nombre}%0A`;
+      mensaje += `   Cantidad: ${p.cantidad}%0A`;
+      mensaje += `   Precio: ${formatPrecio(p.precio)}%0A`;
+      mensaje += `   Subtotal: ${formatPrecio(p.precio * p.cantidad)}%0A%0A`;
+    });
+    
+    mensaje += `*💰 TOTAL: ${formatPrecio(pedido.total)}*%0A%0A`;
+    
+    if (pedido.cliente_notas && pedido.cliente_notas !== 'Ninguna') {
+      mensaje += `*📝 NOTAS:*%0A${pedido.cliente_notas}%0A%0A`;
+    }
+    
+    mensaje += `*📋 Nº DE PEDIDO:* ${numero}%0A`;
+    mensaje += `*📅 FECHA:* ${new Date(pedido.fecha_creacion).toLocaleDateString('es-CO')}%0A%0A`;
+    mensaje += `_Pedido generado desde Catálogo Digital_`;
+
+    // Enviar a los dos números de WhatsApp
+    numerosWhatsApp.forEach((numeroWhatsApp, index) => {
+      const url = `https://api.whatsapp.com/send?phone=${numeroWhatsApp}&text=${mensaje}`;
+      setTimeout(() => {
+        window.open(url, '_blank');
+      }, index * 500); // Desfasar apertura de ventanas
+    });
+  };
+
+  const enviarWhatsAppSincronizado = async (item) => {
+    abrirWhatsAppPedido(item.pedido, item.id);
+    setSincronizadosSinWhatsApp(await marcarWhatsAppEnviado(item.id));
+  };
+
+  // Guardar el pedido en el dispositivo cuando no hay conexión
+  const guardarPedidoSinConexion = async (pedidoData) => {
+    const idLocal = await encolarPedido(pedidoData);
+    setPedidosPendientes(prev => prev + 1);
+    setNumeroPedido(idLocal);
+    setPedidoGuardadoOffline(true);
+    setError(null);
+    setPedidoEnviado(true);
+    setMostrarCarrito(false);
+    setEnviandoPedido(false);
+  };
+
+  // Guardar pedido y enviarlo por WhatsApp (o dejarlo en cola si no hay internet)
   const enviarPedidoWhatsApp = async () => {
     if (enviandoPedido) return;
     
@@ -640,26 +777,37 @@ const CatalogoClientes = ({ priceMultiplier = 1, variantTitle = 'Catálogo de Pr
 
     setEnviandoPedido(true);
 
+    const pedidoData = {
+      cliente_nombre: clienteInfo.nombre.trim(),
+      cliente_telefono: clienteInfo.telefono.replace(/\D/g, ''),
+      direccion_entrega: clienteInfo.direccion.trim() || '',
+      cliente_notas: clienteInfo.notas.trim() || 'Ninguna',
+      vendedor: clienteInfo.vendedor.trim() || 'Sin asignar',
+      productos: productosSeleccionados,
+      total: calcularTotal(),
+      estado: 'pendiente',
+      fecha_creacion: new Date().toISOString()
+    };
+
     try {
+      if (navigator.onLine === false) {
+        await guardarPedidoSinConexion(pedidoData);
+        return;
+      }
+
       // Guardar el pedido en la base de datos
-      const { data: pedido, error } = await supabase
-        .from('pedidos')
-        .insert([
-          {
-            cliente_nombre: clienteInfo.nombre.trim(),
-            cliente_telefono: clienteInfo.telefono.replace(/\D/g, ''),
-            direccion_entrega: clienteInfo.direccion.trim() || '',
-            cliente_notas: clienteInfo.notas.trim() || 'Ninguna',
-            vendedor: clienteInfo.vendedor.trim() || 'Sin asignar',
-            productos: productosSeleccionados,
-            total: calcularTotal(),
-            estado: 'pendiente',
-            fecha_creacion: new Date().toISOString()
-          }
-        ])
-        .select();
+      const { data: pedido, error } = await conTiempoLimite(
+        supabase
+          .from('pedidos')
+          .insert([pedidoData])
+          .select()
+      );
 
       if (error) {
+        if (esErrorDeRed(error)) {
+          await guardarPedidoSinConexion(pedidoData);
+          return;
+        }
         console.error('❌ Error de Supabase:', error);
         setEnviandoPedido(false);
         setError(`Error en servidor: ${error.message}`);
@@ -681,43 +829,10 @@ const CatalogoClientes = ({ priceMultiplier = 1, variantTitle = 'Catálogo de Pr
       }
 
       setNumeroPedido(pedido[0].id);
+      setPedidoGuardadoOffline(false);
       setError(null); // Limpiar errores anteriores
 
-      // Preparar mensaje para WhatsApp
-      const numerosWhatsApp = ['573002945085', '573004583117']; // Dos números de WhatsApp
-      
-      let mensaje = `*¡NUEVO PEDIDO!*%0A%0A`;
-      mensaje += `*Cliente:* ${clienteInfo.nombre}%0A`;
-      mensaje += `*Teléfono:* ${clienteInfo.telefono}%0A`;
-      if (clienteInfo.direccion.trim()) {
-        mensaje += `*Dirección:* ${clienteInfo.direccion}%0A`;
-      }
-      mensaje += `%0A*📦 PRODUCTOS SELECCIONADOS:*%0A%0A`;
-      
-      productosSeleccionados.forEach(p => {
-        mensaje += `✔️ ${p.nombre}%0A`;
-        mensaje += `   Cantidad: ${p.cantidad}%0A`;
-        mensaje += `   Precio: ${formatPrecio(p.precio)}%0A`;
-        mensaje += `   Subtotal: ${formatPrecio(p.precio * p.cantidad)}%0A%0A`;
-      });
-      
-      mensaje += `*💰 TOTAL: ${formatPrecio(calcularTotal())}*%0A%0A`;
-      
-      if (clienteInfo.notas.trim()) {
-        mensaje += `*📝 NOTAS:*%0A${clienteInfo.notas}%0A%0A`;
-      }
-      
-      mensaje += `*📋 Nº DE PEDIDO:* ${pedido[0].id}%0A`;
-      mensaje += `*📅 FECHA:* ${new Date().toLocaleDateString('es-CO')}%0A%0A`;
-      mensaje += `_Pedido generado desde Catálogo Digital_`;
-
-      // Enviar a los dos números de WhatsApp
-      numerosWhatsApp.forEach((numero, index) => {
-        const url = `https://api.whatsapp.com/send?phone=${numero}&text=${mensaje}`;
-        setTimeout(() => {
-          window.open(url, '_blank');
-        }, index * 500); // Desfasar apertura de ventanas
-      });
+      abrirWhatsAppPedido(pedidoData, pedido[0].id);
       
       // ✅ SOLUCIÓN: Cerrar el carrito automáticamente después de enviar
       setPedidoEnviado(true);
@@ -728,6 +843,14 @@ const CatalogoClientes = ({ priceMultiplier = 1, variantTitle = 'Catálogo de Pr
       }, 2000);
 
     } catch (error) {
+      if (esErrorDeRed(error)) {
+        try {
+          await guardarPedidoSinConexion(pedidoData);
+          return;
+        } catch (errorCola) {
+          console.error('💥 No se pudo guardar el pedido en el dispositivo:', errorCola);
+        }
+      }
       console.error('💥 Error al guardar el pedido:', error);
       // ✅ FIX 6: No limpiar carrito en error, mantener visible para reintentar
       setEnviandoPedido(false);
@@ -852,6 +975,49 @@ const CatalogoClientes = ({ priceMultiplier = 1, variantTitle = 'Catálogo de Pr
           </div>
         )}
       </header>
+
+      {/* Estado sin conexión / pedidos pendientes */}
+      {(sinConexion || catalogoDesdeCache || pedidosPendientes > 0) && (
+        <div className="offline-banner">
+          <i className={`fas ${sinConexion ? 'fa-wifi' : 'fa-cloud-upload-alt'}`}></i>
+          <div>
+            {sinConexion && <strong>Sin conexión. </strong>}
+            {catalogoDesdeCache && (
+              <span>Catálogo guardado del {new Date(catalogoDesdeCache).toLocaleString('es-CO')}. </span>
+            )}
+            {pedidosPendientes > 0 && (
+              <span>
+                {pedidosPendientes} pedido(s) guardado(s) en este dispositivo, se enviarán al volver el internet.{' '}
+                {!sinConexion && (
+                  <button type="button" className="offline-banner-btn" onClick={sincronizarPendientes}>
+                    Enviar ahora
+                  </button>
+                )}
+              </span>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Pedidos que se subieron solos y falta avisar por WhatsApp */}
+      {sincronizadosSinWhatsApp.length > 0 && (
+        <div className="offline-banner offline-banner-ok">
+          <i className="fas fa-check-circle"></i>
+          <div>
+            <strong>Pedidos enviados a la plataforma.</strong> Falta avisar por WhatsApp:
+            <ul className="offline-sync-list">
+              {sincronizadosSinWhatsApp.map(item => (
+                <li key={item.id}>
+                  #{item.id} · {item.pedido.cliente_nombre}
+                  <button type="button" className="offline-banner-btn" onClick={() => enviarWhatsAppSincronizado(item)}>
+                    <i className="fab fa-whatsapp"></i> Enviar
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      )}
 
       {/* Mensaje de error */}
       {error && (
@@ -1083,9 +1249,19 @@ const CatalogoClientes = ({ priceMultiplier = 1, variantTitle = 'Catálogo de Pr
             <div className="confirmation-icon">
               <i className="fas fa-check-circle"></i>
             </div>
-            <h3>¡Pedido Enviado con Éxito!</h3>
-            <p>Tu pedido <strong>#{numeroPedido}</strong> ha sido enviado por WhatsApp.</p>
-            <p>En breve nos comunicaremos contigo para confirmarlo.</p>
+            {pedidoGuardadoOffline ? (
+              <>
+                <h3>Pedido guardado sin conexión</h3>
+                <p>El pedido <strong>{numeroPedido}</strong> quedó guardado en este dispositivo.</p>
+                <p>Se enviará a la plataforma automáticamente cuando vuelva el internet. No cierres sesión ni borres los datos del navegador.</p>
+              </>
+            ) : (
+              <>
+                <h3>¡Pedido Enviado con Éxito!</h3>
+                <p>Tu pedido <strong>#{numeroPedido}</strong> ha sido enviado por WhatsApp.</p>
+                <p>En breve nos comunicaremos contigo para confirmarlo.</p>
+              </>
+            )}
             <div className="confirmation-buttons">
               <button 
                 className="btn-secondary"
