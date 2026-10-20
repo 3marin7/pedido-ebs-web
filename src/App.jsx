@@ -36,6 +36,7 @@ import AdminProductosPreventa from './components/AdminProductosPreventa';
 import GestionInmuebles from './components/GestionInmuebles';
 import ComprasInmuebles from './components/ComprasInmuebles';
 import GestionPlataformas from './components/GestionPlataformas';
+import VerificacionFacturasFisicas from './components/VerificacionFacturasFisicas';
 import { supabase } from './lib/supabase';
 
 // Contexto de autenticación
@@ -377,6 +378,14 @@ function App() {
             } />
             
             {/* NUEVA RUTA: Rutas de Cobro Inteligentes */}
+            <Route path="/verificacion-facturas" element={
+              <ProtectedRoute requiredRoles={['superadmin', 'admin', 'contabilidad']}>
+                <>
+                  <PageMeta title="Verificación de Facturas Físicas - EBS" description="Inventario de facturas físicas contra el sistema" />
+                  <VerificacionFacturasFisicas />
+                </>
+              </ProtectedRoute>
+            } />
             <Route path="/rutas-cobro" element={
               <ProtectedRoute requiredRoles={['superadmin', 'admin', 'contabilidad', 'vendedor']}>
                 <>

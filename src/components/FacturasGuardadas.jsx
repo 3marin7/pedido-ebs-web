@@ -18,6 +18,15 @@ const getCodigoCliente = (factura) => {
   return factura?.codigo_cliente || factura?.codigoCliente || factura?.codigo || '';
 };
 
+// Normaliza nombres para agrupar: sin tildes, sin mayúsculas y sin espacios sobrantes
+const normalizarNombre = (nombre) =>
+  String(nombre || '')
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .toLowerCase()
+    .replace(/\s+/g, ' ')
+    .trim();
+
 const sameFacturaId = (abonoFacturaId, facturaId) => String(abonoFacturaId) === String(facturaId);
 
 const PAGE_SIZE = 1000;
@@ -312,8 +321,10 @@ const FacturasGuardadas = () => {
       stats.totalAbonado += f.totalAbonado || 0;
       stats.totalSaldoPendiente += f.saldo || 0;
 
-      if (!stats.porCliente[f.cliente]) {
-        stats.porCliente[f.cliente] = {
+      const claveCliente = normalizarNombre(f.cliente);
+      if (!stats.porCliente[claveCliente]) {
+        stats.porCliente[claveCliente] = {
+          nombre: String(f.cliente || '').replace(/\s+/g, ' ').trim().toUpperCase(),
           cantidad: 0,
           total: 0,
           abonado: 0,
@@ -321,10 +332,10 @@ const FacturasGuardadas = () => {
           promedio: 0
         };
       }
-      stats.porCliente[f.cliente].cantidad++;
-      stats.porCliente[f.cliente].total += f.total || 0;
-      stats.porCliente[f.cliente].abonado += f.totalAbonado || 0;
-      stats.porCliente[f.cliente].saldo += f.saldo || 0;
+      stats.porCliente[claveCliente].cantidad++;
+      stats.porCliente[claveCliente].total += f.total || 0;
+      stats.porCliente[claveCliente].abonado += f.totalAbonado || 0;
+      stats.porCliente[claveCliente].saldo += f.saldo || 0;
 
       if (!stats.porVendedor[f.vendedor]) {
         stats.porVendedor[f.vendedor] = {
@@ -364,6 +375,13 @@ const FacturasGuardadas = () => {
 
     return stats;
   }, [facturas, abonos, facturasProcesadas]);
+
+  const clientesResumen = useMemo(() => {
+    const termino = normalizarNombre(busquedaClienteResumen);
+    return Object.entries(estadisticas.porCliente)
+      .filter(([clave]) => clave.includes(termino))
+      .sort((a, b) => b[1].saldo - a[1].saldo);
+  }, [estadisticas, busquedaClienteResumen]);
 
   // Función para determinar la clase de prioridad del cliente
   const getClientePriorityClass = (saldo, total) => {
@@ -1178,22 +1196,35 @@ const FacturasGuardadas = () => {
                 <h4><i className="fas fa-user-tie"></i> Estadísticas por Vendedor</h4>
                 <div className="vendedores-list">
                   {Object.entries(estadisticas.porVendedor)
-                    .sort((a, b) => b[1].total - a[1].total)
+                    .sort((a, b) => b[1].saldo - a[1].saldo)
                     .map(([vendedor, datos]) => (
                       <div key={vendedor} className="vendedor-item">
                         <span className="vendedor-nombre">{vendedor}</span>
                         <div className="vendedor-stats">
                           <div className="stat">
-                            <span>{datos.cantidad} facturas pendientes/parciales</span>
-                            <strong>{formatMoneda(datos.total)}</strong>
+                            <span>Saldo</span>
+                            <strong>{formatMoneda(datos.saldo)}</strong>
                           </div>
                           <div className="stat">
-                            <span>Abonado: {formatMoneda(datos.abonado)}</span>
-                            <span>Saldo: {formatMoneda(datos.saldo)}</span>
+                            <span>Abonado</span>
+                            <strong>{formatMoneda(datos.abonado)}</strong>
                           </div>
                         </div>
                       </div>
                     ))}
+                  <div className="vendedor-item vendedor-total">
+                    <span className="vendedor-nombre">Total cartera</span>
+                    <div className="vendedor-stats">
+                      <div className="stat">
+                        <span>Saldo</span>
+                        <strong>{formatMoneda(estadisticas.totalSaldoPendiente)}</strong>
+                      </div>
+                      <div className="stat">
+                        <span>Abonado</span>
+                        <strong>{formatMoneda(estadisticas.totalAbonado)}</strong>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -1213,25 +1244,17 @@ const FacturasGuardadas = () => {
               </div>
               
               {/* Contador de resultados */}
-              {Object.entries(estadisticas.porCliente).filter(([cliente]) => 
-                cliente.toLowerCase().includes(busquedaClienteResumen.toLowerCase())
-              ).length > 0 && (
+              {clientesResumen.length > 0 && (
                 <div className="resultados-count">
-                  {Object.entries(estadisticas.porCliente).filter(([cliente]) => 
-                    cliente.toLowerCase().includes(busquedaClienteResumen.toLowerCase())
-                  ).length} clientes con saldo pendiente
+                  {clientesResumen.length} clientes con saldo pendiente
                 </div>
               )}
-              
+
               <div className="clientes-list">
-                {Object.entries(estadisticas.porCliente)
-                  .filter(([cliente]) => 
-                    cliente.toLowerCase().includes(busquedaClienteResumen.toLowerCase())
-                  )
-                  .sort((a, b) => b[1].saldo - a[1].saldo)
-                  .map(([cliente, datos]) => (
-                    <div 
-                      key={cliente} 
+                {clientesResumen
+                  .map(([clave, datos]) => (
+                    <div
+                      key={clave}
                       className={`cliente-item ${
                         datos.saldo === 0 ? 'saldo-cero' : 
                         datos.saldo > 5000000 ? 'alto-saldo' :
@@ -1239,7 +1262,7 @@ const FacturasGuardadas = () => {
                       }`}
                     >
                       <div className="cliente-info">
-                        <span className="cliente-nombre">{cliente}</span>
+                        <span className="cliente-nombre">{datos.nombre}</span>
                         <span className="facturas-count">
                           {datos.cantidad} factura{datos.cantidad !== 1 ? 's' : ''} pendiente{datos.cantidad !== 1 ? 's' : ''}
                         </span>
@@ -1259,9 +1282,7 @@ const FacturasGuardadas = () => {
                   ))}
                 
                 {/* Estado vacío */}
-                {Object.entries(estadisticas.porCliente).filter(([cliente]) => 
-                  cliente.toLowerCase().includes(busquedaClienteResumen.toLowerCase())
-                ).length === 0 && (
+                {clientesResumen.length === 0 && (
                   <div className="clientes-vacio">
                     <i className="fas fa-search"></i>
                     <h4>No se encontraron clientes</h4>

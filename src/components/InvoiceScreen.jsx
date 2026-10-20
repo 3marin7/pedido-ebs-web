@@ -51,6 +51,8 @@ const InvoiceScreen = () => {
   const [precioProducto, setPrecioProducto] = useState('');
   const [vendedorSeleccionado, setVendedorSeleccionado] = useState('');
   const [centroComercial, setCentroComercial] = useState('');
+  // ID del pedido de origen (si la factura se cargó desde GestionPedidos)
+  const [pedidoOrigenId, setPedidoOrigenId] = useState(null);
   
   // Estados para vistas modales
   const [mostrarVistaPrevia, setMostrarVistaPrevia] = useState(false);
@@ -156,6 +158,7 @@ const InvoiceScreen = () => {
         setVendedorSeleccionado(pedidoData.vendedor || '');
         setProductos(pedidoData.productos || []);
         setCentroComercial(centroComercialDB || '');
+        setPedidoOrigenId(pedidoData.pedidoId || null);
 
         // Limpiar el state para que no se recargue al volver
         window.history.replaceState({}, document.title);
@@ -604,6 +607,7 @@ const InvoiceScreen = () => {
     setProductos([]);
     setVendedorSeleccionado('');
     setErroresStock({});
+    setPedidoOrigenId(null);
   };
 
   // ⭐⭐ MODIFICACIÓN - Función guardarFactura con opción de imprimir ⭐⭐
@@ -678,6 +682,25 @@ const InvoiceScreen = () => {
 
       // Actualizar inventario después de guardar la factura (pasando el facturaId)
       await actualizarInventario(productos, numeroFactura);
+
+      // Si la factura viene de un pedido, pasarlo a "listo para entrega"
+      if (pedidoOrigenId) {
+        const { error: errorPedido } = await supabase
+          .from('pedidos')
+          .update({
+            estado: 'listo_para_entrega',
+            fecha_actualizacion: new Date().toISOString()
+          })
+          .eq('id', pedidoOrigenId)
+          .in('estado', ['pendiente', 'en_preparacion']);
+
+        if (errorPedido) {
+          console.error('Error actualizando estado del pedido:', errorPedido);
+          alert(`⚠️ La factura se guardó, pero no se pudo cambiar el pedido #${pedidoOrigenId} a "Listo para entrega". Cámbialo manualmente.`);
+        } else {
+          setPedidoOrigenId(null);
+        }
+      }
 
       // Mostrar diálogo de confirmación con opción de imprimir
       const usuarioQuiereImprimir = window.confirm(

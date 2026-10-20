@@ -53,11 +53,13 @@ const FacturaDetalle = () => {
           const { data, error } = await supabase
             .from('usuarios')
             .select('telefono')
-            .eq('nombre', factura.vendedor)
+            .ilike('nombre', factura.vendedor.trim())
+            .limit(1)
             .maybeSingle();
           if (error) throw error;
           setTelefonoVendedor(data?.telefono || 'NO ESPECIFICADO');
         } catch (error) {
+          console.error('Error consultando teléfono del vendedor:', error);
           setTelefonoVendedor('NO ESPECIFICADO');
         }
       };

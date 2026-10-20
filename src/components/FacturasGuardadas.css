@@ -2775,3 +2775,14 @@
   margin: 0;
   font-size: 0.9rem;
 }
+/* Fila de total de cartera en estadísticas por vendedor */
+.vendedor-item.vendedor-total {
+  border-top: 2px solid #2c3e50;
+  border-bottom: none;
+  background-color: #f1f4f9;
+}
+
+.vendedor-item.vendedor-total .vendedor-nombre {
+  text-transform: uppercase;
+  font-weight: 700;
+}

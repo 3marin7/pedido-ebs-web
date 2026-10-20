@@ -326,10 +326,19 @@ ${pedido.cliente_notas && pedido.cliente_notas !== 'Ninguna' ? `• Notas: ${ped
 
   // Función para cargar pedido como factura
   const cargarComoFactura = (pedido) => {
+    // Advertir si el pedido ya fue facturado (evita facturar/alistar dos veces)
+    if (pedido.estado === 'listo_para_entrega' || pedido.estado === 'entregado') {
+      const continuar = window.confirm(
+        `⚠️ El pedido #${pedido.id} ya está "${getTextoEstado(pedido.estado)}".\n\nEs posible que ya haya sido facturado. ¿Deseas cargarlo como factura de todas formas?`
+      );
+      if (!continuar) return;
+    }
+
     // Navegar a InvoiceScreen con los datos del pedido
     navigate('/facturacion', {
       state: {
         pedidoData: {
+          pedidoId: pedido.id,
           cliente: pedido.cliente_nombre,
           telefono: pedido.cliente_telefono,
           direccion: pedido.direccion_entrega || '',

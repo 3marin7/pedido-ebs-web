@@ -1,0 +1,225 @@
+.vff-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.vff-container h2 {
+  color: #2c3e50;
+  margin-bottom: 0.25rem;
+}
+
+.vff-ayuda {
+  color: #5a6b7d;
+  margin-bottom: 1rem;
+}
+
+.vff-cargando {
+  text-align: center;
+  padding: 2rem;
+  color: #5a6b7d;
+}
+
+.vff-filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: flex-end;
+  margin-bottom: 1rem;
+}
+
+.vff-filtros label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.vff-filtros select {
+  padding: 0.5rem;
+  border: 1px solid #ccd5e0;
+  border-radius: 6px;
+  min-width: 200px;
+}
+
+.vff-filtros .vff-check {
+  flex-direction: row;
+  align-items: center;
+  font-weight: 500;
+}
+
+.vff-registro {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.vff-registro input {
+  flex: 1;
+  min-width: 0;
+  padding: 0.85rem 1rem;
+  font-size: 1.3rem;
+  border: 2px solid #2b6cb0;
+  border-radius: 8px;
+}
+
+.vff-registro button,
+.vff-acciones button {
+  padding: 0.6rem 1rem;
+  border: none;
+  border-radius: 6px;
+  background: #2b6cb0;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.vff-acciones button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.vff-acciones button.peligro {
+  background: #c0392b;
+  margin-left: 0.5rem;
+}
+
+.vff-mensaje {
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+.vff-mensaje.ok { background: #e3f6e8; color: #1e7b3c; }
+.vff-mensaje.aviso { background: #fff4d6; color: #8a6100; }
+.vff-mensaje.error { background: #fde4e1; color: #a5281b; }
+
+.vff-resumen {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.vff-resumen div {
+  background: white;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+}
+
+.vff-resumen span { color: #5a6b7d; font-size: 0.9rem; }
+.vff-resumen strong { font-size: 1.4rem; color: #2c3e50; }
+.vff-resumen .ok strong { color: #1e7b3c; }
+.vff-resumen .faltan strong { color: #a5281b; }
+
+.vff-progreso {
+  position: relative;
+  height: 22px;
+  background: #e0e6f2;
+  border-radius: 11px;
+  overflow: hidden;
+  margin-bottom: 1rem;
+}
+
+.vff-progreso div {
+  height: 100%;
+  background: #27ae60;
+  transition: width 0.3s;
+}
+
+.vff-progreso span {
+  position: absolute;
+  inset: 0;
+  text-align: center;
+  line-height: 22px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.vff-acciones {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.vff-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.vff-acciones .vff-tabs button {
+  background: #e0e6f2;
+  color: #2c3e50;
+}
+
+.vff-acciones .vff-tabs button.activa {
+  background: #2c3e50;
+  color: white;
+}
+
+.vff-tabla-wrap {
+  overflow-x: auto;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.vff-tabla {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.vff-tabla th,
+.vff-tabla td {
+  padding: 0.6rem 0.75rem;
+  border-bottom: 1px solid #eef1f6;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.vff-tabla th {
+  background: #f1f4f9;
+  color: #2c3e50;
+}
+
+.vff-tabla tbody tr {
+  cursor: pointer;
+}
+
+.vff-tabla tbody tr:hover {
+  background: #f8f9fb;
+}
+
+.vff-tabla tr.verificada {
+  background: #eef9f1;
+}
+
+.vff-tabla .vff-num {
+  text-align: right;
+}
+
+.vff-vacio {
+  text-align: center;
+  color: #5a6b7d;
+  padding: 2rem !important;
+}
+
+.vff-resumen dl {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.15rem 0.75rem;
+  margin: 0.5rem 0 0;
+  font-size: 0.9rem;
+}
+
+.vff-resumen dt { color: #5a6b7d; }
+.vff-resumen dd { margin: 0; text-align: right; font-weight: 600; color: #2c3e50; }

@@ -116,6 +116,7 @@ const Navigation = () => {
             { path: '/dashboard-ventas', label: 'Dashboard Ventas', icon: '📈' },
             { path: '/reportes-ventas', label: 'Informe de Ventas', icon: '🧾' },
             { path: '/reportes-cobros', label: 'Informe de Cobros', icon: '💰' },
+            { path: '/verificacion-facturas', label: 'Verificar Facturas Físicas', icon: '✅' },
             { path: '/plan-seguimiento-ventas', label: 'Plan Seguimiento Ventas', icon: '🎯' },
             { path: '/calculador-sueldo-vendedor', label: 'Calculador Sueldo Vendedor', icon: '💰' },
             { path: '/reporte-clientes-producto', label: 'Clientes por Producto', icon: '👥' }
@@ -193,6 +194,7 @@ const Navigation = () => {
             { path: '/dashboard-ventas', label: 'Dashboard Ventas', icon: '📈' },
             { path: '/reportes-ventas', label: 'Informe de Ventas', icon: '🧾' },
             { path: '/reportes-cobros', label: 'Informe de Cobros', icon: '💰' },
+            { path: '/verificacion-facturas', label: 'Verificar Facturas Físicas', icon: '✅' },
             { path: '/plan-seguimiento-ventas', label: 'Plan Seguimiento Ventas', icon: '🎯' },
             { path: '/calculador-sueldo-vendedor', label: 'Calculador Sueldo Vendedor', icon: '💰' },
             { path: '/reporte-clientes-producto', label: 'Clientes por Producto', icon: '👥' },
@@ -302,6 +304,7 @@ const Navigation = () => {
             { path: '/dashboard-ventas', label: 'Dashboard Ventas', icon: '📈' },
             { path: '/reportes-ventas', label: 'Informe de Ventas', icon: '🧾' },
             { path: '/reportes-cobros', label: 'Reportes de Cobros', icon: '💰' },
+            { path: '/verificacion-facturas', label: 'Verificar Facturas Físicas', icon: '✅' },
             { path: '/plan-seguimiento-ventas', label: 'Plan Seguimiento Ventas', icon: '🎯' },
             { path: '/calculador-sueldo-vendedor', label: 'Calculador Sueldo Vendedor', icon: '💰' }
           ]
