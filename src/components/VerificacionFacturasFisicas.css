@@ -223,3 +223,78 @@
 
 .vff-resumen dt { color: #5a6b7d; }
 .vff-resumen dd { margin: 0; text-align: right; font-weight: 600; color: #2c3e50; }
+
+.vff-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  z-index: 1000;
+}
+
+.vff-modal {
+  background: white;
+  border-radius: 10px;
+  padding: 1.5rem;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+.vff-modal h4 {
+  margin: 0 0 0.5rem;
+  color: #a5281b;
+}
+
+.vff-modal-aviso {
+  background: #fff4d6;
+  color: #8a6100;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+.vff-modal input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.6rem 0.75rem;
+  margin: 0.5rem 0;
+  border: 1px solid #ccd5e0;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+.vff-modal-error {
+  color: #c0392b;
+  font-weight: 600;
+  margin: 0 0 0.5rem;
+}
+
+.vff-modal-botones {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+.vff-modal-botones button {
+  padding: 0.6rem 1rem;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  background: #e0e6f2;
+  color: #2c3e50;
+}
+
+.vff-modal-botones button.peligro {
+  background: #c0392b;
+  color: white;
+}
+
+.vff-modal-botones button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

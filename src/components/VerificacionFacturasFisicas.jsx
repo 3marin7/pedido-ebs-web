@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { useAuth } from '../App';
 import { supabase } from './supabaseClient';
+import { verificarClaveAutorizacion, EMAIL_AUTORIZACION } from '../lib/supabase';
 import * as XLSX from 'xlsx';
 import { parseDateLocal, formatDateLocal, nowLocalIsoDate } from '../lib/dateUtils';
 import './VerificacionFacturasFisicas.css';
@@ -55,7 +56,12 @@ const VerificacionFacturasFisicas = () => {
   const [vista, setVista] = useState('faltantes');
   const [numero, setNumero] = useState('');
   const [mensaje, setMensaje] = useState(null);
+  const [mostrarReinicio, setMostrarReinicio] = useState(false);
+  const [claveReinicio, setClaveReinicio] = useState('');
+  const [errorReinicio, setErrorReinicio] = useState('');
+  const [verificandoClave, setVerificandoClave] = useState(false);
   const inputRef = useRef(null);
+  const puedeReiniciar = user?.email?.toLowerCase() === EMAIL_AUTORIZACION;
 
   useEffect(() => {
     const cargarDatos = async () => {
@@ -238,14 +244,34 @@ const VerificacionFacturasFisicas = () => {
     XLSX.writeFile(wb, `facturas_faltantes${sufijo}_${nowLocalIsoDate()}.xlsx`);
   };
 
-  const reiniciar = async () => {
-    const ids = facturasAlcance.filter((f) => verificadas.has(String(f.id))).map((f) => f.id);
-    if (ids.length === 0) return;
+  const cerrarReinicio = () => {
+    setMostrarReinicio(false);
+    setClaveReinicio('');
+    setErrorReinicio('');
+  };
 
-    const confirmar = window.confirm(
-      `¿Borrar las ${ids.length} marcas de verificación${vendedor ? ` de ${vendedor}` : ''}?\n\nUsa esto solo para empezar un inventario nuevo.`
-    );
-    if (!confirmar) return;
+  // Solo la cuenta de autorización puede reiniciar, y debe confirmar su contraseña
+  const reiniciar = async (e) => {
+    e.preventDefault();
+    const ids = facturasAlcance.filter((f) => verificadas.has(String(f.id))).map((f) => f.id);
+    if (!puedeReiniciar || ids.length === 0) return;
+
+    if (!claveReinicio) {
+      setErrorReinicio('Ingresa la contraseña de autorización.');
+      return;
+    }
+
+    setVerificandoClave(true);
+    const valida = await verificarClaveAutorizacion(claveReinicio);
+    setVerificandoClave(false);
+
+    if (!valida) {
+      setErrorReinicio('Contraseña incorrecta.');
+      setClaveReinicio('');
+      return;
+    }
+
+    cerrarReinicio();
 
     for (let i = 0; i < ids.length; i += 200) {
       const { error } = await supabase
@@ -365,11 +391,51 @@ const VerificacionFacturasFisicas = () => {
           <button type="button" onClick={exportarFaltantes} disabled={resumen.faltantes.cantidad === 0}>
             📥 Exportar faltantes
           </button>
-          <button type="button" className="peligro" onClick={reiniciar} disabled={resumen.verificadas.cantidad === 0}>
-            Reiniciar
-          </button>
+          {puedeReiniciar && (
+            <button
+              type="button"
+              className="peligro"
+              onClick={() => setMostrarReinicio(true)}
+              disabled={resumen.verificadas.cantidad === 0}
+            >
+              Reiniciar
+            </button>
+          )}
         </div>
       </div>
+
+      {mostrarReinicio && (
+        <div className="vff-modal-overlay">
+          <form className="vff-modal" onSubmit={reiniciar}>
+            <h4>Reiniciar verificación</h4>
+            <p>
+              Se borrarán <strong>{resumen.verificadas.cantidad}</strong> marcas de verificación
+              {vendedor ? ` de ${vendedor}` : ' de todos los vendedores'}. Esta acción no se puede deshacer.
+            </p>
+            <p className="vff-modal-aviso">
+              💡 Si necesitas conservar el informe, usa "Exportar faltantes" antes de reiniciar.
+            </p>
+            <input
+              type="password"
+              placeholder="Contraseña de autorización"
+              autoComplete="current-password"
+              value={claveReinicio}
+              onChange={(e) => {
+                setClaveReinicio(e.target.value);
+                setErrorReinicio('');
+              }}
+              autoFocus
+            />
+            {errorReinicio && <p className="vff-modal-error">{errorReinicio}</p>}
+            <div className="vff-modal-botones">
+              <button type="submit" className="peligro" disabled={verificandoClave}>
+                {verificandoClave ? 'Verificando...' : 'Reiniciar'}
+              </button>
+              <button type="button" onClick={cerrarReinicio}>Cancelar</button>
+            </div>
+          </form>
+        </div>
+      )}
 
       <div className="vff-tabla-wrap">
         <table className="vff-tabla">

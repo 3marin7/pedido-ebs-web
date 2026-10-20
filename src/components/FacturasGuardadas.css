@@ -2786,3 +2786,20 @@
   text-transform: uppercase;
   font-weight: 700;
 }
+
+/* Contraseña de autorización para eliminar facturas */
+.clave-eliminar-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.6rem 0.75rem;
+  margin: 0.5rem 0;
+  border: 1px solid #ccd5e0;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+.clave-eliminar-error {
+  color: #c0392b;
+  font-weight: 600;
+  margin: 0 0 0.5rem;
+}

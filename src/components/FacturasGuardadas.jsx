@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../App';
 import { isAdminRole, isSuperAdminRole } from '../lib/roleUtils';
 import { supabase } from './supabaseClient';
+import { ejecutarConAutorizacion } from '../lib/supabase';
 import * as XLSX from 'xlsx';
 import { parseDateLocal, formatDateLocal, nowLocalIsoDate, formatDateTimeBogota } from '../lib/dateUtils';
 import './FacturasGuardadas.css';
@@ -108,6 +109,9 @@ const FacturasGuardadas = () => {
     [facturas]
   );
   const [mostrarConfirmacion, setMostrarConfirmacion] = useState(null);
+  const [claveEliminar, setClaveEliminar] = useState('');
+  const [errorClave, setErrorClave] = useState('');
+  const [verificandoClave, setVerificandoClave] = useState(false);
   const [mostrarResumen, setMostrarResumen] = useState(false);
   const [importando, setImportando] = useState(false);
   const [errorImportacion, setErrorImportacion] = useState(null);
@@ -395,7 +399,7 @@ const FacturasGuardadas = () => {
   };
 
   // Eliminar factura (y sus abonos asociados)
-  const eliminarFactura = async (id) => {
+  const eliminarFactura = async (id, clave) => {
     if (!canDeleteInvoices) return;
     
     const facturaAEliminar = facturas.find(f => f.id === id);
@@ -416,19 +420,29 @@ const FacturasGuardadas = () => {
     try {
       setCargando(true);
       
-      const { error: abonosError } = await supabase
-        .from('abonos')
-        .delete()
-        .eq('factura_id', id);
+      // Se borra con la sesión de la cuenta de autorización: en Supabase solo
+      // esa cuenta tiene permiso para eliminar facturas
+      const { autorizado } = await ejecutarConAutorizacion(clave, async (clienteAutorizado) => {
+        const { error: abonosError } = await clienteAutorizado
+          .from('abonos')
+          .delete()
+          .eq('factura_id', id);
+        
+        if (abonosError) throw abonosError;
+        
+        const { error: facturaError } = await clienteAutorizado
+          .from('facturas')
+          .delete()
+          .eq('id', id);
+        
+        if (facturaError) throw facturaError;
+      });
       
-      if (abonosError) throw abonosError;
-      
-      const { error: facturaError } = await supabase
-        .from('facturas')
-        .delete()
-        .eq('id', id);
-      
-      if (facturaError) throw facturaError;
+      if (!autorizado) {
+        setErrorClave('Contraseña incorrecta.');
+        setClaveEliminar('');
+        return;
+      }
       
       setFacturas(facturas.filter(f => f.id !== id));
       setAbonos(abonos.filter(a => a.factura_id !== id));
@@ -438,14 +452,33 @@ const FacturasGuardadas = () => {
         .map(f => f.vendedor)
         .sort())];
       setVendedores(vendedoresActualizados);
-      
+      cerrarConfirmacion();
     } catch (error) {
       console.error("Error eliminando factura:", error);
       alert(`No se pudo eliminar la factura: ${error.message || 'Error desconocido'}`);
+      cerrarConfirmacion();
     } finally {
       setCargando(false);
-      setMostrarConfirmacion(null);
     }
+  };
+
+  const cerrarConfirmacion = () => {
+    setMostrarConfirmacion(null);
+    setClaveEliminar('');
+    setErrorClave('');
+  };
+
+  // Exigir la contraseña de la cuenta de autorización antes de eliminar
+  const confirmarEliminacion = async (e) => {
+    e.preventDefault();
+    if (!claveEliminar) {
+      setErrorClave('Ingresa la contraseña de autorización.');
+      return;
+    }
+
+    setVerificandoClave(true);
+    await eliminarFactura(mostrarConfirmacion, claveEliminar);
+    setVerificandoClave(false);
   };
 
   // Exportar facturas y abonos en EXCEL
@@ -1737,26 +1770,39 @@ const FacturasGuardadas = () => {
       
       {mostrarConfirmacion && (
         <div className="confirmacion-overlay">
-          <div className="confirmacion-box">
+          <form className="confirmacion-box" onSubmit={confirmarEliminacion}>
             <h4>Confirmar eliminación</h4>
-            <p>Esta acción no se puede deshacer. ¿Deseas continuar?</p>
+            <p>Esta acción no se puede deshacer. Ingresa la contraseña de autorización para continuar:</p>
+            <input
+              type="password"
+              className="clave-eliminar-input"
+              placeholder="Contraseña"
+              autoComplete="current-password"
+              value={claveEliminar}
+              onChange={(e) => {
+                setClaveEliminar(e.target.value);
+                setErrorClave('');
+              }}
+              autoFocus
+            />
+            {errorClave && <p className="clave-eliminar-error">{errorClave}</p>}
             <div className="confirmacion-buttons">
-              <button 
+              <button
+                type="submit"
                 className="button danger-button"
-                onClick={() => eliminarFactura(mostrarConfirmacion)}
+                disabled={verificandoClave || cargando}
               >
-                <i className="fas fa-trash"></i> Eliminar
+                <i className="fas fa-trash"></i> {verificandoClave ? 'Verificando...' : 'Eliminar'}
               </button>
-              <button 
+              <button
+                type="button"
                 className="button secondary-button"
-                onClick={() => {
-                  setMostrarConfirmacion(null);
-                }}
+                onClick={cerrarConfirmacion}
               >
                 <i className="fas fa-times"></i> Cancelar
               </button>
             </div>
-          </div>
+          </form>
         </div>
       )}
     </div>
