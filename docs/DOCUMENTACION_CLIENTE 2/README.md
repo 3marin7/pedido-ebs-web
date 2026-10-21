@@ -1,161 +1,47 @@
-# 📦 PAQUETE DE DOCUMENTACIÓN
-## Sistema de Gestión Comercial Distribuciones EBS
+# Documentación del sistema EBS
 
-**Fecha de entrega:** 2 de febrero de 2026  
-**Cliente:** [Nombre del Cliente]  
-**Versión:** 1.0
+**Revisión del paquete:** 21 de octubre de 2026
 
----
+Este paquete acompaña el repositorio `pedido-ebs-web`. La documentación ejecutiva y técnica se contrastó con el código fuente disponible. Esa revisión acredita funciones visibles en el repositorio, pero no certifica un despliegue, datos reales, configuración de Supabase, aceptación del cliente ni compromisos comerciales.
 
-## 🎯 Bienvenido
+## Empezar aquí
 
-Este paquete contiene **toda la documentación** necesaria para entender, implementar y operar el Sistema de Gestión Comercial Distribuciones EBS.
+- **Gerencia:** [Resumen ejecutivo](./01_EJECUTIVA/01.1_Resumen_Ejecutivo.md) y [base para propuesta comercial](./01_EJECUTIVA/01.2_Propuesta_Comercial.md).
+- **Equipo técnico:** [Análisis y supuestos](./02_TECNICA/02.1_Analisis_Problema.md), [ERS](./02_TECNICA/02.0_ERS_IEEE830_Sistema_EBS.md), [requerimientos funcionales](./02_TECNICA/02.2_Requerimientos_Funcionales.md), [diagramas](./02_TECNICA/02.4_Diagramas_Sistema.md) y [arquitectura técnica](./02_TECNICA/02.5_Arquitectura_Tecnica.md).
+- **Instalación, migración y respaldo:** los archivos de la sección técnica son borradores/procedimientos propuestos hasta que se validen contra los servicios y datos reales.
 
----
+## Contenido
 
-## 📁 Contenido del Paquete
+### 01 — Ejecutiva
 
-```
-DOCUMENTACION_CLIENTE/
-│
-├── 📋 INDICE_GENERAL.md ← COMIENCE AQUÍ
-│
-├── 01_EJECUTIVA/ (Para gerencia y propietarios)
-│   ├── 01.1_Resumen_Ejecutivo.md
-│   ├── 01.2_Propuesta_Comercial.md
-│   └── 01.3_Casos_Exito.md (Por crear)
-│
-├── 02_TECNICA/ (Para equipo técnico y de sistemas)
-│   ├── 02.1_Analisis_Problema.md
-│   ├── 02.2_Requerimientos_Funcionales.md
-│   ├── 02.3_Arquitectura_Tecnica.md (Por crear)
-│   └── 02.4_Diagramas_Sistema.md (Por crear)
-│
-├── 03_LEGAL/ (Para departamento legal y financiero)
-│   ├── 03.1_Contrato_Servicios.md (Por crear)
-│   ├── 03.2_Politica_Seguridad.md (Por crear)
-│   └── 03.3_SLA_Soporte.md (Por crear)
-│
-└── 04_OPERATIVA/ (Para usuarios finales del sistema)
-    ├── 04.1_Manual_Usuario.md (Por crear)
-    ├── 04.2_Guia_Rapida.md (Por crear)
-    └── 04.3_Preguntas_Frecuentes.md (Por crear)
-```
+- `01.1_Resumen_Ejecutivo.md`: alcance presente en el código y límites de lo que la revisión puede confirmar.
+- `01.2_Propuesta_Comercial.md`: base no vinculante; precios, soporte, hosting y cronograma quedan pendientes de acuerdo.
 
----
+### 02 — Técnica
 
-## 🚀 Por Dónde Empezar
+- `02.0_ERS_IEEE830_Sistema_EBS.md`
+- `02.1_Analisis_Problema.md`
+- `02.2_Requerimientos_Funcionales.md`
+- `02.3_Plan_Migracion_Datos.md`
+- `02.3_Guia_Estudiantes_Migracion_Datos.md` (material didáctico, no caso real)
+- `02.4_Diagramas_Sistema.md`
+- `02.5_Arquitectura_Tecnica.md`
+- `02.6_Plan_Respaldo_Datos.md` y `02.6.1_Resumen_Plan_Respaldo.md`
+- `02.7_Plan_Instalacion.md` y `02.7.1_Resumen_Plan_Instalacion.md`
+- `02.8_Proceso_Migracion_Respaldo.md` (validar contenido antes de usar)
 
-### Si eres Gerente o Propietario
-👉 **Empieza con:**
-1. [INDICE_GENERAL.md](./INDICE_GENERAL.md)
-2. [01.1_Resumen_Ejecutivo.md](./01_EJECUTIVA/01.1_Resumen_Ejecutivo.md)
-3. [01.2_Propuesta_Comercial.md](./01_EJECUTIVA/01.2_Propuesta_Comercial.md)
+### 03 — Legal y 04 — Operativa
 
-⏱️ **Tiempo estimado:** 20-30 minutos  
-📌 **Objetivo:** Entender el problema, la solución y la inversión requerida
+Los documentos [contrato](./03_LEGAL/03.1_Contrato_Servicios.md), [política de seguridad](./03_LEGAL/03.2_Politica_Seguridad.md) y [SLA](./03_LEGAL/03.3_SLA_Soporte.md) se dejaron como plantillas de negociación con datos y obligaciones pendientes. No son asesoría legal, no están aprobados ni firmados y requieren revisión de abogado colombiano y de las partes.
 
----
+### 05 — Presentación
 
-### Si eres del Equipo Técnico
-👉 **Empieza con:**
-1. [02.1_Analisis_Problema.md](./02_TECNICA/02.1_Analisis_Problema.md)
-2. [02.2_Requerimientos_Funcionales.md](./02_TECNICA/02.2_Requerimientos_Funcionales.md)
-3. [02.3_Arquitectura_Tecnica.md](./02_TECNICA/02.3_Arquitectura_Tecnica.md) *(próximamente)*
+El guion y las notas Markdown se actualizaron. `Presentacion_EBS.pptx` y `generar_pptx.py` conservan cifras y compromisos anteriores no verificados; no distribuir ni regenerar hasta actualizarlos. El archivo `DOCUMENTACION_CLIENTE 2.zip` también es una copia anterior y no contiene las revisiones actuales.
 
-⏱️ **Tiempo estimado:** 1-2 horas  
-📌 **Objetivo:** Comprender especificaciones técnicas y alcance del sistema
+## Hechos que requieren validación externa
 
----
+El repositorio no acredita proveedor/URL de producción, región o plan Supabase, esquema completo, políticas RLS, backups y restauraciones, dominio, titularidad de servicios, cumplimiento DIAN, resultados financieros, usuarios capacitados, SLA, precios ni firma de aceptación. Consultar la arquitectura y la propuesta antes de comunicar estos puntos como compromisos.
 
-### Si eres Usuario Final (Vendedor/Operativo)
-👉 **Empieza con:**
-1. [04.2_Guia_Rapida.md](./04_OPERATIVA/04.2_Guia_Rapida.md) *(próximamente)*
-2. [04.1_Manual_Usuario.md](./04_OPERATIVA/04.1_Manual_Usuario.md) *(próximamente)*
+## Control del paquete
 
-⏱️ **Tiempo estimado:** 30 minutos  
-📌 **Objetivo:** Aprender a usar el sistema rápidamente
-
----
-
-## 📊 Estado de la Documentación
-
-| Documento | Estado | Última actualización |
-|-----------|--------|---------------------|
-| Índice General | ✅ Completo | 02/Feb/2026 |
-| Resumen Ejecutivo | ✅ Completo | 02/Feb/2026 |
-| Propuesta Comercial | ✅ Completo | 02/Feb/2026 |
-| Análisis del Problema | ✅ Completo | 02/Feb/2026 |
-| Requerimientos Funcionales | ✅ Completo | 02/Feb/2026 |
-| Casos de Éxito | ⏳ Pendiente | - |
-| Arquitectura Técnica | ⏳ Pendiente | - |
-| Diagramas del Sistema | ⏳ Pendiente | - |
-| Contrato de Servicios | ⏳ Pendiente | - |
-| Política de Seguridad | ⏳ Pendiente | - |
-| SLA de Soporte | ⏳ Pendiente | - |
-| Manual de Usuario | ⏳ Pendiente | - |
-| Guía Rápida | ⏳ Pendiente | - |
-| Preguntas Frecuentes | ⏳ Pendiente | - |
-
----
-
-## 📞 Contacto
-
-¿Preguntas sobre la documentación?
-
-**Edwin Marín**  
-Distribuciones EBS  
-📧 contacto@distribucionesebs.com  
-📱 [WhatsApp]  
-☎️ [Teléfono]
-
-**Horarios de atención:**  
-Lun-Vie: 8:00 AM - 6:00 PM  
-Sábados: 10:00 AM - 6:00 PM
-
----
-
-## 🔒 Confidencialidad
-
-⚠️ **IMPORTANTE:** Esta documentación es **confidencial** y de uso exclusivo de [Nombre del Cliente]. No debe ser compartida, copiada o distribuida sin autorización expresa por escrito de Distribuciones EBS.
-
----
-
-## 📝 Control de Versiones
-
-| Versión | Fecha | Cambios | Autor |
-|---------|-------|---------|-------|
-| 1.0 | 02/Feb/2026 | Versión inicial | Edwin Marín |
-
----
-
-## ✅ Checklist de Lectura
-
-Marque los documentos que ya revisó:
-
-- [ ] Índice General
-- [ ] Resumen Ejecutivo
-- [ ] Propuesta Comercial
-- [ ] Análisis del Problema
-- [ ] Requerimientos Funcionales
-- [ ] Arquitectura Técnica
-- [ ] Contrato de Servicios
-- [ ] Manual de Usuario
-
----
-
-## 💡 Próximos Pasos Sugeridos
-
-1. ✅ **Revisar documentación ejecutiva** (30 min)
-2. ✅ **Agendar reunión de aclaración** con Distribuciones EBS
-3. ✅ **Compartir con equipo clave** (gerencia, IT, operaciones)
-4. ✅ **Validar presupuesto** internamente
-5. ✅ **Tomar decisión** de implementación
-6. ✅ **Firma de contrato** (si se aprueba)
-7. ✅ **Inicio de implementación**
-
----
-
-**Gracias por confiar en Distribuciones EBS**
-
-*Transformando la gestión comercial de San Andresitos*
+Actualizar esta documentación junto con la versión/tag que se entregue. Antes de la entrega final, registrar ambiente, pruebas ejecutadas, resultados, responsables y aprobaciones. No distribuir una copia comprimida antigua si no refleja estos cambios.

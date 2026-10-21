@@ -1,141 +1,52 @@
-# 📋 ÍNDICE GENERAL - DISTRIBUCIONES EBS
-## Sistema de Gestión Comercial para San Andresitos
+# Índice general de documentación EBS
 
-**Fecha:** 2 de febrero de 2026  
-**Cliente:** [Nombre del Cliente]  
-**Proveedor:** Edwin Marín - Distribuciones EBS  
-**Versión:** 1.0
+**Revisión:** 21 de octubre de 2026
+**Estado:** paquete en revisión; consultar los límites de cada documento
 
----
+La descripción de la aplicación se contrastó con el código fuente del repositorio. No se certifican con esta revisión un ambiente productivo, datos reales, backups, RLS, aceptación, cumplimiento normativo ni términos comerciales.
 
-## 📂 Estructura de la Documentación
+## 01. Ejecutiva
 
-### 01. DOCUMENTACIÓN EJECUTIVA
-Información clave para la toma de decisiones gerenciales.
+- [Resumen ejecutivo](./01_EJECUTIVA/01.1_Resumen_Ejecutivo.md) — capacidades identificables y pendientes de validación.
+- [Propuesta comercial](./01_EJECUTIVA/01.2_Propuesta_Comercial.md) — base para cotización; no vinculante ni con precios aprobados.
 
-- **[01.1_Resumen_Ejecutivo.md](./01_EJECUTIVA/01.1_Resumen_Ejecutivo.md)**  
-  Visión general del proyecto, problemas, solución y beneficios (2 páginas)
+## 02. Técnica
 
-- **[01.2_Propuesta_Comercial.md](./01_EJECUTIVA/01.2_Propuesta_Comercial.md)**  
-  Oferta comercial, inversión, ROI y plan de implementación (4 páginas)
+- [ERS IEEE 830](./02_TECNICA/02.0_ERS_IEEE830_Sistema_EBS.md) — requerimientos a validar y aceptar.
+- [Análisis del problema](./02_TECNICA/02.1_Analisis_Problema.md) — hipótesis; requiere levantamiento con el cliente.
+- [Requerimientos funcionales](./02_TECNICA/02.2_Requerimientos_Funcionales.md) — especificación, no evidencia de aceptación.
+- [Plan de migración](./02_TECNICA/02.3_Plan_Migracion_Datos.md) — borrador no ejecutado.
+- [Guía didáctica de migración](./02_TECNICA/02.3_Guia_Estudiantes_Migracion_Datos.md) — escenario de práctica, no caso real.
+- [Diagramas](./02_TECNICA/02.4_Diagramas_Sistema.md) — vista lógica; validar esquema y despliegue.
+- [Arquitectura técnica](./02_TECNICA/02.5_Arquitectura_Tecnica.md) — repositorio verificable y dependencias por confirmar.
+- [Plan de respaldo](./02_TECNICA/02.6_Plan_Respaldo_Datos.md) y [resumen](./02_TECNICA/02.6.1_Resumen_Plan_Respaldo.md) — propuesta, no prueba de backups vigentes.
+- [Plan de instalación](./02_TECNICA/02.7_Plan_Instalacion.md) y [resumen](./02_TECNICA/02.7.1_Resumen_Plan_Instalacion.md) — borrador, no evidencia de despliegue.
+- `02.8_Proceso_Migracion_Respaldo.md` — completar y revisar antes de su uso.
+- `02.3_Guia_Estudiantes_Migracion_Datos.docx` — versión editable de la guía; verificar que coincida con la versión Markdown antes de distribuir.
 
-- **[01.3_Casos_Exito.md](./01_EJECUTIVA/01.3_Casos_Exito.md)**  
-  Referencias y casos de éxito en comercios similares
+## 03. Legal
 
----
+- [Borrador de contrato de servicios](./03_LEGAL/03.1_Contrato_Servicios.md)
+- [Borrador de política de seguridad](./03_LEGAL/03.2_Politica_Seguridad.md)
+- [Borrador de SLA](./03_LEGAL/03.3_SLA_Soporte.md)
 
-### 02. DOCUMENTACIÓN TÉCNICA
-Especificaciones técnicas del sistema.
+Son plantillas para revisión jurídica y negociación; no están aprobadas ni firmadas, y no deben tratarse como obligaciones vigentes.
 
-- **[02.1_Analisis_Problema.md](./02_TECNICA/02.1_Analisis_Problema.md)**  
-  Diagnóstico detallado de la situación actual
+## 04. Operativa
 
-- **[02.2_Requerimientos_Funcionales.md](./02_TECNICA/02.2_Requerimientos_Funcionales.md)**  
-  Especificación IEEE 830 de funcionalidades del sistema
+Manual, guía rápida, preguntas frecuentes, mantenimiento, capacitación, pruebas de aceptación y acta de entrega requieren revisión contra el build y el ambiente realmente entregados. La existencia de estos archivos no significa que se hayan ejecutado pruebas o capacitación.
 
-- **[02.3_Plan_Migracion_Datos.md](./02_TECNICA/02.3_Plan_Migracion_Datos.md)** ✨ NUEVO  
-  Plan detallado de migración de datos del sistema actual al nuevo
+## 05. Presentación
 
-- **[02.4_Diagramas_Sistema.md](./02_TECNICA/02.4_Diagramas_Sistema.md)**  
-  Casos de uso, diagramas de clases y modelo de datos
+- [Guion para presentación](./05_PRESENTACION/05.1_Presentacion_Cliente.md)
+- [Notas del presentador](./05_PRESENTACION/05.2_Notas_Presentador.md)
+- `Presentacion_EBS.pptx` y `generar_pptx.py` son versiones históricas con cifras no verificadas; no distribuir ni regenerar todavía.
 
-- **[02.5_Arquitectura_Tecnica.md](./02_TECNICA/02.5_Arquitectura_Tecnica.md)** ✨ NUEVO  
-  Arquitectura técnica, stack, APIs, seguridad y rendimiento
+El ZIP del paquete es una copia anterior y no refleja estas revisiones.
 
-- **[02.6_Plan_Respaldo_Datos.md](./02_TECNICA/02.6_Plan_Respaldo_Datos.md)** ✨ NUEVO  
-  Estrategia completa de backups y recuperación ante desastres
+## Orden recomendado
 
-- **[02.6.1_Resumen_Plan_Respaldo.md](./02_TECNICA/02.6.1_Resumen_Plan_Respaldo.md)** ✨ NUEVO  
-  Resumen ejecutivo del plan de respaldo
-
-- **[02.7_Plan_Instalacion.md](./02_TECNICA/02.7_Plan_Instalacion.md)** ✨ NUEVO  
-  Procedimiento completo de instalación y despliegue del sistema
-
-- **[02.7.1_Resumen_Plan_Instalacion.md](./02_TECNICA/02.7.1_Resumen_Plan_Instalacion.md)** ✨ NUEVO  
-  Resumen ejecutivo del plan de instalación
-
-- **[02.8_Proceso_Migracion_Respaldo.md](./02_TECNICA/02.8_Proceso_Migracion_Respaldo.md)** ✨ NUEVO  
-  Proceso operativo resumido de migración y respaldos
-
----
-
-### 03. DOCUMENTACIÓN LEGAL
-Documentos contractuales y legales.
-
-- **[03.1_Contrato_Servicios.md](./03_LEGAL/03.1_Contrato_Servicios.md)**  
-  Contrato de servicios de plataforma tecnológica
-
-- **[03.2_Politica_Seguridad.md](./03_LEGAL/03.2_Politica_Seguridad.md)**  
-  Políticas de seguridad, backups y protección de datos
-
-- **[03.3_SLA_Soporte.md](./03_LEGAL/03.3_SLA_Soporte.md)**  
-  Acuerdos de nivel de servicio y soporte técnico
-
----
-
-### 04. DOCUMENTACIÓN OPERATIVA
-Guías para usuarios del sistema.
-
-- **[04.1_Manual_Usuario.md](./04_OPERATIVA/04.1_Manual_Usuario.md)**  
-  Guía completa de uso del sistema
-
-- **[04.2_Guia_Rapida.md](./04_OPERATIVA/04.2_Guia_Rapida.md)**  
-  Inicio rápido y operaciones frecuentes
-
-- **[04.3_Preguntas_Frecuentes.md](./04_OPERATIVA/04.3_Preguntas_Frecuentes.md)**  
-  FAQ y solución de problemas comunes
-
-- **[04.4_Plan_Mantenimiento_Soporte.md](./04_OPERATIVA/04.4_Plan_Mantenimiento_Soporte.md)** ✨ NUEVO  
-  Plan de mantenimiento preventivo, correctivo y soporte técnico
-
-- **[04.5_Plan_Capacitacion_Usuarios.md](./04_OPERATIVA/04.5_Plan_Capacitacion_Usuarios.md)** ✨ NUEVO  
-  Cronograma y contenido de capacitación por roles
-
-- **[04.6_Plan_Pruebas_Aceptacion.md](./04_OPERATIVA/04.6_Plan_Pruebas_Aceptacion.md)** ✨ NUEVO  
-  Plan UAT con criterios de aceptación y registro de pruebas
-
-- **[04.7_Acta_Entrega.md](./04_OPERATIVA/04.7_Acta_Entrega.md)** ✨ NUEVO  
-  Acta formal de entrega y aceptación del sistema
-
----
-
-## 🎯 Cómo Usar Esta Documentación
-
-### Para Gerencia/Propietarios
-👉 Comience con: **01_EJECUTIVA** (Resumen + Propuesta Comercial)  
-⏱️ Tiempo de lectura: 15 minutos
-
-### Para Equipo de Ventas/Operativo
-👉 Comience con: **04_OPERATIVA** (Manual de Usuario + Guía Rápida)  
-⏱️ Tiempo de lectura: 30 minutos
-
-### Para Equipo Técnico/IT
-👉 Comience con: **02_TECNICA** (Requerimientos + Arquitectura)  
-⏱️ Tiempo de lectura: 45 minutos
-
-### Para Departamento Legal/Financiero
-👉 Comience con: **03_LEGAL** (Contrato + SLA)  
-⏱️ Tiempo de lectura: 30 minutos
-
----
-
-## 📞 Contacto y Soporte
-
-**Proveedor:** Edwin Marín - Distribuciones EBS  
-**Email:** contacto@distribucionesebs.com  
-**Teléfono:** [Número de contacto]  
-**Soporte Técnico:** soporte@distribucionesebs.com  
-**Horario de Atención:** Lunes a Viernes 8:00 AM - 6:00 PM | Sábados 10:00 AM - 6:00 PM
-
----
-
-## 📌 Notas Importantes
-
-✅ Esta documentación corresponde al **sistema en producción** actualmente operativo  
-✅ Versión del sistema: **v1.0** (Febrero 2026)  
-✅ Incluye todas las actualizaciones implementadas hasta la fecha  
-✅ Documento dinámico: se actualiza con cada nueva versión del sistema
-
----
-
-**Confidencialidad:** Este documento es de uso exclusivo del cliente y no debe ser compartido sin autorización expresa de Distribuciones EBS.
+1. Leer el [README del paquete](./README.md) y el [resumen ejecutivo](./01_EJECUTIVA/01.1_Resumen_Ejecutivo.md).
+2. Confirmar alcance y condiciones con la [base comercial](./01_EJECUTIVA/01.2_Propuesta_Comercial.md).
+3. Identificar versión/ambiente y revisar la [arquitectura](./02_TECNICA/02.5_Arquitectura_Tecnica.md).
+4. Ejecutar y documentar aceptación, seguridad, configuración y operación antes de firmar acta de entrega.
