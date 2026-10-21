@@ -342,7 +342,8 @@ const Navigation = () => {
         { path: '/gestion-inventario', label: 'Gestión Inventario', icon: '📋', tipo: 'simple' },
         { path: '/movimientos', label: 'Historial Movimientos', icon: '📊', tipo: 'simple' },
         { path: '/gestion-pedidos', label: 'Gestión Pedidos', icon: '🛒', tipo: 'simple' },
-        { path: '/facturas', label: 'Ver Facturas', icon: '🧾', tipo: 'simple' }
+        { path: '/facturas', label: 'Ver Facturas', icon: '🧾', tipo: 'simple' },
+        { path: '/verificacion-facturas', label: 'Verificar Facturas Físicas', icon: '✅', tipo: 'simple' }
       ];
     }
 

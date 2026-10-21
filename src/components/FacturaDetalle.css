@@ -869,3 +869,71 @@
   font-size: 10px;
   text-align: center;
 }
+/* Contraseña de autorización para eliminar abonos */
+.clave-abono-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  z-index: 1000;
+}
+
+.clave-abono-box {
+  background: white;
+  border-radius: 10px;
+  padding: 1.5rem;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+.clave-abono-box h4 {
+  margin: 0 0 0.5rem;
+  color: #a5281b;
+}
+
+.clave-abono-box input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.6rem 0.75rem;
+  margin: 0.5rem 0;
+  border: 1px solid #ccd5e0;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+.clave-abono-error {
+  color: #c0392b;
+  font-weight: 600;
+  margin: 0 0 0.5rem;
+}
+
+.clave-abono-botones {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+.clave-abono-botones button {
+  padding: 0.6rem 1rem;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  background: #e0e6f2;
+  color: #2c3e50;
+}
+
+.clave-abono-botones button.peligro {
+  background: #c0392b;
+  color: white;
+}
+
+@media print {
+  .clave-abono-overlay {
+    display: none;
+  }
+}

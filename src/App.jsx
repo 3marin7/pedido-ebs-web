@@ -379,7 +379,7 @@ function App() {
             
             {/* NUEVA RUTA: Rutas de Cobro Inteligentes */}
             <Route path="/verificacion-facturas" element={
-              <ProtectedRoute requiredRoles={['superadmin', 'admin', 'contabilidad']}>
+              <ProtectedRoute requiredRoles={['superadmin', 'admin', 'contabilidad', 'inventario']}>
                 <>
                   <PageMeta title="Verificación de Facturas Físicas - EBS" description="Inventario de facturas físicas contra el sistema" />
                   <VerificacionFacturasFisicas />

@@ -10,6 +10,36 @@ const chunkArray = (array, size = 200) => {
   return chunks;
 };
 
+const PAGE_SIZE = 1000;
+
+// Normaliza nombres para agrupar: sin tildes, sin mayúsculas y sin espacios sobrantes
+const normalizarNombre = (nombre) =>
+  String(nombre || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/\s+/g, ' ')
+    .trim();
+
+// Supabase devuelve máximo 1000 filas por consulta: pedir por páginas
+const cargarPaginado = async (crearConsulta) => {
+  let desde = 0;
+  let filas = [];
+
+  while (true) {
+    const { data, error } = await crearConsulta().range(desde, desde + PAGE_SIZE - 1);
+    if (error) throw error;
+
+    const lote = data || [];
+    filas = [...filas, ...lote];
+
+    if (lote.length < PAGE_SIZE) break;
+    desde += PAGE_SIZE;
+  }
+
+  return filas;
+};
+
 const parseDateLocal = (value, endOfDay = false) => {
   if (!value) return null;
 
@@ -99,6 +129,8 @@ const numeroALetras = (valor) => {
 
 const CalculadorSueldoVendedor = () => {
   const [vendedores, setVendedores] = useState([]);
+  // Formas en que está escrito cada vendedor en las facturas: { nombreMostrado: [variantes] }
+  const [variantesVendedor, setVariantesVendedor] = useState({});
   const [vendedorSeleccionado, setVendedorSeleccionado] = useState(null);
   const [mostrarNuevoVendedor, setMostrarNuevoVendedor] = useState(false);
   const [nuevoVendedor, setNuevoVendedor] = useState('');
@@ -177,18 +209,38 @@ const CalculadorSueldoVendedor = () => {
   const cargarVendedores = async () => {
     try {
       setError(null);
-      const [{ data: facturas, error: errorFacturas }, { data: gastos, error: errorGastos }] = await Promise.all([
-        supabase.from('facturas').select('vendedor').not('vendedor', 'is', null).not('vendedor', 'eq', 'Sin asignar'),
-        supabase.from('gastos_empresa').select('empleado').not('empleado', 'is', null)
+      const [facturas, gastos] = await Promise.all([
+        cargarPaginado(() =>
+          supabase.from('facturas').select('id, vendedor').not('vendedor', 'is', null).not('vendedor', 'eq', 'Sin asignar').order('id')
+        ),
+        cargarPaginado(() =>
+          supabase.from('gastos_empresa').select('id, empleado').not('empleado', 'is', null).order('id')
+        )
       ]);
 
-      if (errorFacturas) throw errorFacturas;
-      if (errorGastos) throw errorGastos;
+      // Agrupar "Edwin Marin", "Edwin Marín", "EDWIN MARIN " como la misma persona.
+      // Se muestra la forma más usada en las facturas.
+      const grupos = {};
+      const registrar = (nombre, enFactura) => {
+        const original = String(nombre || '');
+        const clave = normalizarNombre(original);
+        if (!clave) return;
+        if (!grupos[clave]) grupos[clave] = { conteo: {}, variantes: new Set() };
+        const limpio = original.replace(/\s+/g, ' ').trim();
+        grupos[clave].conteo[limpio] = (grupos[clave].conteo[limpio] || 0) + (enFactura ? 1 : 0);
+        if (enFactura) grupos[clave].variantes.add(original);
+      };
+      facturas.forEach(f => registrar(f.vendedor, true));
+      gastos.forEach(g => registrar(g.empleado, false));
 
-      const vendedoresUnicos = Array.from(new Set([
-        ...(facturas || []).map(f => f.vendedor),
-        ...(gastos || []).map(g => g.empleado)
-      ].map(nombre => String(nombre).trim()).filter(Boolean))).sort((a, b) => a.localeCompare(b, 'es'));
+      const variantes = {};
+      Object.values(grupos).forEach(({ conteo, variantes: vs }) => {
+        const mostrado = Object.entries(conteo).sort((a, b) => b[1] - a[1])[0][0];
+        variantes[mostrado] = [...vs];
+      });
+
+      const vendedoresUnicos = Object.keys(variantes).sort((a, b) => a.localeCompare(b, 'es'));
+      setVariantesVendedor(variantes);
       setVendedores(vendedoresUnicos);
 
       if (vendedoresUnicos.length > 0 && !vendedorSeleccionado) {
@@ -220,16 +272,19 @@ const CalculadorSueldoVendedor = () => {
       const inicioFecha = fechaInicio;
       const finFecha = fechaFin;
 
-      // Obtener todas las facturas del vendedor en el sistema.
-      const { data, error: queryError } = await supabase
-        .from('facturas')
-        .select('id, fecha, total, cliente, productos')
-        .eq('vendedor', vendedorSeleccionado)
-        .order('fecha', { ascending: false });
+      // Obtener todas las facturas del vendedor, con todas las formas en que está escrito su nombre.
+      const nombresVendedor = variantesVendedor[vendedorSeleccionado]?.length
+        ? variantesVendedor[vendedorSeleccionado]
+        : [vendedorSeleccionado];
 
-      if (queryError) throw queryError;
-
-      const facturasSistema = data || [];
+      const facturasSistema = await cargarPaginado(() =>
+        supabase
+          .from('facturas')
+          .select('id, fecha, total, cliente, productos')
+          .in('vendedor', nombresVendedor)
+          .order('fecha', { ascending: false })
+          .order('id', { ascending: false })
+      );
       const facturaIdsSistema = facturasSistema.map(f => f.id).filter(Boolean);
 
       let abonosPeriodo = [];

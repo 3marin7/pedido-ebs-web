@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from './supabaseClient';
+import { ejecutarConAutorizacion } from '../lib/supabase';
 import { useAuth } from '../App';
 import './FacturaDetalle.css';
 
@@ -74,6 +75,9 @@ const FacturaDetalle = () => {
   const [editandoAbono, setEditandoAbono] = useState(null);
   const [mostrarFormAbono, setMostrarFormAbono] = useState(false);
   const [codigoClienteResuelto, setCodigoClienteResuelto] = useState('');
+  const [abonoAEliminar, setAbonoAEliminar] = useState(null);
+  const [claveAbono, setClaveAbono] = useState('');
+  const [errorClaveAbono, setErrorClaveAbono] = useState('');
 
   // Función para convertir números a letras
   const convertirNumeroALetras = (numero) => {
@@ -966,26 +970,50 @@ const FacturaDetalle = () => {
     }
   };
 
-  const eliminarAbono = async (idAbono) => {
-    if (user?.role !== 'admin') return;
-    if (!window.confirm('¿Estás seguro de eliminar este abono?')) return;
+  const cerrarEliminarAbono = () => {
+    setAbonoAEliminar(null);
+    setClaveAbono('');
+    setErrorClaveAbono('');
+  };
+
+  // Eliminar abono: exige la contraseña de la cuenta de autorización y borra con esa sesión
+  const eliminarAbono = async (e) => {
+    e.preventDefault();
+    if (user?.role !== 'admin' || !abonoAEliminar) return;
+
+    if (!claveAbono) {
+      setErrorClaveAbono('Ingresa la contraseña de autorización.');
+      return;
+    }
+
+    const idAbono = abonoAEliminar.id;
 
     try {
       setCargando(true);
       
-      const { error } = await supabase
-        .from('abonos')
-        .delete()
-        .eq('id', idAbono);
-      
-      if (error) throw error;
+      const { autorizado } = await ejecutarConAutorizacion(claveAbono, async (clienteAutorizado) => {
+        const { error } = await clienteAutorizado
+          .from('abonos')
+          .delete()
+          .eq('id', idAbono);
+        
+        if (error) throw error;
+      });
+
+      if (!autorizado) {
+        setErrorClaveAbono('Contraseña incorrecta.');
+        setClaveAbono('');
+        return;
+      }
 
       // Actualizar estado local
       setAbonos(abonos.filter(abono => abono.id !== idAbono));
+      cerrarEliminarAbono();
       
     } catch (error) {
       console.error("Error eliminando abono:", error);
       alert('Error al eliminar el abono');
+      cerrarEliminarAbono();
     } finally {
       setCargando(false);
     }
@@ -1391,7 +1419,7 @@ const FacturaDetalle = () => {
                           </button>
                           <button 
                             className="button icon-button small danger"
-                            onClick={() => eliminarAbono(abono.id)}
+                            onClick={() => setAbonoAEliminar(abono)}
                             title="Eliminar"
                             disabled={cargando}
                           >
@@ -1421,6 +1449,37 @@ const FacturaDetalle = () => {
           <small>Sistema de Ebs-Hermanos Marin</small>
         </div>
       </div>
+
+      {abonoAEliminar && (
+        <div className="clave-abono-overlay">
+          <form className="clave-abono-box" onSubmit={eliminarAbono}>
+            <h4>Eliminar abono</h4>
+            <p>
+              Abono de <strong>${Number(abonoAEliminar.monto || 0).toLocaleString('es-CO')}</strong>
+              {abonoAEliminar.fecha ? ` del ${abonoAEliminar.fecha}` : ''}. Esta acción no se puede deshacer.
+            </p>
+            <p>Ingresa la contraseña de autorización para continuar:</p>
+            <input
+              type="password"
+              placeholder="Contraseña"
+              autoComplete="current-password"
+              value={claveAbono}
+              onChange={(e) => {
+                setClaveAbono(e.target.value);
+                setErrorClaveAbono('');
+              }}
+              autoFocus
+            />
+            {errorClaveAbono && <p className="clave-abono-error">{errorClaveAbono}</p>}
+            <div className="clave-abono-botones">
+              <button type="submit" className="peligro" disabled={cargando}>
+                {cargando ? 'Verificando...' : 'Eliminar'}
+              </button>
+              <button type="button" onClick={cerrarEliminarAbono}>Cancelar</button>
+            </div>
+          </form>
+        </div>
+      )}
     </div>
   );
 };

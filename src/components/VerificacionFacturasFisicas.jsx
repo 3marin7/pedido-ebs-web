@@ -3,7 +3,8 @@ import { useAuth } from '../App';
 import { supabase } from './supabaseClient';
 import { verificarClaveAutorizacion, EMAIL_AUTORIZACION } from '../lib/supabase';
 import * as XLSX from 'xlsx';
-import { parseDateLocal, formatDateLocal, nowLocalIsoDate } from '../lib/dateUtils';
+import { parseDateLocal, formatDateLocal, nowLocalIsoDate, formatDateTimeBogota } from '../lib/dateUtils';
+import { isSuperAdminRole } from '../lib/roleUtils';
 import './VerificacionFacturasFisicas.css';
 
 const SALDO_EPSILON = 0.01;
@@ -49,6 +50,8 @@ const VerificacionFacturasFisicas = () => {
   const { user } = useAuth();
   const [facturas, setFacturas] = useState([]);
   const [verificadas, setVerificadas] = useState(new Set());
+  // Quién verificó cada factura y cuándo: { [facturaId]: { por, en } }
+  const [registro, setRegistro] = useState({});
   const [cargando, setCargando] = useState(true);
   const [errorCarga, setErrorCarga] = useState('');
   const [vendedor, setVendedor] = useState('');
@@ -62,6 +65,8 @@ const VerificacionFacturasFisicas = () => {
   const [verificandoClave, setVerificandoClave] = useState(false);
   const inputRef = useRef(null);
   const puedeReiniciar = user?.email?.toLowerCase() === EMAIL_AUTORIZACION;
+  const verRegistro = isSuperAdminRole(user?.role);
+  const nombreUsuario = user?.name || user?.username || user?.email || null;
 
   useEffect(() => {
     const cargarDatos = async () => {
@@ -70,7 +75,7 @@ const VerificacionFacturasFisicas = () => {
         const [facturasData, abonosData, verificacionesData] = await Promise.all([
           cargarTodo('facturas', 'id, fecha, cliente, vendedor, total', 'id'),
           cargarTodo('abonos', 'id, factura_id, monto', 'id'),
-          cargarTodo('verificacion_facturas_fisicas', 'factura_id', 'factura_id')
+          cargarTodo('verificacion_facturas_fisicas', 'factura_id, verificada_por, verificada_en', 'factura_id')
         ]);
 
         const abonadoPorFactura = {};
@@ -87,6 +92,11 @@ const VerificacionFacturasFisicas = () => {
           })
         );
         setVerificadas(new Set(verificacionesData.map((v) => String(v.factura_id))));
+        setRegistro(
+          Object.fromEntries(
+            verificacionesData.map((v) => [String(v.factura_id), { por: v.verificada_por, en: v.verificada_en }])
+          )
+        );
       } catch (error) {
         console.error('Error cargando verificación de facturas:', error);
         setErrorCarga(
@@ -129,6 +139,21 @@ const VerificacionFacturasFisicas = () => {
     return r;
   }, [facturasAlcance, verificadas]);
 
+  // Resumen para el superadmin: cuántas facturas verificó cada persona
+  const registroPorPersona = useMemo(() => {
+    const personas = {};
+    facturasAlcance.forEach((f) => {
+      const r = verificadas.has(String(f.id)) ? registro[String(f.id)] : null;
+      if (!r) return;
+      const persona = r.por || 'Sin registro';
+      if (!personas[persona]) personas[persona] = { persona, cantidad: 0, saldo: 0, ultima: null };
+      personas[persona].cantidad++;
+      personas[persona].saldo += f.saldo;
+      if (r.en && (!personas[persona].ultima || r.en > personas[persona].ultima)) personas[persona].ultima = r.en;
+    });
+    return Object.values(personas).sort((a, b) => b.cantidad - a.cantidad);
+  }, [facturasAlcance, verificadas, registro]);
+
   const facturasVista = useMemo(() => {
     if (vista === 'faltantes') return facturasAlcance.filter((f) => !verificadas.has(String(f.id)));
     if (vista === 'verificadas') return facturasAlcance.filter((f) => verificadas.has(String(f.id)));
@@ -138,10 +163,11 @@ const VerificacionFacturasFisicas = () => {
   const marcar = async (facturaId) => {
     const key = String(facturaId);
     setVerificadas((prev) => new Set(prev).add(key));
+    setRegistro((prev) => ({ ...prev, [key]: { por: nombreUsuario, en: new Date().toISOString() } }));
 
     const { error } = await supabase
       .from('verificacion_facturas_fisicas')
-      .insert([{ factura_id: facturaId, verificada_por: user?.username || null }]);
+      .insert([{ factura_id: facturaId, verificada_por: nombreUsuario }]);
 
     // 23505 = ya estaba marcada (otra persona la marcó al mismo tiempo)
     if (error && error.code !== '23505') {
@@ -437,6 +463,32 @@ const VerificacionFacturasFisicas = () => {
         </div>
       )}
 
+      {verRegistro && registroPorPersona.length > 0 && (
+        <div className="vff-registro-personas">
+          <h4>Registro por persona</h4>
+          <table className="vff-tabla">
+            <thead>
+              <tr>
+                <th>Verificado por</th>
+                <th>Facturas</th>
+                <th>Saldo verificado</th>
+                <th>Última verificación</th>
+              </tr>
+            </thead>
+            <tbody>
+              {registroPorPersona.map((p) => (
+                <tr key={p.persona}>
+                  <td>{p.persona}</td>
+                  <td>{p.cantidad}</td>
+                  <td className="vff-num">{formatMoneda(p.saldo)}</td>
+                  <td>{p.ultima ? formatDateTimeBogota(p.ultima) : ''}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
       <div className="vff-tabla-wrap">
         <table className="vff-tabla">
           <thead>
@@ -447,6 +499,8 @@ const VerificacionFacturasFisicas = () => {
               <th>Cliente</th>
               <th>Vendedor</th>
               <th>Saldo</th>
+              {verRegistro && <th>Verificado por</th>}
+              {verRegistro && <th>Fecha verificación</th>}
             </tr>
           </thead>
           <tbody>
@@ -460,12 +514,16 @@ const VerificacionFacturasFisicas = () => {
                   <td>{f.cliente}</td>
                   <td>{f.vendedor}</td>
                   <td className="vff-num">{formatMoneda(f.saldo)}</td>
+                  {verRegistro && <td>{ok ? registro[String(f.id)]?.por || '—' : ''}</td>}
+                  {verRegistro && (
+                    <td>{ok && registro[String(f.id)]?.en ? formatDateTimeBogota(registro[String(f.id)].en) : ''}</td>
+                  )}
                 </tr>
               );
             })}
             {facturasVista.length === 0 && (
               <tr>
-                <td colSpan={6} className="vff-vacio">
+                <td colSpan={verRegistro ? 8 : 6} className="vff-vacio">
                   {vista === 'faltantes' ? '🎉 No hay facturas faltantes' : 'No hay facturas en esta vista'}
                 </td>
               </tr>
