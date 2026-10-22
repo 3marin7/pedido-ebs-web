@@ -2050,3 +2050,81 @@ body {
   gap: 0.5rem;
   padding: 0.25rem 0;
 }
+
+/* Búsqueda de clientes de la base de datos en el formulario del pedido */
+.cliente-busqueda-group {
+  position: relative;
+}
+
+.cliente-sugerencias {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  margin: 2px 0 0;
+  padding: 0;
+  list-style: none;
+  background: #fff;
+  border: 1px solid #ccd5e0;
+  border-radius: 8px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+.cliente-sugerencias button {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  border: none;
+  border-bottom: 1px solid #eef1f6;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  font-size: 0.95rem;
+  color: #2c3e50;
+}
+
+.cliente-sugerencias li:last-child button {
+  border-bottom: none;
+}
+
+.cliente-sugerencias button:hover,
+.cliente-sugerencias button:focus {
+  background: #ecf3fb;
+  outline: none;
+}
+
+.cliente-sugerencias span {
+  font-size: 0.8rem;
+  color: #5a6b7d;
+}
+
+/* Aviso de pedido recuperado */
+.borrador-recuperado {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.6rem 0.75rem;
+  margin-bottom: 0.75rem;
+  background: #fff4d6;
+  color: #8a6100;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+.borrador-recuperado button {
+  padding: 0.35rem 0.75rem;
+  border: 1px solid #8a6100;
+  border-radius: 4px;
+  background: transparent;
+  color: #8a6100;
+  font-weight: 600;
+  cursor: pointer;
+}

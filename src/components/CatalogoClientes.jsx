@@ -1,6 +1,8 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef, useContext } from 'react';
 import { useLocation } from 'react-router-dom';
 import { supabase } from './supabaseClient';
+import { AuthContext } from '../App';
+import { normalizeRole } from '../lib/roleUtils';
 import { formatInputDateLocal } from '../lib/dateUtils';
 import {
   conTiempoLimite,
@@ -11,7 +13,12 @@ import {
   obtenerPedidosPendientes,
   obtenerSincronizadosSinWhatsApp,
   marcarWhatsAppEnviado,
-  sincronizarPedidosPendientes
+  sincronizarPedidosPendientes,
+  guardarClientesEnCache,
+  leerClientesDeCache,
+  guardarBorradorPedido,
+  leerBorradorPedido,
+  borrarBorradorPedido
 } from '../lib/offlinePedidos';
 import './CatalogoClientes.css';
 
@@ -23,7 +30,24 @@ const normalizarCategoriaUrl = (valor) => String(valor || '')
   .trim()
   .toLowerCase();
 
+// Normaliza texto para buscar: sin tildes, sin mayúsculas y sin espacios sobrantes
+const normalizarTexto = (valor) => String(valor || '')
+  .normalize('NFD')
+  .replace(/[\u0300-\u036f]/g, '')
+  .toLowerCase()
+  .replace(/\s+/g, ' ')
+  .trim();
+
+// Roles del equipo que usan las ayudas del pedido (buscar clientes, borrador, vendedor automático).
+// El catálogo también lo abren clientes sin sesión: para ellos no se activa nada de esto.
+const ROLES_BUSCAN_CLIENTES = ['vendedor', 'admin', 'superadmin', 'inventario', 'contabilidad'];
+const MAX_SUGERENCIAS = 8;
+
 const CatalogoClientes = ({ priceMultiplier = 1, variantTitle = 'Catálogo de Productos' }) => {
+  // Sesión opcional: el catálogo también se abre sin iniciar sesión
+  const user = useContext(AuthContext)?.user || null;
+  const puedeBuscarClientes = !!user && ROLES_BUSCAN_CLIENTES.includes(normalizeRole(user.role));
+  const varianteBorrador = String(priceMultiplier);
   const [productos, setProductos] = useState([]);
   const [productosSeleccionados, setProductosSeleccionados] = useState([]);
   const [cargando, setCargando] = useState(true);
@@ -49,6 +73,11 @@ const CatalogoClientes = ({ priceMultiplier = 1, variantTitle = 'Catálogo de Pr
   const [cantidadesRapidas] = useState([12, 24, 36, 60]);
   const [vistaActual, setVistaActual] = useState('grid'); // 'grid' o 'lista'
   const [clienteSeleccionadoId, setClienteSeleccionadoId] = useState(null);
+  const [clientesBD, setClientesBD] = useState([]);
+  const [mostrarSugerencias, setMostrarSugerencias] = useState(false);
+  const [borradorRestaurado, setBorradorRestaurado] = useState(false);
+  const borradorListo = useRef(false);
+  const preciosRevisados = useRef(false);
   const [generandoPDF, setGenerandoPDF] = useState(false);
   const [navActivo, setNavActivo] = useState('');
   const [panelBusquedaActiva, setPanelBusquedaActiva] = useState(null);
@@ -225,6 +254,164 @@ const CatalogoClientes = ({ priceMultiplier = 1, variantTitle = 'Catálogo de Pr
       clearInterval(intervalo);
     };
   }, [sincronizarPendientes]);
+
+  // Recuperar el pedido en curso si el vendedor salió de la pantalla o recargó
+  useEffect(() => {
+    if (!puedeBuscarClientes) return;
+    let activo = true;
+
+    leerBorradorPedido(varianteBorrador).then((borrador) => {
+      if (!activo) return;
+
+      if (borrador?.productosSeleccionados?.length) {
+        setProductosSeleccionados(borrador.productosSeleccionados);
+
+        // Si se llegó con un cliente en el enlace, ese cliente manda
+        const tieneClienteEnUrl = new URLSearchParams(location.search).has('cliente');
+        if (borrador.clienteInfo) {
+          setClienteInfo(prev => tieneClienteEnUrl
+            ? { ...prev, vendedor: prev.vendedor || borrador.clienteInfo.vendedor || '', notas: prev.notas || borrador.clienteInfo.notas || '' }
+            : { ...prev, ...borrador.clienteInfo });
+        }
+        if (!tieneClienteEnUrl && borrador.clienteSeleccionadoId) {
+          setClienteSeleccionadoId(borrador.clienteSeleccionadoId);
+        }
+        setBorradorRestaurado(true);
+        setMostrarCarrito(true);
+      }
+
+      borradorListo.current = true;
+    });
+
+    return () => {
+      activo = false;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [varianteBorrador, puedeBuscarClientes]);
+
+  // Guardar el pedido en curso en el dispositivo a medida que se arma
+  useEffect(() => {
+    if (!puedeBuscarClientes || !borradorListo.current) return;
+
+    if (pedidoEnviado) {
+      borrarBorradorPedido(varianteBorrador);
+      return;
+    }
+
+    const vacio = productosSeleccionados.length === 0 && !clienteInfo.nombre.trim() && !clienteInfo.telefono.trim();
+    if (vacio) {
+      borrarBorradorPedido(varianteBorrador);
+    } else {
+      guardarBorradorPedido(varianteBorrador, { productosSeleccionados, clienteInfo, clienteSeleccionadoId });
+    }
+  }, [productosSeleccionados, clienteInfo, clienteSeleccionadoId, pedidoEnviado, varianteBorrador, puedeBuscarClientes]);
+
+  // Un borrador puede tener precios viejos: actualizarlos con el catálogo actual
+  useEffect(() => {
+    if (!borradorRestaurado || preciosRevisados.current || productos.length === 0) return;
+    preciosRevisados.current = true;
+
+    setProductosSeleccionados(prev => prev.map((item) => {
+      const actual = productos.find(p => p.id === item.id);
+      return actual ? { ...item, precio: calcularPrecioVista(actual.precio) } : item;
+    }));
+  }, [borradorRestaurado, productos, calcularPrecioVista]);
+
+  // El vendedor conectado queda seleccionado automáticamente
+  useEffect(() => {
+    if (!puedeBuscarClientes || !user?.name) return;
+    const propio = vendedores.find(v => normalizarTexto(v) === normalizarTexto(user.name));
+    if (propio) {
+      setClienteInfo(prev => (prev.vendedor ? prev : { ...prev, vendedor: propio }));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.name, puedeBuscarClientes]);
+
+  // Lista de clientes para buscar desde el formulario (guardada también para trabajar sin conexión)
+  useEffect(() => {
+    if (!puedeBuscarClientes) return;
+    let activo = true;
+
+    const cargarClientes = async () => {
+      const enCache = await leerClientesDeCache();
+      if (activo && enCache.length) setClientesBD(enCache);
+
+      try {
+        let desde = 0;
+        let lista = [];
+        while (true) {
+          const { data, error: errorClientes } = await conTiempoLimite(
+            supabase
+              .from('clientes')
+              .select('id, nombre, telefono, direccion, codigo_cliente')
+              .order('id', { ascending: true })
+              .range(desde, desde + 999)
+          );
+          if (errorClientes) throw errorClientes;
+          const lote = data || [];
+          lista = [...lista, ...lote];
+          if (lote.length < 1000) break;
+          desde += 1000;
+        }
+
+        if (activo) setClientesBD(lista);
+        guardarClientesEnCache(lista);
+      } catch (errorCarga) {
+        console.warn('No se pudo actualizar la lista de clientes:', errorCarga);
+      }
+    };
+
+    cargarClientes();
+    return () => {
+      activo = false;
+    };
+  }, [puedeBuscarClientes]);
+
+  const clientesIndexados = useMemo(
+    () => clientesBD.map(c => ({
+      cliente: c,
+      nombre: normalizarTexto(c.nombre),
+      codigo: normalizarTexto(c.codigo_cliente),
+      telefono: String(c.telefono || '').replace(/\D/g, '')
+    })),
+    [clientesBD]
+  );
+
+  // Coincidencias por nombre, código o teléfono mientras se escribe el nombre
+  const sugerenciasClientes = useMemo(() => {
+    if (!puedeBuscarClientes || clienteSeleccionadoId) return [];
+    const termino = normalizarTexto(clienteInfo.nombre);
+    if (termino.length < 2) return [];
+    const digitos = clienteInfo.nombre.replace(/\D/g, '');
+
+    return clientesIndexados
+      .filter(c =>
+        c.nombre.includes(termino) ||
+        (c.codigo && c.codigo.includes(termino)) ||
+        (digitos.length >= 4 && c.telefono.includes(digitos))
+      )
+      .slice(0, MAX_SUGERENCIAS)
+      .map(c => c.cliente);
+  }, [puedeBuscarClientes, clienteSeleccionadoId, clienteInfo.nombre, clientesIndexados]);
+
+  const seleccionarClienteBD = (cliente) => {
+    setClienteInfo(prev => ({
+      ...prev,
+      nombre: cliente.nombre || '',
+      telefono: cliente.telefono || '',
+      direccion: cliente.direccion || ''
+    }));
+    setClienteSeleccionadoId(cliente.id);
+    setMostrarSugerencias(false);
+    setError(null);
+  };
+
+  const handleNombreClienteChange = (e) => {
+    handleInputChange(e);
+    // Si se edita el nombre de un cliente ya elegido, deja de estar ligado a la base de datos
+    if (clienteSeleccionadoId) setClienteSeleccionadoId(null);
+    setMostrarSugerencias(true);
+  };
 
   // Handlers
   const handleInputChange = (e) => {
@@ -699,8 +886,9 @@ const CatalogoClientes = ({ priceMultiplier = 1, variantTitle = 'Catálogo de Pr
       telefono: '',
       direccion: '',
       notas: '',
-      vendedor: ''
+      vendedor: puedeBuscarClientes ? prev.vendedor : ''
     }));
+    setBorradorRestaurado(false);
     setPedidoEnviado(false);
     setPedidoGuardadoOffline(false);
     setNumeroPedido(null);
@@ -1422,6 +1610,21 @@ const CatalogoClientes = ({ priceMultiplier = 1, variantTitle = 'Catálogo de Pr
                   </div>
                   
                   {/* Información del cliente */}
+                  {borradorRestaurado && productosSeleccionados.length > 0 && (
+                    <div className="borrador-recuperado" role="status">
+                      <span>📝 Recuperamos tu pedido sin enviar. Los precios se actualizaron con el catálogo actual.</span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (!window.confirm('¿Descartar este pedido y empezar uno nuevo?')) return;
+                          reiniciarParaNuevoPedido();
+                          setMostrarCarrito(true);
+                        }}
+                      >
+                        Empezar de nuevo
+                      </button>
+                    </div>
+                  )}
                   <div id="cliente-info-cart" className="cliente-info-cart">
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
                       <h3>Completa tus datos para enviar el pedido</h3>
@@ -1441,13 +1644,12 @@ const CatalogoClientes = ({ priceMultiplier = 1, variantTitle = 'Catálogo de Pr
                           ✓ Cliente cargado desde BD
                           <button
                             onClick={() => {
-                              setClienteInfo({
+                              setClienteInfo(prev => ({
+                                ...prev,
                                 nombre: '',
                                 telefono: '',
-                                direccion: '',
-                                notas: '',
-                                vendedor: ''
-                              });
+                                direccion: ''
+                              }));
                               setClienteSeleccionadoId(null);
                               window.history.replaceState({}, document.title, '/catalogo-clientes');
                             }}
@@ -1492,17 +1694,41 @@ const CatalogoClientes = ({ priceMultiplier = 1, variantTitle = 'Catálogo de Pr
                         </select>
                         {!clienteInfo.vendedor.trim() && <span className="error-text">Campo obligatorio</span>}
                       </div>
-                      <div className="form-group">
+                      <div className="form-group cliente-busqueda-group">
                         <label htmlFor="nombre-cliente">Nombre Completo *</label>
                         <input
                           id="nombre-cliente"
                           type="text"
                           name="nombre"
                           value={clienteInfo.nombre}
-                          onChange={handleInputChange}
-                          placeholder="Ej: María González"
+                          onChange={handleNombreClienteChange}
+                          onFocus={() => setMostrarSugerencias(true)}
+                          onBlur={() => setTimeout(() => setMostrarSugerencias(false), 150)}
+                          placeholder={puedeBuscarClientes ? 'Escribe nombre, código o teléfono del cliente' : 'Ej: María González'}
+                          autoComplete="off"
                           className={!clienteInfo.nombre.trim() ? 'input-error' : ''}
                         />
+                        {mostrarSugerencias && sugerenciasClientes.length > 0 && (
+                          <ul className="cliente-sugerencias" role="listbox">
+                            {sugerenciasClientes.map((c) => (
+                              <li key={c.id}>
+                                <button
+                                  type="button"
+                                  onMouseDown={(e) => e.preventDefault()}
+                                  onClick={() => seleccionarClienteBD(c)}
+                                >
+                                  <strong>{c.nombre}</strong>
+                                  <span>
+                                    {[c.codigo_cliente, c.telefono, c.direccion].filter(Boolean).join(' · ')}
+                                  </span>
+                                </button>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                        {puedeBuscarClientes && !clienteSeleccionadoId && clienteInfo.nombre.trim().length >= 2 && sugerenciasClientes.length === 0 && clientesBD.length > 0 && (
+                          <small>No está en la base de datos: se enviará como cliente nuevo</small>
+                        )}
                         {!clienteInfo.nombre.trim() && <span className="error-text">Campo obligatorio</span>}
                       </div>
                       <div className="form-group">

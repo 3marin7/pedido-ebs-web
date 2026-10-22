@@ -49,6 +49,56 @@ export const leerProductosDeCache = async () => {
   }
 };
 
+// ---------- Clientes (búsqueda en el formulario del pedido) ----------
+
+const CLAVE_CLIENTES = 'clientes_busqueda';
+
+export const guardarClientesEnCache = async (clientes) => {
+  try {
+    await store.setItem(CLAVE_CLIENTES, { clientes, fecha: new Date().toISOString() });
+  } catch (error) {
+    console.warn('No se pudo guardar la lista de clientes en el dispositivo:', error);
+  }
+};
+
+export const leerClientesDeCache = async () => {
+  try {
+    return (await store.getItem(CLAVE_CLIENTES))?.clientes || [];
+  } catch {
+    return [];
+  }
+};
+
+// ---------- Borrador del pedido en curso ----------
+// Guarda el carrito y los datos del cliente para que no se pierdan
+// al cambiar de pantalla, recargar o cerrar el navegador.
+
+const claveBorrador = (variante) => `borrador_pedido_${variante}`;
+
+export const guardarBorradorPedido = async (variante, borrador) => {
+  try {
+    await store.setItem(claveBorrador(variante), { ...borrador, fecha: new Date().toISOString() });
+  } catch (error) {
+    console.warn('No se pudo guardar el borrador del pedido:', error);
+  }
+};
+
+export const leerBorradorPedido = async (variante) => {
+  try {
+    return await store.getItem(claveBorrador(variante));
+  } catch {
+    return null;
+  }
+};
+
+export const borrarBorradorPedido = async (variante) => {
+  try {
+    await store.removeItem(claveBorrador(variante));
+  } catch {
+    // sin acceso al almacenamiento: no hay nada que borrar
+  }
+};
+
 // ---------- Cola de pedidos pendientes ----------
 
 export const obtenerPedidosPendientes = async () => {
