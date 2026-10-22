@@ -86,6 +86,21 @@ describe('ClientesScreen', () => {
     expect(screen.getByPlaceholderText(/ej: cliente@ejemplo.com/i)).toBeInTheDocument()
   })
 
+  test('en modo de selección oculta la gestión de clientes y permite escoger uno', async () => {
+    renderWithRouter(
+      <ClientesScreen {...mockCallbacks} clientes={mockClientes} soloSeleccion />
+    )
+
+    const botonesSeleccionar = await screen.findAllByRole('button', { name: /seleccionar cliente/i })
+    expect(botonesSeleccionar).toHaveLength(mockClientes.length)
+    expect(screen.queryByText(/agregar nuevo cliente/i)).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /exportar clientes/i })).not.toBeInTheDocument()
+
+    fireEvent.click(botonesSeleccionar[0])
+
+    expect(mockCallbacks.onSeleccionarCliente).toHaveBeenCalledWith(mockClientes[0])
+  })
+
   test('permite editar un campo del formulario', () => {
     renderWithRouter(<ClientesScreen {...mockCallbacks} clientes={mockClientes} />)
 

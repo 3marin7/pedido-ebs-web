@@ -1,7 +1,7 @@
 import React, { useState, useEffect, createContext, useContext } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
-import { normalizeRole, isAdminRole } from './lib/roleUtils';
+import { canViewPlatformManagement, normalizeRole, isAdminRole } from './lib/roleUtils';
 import InvoiceScreen from './components/InvoiceScreen';
 import FacturasGuardadas from './components/FacturasGuardadas';
 import FacturaDetalle from './components/FacturaDetalle';
@@ -55,7 +55,7 @@ const useAuth = () => {
 export { AuthContext, useAuth };
 
 // Componente para proteger rutas según el rol
-const ProtectedRoute = ({ children, requiredRoles = [] }) => {
+const ProtectedRoute = ({ children, requiredRoles = [], allowedEmails = null }) => {
   const { user, isLoading, checkSession } = useAuth();
   const location = useLocation();
 
@@ -88,6 +88,10 @@ const ProtectedRoute = ({ children, requiredRoles = [] }) => {
 
   // Verificar roles si se especifican (admin siempre tiene acceso)
   if (requiredRoles.length > 0 && !isAdminRole(user.role) && !requiredRoles.includes(userRole)) {
+    return <Navigate to="/unauthorized" replace />;
+  }
+
+  if (allowedEmails && !allowedEmails(user.email)) {
     return <Navigate to="/unauthorized" replace />;
   }
 
@@ -437,7 +441,10 @@ function App() {
             } />
 
             <Route path="/gestion-plataformas" element={
-              <ProtectedRoute requiredRoles={['superadmin', 'admin']}>
+              <ProtectedRoute
+                requiredRoles={['superadmin', 'admin']}
+                allowedEmails={canViewPlatformManagement}
+              >
                 <><PageMeta title="Plataformas Arrendadas - EBS" description="Control de contratos, facturación e infraestructura técnica de clientes" /><GestionPlataformas /></>
               </ProtectedRoute>
             } />

@@ -68,12 +68,21 @@
 
 /* Cabecera */
 .facturas-header {
+  position: sticky;
+  top: var(--navigation-height, 70px);
+  z-index: 900;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  margin-bottom: 18px;
+  margin: 0 -1rem 18px;
+  padding: 12px 1rem;
+  background: rgba(248, 250, 252, 0.98);
+  border-bottom: 1px solid #dbe4ee;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
 }
 
 .header-left {
@@ -104,6 +113,10 @@
 .header-actions .button {
   white-space: nowrap;
   flex: 0 0 auto;
+}
+
+.header-actions .vista-facturas-selector {
+  margin: 0;
 }
 
 /* Tarjetas de Factura */
@@ -1838,7 +1851,9 @@
   border: 1px solid #ececec;
   border-radius: 16px;
   box-shadow: 0 12px 28px rgba(0, 0, 0, 0.14);
-  overflow: hidden;
+  max-height: calc(100vh - 120px);
+  overflow-x: hidden;
+  overflow-y: auto;
   z-index: 1100;
   min-width: 190px;
 }

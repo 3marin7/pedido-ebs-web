@@ -6,6 +6,7 @@ import { supabase } from './supabaseClient';
 import './InvoiceScreen.css';
 import { useAuth } from '../App';
 import { formatInputDateLocal } from '../lib/dateUtils';
+import { isAdminRole, isSuperAdminRole, normalizeRole } from '../lib/roleUtils';
 
 export const normalizeProductName = (value = '') =>
   String(value)
@@ -41,6 +42,7 @@ const InvoiceScreen = () => {
   // Estados principales
   const [cliente, setCliente] = useState('');
   const [codigoCliente, setCodigoCliente] = useState('');
+  const [clienteMaestroSeleccionado, setClienteMaestroSeleccionado] = useState(null);
   const [fecha, setFecha] = useState(formatInputDateLocal(new Date()));
   const [direccion, setDireccion] = useState('');
   const [telefono, setTelefono] = useState('');
@@ -76,6 +78,8 @@ const InvoiceScreen = () => {
   const [vistaProductosAgregados, setVistaProductosAgregados] = useState('grid'); // 'grid' o 'list'
 
   const vendedores = ['Edwin Marin', 'Fredy Marin', 'Fabian Marin'];
+  const esVendedor = normalizeRole(user?.role) === 'vendedor';
+  const puedeActualizarClienteMaestro = isAdminRole(user?.role) || isSuperAdminRole(user?.role);
 
   const normalizarTexto = (valor = '') =>
     valor
@@ -601,6 +605,7 @@ const InvoiceScreen = () => {
   const limpiarFormulario = () => {
     setCliente('');
     setCodigoCliente('');
+    setClienteMaestroSeleccionado(null);
     setDireccion('');
     setTelefono('');
     setCorreo('');
@@ -628,6 +633,43 @@ const InvoiceScreen = () => {
       if (!codigoClienteFinal) {
         alert('No se encontró código para este cliente. Selecciónalo desde el catálogo de clientes o crea/actualiza el cliente primero.');
         return;
+      }
+
+      const clienteBase = clienteMaestroSeleccionado
+        || clientes.find((item) => item.codigo_cliente === codigoClienteFinal);
+      const cambiosCliente = clienteBase && puedeActualizarClienteMaestro
+        ? {
+          nombre: cliente.trim(),
+          telefono: telefono.trim(),
+        }
+        : null;
+      const clienteCambio = cambiosCliente && (
+        cambiosCliente.nombre !== String(clienteBase.nombre || '').trim()
+        || cambiosCliente.telefono !== String(clienteBase.telefono || '').trim()
+      );
+
+      if (clienteCambio) {
+        const confirmarActualizacion = window.confirm(
+          `El nombre o teléfono de "${clienteBase.nombre}" cambió. `
+          + '¿Deseas actualizar el registro maestro del cliente para futuras facturas?'
+        );
+        if (!confirmarActualizacion) return;
+
+        const { error: errorCliente } = await supabase
+          .from('clientes')
+          .update(cambiosCliente)
+          .eq('codigo_cliente', codigoClienteFinal);
+
+        if (errorCliente) throw errorCliente;
+
+        setClientes((actuales) => actuales.map((item) => (
+          item.codigo_cliente === codigoClienteFinal
+            ? { ...item, ...cambiosCliente }
+            : item
+        )));
+        setClienteMaestroSeleccionado((actual) => (
+          actual ? { ...actual, ...cambiosCliente } : actual
+        ));
       }
 
       // Buscar vendedor_id desde tabla usuarios por nombre
@@ -729,6 +771,12 @@ const InvoiceScreen = () => {
   const seleccionarCliente = async (cliente) => {
     setCliente(cliente.nombre);
     setCodigoCliente(cliente.codigo_cliente || '');
+    setClienteMaestroSeleccionado({
+      id: cliente.id,
+      codigo_cliente: cliente.codigo_cliente || '',
+      nombre: cliente.nombre || '',
+      telefono: cliente.telefono || '',
+    });
     setDireccion(cliente.direccion || '');
     setTelefono(cliente.telefono || '');
     setCorreo(cliente.correo || '');
@@ -786,7 +834,7 @@ const InvoiceScreen = () => {
           <div className="catalogo-content">
             <div className="catalogo-header">
               <h2>Catálogo de Productos</h2>
-              <button 
+              <button
                 className="button secondary-button"
                 onClick={() => setMostrarCatalogo(false)}
               >
@@ -851,6 +899,7 @@ const InvoiceScreen = () => {
           onSeleccionarCliente={seleccionarCliente}
           onVolver={() => setMostrarClientes(false)}
           clientes={clientes}
+          soloSeleccion
         />
       )}
 
@@ -860,16 +909,18 @@ const InvoiceScreen = () => {
           <h1>PEDIDO EBS</h1>
 
           {/* Botón de seleccionar cliente */}
-          <div className="form-row">
-            <div className="form-group">
-              <button 
-                className="button info-button"
-                onClick={() => setMostrarClientes(true)}
-              >
-                <i className="fas fa-users"></i> Seleccionar Cliente
-              </button>
+          {esVendedor && (
+            <div className="form-row">
+              <div className="form-group">
+                <button
+                  className="button info-button"
+                  onClick={() => setMostrarClientes(true)}
+                >
+                  <i className="fas fa-users"></i> Consultar y seleccionar cliente
+                </button>
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Información del cliente */}
           <div className="customer-info-section">
@@ -882,6 +933,7 @@ const InvoiceScreen = () => {
                   placeholder="Nombre del cliente *"
                   required
                   className={!cliente ? 'input-error' : ''}
+                  readOnly={esVendedor && Boolean(clienteMaestroSeleccionado)}
                 />
               </div>
               <div className="form-group" style={{flex: 1}}>
@@ -909,6 +961,7 @@ const InvoiceScreen = () => {
                   value={telefono}
                   onChange={(e) => setTelefono(e.target.value)}
                   placeholder="Teléfono Opcional"
+                  readOnly={esVendedor && Boolean(clienteMaestroSeleccionado)}
                 />
               </div>
             </div>

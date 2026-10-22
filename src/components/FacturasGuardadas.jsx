@@ -4,6 +4,7 @@ import { useAuth } from '../App';
 import { isAdminRole, isSuperAdminRole } from '../lib/roleUtils';
 import { supabase } from './supabaseClient';
 import { ejecutarConAutorizacion } from '../lib/supabase';
+import { parsearArchivoFacturas } from '../lib/facturasImport';
 import * as XLSX from 'xlsx';
 import { parseDateLocal, formatDateLocal, nowLocalIsoDate, formatDateTimeBogota } from '../lib/dateUtils';
 import './FacturasGuardadas.css';
@@ -31,6 +32,28 @@ const normalizarNombre = (nombre) =>
 const sameFacturaId = (abonoFacturaId, facturaId) => String(abonoFacturaId) === String(facturaId);
 
 const PAGE_SIZE = 1000;
+
+const prepararRegistroExportacion = (registro) =>
+  Object.fromEntries(
+    Object.entries(registro).map(([key, value]) => [
+      key,
+      value && typeof value === 'object' ? JSON.stringify(value) : value,
+    ])
+  );
+
+const escaparCeldaCsv = (value) => {
+  const texto = value === null || value === undefined ? '' : String(value);
+  return `"${texto.replace(/"/g, '""')}"`;
+};
+
+const crearSeccionCsv = (nombre, registros) => {
+  const columnas = [...new Set(registros.flatMap((registro) => Object.keys(registro)))];
+  const filas = registros.map((registro) =>
+    columnas.map((columna) => escaparCeldaCsv(registro[columna])).join(',')
+  );
+
+  return [nombre, columnas.map(escaparCeldaCsv).join(','), ...filas].join('\r\n');
+};
 
 const useDebouncedValue = (value, delay = 150) => {
   const [debouncedValue, setDebouncedValue] = useState(value);
@@ -502,11 +525,15 @@ const FacturasGuardadas = () => {
       const wb = XLSX.utils.book_new();
 
       // Hoja de Facturas
-      const facturasSheet = XLSX.utils.json_to_sheet(facturasData || []);
+      const facturasSheet = XLSX.utils.json_to_sheet(
+        (facturasData || []).map(prepararRegistroExportacion)
+      );
       XLSX.utils.book_append_sheet(wb, facturasSheet, 'Facturas');
 
       // Hoja de Abonos
-      const abonosSheet = XLSX.utils.json_to_sheet(abonosData || []);
+      const abonosSheet = XLSX.utils.json_to_sheet(
+        (abonosData || []).map(prepararRegistroExportacion)
+      );
       XLSX.utils.book_append_sheet(wb, abonosSheet, 'Abonos');
 
       // Descargar
@@ -538,18 +565,15 @@ const FacturasGuardadas = () => {
       
       if (abonosError) throw abonosError;
 
-      // Crear contenido CSV con facturas y abonos
-      let csv = 'FACTURAS\n';
-      csv += 'id,cliente,total,estado,fecha,vendedor\n';
-      (facturasData || []).forEach(f => {
-        csv += `${f.id},"${f.cliente}",${f.total},${f.estado},${f.fecha},${f.vendedor || ''}\n`;
-      });
-
-      csv += '\n\nABONOS\n';
-      csv += 'id,factura_id,monto,fecha,observaciones\n';
-      (abonosData || []).forEach(a => {
-        csv += `${a.id},${a.factura_id},${a.monto},${a.fecha},"${a.observaciones || ''}"\n`;
-      });
+      const facturasCsv = crearSeccionCsv(
+        'FACTURAS',
+        (facturasData || []).map(prepararRegistroExportacion)
+      );
+      const abonosCsv = crearSeccionCsv(
+        'ABONOS',
+        (abonosData || []).map(prepararRegistroExportacion)
+      );
+      const csv = `\uFEFF${facturasCsv}\r\n\r\n${abonosCsv}\r\n`;
 
       const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
       const link = document.createElement('a');
@@ -615,120 +639,68 @@ const FacturasGuardadas = () => {
 
   // Importar facturas y abonos
   const importarDatos = async (event) => {
-    const file = event.target.files[0];
+    const input = event.currentTarget;
+    const file = input.files[0];
     if (!file) {
       setErrorImportacion('No se seleccionó ningún archivo');
       return;
     }
 
-    if (!file.name.endsWith('.json') && !file.type.includes('json')) {
-      setErrorImportacion('El archivo debe ser de tipo JSON');
-      event.target.value = '';
-      return;
-    }
-
     setImportando(true);
     setErrorImportacion(null);
-    const reader = new FileReader();
-    
-    reader.onload = async (e) => {
-      try {
-        const contenido = e.target.result;
-        if (!contenido) throw new Error('El archivo está vacío');
+    try {
+      const { facturas: facturasImportadas, abonos: abonosImportados } =
+        await parsearArchivoFacturas(file);
 
-        let datosImportados;
-        try {
-          datosImportados = JSON.parse(contenido);
-        } catch (parseError) {
-          throw new Error('El archivo no contiene un JSON válido');
-        }
+      const confirmar = window.confirm(
+        `Se importarán ${facturasImportadas.length} factura(s) y ${abonosImportados.length} abono(s). `
+        + 'Los registros con el mismo ID se actualizarán. ¿Deseas continuar?'
+      );
+      if (!confirmar) return;
 
-        let facturasImportadas = [];
-        let abonosImportados = [];
-        
-        if (datosImportados.facturas && datosImportados.abonos) {
-          facturasImportadas = datosImportados.facturas;
-          abonosImportados = datosImportados.abonos;
-        } else if (Array.isArray(datosImportados)) {
-          facturasImportadas = datosImportados;
-          abonosImportados = [];
-        } else {
-          throw new Error("Formato de archivo no reconocido");
-        }
-
-        const camposRequeridosFacturas = ['id', 'cliente', 'vendedor', 'fecha', 'productos', 'total'];
-        facturasImportadas.forEach((factura, index) => {
-          camposRequeridosFacturas.forEach(campo => {
-            if (!factura.hasOwnProperty(campo)) {
-              throw new Error(`Factura en posición ${index} no tiene el campo requerido: ${campo}`);
-            }
-          });
-        });
-
-        const camposRequeridosAbonos = ['id', 'factura_id', 'fecha', 'monto'];
-        abonosImportados.forEach((abono, index) => {
-          camposRequeridosAbonos.forEach(campo => {
-            if (!abono.hasOwnProperty(campo)) {
-              throw new Error(`Abono en posición ${index} no tiene el campo requerido: ${campo}`);
-            }
-          });
-          
-          if (!abono.metodo) {
-            abono.metodo = 'No especificado';
-          }
-        });
-
+      if (facturasImportadas.length > 0) {
         const { error: facturasError } = await supabase
           .from('facturas')
           .upsert(facturasImportadas, { onConflict: 'id' });
-        
-        if (facturasError) throw facturasError;
-        
-        if (abonosImportados.length > 0) {
-          const { error: abonosError } = await supabase
-            .from('abonos')
-            .upsert(abonosImportados, { onConflict: 'id' });
-          
-          if (abonosError) throw abonosError;
-        }
 
-        const { data: nuevasFacturas } = await supabase
-          .from('facturas')
-          .select('*');
-        
-        const { data: nuevosAbonos } = await supabase
-          .from('abonos')
-          .select('*');
-        
-        setFacturas(nuevasFacturas || []);
-        setAbonos(nuevosAbonos || []);
-        
-        const vendedoresUnicos = [...new Set(nuevasFacturas
-          .filter(f => f.vendedor)
-          .map(f => f.vendedor)
-          .sort())];
-        setVendedores(vendedoresUnicos);
-        
-        alert('✅ Importación completada con éxito');
-        
-      } catch (error) {
-        console.error("Error en importación:", error);
-        setErrorImportacion(error.message);
-        alert(`❌ Error al importar: ${error.message}`);
-      } finally {
-        setImportando(false);
-        event.target.value = '';
+        if (facturasError) throw facturasError;
       }
-    };
-    
-    reader.onerror = (error) => {
-      console.error("Error al leer archivo:", error);
-      setErrorImportacion('Error al leer el archivo. Intenta nuevamente.');
+
+      if (abonosImportados.length > 0) {
+        const { error: abonosError } = await supabase
+          .from('abonos')
+          .upsert(abonosImportados, { onConflict: 'id' });
+
+        if (abonosError) throw abonosError;
+      }
+
+      const [nuevasFacturas, nuevosAbonos] = await Promise.all([
+        cargarTodasLasFacturas(),
+        cargarTodosLosAbonos(),
+      ]);
+
+      setFacturas(nuevasFacturas);
+      setAbonos(nuevosAbonos);
+
+      const vendedoresUnicos = [...new Set(nuevasFacturas
+        .filter((factura) => factura.vendedor)
+        .map((factura) => factura.vendedor)
+        .sort())];
+      setVendedores(vendedoresUnicos);
+
+      alert(
+        `Importación completada: ${facturasImportadas.length} factura(s) y `
+        + `${abonosImportados.length} abono(s).`
+      );
+    } catch (error) {
+      console.error('Error en importación:', error);
+      const mensaje = error instanceof Error ? error.message : 'Error desconocido al importar.';
+      setErrorImportacion(mensaje);
+      alert(`Error al importar: ${mensaje}`);
+    } finally {
       setImportando(false);
-      event.target.value = '';
-    };
-    
-    reader.readAsText(file);
+      input.value = '';
+    }
   };
 
   // Formatear fecha
@@ -805,54 +777,6 @@ const FacturasGuardadas = () => {
           >
             <i className="fas fa-route"></i> Rutas de Cobro
           </button>
-          <button 
-            className="menu-btn"
-            onClick={() => {
-              exportarExcel();
-              setMenuAbierto(false);
-            }}
-            disabled={importando || cargando}
-          >
-            <i className="fas fa-file-excel"></i> Excel
-          </button>
-          <button 
-            className="menu-btn"
-            onClick={() => {
-              exportarCSV();
-              setMenuAbierto(false);
-            }}
-            disabled={importando || cargando}
-          >
-            <i className="fas fa-file-csv"></i> CSV
-          </button>
-          <label 
-            htmlFor="importar-datos-mobile" 
-            className={`menu-btn ${importando || cargando ? 'disabled' : ''}`}
-          >
-            <i className="fas fa-file-import"></i> {importando ? 'Importando...' : 'Importar'}
-            <input
-              type="file"
-              id="importar-datos-mobile"
-              accept=".json,application/json"
-              style={{ display: 'none' }}
-              onChange={(e) => {
-                importarDatos(e);
-                setMenuAbierto(false);
-              }}
-              disabled={importando || cargando}
-            />
-          </label>
-          <button 
-            className={`menu-btn ${mostrarPagadas ? 'active' : ''}`}
-            onClick={() => {
-              setMostrarPagadas(!mostrarPagadas);
-              setMenuAbierto(false);
-            }}
-            disabled={importando || cargando}
-          >
-            <i className={`fas fa-${mostrarPagadas ? 'eye' : 'eye-slash'}`}></i> 
-            {mostrarPagadas ? 'Mostrando Todas' : 'Solo Pendientes'}
-          </button>
           <button
             className={`menu-btn ${vistaActual === 'lista' ? 'active' : ''}`}
             onClick={() => {
@@ -883,7 +807,18 @@ const FacturasGuardadas = () => {
           >
             <i className="fas fa-th-large"></i> Vista tarjetas
           </button>
-          <button 
+          <button
+            className={`menu-btn ${mostrarPagadas ? 'active' : ''}`}
+            onClick={() => {
+              setMostrarPagadas(!mostrarPagadas);
+              setMenuAbierto(false);
+            }}
+            disabled={importando || cargando}
+          >
+            <i className={`fas fa-${mostrarPagadas ? 'eye' : 'eye-slash'}`}></i>
+            {mostrarPagadas ? 'Mostrando Todas' : 'Solo Pendientes'}
+          </button>
+          <button
             className={`menu-btn ${mostrarResumen ? 'active' : ''}`}
             onClick={() => {
               setMostrarResumen(!mostrarResumen);
@@ -891,10 +826,10 @@ const FacturasGuardadas = () => {
             }}
             disabled={importando || cargando}
           >
-            <i className={`fas fa-${mostrarResumen ? 'eye-slash' : 'eye'}`}></i> 
+            <i className={`fas fa-${mostrarResumen ? 'eye-slash' : 'eye'}`}></i>
             {mostrarResumen ? 'Ocultar' : 'Mostrar'} Resúmenes
           </button>
-          <button 
+          <button
             className="menu-btn"
             onClick={() => {
               navigate('/reportes-cobros');
@@ -904,12 +839,49 @@ const FacturasGuardadas = () => {
           >
             <i className="fas fa-chart-bar"></i> Reportes de Cobros
           </button>
+          <button
+            className="menu-btn"
+            onClick={() => {
+              exportarExcel();
+              setMenuAbierto(false);
+            }}
+            disabled={importando || cargando}
+          >
+            <i className="fas fa-file-excel"></i> Exportar Excel
+          </button>
+          <button 
+            className="menu-btn"
+            onClick={() => {
+              exportarCSV();
+              setMenuAbierto(false);
+            }}
+            disabled={importando || cargando}
+          >
+            <i className="fas fa-file-csv"></i> Exportar CSV
+          </button>
+          <label
+            htmlFor="importar-datos-mobile"
+            className={`menu-btn ${importando || cargando ? 'disabled' : ''}`}
+          >
+            <i className="fas fa-file-import"></i> {importando ? 'Importando...' : 'Importar Excel/CSV/JSON'}
+            <input
+              type="file"
+              id="importar-datos-mobile"
+              accept=".json,.csv,.xlsx,.xls,application/json,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"
+              style={{ display: 'none' }}
+              onChange={(e) => {
+                importarDatos(e);
+                setMenuAbierto(false);
+              }}
+              disabled={importando || cargando}
+            />
+          </label>
         </div>
       </div>
 
       <header className="facturas-header">
         <div className="header-left">
-          <button 
+          <button
             className="menu-toggle"
             onClick={() => setMenuAbierto(true)}
           >
@@ -935,6 +907,60 @@ const FacturasGuardadas = () => {
           >
             <i className="fas fa-route"></i> Rutas de Cobro
           </button>
+          <div className="vista-facturas-selector" aria-label="Vista de facturas">
+            <span className="vista-facturas-label">Ver como:</span>
+            <button
+              type="button"
+              className={vistaActual === 'lista' ? 'active' : ''}
+              onClick={() => setVistaActual('lista')}
+              disabled={importando || cargando}
+            >
+              <i className="fas fa-list"></i> Lista
+            </button>
+            <button
+              type="button"
+              className={vistaActual === 'tabla' ? 'active' : ''}
+              onClick={() => setVistaActual('tabla')}
+              disabled={importando || cargando}
+            >
+              <i className="fas fa-table"></i> Tabla
+            </button>
+            <button
+              type="button"
+              className={vistaActual === 'tarjeta' ? 'active' : ''}
+              onClick={() => setVistaActual('tarjeta')}
+              disabled={importando || cargando}
+            >
+              <i className="fas fa-th-large"></i> Tarjetas
+            </button>
+          </div>
+          <button
+            className={`button ${mostrarPagadas ? 'success-button' : 'secondary-button'}`}
+            onClick={() => setMostrarPagadas(!mostrarPagadas)}
+            disabled={importando || cargando}
+          >
+            <i className={`fas fa-${mostrarPagadas ? 'eye' : 'eye-slash'}`}></i>
+            {mostrarPagadas ? 'Mostrando Todas' : 'Solo Pendientes'}
+          </button>
+          {(facturas.length > 0 || abonos.length > 0) && (
+            <>
+              <button 
+                className="button secondary-button"
+                onClick={() => setMostrarResumen(!mostrarResumen)}
+                disabled={importando || cargando}
+              >
+                <i className={`fas fa-${mostrarResumen ? 'eye-slash' : 'eye'}`}></i> {mostrarResumen ? 'Ocultar' : 'Mostrar'} Resúmenes
+              </button>
+
+              <button 
+                className="button report-button"
+                onClick={() => navigate('/reportes-cobros')}
+                disabled={importando || cargando}
+              >
+                <i className="fas fa-chart-bar"></i> Reportes de Cobros
+              </button>
+            </>
+          )}
           {(facturas.length > 0 || abonos.length > 0) && (
             <>
               <button 
@@ -951,45 +977,22 @@ const FacturasGuardadas = () => {
               >
                 <i className="fas fa-file-csv"></i> CSV
               </button>
-              <label 
-                htmlFor="importar-datos" 
-                className={`button warning-button ${importando || cargando ? 'disabled' : ''}`}
-              >
-                <i className="fas fa-file-import"></i> {importando ? 'Importando...' : 'Importar'}
-                <input
-                  type="file"
-                  id="importar-datos"
-                  accept=".json,application/json"
-                  style={{ display: 'none' }}
-                  onChange={importarDatos}
-                  disabled={importando || cargando}
-                />
-              </label>
-              <button 
-                className={`button ${mostrarPagadas ? 'success-button' : 'secondary-button'}`}
-                onClick={() => setMostrarPagadas(!mostrarPagadas)}
-                disabled={importando || cargando}
-              >
-                <i className={`fas fa-${mostrarPagadas ? 'eye' : 'eye-slash'}`}></i> 
-                {mostrarPagadas ? 'Mostrando Todas' : 'Solo Pendientes'}
-              </button>
-              <button 
-                className="button secondary-button"
-                onClick={() => setMostrarResumen(!mostrarResumen)}
-                disabled={importando || cargando}
-              >
-                <i className={`fas fa-${mostrarResumen ? 'eye-slash' : 'eye'}`}></i> {mostrarResumen ? 'Ocultar' : 'Mostrar'} Resúmenes
-              </button>
-              
-              <button 
-                className="button report-button"
-                onClick={() => navigate('/reportes-cobros')}
-                disabled={importando || cargando}
-              >
-                <i className="fas fa-chart-bar"></i> Reportes de Cobros
-              </button>
             </>
           )}
+          <label
+            htmlFor="importar-datos"
+            className={`button warning-button ${importando || cargando ? 'disabled' : ''}`}
+          >
+            <i className="fas fa-file-import"></i> {importando ? 'Importando...' : 'Importar Excel/CSV/JSON'}
+            <input
+              type="file"
+              id="importar-datos"
+              accept=".json,.csv,.xlsx,.xls,application/json,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"
+              style={{ display: 'none' }}
+              onChange={importarDatos}
+              disabled={importando || cargando}
+            />
+          </label>
         </div>
       </header>
 
@@ -998,34 +1001,6 @@ const FacturasGuardadas = () => {
           <i className="fas fa-exclamation-circle"></i> {errorImportacion}
         </div>
       )}
-
-      <div className="vista-facturas-selector" aria-label="Vista de facturas">
-        <span className="vista-facturas-label">Ver como:</span>
-        <button
-          type="button"
-          className={vistaActual === 'lista' ? 'active' : ''}
-          onClick={() => setVistaActual('lista')}
-          disabled={importando || cargando}
-        >
-          <i className="fas fa-list"></i> Lista
-        </button>
-        <button
-          type="button"
-          className={vistaActual === 'tabla' ? 'active' : ''}
-          onClick={() => setVistaActual('tabla')}
-          disabled={importando || cargando}
-        >
-          <i className="fas fa-table"></i> Tabla
-        </button>
-        <button
-          type="button"
-          className={vistaActual === 'tarjeta' ? 'active' : ''}
-          onClick={() => setVistaActual('tarjeta')}
-          disabled={importando || cargando}
-        >
-          <i className="fas fa-th-large"></i> Tarjetas
-        </button>
-      </div>
 
       <div className="filtros-container">
         <div className="search-box">
@@ -1679,11 +1654,11 @@ const FacturasGuardadas = () => {
 
       {menuMasAbierto && (
         <div className="fnav-more-menu">
-          <button className="fnav-more-item" onClick={() => { setMenuMasAbierto(false); setNavActivoMobile(''); exportarExcel(); }}>
-            <i className="fas fa-file-excel"></i> Exportar Excel
+          <button className="fnav-more-item" onClick={() => { setMenuMasAbierto(false); setNavActivoMobile(''); navigate('/facturacion'); }}>
+            <i className="fas fa-plus"></i> Nueva Factura
           </button>
-          <button className="fnav-more-item" onClick={() => { setMenuMasAbierto(false); setNavActivoMobile(''); exportarCSV(); }}>
-            <i className="fas fa-file-csv"></i> Exportar CSV
+          <button className="fnav-more-item" onClick={() => { setMenuMasAbierto(false); setNavActivoMobile(''); navigate('/rutas-cobro'); }}>
+            <i className="fas fa-route"></i> Rutas de Cobro
           </button>
           <button className="fnav-more-item" onClick={() => { setMenuMasAbierto(false); setNavActivoMobile(''); setVistaActual('lista'); }}>
             <i className="fas fa-list"></i> Vista de lista
@@ -1694,12 +1669,47 @@ const FacturasGuardadas = () => {
           <button className="fnav-more-item" onClick={() => { setMenuMasAbierto(false); setNavActivoMobile(''); setVistaActual('tarjeta'); }}>
             <i className="fas fa-th-large"></i> Vista tarjetas
           </button>
-          <button className="fnav-more-item" onClick={() => { setMenuMasAbierto(false); setNavActivoMobile(''); navigate('/rutas-cobro'); }}>
-            <i className="fas fa-route"></i> Rutas de Cobro
+          <button
+            className="fnav-more-item"
+            onClick={() => {
+              setMenuMasAbierto(false);
+              setNavActivoMobile('');
+              setMostrarPagadas((mostrar) => !mostrar);
+            }}
+          >
+            <i className={`fas fa-${mostrarPagadas ? 'eye' : 'eye-slash'}`}></i>
+            {mostrarPagadas ? 'Mostrando todas' : 'Solo pendientes'}
           </button>
           <button className="fnav-more-item" onClick={() => { setMenuMasAbierto(false); setNavActivoMobile(''); setMostrarResumen(v => !v); }}>
             <i className="fas fa-chart-pie"></i> {mostrarResumen ? 'Ocultar resumen' : 'Ver resumen'}
           </button>
+          <button className="fnav-more-item" onClick={() => { setMenuMasAbierto(false); setNavActivoMobile(''); navigate('/reportes-cobros'); }}>
+            <i className="fas fa-chart-bar"></i> Reportes de Cobros
+          </button>
+          <button className="fnav-more-item" onClick={() => { setMenuMasAbierto(false); setNavActivoMobile(''); exportarExcel(); }}>
+            <i className="fas fa-file-excel"></i> Exportar Excel
+          </button>
+          <button className="fnav-more-item" onClick={() => { setMenuMasAbierto(false); setNavActivoMobile(''); exportarCSV(); }}>
+            <i className="fas fa-file-csv"></i> Exportar CSV
+          </button>
+          <label
+            htmlFor="importar-datos-more"
+            className={`fnav-more-item ${importando || cargando ? 'disabled' : ''}`}
+          >
+            <i className="fas fa-file-import"></i> {importando ? 'Importando...' : 'Importar Excel/CSV/JSON'}
+            <input
+              type="file"
+              id="importar-datos-more"
+              accept=".json,.csv,.xlsx,.xls,application/json,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"
+              style={{ display: 'none' }}
+              onChange={(event) => {
+                importarDatos(event);
+                setMenuMasAbierto(false);
+                setNavActivoMobile('');
+              }}
+              disabled={importando || cargando}
+            />
+          </label>
         </div>
       )}
 

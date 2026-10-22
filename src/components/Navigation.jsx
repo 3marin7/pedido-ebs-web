@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../App';
-import { normalizeRole } from '../lib/roleUtils';
+import { canViewPlatformManagement, normalizeRole } from '../lib/roleUtils';
 import './Navigation.css';
 
 const Navigation = () => {
@@ -11,6 +11,7 @@ const Navigation = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [menuActivo, setMenuActivo] = useState(null);
+  const navigationRef = useRef(null);
   const menuRef = useRef(null);
   const toggleRef = useRef(null);
 
@@ -44,6 +45,36 @@ const Navigation = () => {
       document.body.classList.remove('mobile-navigation-open');
     };
   }, [isMenuOpen]);
+
+  useEffect(() => {
+    const navigation = navigationRef.current;
+    if (!navigation) return undefined;
+
+    const actualizarAltura = () => {
+      document.documentElement.style.setProperty(
+        '--navigation-height',
+        `${navigation.getBoundingClientRect().height}px`
+      );
+    };
+
+    actualizarAltura();
+    if (typeof ResizeObserver === 'undefined') {
+      window.addEventListener('resize', actualizarAltura);
+
+      return () => {
+        window.removeEventListener('resize', actualizarAltura);
+        document.documentElement.style.removeProperty('--navigation-height');
+      };
+    }
+
+    const observer = new ResizeObserver(actualizarAltura);
+    observer.observe(navigation);
+
+    return () => {
+      observer.disconnect();
+      document.documentElement.style.removeProperty('--navigation-height');
+    };
+  }, []);
 
   const getActiveGroup = (links) => {
     return links.find(link => link.tipo === 'grupo' && link.submenu?.some(subLink =>
@@ -423,7 +454,15 @@ const Navigation = () => {
     );
   };
 
-  const availableLinks = getAvailableLinks();
+  const availableLinks = getAvailableLinks()
+    .map((link) => (
+      link.tipo === 'grupo'
+        ? { ...link, submenu: link.submenu.filter((subLink) => (
+          subLink.path !== '/gestion-plataformas' || canViewPlatformManagement(user?.email)
+        )) }
+        : link
+    ))
+    .filter((link) => link.tipo !== 'grupo' || link.submenu.length > 0);
   const activeGroupPath = getActiveGroup(availableLinks)?.path;
 
   useEffect(() => {
@@ -440,7 +479,7 @@ const Navigation = () => {
   }, [isMenuOpen, location.pathname, activeGroupPath]);
 
   return (
-    <nav className="navigation">
+    <nav ref={navigationRef} className="navigation">
       <div className="nav-container">
         <div className="nav-brand">
           <Link to="/" className="brand-logo-link" aria-label="Distribuciones EBS">

@@ -8,7 +8,8 @@ import { formatInputDateLocal } from '../lib/dateUtils';
 const ClientesScreen = ({ 
   onSeleccionarCliente, 
   onVolver,
-  clientes: initialClientes 
+  clientes: initialClientes,
+  soloSeleccion = false,
 }) => {
   const navigate = useNavigate();
   // Estados para clientes
@@ -621,32 +622,33 @@ const ClientesScreen = ({
         ) : (
           <>
             {/* Estadísticas en Acordeón */}
-            <div className="clientes-stats-collapsible">
-              <div 
-                className="stats-header"
-                onClick={() => setMostrarEstadisticas(!mostrarEstadisticas)}
-              >
-                <h4>📊 Estadísticas de Clientes</h4>
-                <span className={`toggle-arrow ${mostrarEstadisticas ? 'expanded' : ''}`}>
-                  ▼
-                </span>
-              </div>
-              
-              {mostrarEstadisticas && (
-                <div className="stats-grid">
-                  {[5, 4, 3, 2, 1].map(star => (
-                    <div key={star} className="stat-item">
-                      <span className={`clasificacion-badge clasificacion-${star}`}>
-                        {star} {'★'.repeat(star)}
-                      </span>
-                      <span>
-                        {clientes.filter(c => c.clasificacion === star).length} clientes
-                      </span>
-                    </div>
-                  ))}
+            {!soloSeleccion && (
+              <div className="clientes-stats-collapsible">
+                <div
+                  className="stats-header"
+                  onClick={() => setMostrarEstadisticas(!mostrarEstadisticas)}
+                >
+                  <h4>📊 Estadísticas de Clientes</h4>
+                  <span className={`toggle-arrow ${mostrarEstadisticas ? 'expanded' : ''}`}>
+                    ▼
+                  </span>
                 </div>
-              )}
-            </div>
+                {mostrarEstadisticas && (
+                  <div className="stats-grid">
+                    {[5, 4, 3, 2, 1].map(star => (
+                      <div key={star} className="stat-item">
+                        <span className={`clasificacion-badge clasificacion-${star}`}>
+                          {star} {'★'.repeat(star)}
+                        </span>
+                        <span>
+                          {clientes.filter(c => c.clasificacion === star).length} clientes
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
             
             {!clienteEditando && (
               <div className={`clientes-list clientes-list--${vistaClientes}`}>
@@ -670,25 +672,38 @@ const ClientesScreen = ({
                         {cliente.direccion && <p>📍 Dir: {cliente.direccion}</p>}
                       </div>
                       <div className="clientes-screen-actions">
-                        <button
-                          className="button info-button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            iniciarEdicionCliente(cliente);
-                          }}
-                        >
-                          ✏️ Editar
-                        </button>
-                        <button
-                          className="button success-button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            // Navegar a CatalogoClientes con datos del cliente
-                            navigate(`/catalogo-clientes?cliente=${encodeURIComponent(cliente.nombre)}&telefono=${encodeURIComponent(cliente.telefono || '')}&direccion=${encodeURIComponent(cliente.direccion || '')}&clienteId=${cliente.id}`);
-                          }}
-                        >
-                          🛒 Hacer Pedido
-                        </button>
+                        {soloSeleccion ? (
+                          <button
+                            className="button success-button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              seleccionarCliente(cliente);
+                            }}
+                          >
+                            Seleccionar cliente
+                          </button>
+                        ) : (
+                          <>
+                            <button
+                              className="button info-button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                iniciarEdicionCliente(cliente);
+                              }}
+                            >
+                              ✏️ Editar
+                            </button>
+                            <button
+                              className="button success-button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                navigate(`/catalogo-clientes?cliente=${encodeURIComponent(cliente.nombre)}&telefono=${encodeURIComponent(cliente.telefono || '')}&direccion=${encodeURIComponent(cliente.direccion || '')}&clienteId=${cliente.id}`);
+                              }}
+                            >
+                              🛒 Hacer Pedido
+                            </button>
+                          </>
+                        )}
                       </div>
                     </div>
                   ))
@@ -702,7 +717,8 @@ const ClientesScreen = ({
           </>
         )}
         
-        <div className="nuevo-cliente-form">
+        {!soloSeleccion && (
+          <div className="nuevo-cliente-form">
           <h3>{clienteEditando ? 'Editar Cliente' : 'Agregar Nuevo Cliente'}</h3>
           <div className="form-row">
             <div className="form-group">
@@ -799,9 +815,10 @@ const ClientesScreen = ({
               </button>
             )}
           </div>
-        </div>
+          </div>
+        )}
 
-        <div className="clientes-actions">
+        {!soloSeleccion && <div className="clientes-actions">
           <button 
             className="button info-button"
             onClick={exportarClientes}
@@ -859,9 +876,9 @@ const ClientesScreen = ({
               <span>Procesando archivo...</span>
             </div>
           )}
-        </div>
+        </div>}
 
-        {mostrarReporteDatos && (
+        {!soloSeleccion && mostrarReporteDatos && (
           <section className="clientes-data-report" aria-label="Reporte de datos faltantes">
             <div className="clientes-data-report-header">
               <div>
