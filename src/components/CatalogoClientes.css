@@ -22,11 +22,17 @@
 }
 
 html, body, #root {
-  height: 100%;
   margin: 0;
   padding: 0;
+  /* clip (no hidden) para no crear un contenedor con scroll propio:
+     así la barra superior queda fija al desplazarse */
   overflow-x: hidden;
+  overflow-x: clip;
   font-size: 16px;
+}
+
+html, body {
+  height: 100%;
 }
 
 body {

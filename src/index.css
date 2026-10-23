@@ -27,8 +27,10 @@ html, body, #root {
   width: 100%;
   min-width: 320px;
   min-height: 100%;
+  /* clip evita el desplazamiento lateral sin crear un contenedor con scroll propio
+     (overflow hidden/auto aquí rompe position: sticky de la barra superior) */
   overflow-x: hidden;
-  overflow-y: auto;
+  overflow-x: clip;
 }
 
 body {

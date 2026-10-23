@@ -79,7 +79,11 @@ const InvoiceScreen = () => {
 
   const vendedores = ['Edwin Marin', 'Fredy Marin', 'Fabian Marin'];
   const esVendedor = normalizeRole(user?.role) === 'vendedor';
-  const puedeActualizarClienteMaestro = isAdminRole(user?.role) || isSuperAdminRole(user?.role);
+  // Quienes facturan (admin, superadmin, inventario) pueden corregir los datos del cliente;
+  // el vendedor solo consulta y selecciona
+  const puedeActualizarClienteMaestro = isAdminRole(user?.role)
+    || isSuperAdminRole(user?.role)
+    || normalizeRole(user?.role) === 'inventario';
 
   const normalizarTexto = (valor = '') =>
     valor
@@ -899,7 +903,7 @@ const InvoiceScreen = () => {
           onSeleccionarCliente={seleccionarCliente}
           onVolver={() => setMostrarClientes(false)}
           clientes={clientes}
-          soloSeleccion
+          soloSeleccion={!puedeActualizarClienteMaestro}
         />
       )}
 
@@ -909,18 +913,17 @@ const InvoiceScreen = () => {
           <h1>PEDIDO EBS</h1>
 
           {/* Botón de seleccionar cliente */}
-          {esVendedor && (
-            <div className="form-row">
-              <div className="form-group">
-                <button
-                  className="button info-button"
-                  onClick={() => setMostrarClientes(true)}
-                >
-                  <i className="fas fa-users"></i> Consultar y seleccionar cliente
-                </button>
-              </div>
+          <div className="form-row">
+            <div className="form-group">
+              <button
+                className="button info-button"
+                onClick={() => setMostrarClientes(true)}
+              >
+                <i className="fas fa-users"></i>{' '}
+                {puedeActualizarClienteMaestro ? 'Seleccionar o editar cliente' : 'Consultar y seleccionar cliente'}
+              </button>
             </div>
-          )}
+          </div>
 
           {/* Información del cliente */}
           <div className="customer-info-section">
